@@ -1,5 +1,5 @@
 <html>
-<!--#include virtual="../../header.html" -->
+[% PROCESS "../../header.html" %]
 <body>
 
 <H2>Contributed EIT Data:</H2>

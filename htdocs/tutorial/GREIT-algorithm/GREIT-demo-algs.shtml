@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 GREIT algorithms: Example images
@@ -16,7 +16,7 @@ GREIT framework, it is now of mostly historical interest.
 <H3>Prepare data: phantom data</H3>
 
 <pre>
-<!--#include virtual="demo_algs01.m" -->
+[% PROCESS "demo_algs01.m" %]
 </pre>
 
 <H3>Prepare data: simulated FEM</H3>
@@ -24,7 +24,7 @@ GREIT framework, it is now of mostly historical interest.
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td>
 <pre>
-<!--#include virtual="demo_algs02.m" -->
+[% PROCESS "demo_algs02.m" %]
 </pre>
 </td>
 <td valign="top" align="right" width="150">
@@ -36,7 +36,7 @@ GREIT framework, it is now of mostly historical interest.
 
 
 <pre>
-<!--#include virtual="demo_algs03.m" -->
+[% PROCESS "demo_algs03.m" %]
 </pre>
 
 <H2>Algorithm results</H2>
@@ -45,12 +45,12 @@ Using the function <a href="get_list_of_algs.m"><tt
    >get_list_of_algs.m</tt></a>:
 <ul>
 <pre>
-<!--#include virtual="get_list_of_algs.m" -->
+[% PROCESS "get_list_of_algs.m" %]
 </pre>
 </ul>
 we can run the following demo script:
 <pre>
-<!--#include virtual="demo_algs04.m" -->
+[% PROCESS "demo_algs04.m" %]
 </pre>
 
 <center>

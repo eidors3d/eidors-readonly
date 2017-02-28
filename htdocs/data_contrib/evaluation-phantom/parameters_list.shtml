@@ -1,5 +1,5 @@
 <html>
-<!--#include virtual="../../header.html" -->
+[% PROCESS "../../header.html" %]
 <body>
 <body>
 <h1>List of parameters:</h1>

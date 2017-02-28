@@ -1,7 +1,7 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#set var="display_errors" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% display_errors = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2 >Noise performance of different hyperparameter selection approaches</h2>
 
@@ -42,7 +42,7 @@ We generate the following four different model configurations in order to show h
 </ol> 
    
 <pre>
-<!--#include virtual="./noise_performance_01.m" -->
+[% PROCESS "./noise_performance_01.m" %]
 </pre>
 
 <center>
@@ -56,7 +56,7 @@ The four different configurations electrode / skip configurations used in the an
 Generating EIT voltage measurements and noise
 </h3>
 <pre>
-<!--#include virtual="noise_performance_02.m" -->
+[% PROCESS "noise_performance_02.m" %]
 </pre>
 
 <h3> 
@@ -64,7 +64,7 @@ Visualizing noise performance (Gauss-Newton reconstruction)
 </h3>
 
 <pre>
-<!--#include virtual="noise_performance_03.m" -->
+[% PROCESS "noise_performance_03.m" %]
 </pre>
 
 <center>

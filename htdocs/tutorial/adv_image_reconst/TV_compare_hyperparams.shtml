@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Compare selection of hyperparameters for Total Variation
@@ -15,7 +15,7 @@ GN step (&alpha;<sub>1</sub>), and another for the GN interations
 
 Simulate shape with edges 
 <pre>
-<!--#include virtual="TV_hyperparams01.m" -->
+[% PROCESS "TV_hyperparams01.m" %]
 </pre>
 
 <center>
@@ -26,7 +26,7 @@ Shape that is to be reconstructed (generated on 576 element mesh)
 
 <h3>Create TV reconstruction model</H3>
 <pre>
-<!--#include virtual="TV_hyperparams02.m" -->
+[% PROCESS "TV_hyperparams02.m" %]
 </pre>
 <center>
 <img src="TV_hyperparams02a.png">
@@ -36,42 +36,42 @@ Reconstruction model (256 elements)
 
 <h3>Reconstruction with no noise</H3>
 <pre>
-<!--#include virtual="TV_hyperparams03.m" -->
+[% PROCESS "TV_hyperparams03.m" %]
 </pre>
 
 <p><B> To display these results, create an html table with matlab</B>
 <pre>
-<!--#include virtual="TV_hyperparams04.m" -->
+[% PROCESS "TV_hyperparams04.m" %]
 </pre>
 
 <H3>Reconstruction Results (No Noise) 
 (GN param = &alpha;<sub>1</sub>, TV param= &alpha;<sub>2</sub>)</H3>
 <center>
-<!--#include virtual="TV-params-NSR=0.html" -->
+[% PROCESS "TV-params-NSR=0.html" %]
 </center>
 
 
 <h3>Reconstruction with 20db SNR noise</H3>
 <p><B> Add Noise</B>
 <pre>
-<!--#include virtual="TV_hyperparams05.m" -->
+[% PROCESS "TV_hyperparams05.m" %]
 </pre>
 
 <p><B> Calculations</B>
 
 <pre>
-<!--#include virtual="TV_hyperparams06.m" -->
+[% PROCESS "TV_hyperparams06.m" %]
 </pre>
 
 <p><B> To display these results, create an html table with matlab</B>
 <pre>
-<!--#include virtual="TV_hyperparams07.m" -->
+[% PROCESS "TV_hyperparams07.m" %]
 </pre>
 
 <H3>Reconstruction Results (20dB SNR) 
 (GN param = &alpha;<sub>1</sub>, TV param= &alpha;<sub>2</sub>)</H3>
 <center>
-<!--#include virtual="TV-params-NSR=0.01.html" -->
+[% PROCESS "TV-params-NSR=0.01.html" %]
 </center>
 
 </td></tr></table>

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2 >PEEP trial after lung injury (pig)</h2>
 
@@ -43,7 +43,7 @@ EIDORS Analysis
 
 <li><b> Create a FEM model of the pig</b>
 <pre>
-<!--#include virtual="if_peep_trial01.m" -->
+[% PROCESS "if_peep_trial01.m" %]
 </pre>
 
 <center>
@@ -54,12 +54,12 @@ EIDORS Analysis
 
 <li><b> Reconstruct images</b>
 <pre>
-<!--#include virtual="if_peep_trial02.m" -->
+[% PROCESS "if_peep_trial02.m" %]
 </pre>
 
 <li><b> Select Regions of interest to plot</b>
 <pre>
-<!--#include virtual="if_peep_trial03.m" -->
+[% PROCESS "if_peep_trial03.m" %]
 </pre>
 
 <center>
@@ -71,7 +71,7 @@ regional ventilation
 
 <li><b> Normalized Impedance Change (&Delta;Z) at each ROI</b>
 <pre>
-<!--#include virtual="if_peep_trial04.m" -->
+[% PROCESS "if_peep_trial04.m" %]
 </pre>
 
 <center>
@@ -86,7 +86,7 @@ Normalized &Delta;Z time course for different lung ROIs.
 
 This function creates a video of the sample sequences.
 <pre>
-<!--#include virtual="if_peep_trial05.m" -->
+[% PROCESS "if_peep_trial05.m" %]
 </pre>
 
 <center>

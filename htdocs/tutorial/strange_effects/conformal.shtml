@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>Strange Effect: Conformal deformations of boundary shape</H2>
 
@@ -14,7 +14,7 @@ the deformation
 </H3>
 
 <pre>
-<!--#include virtual="conformal1_01.m" -->
+[% PROCESS "conformal1_01.m" %]
 </pre>
 
 <center>
@@ -32,7 +32,7 @@ z<sub>new</sub>= e<sup>.01(z-20-80i )</sup>(z+20i)(z-10i)
 </H3>
 
 <pre>
-<!--#include virtual="conformal1_02.m" -->
+[% PROCESS "conformal1_02.m" %]
 </pre>
 
 <center>
@@ -46,7 +46,7 @@ z<sub>new</sub>= e<sup>.01(z-20-80i )</sup>(z+20i)(z-10i)
 </center>
 
 <pre>
-<!--#include virtual="conformal1_03.m" -->
+[% PROCESS "conformal1_03.m" %]
 </pre>
 
 <center>

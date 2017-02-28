@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 GREIT evaluation: Evaluation using simulation data
@@ -25,7 +25,7 @@ In the rest of this example, the function
 lists the provided algorithms to test.
 
 <pre>
-<!--#include virtual="../GREIT-algorithm/get_list_of_algs.m" -->
+[% PROCESS "../GREIT-algorithm/get_list_of_algs.m" %]
 </pre>
 
 <H2>Prepare simulation data: phantom data</H2>
@@ -68,7 +68,7 @@ Ringing
 The function <a href="calc_hm_set.m"><tt>calc_hm_set.m</tt></a>
 calculates the HAS from each image
 <pre>
-<!--#include virtual="calc_hm_set.m" -->
+[% PROCESS "calc_hm_set.m" %]
 </pre>
 
 
@@ -78,7 +78,7 @@ First, we reconstruct an image using some of the
 proposed algorithms.
 
 <pre>
-<!--#include virtual="simulation_test03.m" -->
+[% PROCESS "simulation_test03.m" %]
 </pre>
 
 <center>
@@ -120,7 +120,7 @@ The parameters listed previously
 <a href="./GREIT_sim_params.m"><tt
           >GREIT_sim_params.m</tt></a>.
 <pre>
-<!--#include virtual="GREIT_sim_params.m" -->
+[% PROCESS "GREIT_sim_params.m" %]
 </pre>
 
 <H2>Calculate noise performance</H2>
@@ -148,7 +148,7 @@ The parameters listed previously
 <a href="./GREIT_sim_params.m"><tt
           >GREIT_sim_params.m</tt></a>.
 <pre>
-<!--#include virtual="GREIT_noise_params.m" -->
+[% PROCESS "GREIT_noise_params.m" %]
 </pre>
 
 <H3>Parameters from example images</H3>
@@ -156,7 +156,7 @@ The parameters listed previously
 In order to display the parameters from the example images,
 we calculate:
 <pre>
-<!--#include virtual="simulation_test04.m" -->
+[% PROCESS "simulation_test04.m" %]
 </pre>
 
 <center>

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>GREIT Reconstruction for multiple electrode layers</h2>
 
@@ -14,7 +14,7 @@ Simulation model
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_mat_2layer01.m" -->
+[% PROCESS "mk_GREIT_mat_2layer01.m" %]
 </pre>
 
 <center>
@@ -30,7 +30,7 @@ Calculate GREIT reconstruction matrix
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_mat_2layer02.m" -->
+[% PROCESS "mk_GREIT_mat_2layer02.m" %]
 </pre>
 
 <center>
@@ -45,7 +45,7 @@ Reconstruct Images
 </h3>
 
 <pre>
-<!--#include virtual="mk_GREIT_mat_2layer03.m" -->
+[% PROCESS "mk_GREIT_mat_2layer03.m" %]
 </pre>
 
 <center>

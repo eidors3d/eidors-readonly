@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 GREIT algorithm: NOSER
@@ -21,13 +21,13 @@ Int. J. Imaging Systems and Technology,
 <H3>GREIT NOSER algorithm for time difference</H3>
 
 <pre>
-<!--#include virtual="GREIT_NOSER_diff.m" -->
+[% PROCESS "GREIT_NOSER_diff.m" %]
 </pre>
 
 <H3>GREIT NOSER algorithm for normalized time difference</H3>
 
 <pre>
-<!--#include virtual="GREIT_NOSER_ndiff.m" -->
+[% PROCESS "GREIT_NOSER_ndiff.m" %]
 </pre>
 
 <H3>Jacobian Calculation</H3>
@@ -36,7 +36,7 @@ The previous code depends on this function to
 calculate and cache the Jacobian matrix.
 
 <pre>
-<!--#include virtual="GREIT_Jacobian_cyl.m" -->
+[% PROCESS "GREIT_Jacobian_cyl.m" %]
 </pre>
 
 

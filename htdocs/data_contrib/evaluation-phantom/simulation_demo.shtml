@@ -1,5 +1,5 @@
 <html>
-<!--#include virtual="../../header.html" -->
+[% PROCESS "../../header.html" %]
 <body>
 <h1>Simulation demo</h1>
 Simulated 
@@ -21,7 +21,7 @@ sim_Det_3D.m) beside GREIT parameters for a single object in 2D
 
 2D model created using Netgen:
 <pre>
-<!--#include virtual="code/sim_2D_params.m" -->
+[% PROCESS "code/sim_2D_params.m" %]
 </pre>
 
 <center>
@@ -69,7 +69,7 @@ Netgen. A cubic target was moved in the saline solution according to the
 predefined movement protocols horizontally in central-plane (z=0) and off-plane. </font></p>
 
 <pre>
-<!--#include virtual="code/sim_Det_3D.m" -->
+[% PROCESS "code/sim_Det_3D.m" %]
 </pre>
 
 <center>

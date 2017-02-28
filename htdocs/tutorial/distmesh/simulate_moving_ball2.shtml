@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Simulate a moving 2D target on a fixed mesh
@@ -14,7 +14,7 @@ mesh creation functions.
 <h3>Step 1: Create fine mesh (300 nodes)</h3>
 
 <pre>
-<!--#include virtual="simulate_move2_01.m" -->
+[% PROCESS "simulate_move2_01.m" %]
 </pre>
 
 <h3>Step 2: Simulate movement</h3>
@@ -24,7 +24,7 @@ surrounding the target. Then using <tt>interp_mesh.m</tt>,
 we find the elements that are in the target position.
 
 <pre>
-<!--#include virtual="simulate_move2_02.m" -->
+[% PROCESS "simulate_move2_02.m" %]
 </pre>
 
 <center>
@@ -44,12 +44,12 @@ Magnification of areas of interest in the previous figure.
 
 <h3>Step 3: Simulate Homogeneous measurements</h3>
 <pre>
-<!--#include virtual="simulate_move2_03.m" -->
+[% PROCESS "simulate_move2_03.m" %]
 </pre>
 
 <h3>Step 4: Simulate moving target and simulate measurements</h3>
 <pre>
-<!--#include virtual="simulate_move2_04.m" -->
+[% PROCESS "simulate_move2_04.m" %]
 </pre>
 
 In order to animate these meshes, we call the 
@@ -57,7 +57,7 @@ In order to animate these meshes, we call the
 <tt>convert</tt> function to create the animations
 
 <pre>
-<!--#include virtual="simulate_move2_05.m" -->
+[% PROCESS "simulate_move2_05.m" %]
 </pre>
 
 <center>
@@ -68,7 +68,7 @@ Animation of the simulation mesh surrounding a moving target
 
 <h3>Step 5: Reconstruct images</h3>
 <pre>
-<!--#include virtual="simulate_move2_06.m" -->
+[% PROCESS "simulate_move2_06.m" %]
 </pre>
 
 <center>

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>FEM Models Prepackaged with EIDORS</H2>
 
@@ -26,7 +26,7 @@ is a string such as 'c2d0c', where
 Use <tt>help mk_common_models</tt> for more details
 
 <pre>
-<!--#include virtual="common_models01.m" -->
+[% PROCESS "common_models01.m" %]
 </pre>
 
 <blockquote>
@@ -37,7 +37,7 @@ Model c2d0c (left) and d2d3c (right)
 </blockquote>
 
 <pre>
-<!--#include virtual="common_models02.m" -->
+[% PROCESS "common_models02.m" %]
 </pre>
 
 <blockquote>
@@ -48,7 +48,7 @@ Model c2d0d (left) and d2d3d (right)
 </blockquote>
 
 <pre>
-<!--#include virtual="common_models03.m" -->
+[% PROCESS "common_models03.m" %]
 </pre>
 
 Come rough 2D models of thorax shapes are available
@@ -65,7 +65,7 @@ green lines and point electrods by green circles
 </blockquote>
 
 <pre>
-<!--#include virtual="common_models04.m" -->
+[% PROCESS "common_models04.m" %]
 </pre>
 
 <table>

@@ -1,4 +1,4 @@
-<!--#include virtual="../nav-sidebar.shtml" -->
+[% PROCESS "../../nav-sidebar.shtml" %]
 <h2>EIDORS3D tutorial</h2>
 
 This tutorial was created by Nick Polydorides,
@@ -8,7 +8,7 @@ function with EIDORS version 3.x, but this style
 of code is now deprecated.
 
 <pre>
-<!--#include virtual="eidors3d_tutorial.m" -->
+[% PROCESS "eidors3d_tutorial.m" %]
 </pre>
 </ul>
 

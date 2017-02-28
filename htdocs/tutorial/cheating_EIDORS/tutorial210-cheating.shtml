@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>Cheating with EIDORS</H2>
 
@@ -49,9 +49,9 @@ the colours as follows:
 
 In order to simulate data for these images, we use
 the following code for a small (256 element) face model:
-<pre><!--#include virtual="tutorial210a.m" --></pre>
+<pre>[% PROCESS "tutorial210a.m" %]</pre>
 and for a larger (576 element) face model:
-<pre><!--#include virtual="tutorial210b.m" --></pre>
+<pre>[% PROCESS "tutorial210b.m" %]</pre>
 
 <h3>
 Approach #1: Careful selection of noise
@@ -71,7 +71,7 @@ Each image was reconstructed (with different selections of
 hyperparameter values), and reviewed by the author to determine which cases
 corresponded to the happy transform.
 
-<pre><!--#include virtual="tutorial210c.m" --></pre>
+<pre>[% PROCESS "tutorial210c.m" %]</pre>
 
  Fig. 2 shows two successful 'happy' images.
 <center>
@@ -127,10 +127,10 @@ in the happy face, we set
 In order to implement this prior function with
 EIDORS, we define function
 <tt>tutorial210_cheat_tikhonov.m</tt> as follows
-<pre><!--#include virtual="tutorial210_cheat_tikhonov.m" --></pre>
+<pre>[% PROCESS "tutorial210_cheat_tikhonov.m" %]</pre>
 
 Images are reconstructed with this prior as follows:
-<pre><!--#include virtual="tutorial210e.m" --></pre>
+<pre>[% PROCESS "tutorial210e.m" %]</pre>
 
 The effect of careful prior selection is hown in Fig. 3.
 In this case, images were reconstructed on a 576 element
@@ -155,7 +155,7 @@ In order to enhance this effect, we use an <i>inverse crime</i>,
 by putting the Tikhonov prior information <i>exactly</i> where
 it needs to be to get the happy face (Fig. 4).
 Images are reconstructed with this prior as follows:
-<pre><!--#include virtual="tutorial210d.m" --></pre>
+<pre>[% PROCESS "tutorial210d.m" %]</pre>
 
 <center>
 <img height="128" src="tutorial210d.png" >
@@ -195,10 +195,10 @@ This function is clearly more complicated than the
 <tt>tutorial210_cheat_tikhonov.m</tt> because we
 need to search for adjoining elements in the FEM.
 
-<pre><!--#include virtual="tutorial210_cheat_laplace.m" --></pre>
+<pre>[% PROCESS "tutorial210_cheat_laplace.m" %]</pre>
 Images are reconstructed with this prior as follows (using
 almost identical code to the previous example):
-<pre><!--#include virtual="tutorial210g.m" --></pre>
+<pre>[% PROCESS "tutorial210g.m" %]</pre>
 
  Fig 5 shows the effect of such careful
 edge preserving prior selection (with no <i>inverse crime</i>).
@@ -229,7 +229,7 @@ it needs to be to get the happy face (Fig. 6).
 <i>Known edges</i> are weighted at 0.3&times;that of other
 edges in the image.
 Images are reconstructed with this prior as follows:
-<pre><!--#include virtual="tutorial210f.m" --></pre>
+<pre>[% PROCESS "tutorial210f.m" %]</pre>
 
 
 <center>

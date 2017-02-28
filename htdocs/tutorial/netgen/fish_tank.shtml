@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 View of an electric fish in a tank
@@ -19,7 +19,7 @@ Model a 3D tank with 8 electrodes and an elliptical fish
 </h3>
 
 <pre>
-<!--#include virtual="fish_tank01.m" -->
+[% PROCESS "fish_tank01.m" %]
 </pre>
 
 <center>
@@ -33,7 +33,7 @@ Create stim_patterns and meas_patterns for the fish
 </h3>
 
 <pre>
-<!--#include virtual="fish_tank02.m" -->
+[% PROCESS "fish_tank02.m" %]
 </pre>
 
 <h3>
@@ -41,7 +41,7 @@ Solve for the voltage distribution in the tank
 </h3>
 
 <pre>
-<!--#include virtual="fish_tank03.m" -->
+[% PROCESS "fish_tank03.m" %]
 </pre>
 
 
@@ -55,7 +55,7 @@ Solve for the voltage distribution near the fish's head
 </h3>
 
 <pre>
-<!--#include virtual="fish_tank04.m" -->
+[% PROCESS "fish_tank04.m" %]
 </pre>
 
 <center>

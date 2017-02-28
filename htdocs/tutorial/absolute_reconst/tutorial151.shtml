@@ -1,6 +1,6 @@
 <!--#set var="root" value="../../" -->
 <!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>
 Absolute Imaging: Non-Linear Gauss Newton Image Reconstruction
@@ -15,7 +15,7 @@ models may be downloaded here
  (<a href="tutorial151_model.mat">tutorial151_model.mat</a>).
 
 
-<pre><!--#include virtual="tutorial151a.m" --></pre>
+<pre>[% PROCESS "tutorial151a.m" %]</pre>
 
 <center>
 <img src="tutorial151a.png">
@@ -31,7 +31,7 @@ We simulate both homogeneous measurements and
 target measurements in order to do both 
 difference and absolute imaging.
 
-<pre><!--#include virtual="tutorial151b.m" --></pre>
+<pre>[% PROCESS "tutorial151b.m" %]</pre>
 
 <center>
 <img src="tutorial151b.png">
@@ -44,7 +44,7 @@ Using a smaller model for the inverse, we can
 reconstruct this pattern with <i>difference</i>
 imaging.
 
-<pre><!--#include virtual="tutorial151c.m" --></pre>
+<pre>[% PROCESS "tutorial151c.m" %]</pre>
 
 <center>
 <img src="tutorial151c.png">
@@ -60,11 +60,11 @@ First, the download the following function file
 <a href="tutorial151_nonlinearGN.m">tutorial151_nonlinearGN.m</a>
 and save it to a directory in your path, or copy-and-paste
 the file here:
-<pre><!--#include virtual="tutorial151_nonlinearGN.m" --></pre>
+<pre>[% PROCESS "tutorial151_nonlinearGN.m" %]</pre>
 
 Using this function, the following code will do absolute imaging
 
-<pre><!--#include virtual="tutorial151d.m" --></pre>
+<pre>[% PROCESS "tutorial151d.m" %]</pre>
 
 Running this code gives the following output:
 <pre>

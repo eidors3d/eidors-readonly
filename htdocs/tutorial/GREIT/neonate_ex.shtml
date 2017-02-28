@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>GREIT Reconstruction for an neonate human thorax geometry</h2>
 
@@ -34,7 +34,7 @@ Image reconstruction model
 
 Forward model model
 <pre>
-<!--#include virtual="neonate_ex01.m" -->
+[% PROCESS "neonate_ex01.m" %]
 </pre>
 <center>
 
@@ -45,7 +45,7 @@ Finite element model of thorax
 
 Reconstruction model
 <pre>
-<!--#include virtual="neonate_ex02.m" -->
+[% PROCESS "neonate_ex02.m" %]
 </pre>
 
 <h3> 
@@ -54,7 +54,7 @@ GREIT reconstruction
 
 Reconstruct images
 <pre>
-<!--#include virtual="neonate_ex03.m" -->
+[% PROCESS "neonate_ex03.m" %]
 </pre>
 <center>
 <img src="neonate_ex03a.png">
@@ -64,7 +64,7 @@ Images of three different breaths (end inspiration)
 
 Reconstruct temporal signals
 <pre>
-<!--#include virtual="neonate_ex04.m" -->
+[% PROCESS "neonate_ex04.m" %]
 </pre>
 
 <center>
@@ -82,7 +82,7 @@ The shape of a neonate is roughly elliptical. Based on the neonate CT
 here</a>, the elliptical ration is about 1:1.14.
 
 <pre>
-<!--#include virtual="neonate_ex05.m" -->
+[% PROCESS "neonate_ex05.m" %]
 </pre>
 
 <center>

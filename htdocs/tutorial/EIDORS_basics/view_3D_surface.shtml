@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Viewing surface and depth voltages</h2>
 
@@ -9,7 +9,7 @@ Create a simple 3D model (electrodes at 170&deg; and 190&deg;
 </h3>
 
 <pre>
-<!--#include virtual="view_3D_surf01.m" -->
+[% PROCESS "view_3D_surf01.m" %]
 </pre>
 
 <center>
@@ -23,7 +23,7 @@ Show voltage on surface
 </h3>
 
 <pre>
-<!--#include virtual="view_3D_surf02.m" -->
+[% PROCESS "view_3D_surf02.m" %]
 </pre>
 
 <center>
@@ -37,7 +37,7 @@ Show vertical slices (internal)
 </h3>
 
 <pre>
-<!--#include virtual="view_3D_surf03.m" -->
+[% PROCESS "view_3D_surf03.m" %]
 </pre>
 
 <center>
@@ -51,7 +51,7 @@ Adding contrasts to adjust surface voltages
 </h3>
 
 <pre>
-<!--#include virtual="view_3D_surf04.m" -->
+[% PROCESS "view_3D_surf04.m" %]
 </pre>
 
 <center>
@@ -62,7 +62,7 @@ mesh density to see details)
 </center>
 
 <pre>
-<!--#include virtual="view_3D_surf05.m" -->
+[% PROCESS "view_3D_surf05.m" %]
 </pre>
 
 <center>

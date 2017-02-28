@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>EIDORS image reconstructions</h2>
 
@@ -12,12 +12,12 @@ The EIDORS inv_model describes all the
 parameters as part of image reconstruction
 
 <pre>
-<!--#include virtual="basic_3d_01.m" -->
+[% PROCESS "basic_3d_01.m" %]
 </pre>
 
 Add circular inclusion
 <pre>
-<!--#include virtual="basic_3d_02.m" -->
+[% PROCESS "basic_3d_02.m" %]
 </pre>
 
 <center>
@@ -29,7 +29,7 @@ Add circular inclusion
 
 Show in a different way with cut planes
 <pre>
-<!--#include virtual="basic_3d_03.m" -->
+[% PROCESS "basic_3d_03.m" %]
 </pre>
 
 <center>
@@ -41,7 +41,7 @@ and a circular inclusion shown with two cut planes.
 
 <h4>Simulate Voltages</h4>
 <pre>
-<!--#include virtual="basic_3d_04.m" -->
+[% PROCESS "basic_3d_04.m" %]
 </pre>
 
 <center>
@@ -55,12 +55,12 @@ Reconstruction
 </h3>
 Make a reconstruction matrix
 <pre>
-<!--#include virtual="basic_3d_05.m" -->
+[% PROCESS "basic_3d_05.m" %]
 </pre>
 
 Reconstruct the images
 <pre>
-<!--#include virtual="basic_3d_06.m" -->
+[% PROCESS "basic_3d_06.m" %]
 </pre>
 <center>
 <img src="basic_3d_06a.png"><img src="basic_3d_06b.png">

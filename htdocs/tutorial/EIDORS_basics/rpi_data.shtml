@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Absolute and Difference solvers</h2>
 
@@ -30,7 +30,7 @@ It is important to correctly model the size of the electrodes
 and their position to get absolute imaging to work.
 
 <pre>
-<!--#include virtual="rpi_data01.m" -->
+[% PROCESS "rpi_data01.m" %]
 </pre>
 
 <center>
@@ -46,7 +46,7 @@ Load and preprocess data
 One can improve the equality of the images by ensuring that all channels
 have a mean voltage of zero before beginning.
 <pre>
-<!--#include virtual="rpi_data02a.m" -->
+[% PROCESS "rpi_data02a.m" %]
 </pre>
 
 <h3> 
@@ -55,11 +55,11 @@ Difference imaging
 
 Using a very simple model
 <pre>
-<!--#include virtual="rpi_data02b.m" -->
+[% PROCESS "rpi_data02b.m" %]
 </pre>
 Using a the accurate electrode model
 <pre>
-<!--#include virtual="rpi_data03.m" -->
+[% PROCESS "rpi_data03.m" %]
 </pre>
 
 <center>
@@ -78,13 +78,13 @@ In order to estimate the actual conductivity values, we need
 to scale for the applied voltage, tank size (in 3D) and
 background conductivity
 <pre>
-<!--#include virtual="rpi_data04.m" -->
+[% PROCESS "rpi_data04.m" %]
 </pre>
 
 This can even be a quick way to use a difference solver
 for absolute imaging
 <pre>
-<!--#include virtual="rpi_data05.m" -->
+[% PROCESS "rpi_data05.m" %]
 </pre>
 <center>
 <img src="rpi_data04a.png">
@@ -98,7 +98,7 @@ Absolute solvers as a function of iteration
 </h3>
 
 <pre>
-<!--#include virtual="rpi_data06.m" -->
+[% PROCESS "rpi_data06.m" %]
 </pre>
 <center>
 <img src="rpi_data06a.png">
@@ -109,7 +109,7 @@ Gauss-Newton Absolute solver on conductivity at iterations (from left to right):
 </center>
 
 <pre>
-<!--#include virtual="rpi_data07.m" -->
+[% PROCESS "rpi_data07.m" %]
 </pre>
 <center>
 <img src="rpi_data07a.png">

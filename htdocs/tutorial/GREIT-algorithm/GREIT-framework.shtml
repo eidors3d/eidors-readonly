@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 GREIT software framework
@@ -59,7 +59,7 @@ Conceptual framework for GREIT software
 <h3>Step 0: forward model</h3>
 
 <pre>
-<!--#include virtual="framework00.m" -->
+[% PROCESS "framework00.m" %]
 </pre>
 
 <center>
@@ -76,7 +76,7 @@ Create a 32&times;32 pixel grid mesh for the
 inverse model, and show the correspondence between 
 it and the find forward model.
 <pre>
-<!--#include virtual="framework01.m" -->
+[% PROCESS "framework01.m" %]
 </pre>
 
 <center>
@@ -88,7 +88,7 @@ it and the find forward model.
 Calculate a Jacobian for a fine 3D mesh mapped onto
 
 <pre>
-<!--#include virtual="framework02.m" -->
+[% PROCESS "framework02.m" %]
 </pre>
 
 <h3>Step 2: calculate image prior</h3>
@@ -100,13 +100,13 @@ The &radic; is based on our experience that
 a power of zero pushes artefacts to the boundary, while
 a power of one  pushes artefacts to the centre.
 <pre>
-<!--#include virtual="framework03.m" -->
+[% PROCESS "framework03.m" %]
 </pre>
 
 <h3>Step 3: calculate reconstruction matrix </h3>
 
 <pre>
-<!--#include virtual="framework04.m" -->
+[% PROCESS "framework04.m" %]
 </pre>
 
 <h3>Step 4: test reconstruction matrix</h3>
@@ -119,7 +119,7 @@ use the EIDORS imaging functions of colour mapping, showing
    that the GREIT code is functionally separate from EIDORS) 
 
 <pre>
-<!--#include virtual="framework05.m" -->
+[% PROCESS "framework05.m" %]
 </pre>
 
 <center>

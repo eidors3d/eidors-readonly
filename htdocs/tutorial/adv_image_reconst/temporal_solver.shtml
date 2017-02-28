@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 
 <h2>
@@ -51,7 +51,7 @@ to look at data from the past/future, since the current
 measurement tells us everything we need to know.
 
 <pre>
-<!--#include virtual="temporal_solver01.m" -->
+[% PROCESS "temporal_solver01.m" %]
 </pre>
 
 <h3>
@@ -96,7 +96,7 @@ at frame 0, using the indicated data:
 </ol>
 
 The following code defines the reconstruction algorithms:
-<pre><!--#include virtual="temporal_solver02.m" --></pre>
+<pre>[% PROCESS "temporal_solver02.m" %]</pre>
 
 <h3>
 Image Reconstruction
@@ -104,7 +104,7 @@ Image Reconstruction
 
 We reconstruct the image at 9&nbsp;O'clock using
 each algorithm, using the code:
-<pre><!--#include virtual="temporal_solver03.m" --></pre>
+<pre>[% PROCESS "temporal_solver03.m" %]</pre>
 
 <center>
 <img src="temporal_solver03a.png">
@@ -129,7 +129,7 @@ In order to show animated movies of temporal
 solvers, we can do the following
 
 <pre>
-<!--#include virtual="temporal_solver04.m" -->
+[% PROCESS "temporal_solver04.m" %]
 </pre>
 
 Output images are:

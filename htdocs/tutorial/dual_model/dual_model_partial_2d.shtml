@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Dual Models &minus; Coarse model partially covers fine model
@@ -18,7 +18,7 @@ Create a fine model of a tank with 7 electrodes just near
 one side. The coarse model will only represent the 
 conductivity near this region.
 <pre>
-<!--#include virtual="dual_partial2d01.m" -->
+[% PROCESS "dual_partial2d01.m" %]
 </pre>
 
 <center>
@@ -34,7 +34,7 @@ Data are simulated of a point rotating on a fine mesh
 (inverse crime in this case)
 
 <pre>
-<!--#include virtual="dual_partial2d02.m" -->
+[% PROCESS "dual_partial2d02.m" %]
 </pre>
 
 <center>
@@ -48,13 +48,13 @@ Simulation data
 Create fine mesh (<tt>fmdl_mdl</tt>)
    and dual mesh (<tt>dmdl_mdl</tt>) reconstruction models.
 <pre>
-<!--#include virtual="dual_partial2d03.m" -->
+[% PROCESS "dual_partial2d03.m" %]
 </pre>
 
 <h3>Reconstructed images (projected to fine mesh)</h3>
 
 <pre>
-<!--#include virtual="dual_partial2d04.m" -->
+[% PROCESS "dual_partial2d04.m" %]
 </pre>
 
 <center>
@@ -68,7 +68,7 @@ Fine (<i>top</i>) and dual (<i>bottom</i>) reconstructed images
 <h3>Reconstructed images (projected to coarse mesh)</h3>
 
 <pre>
-<!--#include virtual="dual_partial2d05.m" -->
+[% PROCESS "dual_partial2d05.m" %]
 </pre>
 
 <center>

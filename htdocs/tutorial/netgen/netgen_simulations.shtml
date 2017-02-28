@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Using Netgen to simulate fwd and inverse solutions
@@ -16,7 +16,7 @@ Model a 2D tank with 8 electrodes
 </h3>
 
 <pre>
-<!--#include virtual="netgen_sims01.m" -->
+[% PROCESS "netgen_sims01.m" %]
 </pre>
 
 <center>
@@ -28,7 +28,7 @@ Simulate a 2D tank with 8 electrodes with adjacent patterns
 </h3>
 
 <pre>
-<!--#include virtual="netgen_sims02.m" -->
+[% PROCESS "netgen_sims02.m" %]
 </pre>
 
 <center>
@@ -42,7 +42,7 @@ Simulate a 2D tank with 8 electrodes with different current patterns
 </h3>
 
 <pre>
-<!--#include virtual="netgen_sims03.m" -->
+[% PROCESS "netgen_sims03.m" %]
 </pre>
 
 <center>
@@ -59,7 +59,7 @@ Simulate a voltages for a change in conductivity
 </h3>
 
 <pre>
-<!--#include virtual="netgen_sims04.m" -->
+[% PROCESS "netgen_sims04.m" %]
 </pre>
 
 <center>
@@ -76,7 +76,7 @@ Voltage patterns for a change in conductivity
 </h3>
 
 <pre>
-<!--#include virtual="netgen_sims05.m" -->
+[% PROCESS "netgen_sims05.m" %]
 </pre>
 
 <center>
@@ -91,7 +91,7 @@ Simple image reconstruction
 </h3>
 
 <pre>
-<!--#include virtual="netgen_sims06.m" -->
+[% PROCESS "netgen_sims06.m" %]
 </pre>
 
 <center>

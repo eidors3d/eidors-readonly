@@ -1,5 +1,5 @@
 <html>
-<!--#include virtual="../../header.html" -->
+[% PROCESS "../../header.html" %]
 <body>
 
 <h1>Components of evaluation:</h1>

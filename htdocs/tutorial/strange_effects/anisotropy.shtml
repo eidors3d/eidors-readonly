@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>Anisotroic deformations of medium shape</H2>
 
@@ -10,7 +10,7 @@
 </H3>
 
 <pre>
-<!--#include virtual="anisotropy1_01.m" -->
+[% PROCESS "anisotropy1_01.m" %]
 </pre>
 
 <center>
@@ -25,7 +25,7 @@ Rectangular model with current streamlines
 </H3>
 
 <pre>
-<!--#include virtual="anisotropy1_02.m" -->
+[% PROCESS "anisotropy1_02.m" %]
 </pre>
 
 <center>
@@ -39,7 +39,7 @@ Deformed model with current streamlines
 </H3>
 
 <pre>
-<!--#include virtual="anisotropy1_03.m" -->
+[% PROCESS "anisotropy1_03.m" %]
 </pre>
 
 <center>

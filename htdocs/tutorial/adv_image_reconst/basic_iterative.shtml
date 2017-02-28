@@ -1,6 +1,6 @@
 <!--#set var="root" value="../../" -->
 <!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Iterative Gauss Newton reconstruction in 3D
@@ -10,7 +10,7 @@ Here we create a simple 3D shape and iteratively
 reconstruct the image.
 
 <pre>
-<!--#include virtual="basic_iterative01.m" -->
+[% PROCESS "basic_iterative01.m" %]
 </pre>
 
 <center>
@@ -28,7 +28,7 @@ We use the 3D Gauss-Newton reconstruction
 algorithms written by Nick Polydorides
 
 <pre>
-<!--#include virtual="basic_iterative02.m" -->
+[% PROCESS "basic_iterative02.m" %]
 </pre>
 
 <center>

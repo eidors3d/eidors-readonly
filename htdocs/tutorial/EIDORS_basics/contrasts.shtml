@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Contrasts in EIT</h2>
 
@@ -10,7 +10,7 @@ Creating an FEM and solving the forward problem
 
 
 <pre>
-<!--#include virtual="contrasts_01.m" -->
+[% PROCESS "contrasts_01.m" %]
 </pre>
 
 <center>
@@ -21,7 +21,7 @@ elliptical conductivity contrasting inclusion
 </center>
 
 <pre>
-<!--#include virtual="contrasts_02.m" -->
+[% PROCESS "contrasts_02.m" %]
 </pre>
 
 <center>
@@ -32,7 +32,7 @@ elliptical conductivity with a conductive contrast
 </center>
 
 <pre>
-<!--#include virtual="contrasts_03.m" -->
+[% PROCESS "contrasts_03.m" %]
 </pre>
 
 <center>
@@ -45,13 +45,13 @@ Streamlines around a conductive contrasting target
 
 Function to calculate the model
 <pre>
-<!--#include virtual="contrasts_04_modeller.m" -->
+[% PROCESS "contrasts_04_modeller.m" %]
 </pre>
 
 
 Iterate over model shapes 
 <pre>
-<!--#include virtual="contrasts_04.m" -->
+[% PROCESS "contrasts_04.m" %]
 </pre>
 
 <center>

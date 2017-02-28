@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Dual Models to reconstruct a slice of a volume
@@ -14,7 +14,7 @@ the volume at the place of interest.
 To simulate this, we simulate a ball moving in
 a helical path on a fine netgen model.
 <pre>
-<!--#include virtual="centre_slice01.m" -->
+[% PROCESS "centre_slice01.m" %]
 </pre>
 
 <center>
@@ -32,7 +32,7 @@ model where the 2D coarse model is mapped to only
 a layer of elements in the fine model.
 
 <pre>
-<!--#include virtual="centre_slice02.m" -->
+[% PROCESS "centre_slice02.m" %]
 </pre>
 
 <center>
@@ -55,7 +55,7 @@ Images reconstructed with this model have more artefacts,
 but show the reconstructed target at all depths.
 
 <pre>
-<!--#include virtual="centre_slice03.m" -->
+[% PROCESS "centre_slice03.m" %]
 </pre>
 
 Next, we create coarse models which represent
@@ -64,7 +64,7 @@ These images display a targets in the space
 from the original volume.
 
 <pre>
-<!--#include virtual="centre_slice04.m" -->
+[% PROCESS "centre_slice04.m" %]
 </pre>
 
 
@@ -90,7 +90,7 @@ To speed up the calcualion, we use a simpler
 fine model.
 
 <pre>
-<!--#include virtual="centre_slice05.m" -->
+[% PROCESS "centre_slice05.m" %]
 </pre>
 
 <center>
@@ -116,7 +116,7 @@ These images display a targets in the space
 from the original volume.
 
 <pre>
-<!--#include virtual="centre_slice06.m" -->
+[% PROCESS "centre_slice06.m" %]
 </pre>
 
 

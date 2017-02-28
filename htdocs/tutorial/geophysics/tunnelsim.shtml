@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 
 <h2> 
@@ -12,7 +12,7 @@ Simulating Geophysical measurements around a borehole
 Create 3D FEM model of the gallery
 </h3>
 <pre>
-<!--#include virtual="tunnelsim01.m" -->
+[% PROCESS "tunnelsim01.m" %]
 </pre>
 
 <center>
@@ -27,7 +27,7 @@ Create 3D FEM model of the gallery
 Place a simulated contrast
 </h3>
 <pre>
-<!--#include virtual="tunnelsim02.m" -->
+[% PROCESS "tunnelsim02.m" %]
 </pre>
 
 <center>
@@ -46,7 +46,7 @@ reconstruction process; it is also not really
 recommended since the model size is much too small
 near the electrodes.
 <pre>
-<!--#include virtual="tunnelsim03.m" -->
+[% PROCESS "tunnelsim03.m" %]
 </pre>
 
 <center>
@@ -66,7 +66,7 @@ This means that the smoothing prior will be allowed to
 "fill" through the centre, resulting in image content
 where we don't expect it to be.
 <pre>
-<!--#include virtual="tunnelsim04.m" -->
+[% PROCESS "tunnelsim04.m" %]
 </pre>
 
 <center>
@@ -82,7 +82,7 @@ Reconstruct images (on a 2D conforming geometry)
 Here we use a slice created to conform to the
 specified geometry.
 <pre>
-<!--#include virtual="tunnelsim05.m" -->
+[% PROCESS "tunnelsim05.m" %]
 </pre>
 
 <center>
@@ -92,7 +92,7 @@ specified geometry.
 </center>
 
 <pre>
-<!--#include virtual="tunnelsim06.m" -->
+[% PROCESS "tunnelsim06.m" %]
 </pre>
 
 <center>

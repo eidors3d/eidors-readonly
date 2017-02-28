@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 2D Geophysical models using square mesh elements
@@ -22,7 +22,7 @@ this way</small>)
 <h3>Create fine mesh</h3>
 
 <pre>
-<!--#include virtual="square_mesh01.m" -->
+[% PROCESS "square_mesh01.m" %]
 </pre>
 
 <center>
@@ -35,7 +35,7 @@ this way</small>)
 <h3>Create Dual Mesh</h3>
 
 <pre>
-<!--#include virtual="square_mesh02.m" -->
+[% PROCESS "square_mesh02.m" %]
 </pre>
 
 <center>
@@ -48,7 +48,7 @@ this way</small>)
 <h3>Create Simulation Pattern</h3>
 
 <pre>
-<!--#include virtual="square_mesh03.m" -->
+[% PROCESS "square_mesh03.m" %]
 </pre>
 
 <center>
@@ -61,7 +61,7 @@ this way</small>)
 <h3>Inverse Solution</h3>
 
 <pre>
-<!--#include virtual="square_mesh04.m" -->
+[% PROCESS "square_mesh04.m" %]
 </pre>
 
 <center>
@@ -78,7 +78,7 @@ complete electrode model, instead, we place point electrodes
 as follows.
 
 <pre>
-<!--#include virtual="square_mesh05.m" -->
+[% PROCESS "square_mesh05.m" %]
 </pre>
 
 <center>

@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2>Gauss Newton solvers in 3D</h2>
 
@@ -8,7 +8,7 @@
 
 <h3> Simulation Model</H3>
 <pre>
-<!--#include virtual="compare_3D_abs_GN_01.m" -->
+[% PROCESS "compare_3D_abs_GN_01.m" %]
 </pre>
 
 <center>
@@ -20,7 +20,7 @@ Simulation model
 
 <h3> Reconstruction with GN solver</H3>
 <pre>
-<!--#include virtual="compare_3D_abs_GN_02.m" -->
+[% PROCESS "compare_3D_abs_GN_02.m" %]
 </pre>
 
 <center>
@@ -33,7 +33,7 @@ Simulation model
 
 <h3> Reconstruction with GN solver with hyperparameter adjustment</H3>
 <pre>
-<!--#include virtual="compare_3D_abs_GN_03.m" -->
+[% PROCESS "compare_3D_abs_GN_03.m" %]
 </pre>
 
 <center>
@@ -46,7 +46,7 @@ Simulation model
 
 <h3> Reconstruction with constrained GN solver</H3>
 <pre>
-<!--#include virtual="compare_3D_abs_GN_04.m" -->
+[% PROCESS "compare_3D_abs_GN_04.m" %]
 </pre>
 
 <center>

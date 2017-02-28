@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <H2>GN reconstruction vs Backprojection</H2>
 
@@ -14,7 +14,7 @@ Define a regular GN solver
 A regular GN solver is defined first on the
 elements, and then on the nodes.
 <pre>
-<!--#include virtual="nodal_jacobian01.m" -->
+[% PROCESS "nodal_jacobian01.m" %]
 </pre>
 
 <h3> 
@@ -22,7 +22,7 @@ Examples with tank data
 </h3>
 
 <pre>
-<!--#include virtual="nodal_jacobian02.m" -->
+[% PROCESS "nodal_jacobian02.m" %]
 </pre>
 
 <center>
@@ -37,7 +37,7 @@ Examples with lung data
 </h3>
 
 <pre>
-<!--#include virtual="nodal_jacobian03.m" -->
+[% PROCESS "nodal_jacobian03.m" %]
 </pre>
 
 <center>

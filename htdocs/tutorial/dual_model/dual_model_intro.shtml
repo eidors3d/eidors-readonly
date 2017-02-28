@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Introduction to dual models
@@ -26,7 +26,7 @@ Schematic of a dual model based inverse problem
 
 First, simulate some data, based on a 576 element mesh
 <pre>
-<!--#include virtual="dual_model01.m" -->
+[% PROCESS "dual_model01.m" %]
 </pre>
 
 <center>
@@ -51,7 +51,7 @@ Next, we compare two coarse meshes
 </ol>
 
 <pre>
-<!--#include virtual="dual_model02.m" -->
+[% PROCESS "dual_model02.m" %]
 </pre>
 
 <center>
@@ -82,7 +82,7 @@ Then the mapping from coarse to fine would be
 <h3>Image Reconstructions</H3>
 
 <pre>
-<!--#include virtual="dual_model03.m" -->
+[% PROCESS "dual_model03.m" %]
 </pre>
 
 <center>
@@ -101,7 +101,7 @@ We consider a coarse mesh of 64 elements, and fine meshes
 of 64 (same as coarse), 256, and 576 elements
 
 <pre>
-<!--#include virtual="dual_model04.m" -->
+[% PROCESS "dual_model04.m" %]
 </pre>
 
 <center>
@@ -117,7 +117,7 @@ Reconstruct images, and then image onto the
 coarse model and the fine model.
 
 <pre>
-<!--#include virtual="dual_model05.m" -->
+[% PROCESS "dual_model05.m" %]
 </pre>
 
 <center>

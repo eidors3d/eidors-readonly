@@ -1,6 +1,6 @@
-<!--#set var="root" value="../../" -->
-<!--#set var="show_tut" value="1" -->
-<!--#include virtual="../../nav-sidebar.shtml" -->
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
 Electrode movement reconstruction for simulated 3D data
@@ -9,7 +9,7 @@ Electrode movement reconstruction for simulated 3D data
 Here we create a simple 3D model and change the boundary shape between two measurments.
 
 <pre>
-<!--#include virtual="move_3d01.m" -->
+[% PROCESS "move_3d01.m" %]
 </pre>
 
 <center>
@@ -21,7 +21,7 @@ Illustration of the deformation of the 3D model (exaggerated 10x).
 Next we solve the inverse problem in two ways: first, without correcting for electrode movements, and second, with movement correction.
 
 <pre>
-<!--#include virtual="move_3d02.m" -->
+[% PROCESS "move_3d02.m" %]
 </pre>
 
 <center>
