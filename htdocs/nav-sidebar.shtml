@@ -26,7 +26,7 @@
       vlink="#400000" >
 <table border="0" cellspacing="0" cellpadding="0">
 <tr height="80"><td valign="middle">
-<img alt="Eidors-logo" src="<!--#echo var="root" -->eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+<img alt="Eidors-logo" src="[% root %]eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
 </td><td>
 <h2>
     EIDORS:
@@ -39,47 +39,47 @@
 <a href="http://eidors3d.sf.net/" >EIDORS</a>
 (<a href="http://www.sce.carleton.ca/faculty/adler/eidors/index.shtml"
     >mirror</a>)<br>
-<a href="<!--#echo var="root" -->index.shtml"
+<a href="[% root %]index.shtml"
 >Main</a><br>
-<a href="<!--#echo var="root" -->docs.shtml"
+<a href="[% root %]docs.shtml"
    >Documentation</a><br>
-<a href="<!--#echo var="root" -->tutorial/tutorial.shtml"
+<a href="[% root %]tutorial/tutorial.shtml"
    >Tutorials</a><br>
-<!--#if expr="v('show_tut') = '1'" -->
-<a href="<!--#echo var="root" -->tutorial/image_reconst.shtml"
+[% IF show_tut == '1' %]
+<a href="[% root %]tutorial/image_reconst.shtml"
       >&minus; Image Reconst</a><br>
-<a href="<!--#echo var="root" -->tutorial/data_structures.shtml"
+<a href="[% root %]tutorial/data_structures.shtml"
       >&minus; Data Structures</a><br>
-<a href="<!--#echo var="root" -->tutorial/application_examples.shtml"
+<a href="[% root %]tutorial/application_examples.shtml"
       >&minus; Applications</a><br>
-<a href="<!--#echo var="root" -->tutorial/netgen.shtml"
+<a href="[% root %]tutorial/netgen.shtml"
       >&minus; FEM Modelling</a><br>
-<a href="<!--#echo var="root" -->tutorial/GREIT.shtml"
+<a href="[% root %]tutorial/GREIT.shtml"
       >&minus; GREIT</a><br>
-<a href="<!--#echo var="root" -->tutorial/old-tutorials.shtml"
+<a href="[% root %]tutorial/old-tutorials.shtml"
       >&minus; Old tutorials</a><br>
-<a href="<!--#echo var="root" -->tutorial/workshop.shtml"
+<a href="[% root %]tutorial/workshop.shtml"
       >&minus; <i>Workshop</i></a><br>
-<!--#endif -->
-<a href="<!--#echo var="root" -->download.shtml"
+[% END %]
+<a href="[% root %]download.shtml"
    >Install</a><br>
-<a href="<!--#echo var="root" -->data_contrib.shtml"
+<a href="[% root %]data_contrib.shtml"
    >Contrib Data</a><br>
-<a href="<!--#echo var="root" -->GREIT/index.shtml"
+<a href="[% root %]GREIT/index.shtml"
    >GREIT</a><br>
-<a href="<!--#echo var="root" -->doc/index.html"
+<a href="[% root %]doc/index.html"
    >Browse Docs</a><br>
 <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/"
    >Browse SVN</a><br>
 <hr>
-<a href="<!--#echo var="root" -->news.shtml">News</a><br>
+<a href="[% root %]news.shtml">News</a><br>
 <a href="https://lists.sourceforge.net/lists/listinfo/eidors3d-help"
    >Mailing list</a><br>
 (<a href="https://sourceforge.net/mailarchive/forum.php?forum_name=eidors3d-help"
    >archive</a>)<br>
-<a href="<!--#echo var="root" -->faq.shtml">FAQ</a><br>
-<a href="<!--#echo var="root" -->programming/programming.shtml">Developer</a><br>
-<!--#if expr="v('show_dev') = '1'" -->
+<a href="[% root %]faq.shtml">FAQ</a><br>
+<a href="[% root %]programming/programming.shtml">Developer</a><br>
+[% IF show_dev == '1' %]
 <a href="../programming/examples.shtml"
       >&minus; Examples</a><br>
 <a href="../programming/structure.shtml"
@@ -88,7 +88,7 @@
       >&minus; Objects</a><br>
 <a href="../programming/caching.shtml"
       >&minus; Caching</a><br>
-<!--#endif -->
+[% END %]
 
 
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
