@@ -25,7 +25,7 @@ at Universit&eacute; Rennes 1 over the period 2000&minus;2011.
 Create 3D FEM model of the terrain
 </h3>
 <pre>
-[% PROCESS "pont_pean_cgls_01.m" %]
+[%# PROCESS "pont_pean_cgls_01.m" %]
 </pre>
 
 <center>
@@ -38,14 +38,14 @@ Forward model
 Create 2&frac12;D inverse model 
 </h3>
 <pre>
-[% PROCESS "pont_pean_cgls_02.m" %]
+[%# PROCESS "pont_pean_cgls_02.m" %]
 </pre>
 
 <h3>
 Reconstruct the data 
 </h3>
 <pre>
-[% PROCESS "pont_pean_cgls_03.m" %]
+[%# PROCESS "pont_pean_cgls_03.m" %]
 </pre>
 <center>
 <img src="pont_pean_cgls_03a.png">

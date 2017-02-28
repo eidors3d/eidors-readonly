@@ -4,7 +4,7 @@
 <h2>Application Examples</h2>
 
 To run these tutorials, you need to 
-<a href="../download.shtml">download and install</a>
+<a href="../download.html">download and install</a>
 EIDORS and then run this command in a matlab
 (or octave) session.
 <pre width="40">
