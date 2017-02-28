@@ -1,5 +1,5 @@
-<!--#set var="root" value="./" -->
-<!--#include virtual="nav-sidebar.shtml" -->
+[% root = "./" %]
+[% PROCESS "nav-sidebar.shtml" %]
 <h2>Frequently Asked Questions</h2>
 <ol>
 <p><li><b>

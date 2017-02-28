@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.html" -->
+[% PROCESS "../nav-sidebar.shtml" %]
 <h2>Walrus images</h2>
 
 The EIDORS logo is a walrus. EIDORS images

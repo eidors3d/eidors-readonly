@@ -1,4 +1,4 @@
-<!--#include virtual="../nav-sidebar.shtml" -->
+[% PROCESS "../nav-sidebar.shtml" %]
 <h2>Samples for the EIDORS Workshop</h2>
 To run these tutorials, you need to 
 <a href="../download.shtml">download and install</a>
@@ -8,7 +8,7 @@ EIDORS and then run this command in a matlab
 &gt;&gt;run /path/to/eidors3d/startup.m
 </pre>
 
-<!--#include virtual="./workshop.html" -->
+[% PROCESS "./workshop.html" %]
 
 <h3>
 Other interesting Tutorials

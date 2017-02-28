@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.html" -->
+[% PROCESS "../nav-sidebar.shtml" %]
 
 <H3>Project Goal</H3>
 GREIT is a collaborative project to develop a

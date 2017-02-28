@@ -1,4 +1,4 @@
-<!--#include virtual="nav-sidebar.html" -->
+[% PROCESS "../nav-sidebar.shtml" %]
 <h2>EIDORS Examples</h2>
 
 <ul>
