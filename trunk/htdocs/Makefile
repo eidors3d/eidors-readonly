@@ -2,22 +2,38 @@
 
 BUILD_DOCS = ../build-htdocs
 
-#SHTML = $(shell find -type f -name '*.shtml')
-#THTML:= $(SHTML,%.shtml=$(BUILD_DOCS)/%.html)
-# Seems need to reorder variable assignment
- THTML = $(patsubst %.shtml, $(BUILD_DOCS)/%.html, \
-             $(shell find -type f -name '*.shtml'))
-# OTHERVAR := $(filter-out SomethingElse,$(VAR))
+THTML = $(filter-out nav-sidebar.shtml, \
+            $(patsubst %.shtml, $(BUILD_DOCS)/%.shtml, \
+            $(shell find -type f -name '*.shtml')))
 
-all: $(BUILD_DOCS) $(THTML)
+RAW   = $(patsubst %, $(BUILD_DOCS)/%, \
+            $(shell find -type f -iname '*.png' \
+                             -o  -iname '*.jpg' \
+                             -o  -iname '*.jpeg' \
+                             -o  -iname '*.pdf' \
+         ))
 
+INDEX = $(BUILD_DOCS)/index.html
+
+
+
+all: $(THTML) $(RAW) $(INDEX)
+
+$(INDEX): $(BUILD_DOCS)/index.shtml
+	cp $< $@
+
+$(THTML): nav-sidebar.shtml
 
 #tpage $< > $@ #perl -MTemplate -e'$$t->process("$<") or die Template->error();' > $@
-$(THTML): $(BUILD_DOCS)/%.html: %.shtml
+$(THTML): $(BUILD_DOCS)/%.shtml: %.shtml
 	@echo $< " => " $@
 	mkdir -p `dirname $@`
 	(cd `dirname $<` && tpage `basename $<`) > $@ 
 
+$(RAW): $(BUILD_DOCS)/%: %
+	@echo $< " => " $@
+	mkdir -p `dirname $@`
+	cp $< $@ 
 
 
 #OLD CONTENT:
