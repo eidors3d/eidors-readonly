@@ -10,8 +10,8 @@ the parameters of the <tt>inv_model</tt>
 structure.
 
 <pre>
-<!--#include virtual="tutorial120a.m"
- --></pre>
+[% PROCESS "tutorial120a.m" %]
+</pre>
 
 <center>
 <img src="tutorial120a.png">
@@ -24,8 +24,8 @@ five different algorithms, using different
 paramters.
 
 <pre>
-<!--#include virtual="tutorial120b.m"
- --></pre>
+[% PROCESS "tutorial120b.m" %]
+</pre>
 
 <center>
 <img src="tutorial120b.png">
