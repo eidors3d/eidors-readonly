@@ -13,8 +13,8 @@ structure.
 The first step is to create a simulation model
 
 <pre>
-<!--#include virtual="tutorial130a.m"
- --></pre>
+[% PROCESS "tutorial130a.m" %]
+</pre>
 
 <center>
 <img src="tutorial130a.png">
@@ -27,8 +27,8 @@ three different algorithms, using different
 paramters.
 
 <pre>
-<!--#include virtual="tutorial130b.m"
- --></pre>
+[% PROCESS "tutorial130b.m" %]
+</pre>
 
 <center>
 <img src="tutorial130b.png">

@@ -11,6 +11,8 @@ RAW   = $(patsubst %, $(BUILD_DOCS)/%, \
                              -o  -iname '*.jpg' \
                              -o  -iname '*.jpeg' \
                              -o  -iname '*.pdf' \
+                             -o  -iname '*.zip' \
+                             -o  -iname '*.mat' \
          ))
 
 INDEX = $(BUILD_DOCS)/index.html
