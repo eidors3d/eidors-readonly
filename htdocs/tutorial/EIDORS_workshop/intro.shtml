@@ -67,7 +67,7 @@ run ~/eidors-svn/eidors/startup.m
 <H3>Challenge problem:</H3>
 <ol>
 <li>Create a 3D elliptical cylinder with 16 circular electrodes
-    (see <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_ellip_models.shtml">here</a>)
+    (see <a href="../netgen/netgen_ellip_models.shtml">here</a>)
 <br><tt>fmdl= <font color=#E0F0FE
 >ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]);
 </font> show_fem(fmdl); </tt>
@@ -108,14 +108,14 @@ run ~/eidors-svn/eidors/startup.m
 <br>
 </font> show_fem(img); </tt>
 <li>Create a GREIT model for the ellipse
-    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
+    (see <a href="../GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
 <br><tt><font color=#E0F0FE
 > opt.noise_figure = 0.5; %other options are defaults
 <br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
 <br>img= inv_solve(imdl,vh,vi);
 </font> show_fem(img); </tt>
 <li>Compare images for different stimulation patterns
-    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/GREIT_test_params.shtml">here</a>)
+    (see <a href="../GREIT/GREIT_test_params.shtml">here</a>)
 </ol>
 
 

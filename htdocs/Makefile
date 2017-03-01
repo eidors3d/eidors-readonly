@@ -15,6 +15,7 @@ RAW   = $(patsubst %, $(BUILD_DOCS)/%, \
                              -o  -iname '*.mat' \
           ) \
           tutorial/data_structures/tutorial020_f_solve.m \
+          tutorial/workshop/code_2june2015.m \
         )
 
 INDEX = $(BUILD_DOCS)/index.html
