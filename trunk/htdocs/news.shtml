@@ -77,14 +77,14 @@ incompatibilities between different Matlab versions and operating systems.
 New features include:
 <ul>
  <li> Better handling of netgen and gmsh executables (Windows) &minus; paths need only ever by provided once and can contain spaces.
- <li> Completely re-written <a href"http://eidors3d.sourceforge.net/doc/eidors/graphics/matlab/print_convert.html">
+ <li> Completely re-written <a href"./doc/eidors/graphics/matlab/print_convert.html">
 	print_convert</a> function to produce beautiful cropped images with anti-aliasing without using ImageMagick
  <li> Citation requests when specific functions are called for the first time (
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/tools/citeme.html">citeme</a>). We hope this will encourage contributions.
+	<a href="./doc/eidors/tools/citeme.html">citeme</a>). We hope this will encourage contributions.
  <li> A tutorial on 
-	<a href="http://eidors3d.sourceforge.net/tutorial/data_structures/customize.shtml">Customizing EIDORS</a>
+	<a href="./tutorial/data_structures/customize.shtml">Customizing EIDORS</a>
 </ul>
-All <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">tutorials</a> have been updated to use the new features.
+All <a href="./tutorial/tutorial.shtml">tutorials</a> have been updated to use the new features.
 The entire suite has been tested with the newest Matlab 2013a.
 
 <p><li> <b>
@@ -100,33 +100,33 @@ This release includes:
  <li> Physics support: conductivity, resistivity and logs
  <li> Anisotropy support in forward solvers and Jacobian
  <li> FEM models with arbitrary electrode refinement: 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/place_elec_on_surf.html">place_elec_on_surf</a>
+	<a href="./doc/eidors/models/place_elec_on_surf.html">place_elec_on_surf</a>
  <li> Pseudosection Display(
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/graphics/matlab/show_pseudosection.html">show_pseudosection</a>) 
+	<a href="./doc/eidors/graphics/matlab/show_pseudosection.html">show_pseudosection</a>) 
 	and Geophysics stimulation patterns (
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/stim_pattern_geophys.html">stim_pattern_geophys</a>), see
-	<a href="http://eidors3d.sourceforge.net/tutorial/geophysics/stimPattern_pseudoSection.shtml">tutorial</a>
+	<a href="./doc/eidors/models/stim_pattern_geophys.html">stim_pattern_geophys</a>), see
+	<a href="./tutorial/geophysics/stimPattern_pseudoSection.shtml">tutorial</a>
  <li> Geophysics solvers and tutorials
  <li> Re-worked interface to 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/inverse/inv_solve_abs_GN.html">inv_solve_abs_GN</a>
+	<a href="./doc/eidors/solvers/inverse/inv_solve_abs_GN.html">inv_solve_abs_GN</a>
 	exposing advanced features and options
  <li> Support for fast 2D FEM generation with netgen:
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/ng_mk_2d_model.html">ng_mk_2d_model</a>
+	<a href="./doc/eidors/meshing/netgen/ng_mk_2d_model.html">ng_mk_2d_model</a>
  <li> Merging of FEM meshes: 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/merge_meshes.html">merge_meshes</a>
+	<a href="./doc/eidors/models/merge_meshes.html">merge_meshes</a>
  <li> Apparent resistivity 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/forward/fwd_solve_apparent_resistivity.html">forward solver</a> 
-	and <a href="http://eidors3d.sourceforge.net/doc/eidors/solvers/forward/jacobian_apparent_resistivity.html">jacobian</a>
+	<a href="./doc/eidors/solvers/forward/fwd_solve_apparent_resistivity.html">forward solver</a> 
+	and <a href="./doc/eidors/solvers/forward/jacobian_apparent_resistivity.html">jacobian</a>
  <li> Support for new EIT data formats: 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/interface/eidors_readdata.html">eidors_readdata</a>
+	<a href="./doc/eidors/interface/eidors_readdata.html">eidors_readdata</a>
  <li> GREIT models from a model shape library: 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/mk_GREIT_model.html">mk_GREIT_model</a>
+	<a href="./doc/eidors/models/mk_GREIT_model.html">mk_GREIT_model</a>
  <li> Debug features for the eidors cache: 
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/tools/eidors_cache.html">eidors_cache</a>
+	<a href="./doc/eidors/tools/eidors_cache.html">eidors_cache</a>
  <li> Better support for node data in
-	<a href="http://eidors3d.sourceforge.net/doc/eidors/models/mk_image.html">mk_image</a>
+	<a href="./doc/eidors/models/mk_image.html">mk_image</a>
 </ul>
-<a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">Tutorials</a> have been updated to use the new features.
+<a href="./tutorial/tutorial.shtml">Tutorials</a> have been updated to use the new features.
 
 
 <p><li> <b>
@@ -348,11 +348,11 @@ maintain, function names have been standardized to reflect their purpose.
 Several older functions have been deprecated (you may see several warnings when running 
 older code). 
 <br>
-All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
+All  <a href="./tutorial/tutorial.shtml">
 Tutorials</a> have been revised and new ones are available. 
 <br> The default
 solvers are now set at startup and centrally managed through the 
-<a href="http://eidors3d.sourceforge.net/doc/eidors/tools/eidors_default.html">eidors_default</a> function.
+<a href="./doc/eidors/tools/eidors_default.html">eidors_default</a> function.
 <br>
 Because of the many renamed functions, it will be increasingly difficult for the developers to answer questions pertaining to older versions of EIDORS, so we request all users to update.
 </p>
@@ -432,7 +432,7 @@ interactive
 documentation browser
 </a>
 .
-All  <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml">
+All  <a href="./tutorial/tutorial.shtml">
 Tutorials</a> have been updated and new ones are 
 available.
 </p>
@@ -440,25 +440,25 @@ New features since v3.4 include:
 <UL>
 <BR>
 <li> improved GREIT algorithm support - especially for
-       arbitrary extruded shapes and lungs regions (<a href="http://eidors3d.sourceforge.net/tutorial/GREIT.shtml">tutorials</a>)
+       arbitrary extruded shapes and lungs regions (<a href="./tutorial/GREIT.shtml">tutorials</a>)
 <li> algorithms for TV and Data 1-norm 
-(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_borsic/pdipm_diff.html">pdipm_diff</a>,
-<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_borsic/pdipm_abs.html">pdipm_abs</a>)
-<li> updated capabilities in netgen interface (<a href="http://eidors3d.sourceforge.net/tutorial/netgen/extrusion/netgen_ext_models.shtml">tutorial</a>)
+(<a href="./doc/eidors/algorithms/a_borsic/pdipm_diff.html">pdipm_diff</a>,
+<a href="./doc/eidors/algorithms/a_borsic/pdipm_abs.html">pdipm_abs</a>)
+<li> updated capabilities in netgen interface (<a href="./tutorial/netgen/extrusion/netgen_ext_models.shtml">tutorial</a>)
 <li> equidistant electrode placement on arbitrary contours
 <li> algorithms to detect and compensate for electrode errors 
-(<a href="http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/electrode_errors.shtml">tutorial</a> 
+(<a href="./tutorial/adv_image_reconst/electrode_errors.shtml">tutorial</a> 
 and functions:
-<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/meas_icov_rm_elecs.html">meas_icov_rm_elecs</a>,
-<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/calc_reciproc_error.html">calc_reciproc_error</a>,
-<a href="http://eidors3d.sourceforge.net/doc/eidors/models/a_adler/meas_icov_rm_elecs.html">reciprocity_idx</a>)
+<a href="./doc/eidors/algorithms/a_adler/meas_icov_rm_elecs.html">meas_icov_rm_elecs</a>,
+<a href="./doc/eidors/algorithms/a_adler/calc_reciproc_error.html">calc_reciproc_error</a>,
+<a href="./doc/eidors/models/a_adler/meas_icov_rm_elecs.html">reciprocity_idx</a>)
 <li> functions and 
-<a href=http://eidors3d.sourceforge.net/tutorial/tutorial.shtml#geophysics>tutorials</a>
+<a href=./tutorial/tutorial.shtml#geophysics>tutorials</a>
 for geophysical eit
 <li> expanded distmesh and gmsh  support
 <li> support for three new EIT system data formats
 <li> faster forward solvers 
-(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/n_polydorides/forward_solver.html">forward_solver</a>)
+(<a href="./doc/eidors/algorithms/n_polydorides/forward_solver.html">forward_solver</a>)
 </ul>
 Additional enhancements:         
 <ul>
@@ -468,24 +468,24 @@ Additional enhancements:
 <li> improved octave support
 <li> increased memory efficiency
 <li> quick acces functions for common shapes 
-(<a href="http://eidors3d.sourceforge.net/doc/eidors/models/b_grychtol/shape_library.html">shape_library</a>)
+(<a href="./doc/eidors/models/b_grychtol/shape_library.html">shape_library</a>)
 and models
-(<a href="http://eidors3d.sourceforge.net/doc/eidors/models/b_grychtol/mk_library_model.html">mk_library_model</a>),
-see <a href="http://eidors3d.sourceforge.net/tutorial/netgen/mk_library_model.shtml">tutorial</a>
+(<a href="./doc/eidors/models/b_grychtol/mk_library_model.html">mk_library_model</a>),
+see <a href="./tutorial/netgen/mk_library_model.shtml">tutorial</a>
 <li> programming utility functions
 <li> additional solvers 
-(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/b_grychtol/inv_solve_TSVD.html">inv_solve_TSVD</a>)
+(<a href="./doc/eidors/algorithms/b_grychtol/inv_solve_TSVD.html">inv_solve_TSVD</a>)
 <li> bug fixes and unit tests
 <li> improved support for dual model and FEM interpolation (
-<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/mk_c2f_circ_mapping.html">mk_c2f_circ_mapping</a>,
-<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/a_adler/elem_select.html">elem_select</a>)
+<a href="./doc/eidors/algorithms/a_adler/mk_c2f_circ_mapping.html">mk_c2f_circ_mapping</a>,
+<a href="./doc/eidors/algorithms/a_adler/elem_select.html">elem_select</a>)
 <li> shape smoothing and interpolation functions (
-<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/fourier_fit.html">fourier_fit</a>,
-<a href="http://eidors3d.sourceforge.net/doc/eidors/meshing/netgen/piece_poly_fit.html">piece_poly_fit</a>)
+<a href="./doc/eidors/meshing/netgen/fourier_fit.html">fourier_fit</a>,
+<a href="./doc/eidors/meshing/netgen/piece_poly_fit.html">piece_poly_fit</a>)
 <li> clean up unused and deprecated functions
 <li> calculate geometrical FEM properties 
-(<a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/b_grychtol/fix_model.html">fix_model</a>,
- <a href="http://eidors3d.sourceforge.net/doc/eidors/algorithms/m_crabb/linear_reorder.html">linear_reorder</a>)
+(<a href="./doc/eidors/algorithms/b_grychtol/fix_model.html">fix_model</a>,
+ <a href="./doc/eidors/algorithms/m_crabb/linear_reorder.html">linear_reorder</a>)
 <li> caching to HDD of library FEM models
 <li> caching improvements (64 bit support)
 </UL>
@@ -533,27 +533,27 @@ You will need to add the path <tt>H:/tutorial/ngs44</tt>
 
 <td valign=top>
 Go to the EIDORS tutorials
- <a href="http://eidors3d.sourceforge.net/tutorial/tutorial.shtml"
-                          >eidors3d.sourceforge.net/tutorial/tutorial.shtml</a>
+ <a href="./tutorial/tutorial.shtml"
+                          >tutorial/tutorial.shtml</a>
 <p>
 
 Try a few tutorials to see how eidors works.
 I recommend:
 <ol>
 <li>
-<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml"
+<a href="./tutorial/EIDORS_basics/tutorial010.shtml"
      >EIDORS Basics</a>
 <li>
-<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"
+<a href="./tutorial/EIDORS_basics/rpi_data.shtml"
      >Absolute and difference solvers</a>
 <li>
-<a href="http://eidors3d.sourceforge.net/tutorial/lung_EIT/if_peep_trial.shtml"
+<a href="./tutorial/lung_EIT/if_peep_trial.shtml"
      >Lung injury images</a>
 <li>
-<a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml"
+<a href="./tutorial/netgen/netgen_cyl_models.shtml"
      >Netgen FEM models</a>
 <li>
-<a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml"
+<a href="./tutorial/GREIT/adult_ex.shtml"
      >GREIT</a>
 </ol>
 </table>
@@ -561,7 +561,7 @@ I recommend:
 Challenge problem:
 <ol>
 <li>Create a 3D elliptical cylinder with 16 circular electrodes
-    (see <a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_ellip_models.shtml">here</a>)
+    (see <a href="./tutorial/netgen/netgen_ellip_models.shtml">here</a>)
 <br><tt>fmdl= <font color=#E0F0FE
 >ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]);
 </font> show_fem(fmdl); </tt>
@@ -602,7 +602,7 @@ Challenge problem:
 <br>
 </font> show_fem(img); </tt>
 <li>Create a GREIT model for the ellipse
-    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
+    (see <a href="./tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
 <br><tt><font color=#E0F0FE
 > opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
 <br>fmdl.normalize_measurements = 0;
@@ -610,7 +610,7 @@ Challenge problem:
 <br>img= inv_solve(imdl,vh,vi);
 </font> show_fem(img); </tt>
 <li>Compare images for different stimulation patterns
-    (see <a href="http://eidors3d.sourceforge.net/tutorial/GREIT/GREIT_test_params.shtml">here</a>)
+    (see <a href="./tutorial/GREIT/GREIT_test_params.shtml">here</a>)
 </ol>
 </table>
 

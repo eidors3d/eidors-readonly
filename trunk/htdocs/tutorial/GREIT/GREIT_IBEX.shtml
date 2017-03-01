@@ -45,7 +45,7 @@ Load and reconstruct Data
 </h3>
 
 Use data from a
-<a href="http://eidors3d.sourceforge.net/data_contrib/cg-2012-ards-recruitment/cg_data_2012_p1.zip">
+<a href="../../data_contrib/cg-2012-ards-recruitment/cg_data_2012_p1.zip">
    Patient at CHB</a> (Gender: F, Age: 5.9 years, Weight: 20kg, Condition: Primary ARDS triggered by parainfluenza pneumonia)
 
 

@@ -18,31 +18,31 @@ Here are useful tutorials to start with:
 <ul>
 <li>
 <h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial010.shtml"
+<a href="../tutorial/EIDORS_basics/tutorial010.shtml"
      >EIDORS Basics</a>
 </h3>
 
 <li>
 <h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/rpi_data.shtml"
+<a href="../tutorial/EIDORS_basics/rpi_data.shtml"
      >Absolute and difference solvers</a>
 </h3>
 
 <li>
 <h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/lung_EIT/if_peep_trial.shtml"
+<a href="../tutorial/lung_EIT/if_peep_trial.shtml"
      >Lung injury images</a>
 </h3>
 
 <li>
 <h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/netgen/netgen_cyl_models.shtml"
+<a href="../tutorial/netgen/netgen_cyl_models.shtml"
      >Netgen FEM models</a>
 </h3>
 
 <li>
 <h3>
-<a href="http://eidors3d.sourceforge.net/tutorial/GREIT/adult_ex.shtml"
+<a href="../tutorial/GREIT/adult_ex.shtml"
      >GREIT</a>
 </h3>
 </yl>
