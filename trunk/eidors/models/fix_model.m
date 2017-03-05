@@ -67,7 +67,7 @@ copt.fstr      = 'fix_model';
 tmp = eidors_cache( @do_fix_model, {tmp, doall, opt}, copt);
 
 % copy new fields to mdl
-flds = fieldnames(tmp); flds{1:3} = []; % ignore nodes, elems and type
+flds = fieldnames(tmp); flds(1:3) = []; % ignore nodes, elems and type
 for i = 1:numel(flds)
    mdl.(flds{i}) = tmp.(flds{i});
 end
