@@ -53,10 +53,25 @@ else
    doall = true; opt=struct;
 end
 
-copt.cache_obj = {mdl.nodes, mdl.elems, doall, opt};
+% prepare a model with geometry only
+tmp.nodes = mdl.nodes;
+tmp.elems = mdl.elems;
+tmp.type  = mdl.type;
+try 
+   tmp.boundary = mdl.boundary;
+end
+
+copt.cache_obj = {tmp, doall, opt};
 copt.fstr      = 'fix_model';
 
-mdl = eidors_cache( @do_fix_model, {mdl, doall, opt}, copt);
+tmp = eidors_cache( @do_fix_model, {tmp, doall, opt}, copt);
+
+% copy new fields to mdl
+flds = fieldnames(tmp); flds{1:3} = []; % ignore nodes, elems and type
+for i = 1:numel(flds)
+   mdl.(flds{i}) = tmp.(flds{i});
+end
+
 
 
 % Complete the function
