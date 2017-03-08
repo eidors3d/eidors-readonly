@@ -26,6 +26,12 @@ function mdl2 = mdl2d_from3d(mdl3);
 
    % set gnd_node
    mdl2.gnd_node = nmap(mdl3.gnd_node);
+   if mdl2.gnd_node == 0 % we've just killed it
+      ctr = mean(mdl2.nodes);
+      d = bsxfun(@minus, mdl2.nodes, ctr).^2;
+      [jnk, mdl2.gnd_node] = min(d);
+      mdl2.gnd_node = mdl2.gnd_node(1);
+   end
 
    % set material indices
    % NOTE this must be done for both mat_idx and
