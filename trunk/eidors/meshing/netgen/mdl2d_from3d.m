@@ -15,6 +15,9 @@ function mdl2 = mdl2d_from3d(mdl3);
    
    vtx0  = unique(bdy0(:));
    mdl2.nodes = vtx(vtx0,1:2);
+   if isempty(mdl2.nodes)
+      error('mdl2d_from3d: Something went wrong; mdl2 has no nodes');
+   end
 
    % set elems
    nmap  = zeros(size(vtx,1),1); nmap(vtx0) = 1:length(vtx0);
