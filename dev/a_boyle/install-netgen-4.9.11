@@ -1,0 +1,130 @@
+#! /bin/sh
+
+# local install
+SRCDIR=~/netgen-update
+INSTDIR=~/netgen-update
+
+# versions to install
+# TCL
+TCLVER=8.5.8
+# Tix
+TIXVER=8.4.3
+# Togl
+TOGLVER=1.7
+#NetGen version
+NGVER=4.9.13
+
+# TK version should probably match TCL version
+TKVER=${TCLVER}
+
+# comment this line out to skip tests before install
+# tests can be really slow!
+# TEST=1
+
+# comment this line to skip clean up (for debugging build)
+CLEANUP=1
+
+CFLAGS="-I${INSTDIR}/include"
+CPPFLAGS=${CFLAGS}
+
+function err() {
+  echo "$(basename $0) ERROR: $1"
+  exit 1
+}
+
+# make working directories if they don't exist
+mkdir -p ${SRCDIR}
+mkdir -p ${INSTDIR}
+
+# get files
+cd ${SRCDIR}
+[ ! -f "tcl${TCLVER}-src.tar.gz" ] && \
+  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tcl${TCLVER}-src.tar.gz || err "tcl download" )
+[ ! -f "tk${TKVER}-src.tar.gz" ] && \
+  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tk${TKVER}-src.tar.gz || err "tk download" )
+[ ! -f "tix${TIXVER}-src.tar.gz" ] && \
+  ( wget --quiet http://prdownloads.sourceforge.net/tix/files/tix/${TIXVER}/Tix${TIXVER}-src.tar.gz || err "tix download" )
+[ ! -f "togl-${TOGLVER}.tar.gz" ] && \
+  ( wget --quiet http://prdownloads.sourceforge.net/togl/files/Togl/${TOGLVER}/Togl-${TOGLVER}.tar.gz || err "togl download" )
+[ ! -f "netgen-${NGVER}.tar.gz" ] && \
+  ( wget --quiet http://prdownloads.sourceforge.net/netgen-mesher/files/netgen-mesher/${NGVER}/netgen-${NGVER}.tar.gz || err "netgen download" )
+
+# unpack files
+[ ! -d "tcl${TCLVER}" ] && ( tar zxvf tcl${TCLVER}-src.tar.gz > /dev/null || err "tcl unpack" )
+[ ! -d "tk${TKVER}" ]   && ( tar zxvf  tk${TKVER}-src.tar.gz > /dev/null || err "tk unpack" )
+[ ! -d "Tix${TIXVER}" ]   && ( tar zxvf  Tix${TIXVER}-src.tar.gz > /dev/null  || err "tix unpack" )
+[ ! -d "Togl-${TOGLVER}" ]   && ( tar zxvf  Togl-${TOGLVER}.tar.gz > /dev/null || err "togl unpack" )
+[ ! -d "netgen-${NGVER}" ]   && ( tar zxvf  netgen-${NGVER}.tar.gz > /dev/null || err "netgen unpack" )
+
+# build tcl
+cd ${SRCDIR}/tcl${TCLVER}/unix && \
+  ./configure --prefix=${INSTDIR} --enable-threads --enable-shared --enable-64bit &&
+  make && \
+  ( ( [ -n "${TEST}" ] && make test ) || [ -z "${TEST}" ] ) && \
+  make install || err "install tcl-${TCLVER}"
+
+# build tk
+cd ${SRCDIR}/tk${TKVER}/unix && \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --enable-threads --enable-shared --enable-64bit && \
+  make && \
+  ( ( [ -n "${TEST}" ] && make test ) || [ -z "${TEST}" ] ) && \
+  make install || err "install tk-${TKVER}" 
+
+# build tix
+cd ${SRCDIR}/Tix${TIXVER} && \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
+    --enable-threads --enable-shared --enable-64bit && \
+  make && \
+  ( ( [ -n "${TEST}" ] && make test ) || [ -z "${TEST}" ] ) && \
+  make install || err "install tix-${TIXVER}"
+
+
+# build Togl
+cd ${SRCDIR}/Togl-${TOGLVER} && \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
+    --enable-threads --enable-shared --enable-64bit && \
+  make && \
+  ( ( [ -n "${TEST}" ] && make test ) || [ -z "${TEST}" ] ) && \
+  make install || err "install togl-${TOGLVER}"
+
+# TODO is this necessary?
+ln -s ${INSTDIR}/lib/Togl${TOGLVER}/libTogl${TOGLVER}.so ${INSTDIR}/lib/libTogl${TOGLVER}.so || err "ln libTogl${TOGLVER}"
+
+# build NetGen
+cd ${SRCDIR}/netgen-${NGVER} && \
+  CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} \
+  ./configure --prefix=${INSTDIR} \
+    --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix \
+    --with-togl=${SRCDIR}/Togl-${TOGLVER} \
+    --with-tclinclude=${SRCDIR}/include && \
+  make && \
+  ( ( [ -n "${TEST}" ] && make test ) || [ -z "${TEST}" ] ) && \
+  make install || err "install netgen-${TOGLVER}"
+
+echo  " ./configure --prefix=${INSTDIR} --with-tcl=${SRCDIR}/tcl${TCLVER}/unix --with-tk=${SRCDIR}/tk${TKVER}/unix --with-togl=${SRCDIR}/Togl-${TOGLVER} --with-tclinclude=${SRCDIR}/include"
+	     
+
+# clean up
+if [ -n "${CLEANUP}" ]; then
+  cd
+  rm -rf ${SRCDIR}/tcl${TCLVER} || err "clean up tcl-${TCLVER}"
+  rm -rf ${SRCDIR}/tk${TKVER} || err "clean up tk-${TKVER}"
+  rm -rf ${SRCDIR}/Tix${TIXVER} || err "clean up tix-${TIXVER}"
+  rm -rf ${SRCDIR}/Togl-${TOGLVER} || err "clean up togl-${TOGLVER}"
+  rm -rf ${SRCDIR}/netgen-${NGVER} || err "clean up netgen-${NGVER}"
+fi
+
+# fix path issues
+mv ${INSTDIR}/bin/netgen ${INSTDIR}/bin/netgen-exec
+echo "#! /bin/sh
+D=${INSTDIR}/bin
+L=${INSTDIR}/lib
+LD_LIBRARY_PATH=\$L NETGENDIR=\$D \$D/netgen-exec \$*
+" > ${INSTDIR}/bin/netgen
+chmod +x ${INSTDIR}/bin/netgen
+
+echo "run netgen with '${INSTDIR}/bin/netgen'"
+
