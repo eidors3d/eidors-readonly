@@ -1,0 +1,99 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2> 
+Model Reduction
+</h2>
+<p>
+The following are implementations used in the model reduction examples from</br>
+<ul>
+Internal Diode for Frequency Selective EIT Contrasts,
+Alistair Boyle, Daniel Kyrollos, John Harvey and Andy Adler,
+18th International Conference on Biomedical Applications of Electrical
+Impedance Tomography, Thayer School of Engineering at Dartmouth, Hanover, New
+Hampshire, USA, June 21-24, 2017.</ul></p>
+
+<h3>
+Build Models
+</h3>
+
+
+<p>
+First we build a circular 2D Netgen model. There are two stimulus electrodes
+(#1 and #2) and two measurement electrodes (#3 and #4) with locations set by
+selecting angle in degrees.
+In addition, we have added two interior electrodes (#5 and #6) with a particular separation (Figure 1).
+<pre>
+[% PROCESS "model_reduction01.m" %]
+</pre>
+<center>
+<img width="200px" src="model_reduction01a.png">
+<img width="200px" src="model_reduction01c.png">
+<img width="200px" src="model_reduction01e.png">
+<br><i>Figure 1:</i> three of six models, stimulus electrodes #1 and #2, measurement electrodes #3 and #4, interior electrodes #5 and #6;
+<br/>40% diametre <i>(Left)</i>,
+13.2% diametre <i>(Middle)</i>,
+6.4% diametre <i>(Right)</i>  interior electrode separation
+</center>
+</p>
+
+<h3>
+Reduce Model
+</h3>
+
+<p>
+The model is then reduced to a fully-connected "mesh" network of resistors (Figure 2).
+Some mesh networks may be reduced to a "star" configuration, reducing the
+resistors and wiring criss-cross in a physical implementation, but we do not address
+that conversion here.
+<pre>
+[% PROCESS "model_reduction02.m" %]
+</pre>
+<center>
+<img width="200px" src="model_reduction02.png">
+<br><i>Figure 2:</i> reduced mesh network; resistors (blue lines) between electrodes (numbers)
+</center>
+</p>
+
+<h3>
+Find Appropriate Resistors
+</h3>
+
+<p>
+The best standard resistors for our particular mesh can then be found by minimizing the fitting error
+<pre>
+[% PROCESS "model_reduction03.m" %]
+</pre>
+which, for the first model (40% diametre interior electrode separation) gives a
+resistor configuration in the form of an upper triangular matrix
+<pre>
+[% PROCESS "model_reduction03.txt" %]
+</pre>
+where the resistor values are given by the off-diagonal values between each row
+(electrode n) and column (electrode m) with resistor selection error minimized (Figure 3).
+<center>
+<img width="600px" src="model_reduction03.png">
+<br><i>Figure 3:</i> resistor fitting error; possible resistor values (blue),
+resistor tolerance (red dashed), initial resistor scaling (red circle) and
+selected resistor scaling (black box)
+</center>
+</p>
+
+<p>
+Commonly available resistors are defined by EIA standards
+<pre>
+[% PROCESS "model_reduction03_stdres.m" %]
+</pre>
+which is used to calculate the misfit between ideal resistor values and available resistor values
+<pre>
+[% PROCESS "model_reduction03_calc_err.m" %]
+</pre>
+</p>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
