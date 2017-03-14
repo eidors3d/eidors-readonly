@@ -122,6 +122,15 @@ end
 
    set(hh,'YTick', tick_locs');
    set(hh,'YTickLabel', tick_vals');
+% Code to right align YTickLabel
+if 0
+   lab = get(hh,'YTickLabel');
+   for i=1:size(lab,1);
+      nsp = sum(lab(i,:)==' ');
+      lab(i,:) = lab(i,[end-(nsp-1:-1:0),1:(end-nsp)]);
+   end
+   set(hh,'YTickLabel',lab);
+end
 
    if ~isempty(cbsm) % RESET OUR AXES
       if ~all(cbsm == [1,1,0]); 
