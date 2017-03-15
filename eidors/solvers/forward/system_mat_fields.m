@@ -76,6 +76,7 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
   
    sidx= d0*pp.n_elem;
    cidx= (d0+1)*pp.n_elem;
+   i_cem = 0; % Index into electrodes that are CEM (but not pt)
    for i= 1:pp.n_elec
       eleci = fwd_model.electrode(i);
       % contact impedance zc is in [Ohm.m] for 2D or [Ohm.m^2] for 3D
@@ -83,6 +84,10 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
       [bdy_idx, bdy_area] = find_electrode_bdy( ...
           pp.boundary, fwd_model.nodes, eleci.nodes );
           % bdy_area is in [m] for 2D or [m^2] for 3D
+
+      % For pt elec model, bdy_idx = [], so this doesn't run
+      if isempty(bdy_idx); continue; end % no action for pt elecs
+      i_cem = i_cem + 1;
 
       for j= 1:length(bdy_idx);
          bdy_nds= pp.boundary(bdy_idx(j),:);
@@ -94,7 +99,7 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
          FFjidx= [FFjidx; FFi_block  + cidx];
 
          CCiidx= [CCiidx; FFi_block(1:2,:) + cidx];
-         CCjidx= [CCjidx; bdy_nds ; (pp.n_node+i)*ones(1,d0)];
+         CCjidx= [CCjidx; bdy_nds ; (pp.n_node+i_cem)*ones(1,d0)];
          CCdata= [CCdata; [1;-1]*ones(1,d0)];
          sidx = sidx + d0;
          cidx = cidx + d0;
@@ -113,3 +118,25 @@ function do_unit_test
    FC2= system_mat_fields( imdl.fwd_model);
    M = sqrt(.5)*[1,-1;1,1];
    unit_test_cmp('sys_mat3', M*FC2(1:2,:), [[0,-1,1,0;-2,1,1,0], zeros(2,37)]/2, 1e-14);
+
+   % Check we can handle partial CEM/pt electrodes
+   imdl = mk_common_model('b2s',4); fmdl = imdl.fwd_model;
+   fmdl.electrode([2,4])= []; % remove to simplify
+   fmdl.stimulation = stim_meas_list([1,2,1,2]);
+
+   FF = system_mat_fields(fmdl);
+   unit_test_cmp('sys_mat_b2s_1a', size(FF), [256,81]);
+   vh = fwd_solve( mk_image(fmdl,1) ); 
+   unit_test_cmp('sys_mat_b2s_1b', vh.meas, 2.182865407049302, 1e-12);
+
+   fmdl.electrode(2).nodes = [4:6];
+   FF = system_mat_fields(fmdl);
+   unit_test_cmp('sys_mat_b2s_2a', size(FF), [260,82]);
+   vh = fwd_solve( mk_image(fmdl,1) ); 
+   unit_test_cmp('sys_mat_b2s_2b', vh.meas, 1.807627806615849, 1e-12);
+
+   fmdl.electrode(1).nodes = [76:78];
+   FF = system_mat_fields(fmdl);
+   unit_test_cmp('sys_mat_b2s_3a', size(FF), [264,83]);
+   vh = fwd_solve( mk_image(fmdl,1) ); 
+   unit_test_cmp('sys_mat_b2s_3b', vh.meas, 1.432226638247073, 1e-12);
