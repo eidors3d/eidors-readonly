@@ -57,9 +57,8 @@ end
 tmp.nodes = mdl.nodes;
 tmp.elems = mdl.elems;
 tmp.type  = mdl.type;
-try 
-   tmp.boundary = mdl.boundary;
-end
+try, tmp.boundary = mdl.boundary; end
+try, tmp.faces = mdl.faces; end
 
 copt.cache_obj = {tmp, doall, opt};
 copt.fstr      = 'fix_model';
