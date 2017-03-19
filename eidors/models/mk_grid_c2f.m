@@ -31,6 +31,11 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 %                          1  -  calculate one xy voxel plane at a time
 %                          2  -  calculate one y voxel row at a time
 %                          3  -  calculate each voxel separately
+%                       NOTE: read below about persistent usage
+%
+% MK_GRID_C2F('save_memory',N) sets the 'save memory' option for all future
+% calls (persistent variable). N will be used when opt.save_memory is not
+% specified.
 %
 % [C2F M] = MK_GRID_C2F(...) also returns a struct with useful fields
 % characterising the vox model
@@ -55,11 +60,23 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 
 % >> SWISSTOM CONTRIBUTION <<
 
+persistent save_memory;
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'), do_unit_test; return; end
 if ischar(fmdl) && strcmp(fmdl,'PROFILE'), do_small_test; return; end
-if nargin < 3
-    opt = struct();
+if ischar(fmdl) && strcmp(fmdl,'save_memory')
+   if nargin ~= 2, error('Expected a value for save_memory option'); end
+   if ischar(rmdl), rmdl = str2double(rmdl); end
+   save_memory = rmdl;
+   return
+end
+      
+if ~isempty(save_memory)
+   try 
+      opt.save_memory; % command line options have precedence
+   catch
+      opt.save_memory = save_memory;
+   end
 end
 
 [fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt);
@@ -136,9 +153,9 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                       relem_idx_x = relem_idx_y & repmat(relem_idx_x,opt0.Ysz*opt0.Zsz,1);
                       [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_x);
                       if any(felem_idx)
-                         eidors_msg('log_level',eidors_msg('log_level')-1);
+                         eidors_msg('log_level',eidors_msg('log_level')-2);
                          tmp = separable_calculations(fmdl,rmdl,opt);
-                         eidors_msg('log_level',eidors_msg('log_level')+1);
+                         eidors_msg('log_level',eidors_msg('log_level')+2);
                          c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_x);
                       end
                       progress = progress + 1;
@@ -147,9 +164,9 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                 else
                    [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx_y);
                    if any(felem_idx)
-                      eidors_msg('log_level',eidors_msg('log_level')-1);
+                      eidors_msg('log_level',eidors_msg('log_level')-2);
                       tmp = separable_calculations(fmdl,rmdl,opt);
-                      eidors_msg('log_level',eidors_msg('log_level')+1);
+                      eidors_msg('log_level',eidors_msg('log_level')+2);
                       c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx_y);
                    end
                    progress = progress + 1;
@@ -160,9 +177,9 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
           else
              [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt,relem_idx);
              if any(felem_idx)
-                eidors_msg('log_level',eidors_msg('log_level')-1);
+                eidors_msg('log_level',eidors_msg('log_level')-2);
                 tmp = separable_calculations(fmdl,rmdl,opt);
-                eidors_msg('log_level',eidors_msg('log_level')+1);
+                eidors_msg('log_level',eidors_msg('log_level')+2);
                 c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx);
              end
              progress = progress + 1;
@@ -246,7 +263,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
     catch err
        if (strcmp(err.identifier,'MATLAB:nomem'))
           msg = sprintf('%s', ...
-             'Matlab ran out of memory. Consider setting opt.save_memory > 0.\n', ...
+             'Matlab ran out of memory. Consider setting save_memory > 0.\n', ...
              'See HELP MK_GRID_C2F for details.');
           error('EIDORS:mk_grid_c2f:nomem',msg);
        else
@@ -861,7 +878,8 @@ function logmsg(varargin)
     if eidors_msg('log_level') >= 2
         fprintf(varargin{:});
     end
-
+    
+   
     
 %-------------------------------------------------------------------------%
 % Perfom unit tests
