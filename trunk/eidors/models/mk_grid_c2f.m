@@ -70,7 +70,9 @@ if ischar(fmdl) && strcmp(fmdl,'save_memory')
    save_memory = rmdl;
    return
 end
-      
+if nargin < 3
+   opt = struct;
+end
 if ~isempty(save_memory)
    try 
       opt.save_memory; % command line options have precedence
