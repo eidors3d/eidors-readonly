@@ -21,6 +21,8 @@ ans =
     'adult_male_32el'
     'adult_male_16el_lungs'
     'adult_male_32el_lungs'
+    'adult_male_grychtol2016a_1x32'
+    'adult_male_grychtol2016a_2x16'
     'cylinder_16x1el_coarse'
     'cylinder_16x1el_fine'
     'cylinder_16x1el_vfine'
@@ -35,6 +37,17 @@ ans =
     'pig_23kg_32el'
     'pig_23kg_16el_lungs'
     'pig_23kg_32el_lungs'
+    'lamb_newborn_16el'
+    'lamb_newborn_32el'
+    'lamb_newborn_16el_organs'
+    'beagle_16el'
+    'beagle_32el'
+    'beagle_16el_lungs'
+    'beagle_32el_lungs'
+    'beagle_16el_rectelec'
+    'beagle_32el_rectelec'
+    'beagle_16el_lungs_rectelec'
+    'beagle_32el_lungs_rectelec'
 </pre>
 
 <h3>Pig thorax model</h3>
@@ -62,13 +75,9 @@ ans =
 
 <h3>Customized library model</h3>
 
-To see what shapes are available, run:
-<pre>
-&gt;&gt; shape_library('list');
-Available shapes:
-    'adult_male'
-    'pig_23kg'
-</pre>
+A model can be customized from the one provided
+by the library. Here we get the shape and boundary,
+but add our own electrode positions.
 
 <pre>
 [% PROCESS "mk_library_model03.m" %]
@@ -78,6 +87,8 @@ Available shapes:
 <img src="mk_library_model03a.png">
 <img src="mk_library_model03b.png">
 </center>
+
+<h3>Human thorax model with lungs</h3>
 
 
 </td></tr></table>
