@@ -88,8 +88,19 @@ but add our own electrode positions.
 <img src="mk_library_model03b.png">
 </center>
 
-<h3>Human thorax model with lungs</h3>
+<h3>Human thorax model from Visible Human Geometry</h3>
 
+The following models are generated from the visible human geometry
+and use <tt>gmsh</tt> and <tt>netgen</tt> for meshing.
+
+<pre>
+[% PROCESS "mk_library_model04.m" %]
+</pre>
+
+<center>
+<img src="mk_library_model04a.png">
+<img src="mk_library_model04b.png">
+</center>
 
 </td></tr></table>
 <p>
