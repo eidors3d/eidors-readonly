@@ -128,12 +128,6 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
         if isfield(opt, 'image_SNR_targets')
             imdl.hyperparameter.xyzr_targets = opt.image_SNR_targets;
         end
-        ModelDiameter = max(diff([min(imdl.fwd_model.nodes); max(imdl.fwd_model.nodes)]));
-        if (isfield(opt, 'SigmaN') || (ModelDiameter > 5)) && isempty(weight)
-            warning(['Initial guess of weight might be wrong and no proper convergence ', ...
-                     'is guaranteed! Try normalizing model dimensions or ', ...
-                     'provide your initial guess via the weight option.']);
-        end
     end
     
     if ~isempty(weight)
@@ -173,7 +167,11 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
      eidors_msg( 'log_level', log_level); % restore
 end
 % 
-imdl.solve_use_matrix.RM= calc_GREIT_RM(vh,vi, xyz, radius, weight, opt );
+[RM, PJt, M] = calc_GREIT_RM(vh,vi, xyz, radius, weight, opt );
+imdl.solve_use_matrix.RM = RM;
+% store additional data to be used for faulty electrode compensation
+imdl.solve_use_matrix.PJt = PJt;
+imdl.solve_use_matrix.X = inv(M);
 % imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
 imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
