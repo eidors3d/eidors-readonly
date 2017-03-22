@@ -1,4 +1,4 @@
-function show_3d_slices(img, varargin);
+function h = show_3d_slices(img, varargin);
 % show_3d_slices(img, z_cuts, x_cuts, y_cuts, any_cuts)
 % Show a 3d view of an object with many slices through it
 %  z_cuts = planes in z to do a cut
@@ -6,6 +6,11 @@ function show_3d_slices(img, varargin);
 %  y_cuts = planes in y to do a cut
 %  any_cuts = cut planes intercepts as Nx3 matrix (see mdl_slice_mapper)
 % Default show 2 z_cuts and 1 x and 1 y cut
+%
+% h = show_3d_slices(...) returns a cell array of handles to the individual
+% slices { z_slices, x_slices, y_slices, any_slices }
+%
+% See also: mdl_slices_mesher
 
 % (C) 2007-2012 Andy Adler & Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
@@ -75,34 +80,38 @@ xvec = linspace(mdl_min(1), mdl_max(1),np(1)+1);
 yvec = linspace(mdl_min(2), mdl_max(2),np(2)+1);
 zvec = linspace(mdl_min(3), mdl_max(3),np(3)+1);
 
-
+hz = []; hy = []; hx = []; ha = [];
 for i= 1:length(z_cuts)
-    show_slice(img,[inf inf z_cuts(i)]);
+    hz(i) = show_slice(img,[inf inf z_cuts(i)]);
     hold on
 end
 
 for i= 1:length(x_cuts)
-    show_slice(img,[x_cuts(i) inf inf]);
+    hx(i) = show_slice(img,[x_cuts(i) inf inf]);
     hold on
 end
 
 for i= 1:length(y_cuts)
-    show_slice(img,[inf y_cuts(i) inf]);
+    hy(i) = show_slice(img,[inf y_cuts(i) inf]);
     hold on
 end
 
 for i= 1:size(any_cuts,1)
-    show_slice(img,any_cuts(i,:));
+    ha(i) = show_slice(img,any_cuts(i,:));
     hold on
 end
 hold off
 
+if nargout > 0
+   h = {hz,hx,hy,ha};
+end
+
 warning(qfi.state,'EIDORS:FirstImageOnly');
 
-function show_slice(img, level)
+function h = show_slice(img, level)
     slc = mdl_slice_mesher(img,level);
     try slc.calc_colours = img.calc_colours; end
-    show_fem(slc);
+    h = show_fem(slc);
 
     
 function [x_cuts, y_cuts, z_cuts, any_cuts] =  get_cuts(img, varargin)
