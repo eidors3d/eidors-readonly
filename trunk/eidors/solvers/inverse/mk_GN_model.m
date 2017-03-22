@@ -74,7 +74,7 @@ function imdl = mk_GN_model(img, opt, lambda)
         imdl.RtR_prior = @prior_laplace;  
     elseif strcmpi(opt.RtRprior, 'noser');
         imdl.RtR_prior = @prior_noser;  
-        warning('noser prior does not seem to work, WHY?');
+		imdl.prior_use_fwd_not_rec = true;	% else we have issues with c2f mapping
     elseif strcmpi(opt.RtRprior, 'tikhonov');
         imdl.RtR_prior = @prior_tikhonov;  
     else
