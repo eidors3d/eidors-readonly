@@ -138,7 +138,7 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
         if ~isempty(opt.noise_figure)
             weight = target;
         else
-            weight = 1/target * 1E-5;   % a very rough (=bad?) guess
+            weight = 1/target;   % a very rough (=bad?) guess
         end
     end
     
