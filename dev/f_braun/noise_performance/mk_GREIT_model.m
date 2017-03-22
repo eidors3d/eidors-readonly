@@ -35,15 +35,17 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         target_plane (default: 0). Can be specified as
 %         [down_offset up_offset].
 %     noise_figure - the noise figure (NF) to achieve. Overwrites weight 
-%         which will be optimised to achieve the target NF.
-%     image_SNR - an alternative method (apart from the NF) to specify the 
-%         noise performance of the algorithm to achieve.         
+%         which will be optimised to achieve the target NF.     
 %     noise_figure_targets - circular target(s) to use for NF calculation
 %         as an array of coordinates and radius xyzr [4xN] (default: single
 %         target at the center at average electrode height with radius of
 %         opt.target_size. Note that multiple targets are simultaneously
 %         simulated in a single measurement, meaning they should not
 %         overlap.
+%     image_SNR - an alternative method (apart from the NF) to specify the 
+%         noise performance of the algorithm to achieve.    
+%     image_SNR_targets - circular targets used for image SNR calculation 
+%         see xyzr_targets in calc_image_SNR for more information
 %     extra_noise - extra noise samples (such as electrode movement)
 %     desired_solution_fn - specify a function to calculate the desired 
 %         image. It must have the signature:
