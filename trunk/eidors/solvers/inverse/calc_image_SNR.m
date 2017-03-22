@@ -178,9 +178,11 @@ end
 %% generate differential voltages for each conductivity target 
 img = mk_image(imdl.fwd_model, 1);
 if elem_dim(imdl.fwd_model) == 3
-    xyzr = [xx yy zz rr]';    
+    xyzr = [xx yy zz rr]';  
 elseif elem_dim(imdl.fwd_model) == 2
-    xyzr = [xx yy rr]';        
+    xyzr = [xx yy rr]';    
+else
+    error('unsupported dimensions');
 end
 [vh, vi, xyzrOut, c2f] = simulate_movement(img, xyzr);
 NotAssigned = ~ismember(xyzr', xyzrOut', 'rows');
@@ -206,11 +208,22 @@ TEZs = double((imgrsNorm > TEZ_REGION_THRESH));
 clear imgrsNorm;
 
 ElemVols = spdiags(RecMdlVols, 0, length(RecMdlVols), length(RecMdlVols));
+  
+% TEZ matrices with proper normalization (as defined in publication)
+%      z_i  =  a_i     *  c_i    (in publication)
+Z = ElemVols * TEZs;
+Vtez = sum(Z,1);                % volume/area of each TEZ
+Vt = 4/3 * pi * rr.^3;          % volume of each target
+% note: even for the 2D case we take the volume as a target double
+% as thick than another but with same area has double the influence
+K = Vtez ./ Vt';                % TEZ volume / target volume
+% \tilde{z}_i = z_i * k          (in publication)
+Ztilde = Z .* repmat(K, size(Z,1), 1);
 
-% correct ROI with element area/volume
-TEZsNonNorm = ElemVols * TEZs; 
+% TEZ matrices kept for debugging / bw-compatility reasons
+TEZsNonNorm = Z; 
 % normalize ROIs 
-TEZs = TEZs ./ repmat(sum(TEZs,1), size(TEZs,1), 1);    
+TEZs = TEZs ./ repmat(sum(TEZs,1), size(TEZs,1), 1);  
 
 
 %% calculate target-wise distinguishability
@@ -221,9 +234,9 @@ else
     SigmaN = speye(size(RM,2));		% assuming uniform and uncorrelated noise
 end
 
-Signal = diag(TEZsNonNorm' * imgrs);    % numerator in equation (9)
+Signal = diag(Ztilde' * imgrs);    % numerator in equation (9)
 VarPerPixel = diag(RM*SigmaN*RM');      
-Noise = sqrt(TEZs' * VarPerPixel);      % denominator in equation (9)    
+Noise = sqrt(Z' * VarPerPixel);      % denominator in equation (9)  
 
 % get the average of all SNRs
 SNRs = Signal ./ Noise;                 
