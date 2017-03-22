@@ -43,7 +43,7 @@ for jj = 1:length(lambda_sel_approach)
             % use simulated noisy data to choose hyperparameter either with:
             % LCC: L-curve criterion
             % GCV: generalized-cross validation
-            lambdas = choose_lambda(imdl{jj, ii}, vh{ii}.meas, vn, lambda_sel_approach{jj});
+            lambdas = calc_lambda_regtools(imdl{jj, ii}, vh{ii}.meas, vn, lambda_sel_approach{jj});
             imdl{jj, ii}.hyperparameter.value = median(lambdas);
         end
         

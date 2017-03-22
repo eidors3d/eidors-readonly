@@ -1,7 +1,7 @@
-function lambdas = choose_lambda(imdl, vh, vi, type, doPlot)
-%% CHOOSE_LAMBDA: Find optimal hyperparameter by the L-curve (LCC) criterion 
-% or the generalized cross-validation (GCV).
-%   lambdas = choose_lambda(imdl, vh, vi, type, doPlot);
+function lambdas = calc_lambda_regtools(imdl, vh, vi, type, doPlot)
+%% CALC_LAMBDA_REGTOOLS: Find optimal hyperparameter by the L-curve (LCC) 
+% criterion or the generalized cross-validation (GCV).
+%   lambdas = calc_lambda_regtools(imdl, vh, vi, type, doPlot);
 %
 % Output:
 %   lambdas   - "optimal" hyperparameter(s) determined using LCC or GCV
@@ -16,7 +16,7 @@ function lambdas = choose_lambda(imdl, vh, vi, type, doPlot)
 %   doPlot    - will enable plotting if set to true (default = false)
 %
 % Example:
-%   choose_lambda('unit_test');  
+%   calc_lambda_regtools('unit_test');  
 %
 % NOTE
 %   if vi contains multiple frames the returned values will contain an
@@ -81,24 +81,19 @@ end
 %    OR: delete mainline and svn mv 
 
 %% prepare imdl
-% A = calc_jacobian(img);
-% LtL = calc_RtR_prior(imdl);
-% W = calc_meas_icov(imdl);
-[~, A, LtL, W] = get_RM( imdl );
+imdlTmp = imdl;
+% if isfield(imdl.fwd_model,'coarse2fine')
+%     imdlTmp.fwd_model = rmfield(imdlTmp.fwd_model,'coarse2fine');
+% end
+% if isfield(imdl, 'rec_model') && isfield(imdl.rec_model,'coarse2fine')
+%     imdlTmp.rec_model = rmfield(imdlTmp.rec_model,'coarse2fine');
+% end
+img_bkgnd = calc_jacobian_bkgnd(imdlTmp);
+A = calc_jacobian(img_bkgnd);
+W = calc_meas_icov(imdlTmp);
+L = calc_R_prior(imdlTmp);   
 
-
-% TODO: which method is best to get the R prior?
-% (a) as defined in calc_R_prior (incomplete Cholesky factorization)
-% L = ichol(LtL);     % we could do calc_R_prior but the coarse2fine bothers
-% (b) doesn't give me what I want :-/
-% L = calc_R_prior(imdl);    
-% L=(L'*imdl.rec_model.coarse2fine)';
-% (c) complete Cholesky fact. --> gives best results: L'*L closest to LtL
-try
-    L = chol(LtL);     % we could do calc_R_prior but the coarse2fine bothers
-catch
-    L = ichol(LtL);    % still unsure about that as L'*L does not lead to the same as LtL
-end
+LtL = calc_RtR_prior(imdlTmp);
 LtL_ = L'*L;    
 % assert(all(LtL_(:) - LtL(:) < 100*eps), 'Prior differs too much!');
 
@@ -214,10 +209,10 @@ vi = double(vi); vh = double(vh);
 
 % get the hyperparameter value via L-curve
 figure
-lambdas_lcc = choose_lambda(imdl,vh,vi,'LCC',true);
+lambdas_lcc = calc_lambda_regtools(imdl,vh,vi,'LCC',true);
 
 % get the hyperparameter value via GCV
-lambdas_gcv = choose_lambda(imdl,vh,vi,'GCV',true);
+lambdas_gcv = calc_lambda_regtools(imdl,vh,vi,'GCV',true);
 
 % visualize
 FramesOfInterest = [10 35 60 85];
