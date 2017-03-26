@@ -155,7 +155,8 @@ function do_unit_test
    fmdl.stimulation(1).meas_pattern = [1,-1];
    fmdl.solve = @fwd_solve_1st_order;
    fmdl.system_mat = @system_mat_1st_order;
-   fmdl.type = 'fwd_model'
+   fmdl.type = 'fwd_model';
+   fmdl.normalize_measurements= 0;
    img = mk_image(fmdl,[1,1]); 
    img.fwd_solve.get_all_meas = 1;
 
