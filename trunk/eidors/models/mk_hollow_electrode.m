@@ -22,7 +22,6 @@ elec_idx = elec_idx(:)'; % Row vector to index for loop
 elidx=[];
 for i = elec_idx
    elidx = [elidx, fmdl.electrode(i).nodes];
-   
 end
 
 ELNODES = zeros(size(fmdl.nodes,1),1);
@@ -47,6 +46,7 @@ fmdl.nodes = fmdl.nodes(unodes,:);
 fmdl.elems = nodemap(fmdl.elems);
 %remap elecs
 for i = 1:length(fmdl.electrode)
+   idx = ismember(fmdl.electrode(i).nodes,unodes);
    nidx =  nodemap( fmdl.electrode(i).nodes(idx) );
    if any(i==elec_idx);
       npts = fmdl.nodes(nidx,:);
@@ -76,6 +76,11 @@ function do_unit_test
     fmdl2= mk_hollow_electrode(fmdl);
     subplot(223); show_fem(fmdl2); axis([-.1,.3,0.4,0.8])
     title 'original model - all hollow electrode';
+
+    fmdl = unit_test_model2;
+    fmdl4= mk_hollow_electrode(fmdl, length(fmdl.electrode));
+    subplot(224); show_fem(fmdl4); axis([-1,1,-1,1])
+    title 'original model - one electrode';
     
 
 function fmdl = unit_test_model1
@@ -97,3 +102,12 @@ function fmdl = unit_test_model1
    elec_shape=[0.025];
    fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
    fmdl = mdl2d_from3d(fmdl);
+
+function fmdl = unit_test_model2
+   extra={'ball', ...
+         ['solid cyls= cylinder(0.2,0.2,0;0.2,0.2,1;0.2) -maxh=0.05;' ...
+          'solid ball= cyls and orthobrick(-1,-1,0;1,1,0.5);']};
+   fmdl= ng_mk_cyl_models(0,[6],[0.1,0,0.05],extra); 
+   eln   = find(elem_select(fmdl, '(x-0.2).^2+(y-0.2).^2<0.2^2'));
+   eln   = unique(fmdl.elems(eln,:));
+   fmdl.electrode(end+1) = struct('nodes', eln(:)', 'z_contact', .01);
