@@ -8,6 +8,8 @@ function memb_frac = elem_select( fmdl, select_fcn )
 %              can also be a cell array of functions, but all must accept
 %              parameters x, y, and z. ELEM_SELECT then finds elements that
 %              satisfy ALL the functions at once
+%              finally, select_fcn can be a string which will then
+%                be turned into a function via inline(str,'x','y','z')
 % OR
 % select_fcn = string accepting named variables x,y,z.
 %

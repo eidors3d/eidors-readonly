@@ -231,7 +231,7 @@ for e=1:length(mdl.electrode)
         vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
         vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
         % sort nodes around the model (to avoid crossed lines)
-        [jnk,idx] = sort(unwrap(atan2( vy, vx )));
+        [jnk,idx] = order_loop( [vx,vy] );
     end
         
     ecolour = electr_colour( e );
