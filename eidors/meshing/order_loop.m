@@ -4,9 +4,10 @@ function [p n] = order_loop(pp,clk)
 % dimensions that constitute a continues loop, under the assumption that 
 % the distance between two neighbouring points is always smaller than 
 % distance between any non-neighbouring points.
-
-% P = ORDER_LOOP(PP, CLK) orders the loop clockwise if CLK == 1 and
-% counter-clockwise if CLK == 0.
+%
+% [P,idx] = ORDER_LOOP(PP, CLK) orders the loop clockwise if
+%   CLK == 1 and counter-clockwise if CLK == 0.
+% idx is the sort index of the points
 
 % (C) 2012 Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
