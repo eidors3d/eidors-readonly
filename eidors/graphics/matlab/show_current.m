@@ -40,40 +40,16 @@ function quiv = show_current( img, vv )
 
 if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
+
+if nargin==1;
+  e_curr = calc_elem_current( img );
+else 
+  e_curr = calc_elem_current( img, vv);
+end
+
 dims = size(img.fwd_model.nodes,2);
 
-if nargin==1; % We need to calculate
-   if isfield(img,'elem_data')
-      img.fwd_solve.get_all_meas = 1;
-      vh = fwd_solve(img);
-      vv = vh.volt(:,1);
-   elseif isfield(img,'node_data');
-      vv = img.node_data(:,1);
-      error('show_current: cannot interpolate conductivity onto elements (yet)');
-   else
-      error('show_current: one parameter provided, and cannot solve for node voltages');
-   end
-end 
-
-Nel = size(img.fwd_model.elems,1);
-elemcur = zeros(Nel+1,dims);
-% Calc field as I = sigma E
-%V1 = V0 + Ex*x1 + Ey*y1   [ 1 x1 y1 ] [ V0 ]
-%V2 = V0 + Ex*x2 + Ey*y2 = [ 1 x2 y2 ]*[ Ex ]
-%V3 = V0 + Ex*x3 + Ey*y    [ 1 x3 y3 ] [ Ey ]
-oo = ones(dims+1,1);
-for i=1:Nel
-  idx = img.fwd_model.elems(i,:);
-  nod = img.fwd_model.nodes(idx,:);
-  if dims ==2
-     VE  = ([oo, nod])\fix_dim(vv(idx));
-  else
-     VE  = ([oo, nod])\vv(idx);
-  end
-  elemcur(i+1,:) = img.elem_data(i,1)*VE(2:end)';
-%  elemcur(i+1,:) = (reshape(img.elem_data(i,1,:,:),dims,dims)*VE(2:end))';
-
-end
+elemcur = [zeros(1,dims); e_curr ];
 
 if isfield(img.fwd_model, 'mdl_slice_mapper');
    if dims == 2;
