@@ -19,6 +19,7 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 inv_model = rec_or_fwd_model( inv_model);
 
@@ -82,3 +83,19 @@ function inv_model = rec_or_fwd_model( inv_model);
          inv_model= rmfield(inv_model,'rec_model');
       end
    end
+
+function do_unit_test
+   imdl = mk_common_model('a2c2',16);
+
+   priors={'prior_tikhonov',
+           'prior_laplace'};
+
+   for i = 1:length(priors);
+      imdl.RtR_prior = feval(priors{i},imdl);
+
+      R   = calc_R_prior(imdl);
+      RtR = calc_RtR_prior(imdl);  
+      unit_test_cmp(['P:',priors{i}], R'*R, RtR, 1e-10);
+   end
+
+
