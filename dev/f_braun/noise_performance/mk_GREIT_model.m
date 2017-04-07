@@ -442,9 +442,9 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
 
 function do_unit_test
 
-do_performance_test; 
-% return;
-figure
+sidx= 1; subplot(3,3,sidx);
+ do_performance_test; 
+
 % Create a 3D elliptical cylinder with 16 circular electrodes 
 fmdl_1= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]); %show_fem(fmdl);
 % Put two balls into the elliptical cylinder
@@ -458,33 +458,50 @@ fmdl_2.stimulation = stim;
 img = mk_image(fmdl_2, 0.5); vh = fwd_solve(img); %show_fem(img);
 % Simulate inhomogeneous voltages (ball conductivity = 1.0);
 img.elem_data(mat_idx{2})= 1.0; vi = fwd_solve(img); 
+sidx= sidx+1; subplot(3,3,sidx);
 show_fem(img);
 % Reconstruct the image using GREITv1
 imdl= mk_common_gridmdl('GREITc1'); 
 img= inv_solve(imdl,vh,vi);
-figure, subplot(2,2,1);
+sidx= sidx+1; subplot(3,3,sidx);
 show_slices(img)
 
 % Create a GREIT model for the ellipse
 opt.noise_figure = 0.5; opt.distr = 3;opt.square_pixels = 1; %other options are defaults
 fmdl_2 = mdl_normalize(fmdl_2,0);
 % use the true model (inverse crime)
-imdl1 = mk_GREIT_model(mk_image(fmdl_2,0.5), 0.25, [], opt);
+img_2 = mk_image(fmdl_2,0.5);
+imdl1 = mk_GREIT_model(img_2, 0.25, [], opt);
 img1= inv_solve(imdl1,vh,vi);  
-subplot(2,2,2);show_slices(img1);
+sidx= sidx+1; subplot(3,3,sidx);
+show_slices(img1);
+
+opt = rmfield(opt,'noise_figure');
+opt.image_SNR = 1e-3; weight = 90; % need to choose a weight that works with SNR
+imdl1 = mk_GREIT_model(img_2, 0.25, weight, opt);
+img1= inv_solve(imdl1,vh,vi);  
+sidx= sidx+1; subplot(3,3,sidx); show_slices(img1);
+
+weight = [];
+imdl1 = mk_GREIT_model(img_2, 0.25, weight, opt);
+img1= inv_solve(imdl1,vh,vi);  
+sidx= sidx+1; subplot(3,3,sidx); show_slices(img1);
+
+
+opt = rmfield(opt,'image_SNR'); opt.noise_figure = 0.5;
 
 % use honogenous model 
 fmdl_1 = mdl_normalize(fmdl_1,0);
 imdl2 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img2= inv_solve(imdl2,vh,vi); 
-subplot(2,2,3); show_slices(img2);
+sidx= sidx+1; subplot(3,3,sidx); show_slices(img2);
 
 
 % specify targets for NF calc
 opt.noise_figure_targets = [-.5 0 .5 .2;.5 0 .5 .2;];
 imdl3 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img3= inv_solve(imdl3,vh,vi); 
-subplot(2,2,4); show_slices(img3);
+sidx= sidx+1; subplot(3,3,sidx); show_slices(img3);
 % cleanup
 opt = rmfield(opt,'noise_figure_targets');
 
@@ -500,7 +517,7 @@ fmdl_1 = mdl_normalize(fmdl_1,1);
 imdl4 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img4= inv_solve(imdl4,vh,vi); 
 
-figure
+sidx= sidx+1; subplot(3,3,sidx);
 show_slices([img1 img2 img3 img4])
 
 
@@ -524,7 +541,7 @@ opt.square_pixels = 1;
 imdl = mk_GREIT_model(fmdl2,0.25,3,opt);
 
 img = inv_solve(imdl,vh, vi);
-figure
+sidx= sidx+1; subplot(3,3,sidx);
 show_slices(img);
 
 
