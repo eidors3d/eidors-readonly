@@ -1,4 +1,4 @@
-clear all; close all; run ~/EIT/Code/mk_paths.m; clc;
+%clear all; close all; run ~/EIT/Code/mk_paths.m; clc;
 
 %Conductivity and permittivity parametersma
 cond_back=1; cond_inhom=100; 

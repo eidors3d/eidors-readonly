@@ -1,3 +1,7 @@
+ - debug calc_R_prior UNIT_TEST (ichol doesn't give a good estimate, also not posdef)
+    
+ - lookfor fminsearch_octave and see if current version still needs it.
+
  - mk_c2f_circ_mapping doesn't give very accurate results
      even when a large n_interp_min value is given
     - see test code from 19jan2017 (AA)
