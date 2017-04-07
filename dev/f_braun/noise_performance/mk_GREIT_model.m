@@ -120,7 +120,7 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
         % we'll optimise the weight for a given noise figure (NF)
         target = opt.noise_figure;
         NoisPerfName = 'Noise Figure';
-    else
+    elseif ~isempty(opt.image_SNR)
         % we'll optimise the weight for a given image SNR
         NoisPerfName = 'Image SNR';
         target = opt.image_SNR;        
@@ -130,6 +130,8 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
         if isfield(opt, 'image_SNR_targets')
             imdl.hyperparameter.xyzr_targets = opt.image_SNR_targets;
         end
+    else
+        error('internal bug: shouldn''t get here');
     end
     
     if ~isempty(weight)
