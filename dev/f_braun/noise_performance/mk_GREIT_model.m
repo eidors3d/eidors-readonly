@@ -51,6 +51,9 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %         image. It must have the signature:
 %         D = my_function( xyc, radius, options); 
 %         See CALC_GREIT_RM for details.
+%     keep_intermediate_results - if true, stores additional data of 
+%         reconstruction matrix computation to be used later on, 
+%         e.g. for faulty electrode compensation
 %
 % NOTE
 %   currently extra_noise is not supported
@@ -139,8 +142,10 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
     else
         if ~isempty(opt.noise_figure)
             weight = target;
-        else
-            weight = 1/target;   % a very rough (=bad?) guess
+        elseif ~isempty(opt.image_SNR)
+            weight = 1/target;   % the inverse, as image SNR \propto 1/NF
+		else
+            error('internal bug: shouldn''t get here');
         end
     end
     
@@ -164,7 +169,7 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
     else
        [weight, NF] = fminsearch(f, weight,fms_opts);
     end
-    eidors_msg(['mk_GREIT_model: Optimal solution gives NF=' ... 
+    eidors_msg(['mk_GREIT_model: Optimal solution gives ', NoisPerfName, '=' ... 
         num2str(NF+target) ' with weight=' num2str(weight)],1);
     assert((sqrt(NF) / target) < 0.01, ...
             ['Cannot find an accurate enough match for desired ', NoisPerfName]');
@@ -173,9 +178,11 @@ end
 % 
 [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyz, radius, weight, opt );
 imdl.solve_use_matrix.RM = RM;
-% store additional data to be used for faulty electrode compensation
-imdl.solve_use_matrix.PJt = PJt;
-imdl.solve_use_matrix.X = inv(M);
+if opt.keep_intermediate_results
+   % store additional data to be used for faulty electrode compensation
+   imdl.solve_use_matrix.PJt = PJt;
+   imdl.solve_use_matrix.X = inv(M);
+end
 % imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
 imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
@@ -191,9 +198,11 @@ function out = to_optimise(vh,vi,xy,radius,weight, opt, imdl, ...
    if ~isempty(opt.noise_figure)
       NF = calc_noise_figure(imdl,vh, vi_NF);
       eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
-   else
+   elseif ~isempty(opt.image_SNR)
       NF = calc_image_SNR(imdl);
-      eidors_msg(['SNR = ', num2str(NF), ' weight = ', num2str(weight)],1);       
+      eidors_msg(['SNR = ', num2str(NF), ' weight = ', num2str(weight)],1);
+   else
+      error('internal bug: shouldn''t get here');       
    end
    out = (NF - target)^2;
 %    out = (mean(NF) - target)^2 + std(NF);
@@ -426,8 +435,11 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
     end
 
        
+    if ~isfield(opt,'keep_intermediate_results');
+       opt.keep_intermediate_results = false;
+	end
     
-    
+	
     try, opt.normalize = fmdl.normalize_measurements;
     catch, 
         opt.normalize = 0;
@@ -442,7 +454,7 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
 
 function do_unit_test
 
-sidx= 1; subplot(3,3,sidx);
+sidx= 1; subplot(4,4,sidx);
  do_performance_test; 
 
 % Create a 3D elliptical cylinder with 16 circular electrodes 
@@ -458,12 +470,12 @@ fmdl_2.stimulation = stim;
 img = mk_image(fmdl_2, 0.5); vh = fwd_solve(img); %show_fem(img);
 % Simulate inhomogeneous voltages (ball conductivity = 1.0);
 img.elem_data(mat_idx{2})= 1.0; vi = fwd_solve(img); 
-sidx= sidx+1; subplot(3,3,sidx);
+sidx= sidx+1; subplot(4,4,sidx);
 show_fem(img);
 % Reconstruct the image using GREITv1
 imdl= mk_common_gridmdl('GREITc1'); 
 img= inv_solve(imdl,vh,vi);
-sidx= sidx+1; subplot(3,3,sidx);
+sidx= sidx+1; subplot(4,4,sidx);
 show_slices(img)
 
 % Create a GREIT model for the ellipse
@@ -473,35 +485,43 @@ fmdl_2 = mdl_normalize(fmdl_2,0);
 img_2 = mk_image(fmdl_2,0.5);
 imdl1 = mk_GREIT_model(img_2, 0.25, [], opt);
 img1= inv_solve(imdl1,vh,vi);  
-sidx= sidx+1; subplot(3,3,sidx);
+sidx= sidx+1; subplot(4,4,sidx);
 show_slices(img1);
 
+% now do the same but using image SNR and not NF
 opt = rmfield(opt,'noise_figure');
-opt.image_SNR = 1e-3; weight = 90; % need to choose a weight that works with SNR
+opt.image_SNR = 1e-3; 
+weight = 90; % need to choose a weight that works with SNR
 imdl1 = mk_GREIT_model(img_2, 0.25, weight, opt);
 img1= inv_solve(imdl1,vh,vi);  
-sidx= sidx+1; subplot(3,3,sidx); show_slices(img1);
+sidx= sidx+1; subplot(4,4,sidx); show_slices(img1);
+
+unit_test_cmp('Expect no PJT or X', ~isfield(imdl1.solve_use_matrix, 'PJt') & ...
+                                    ~isfield(imdl1.solve_use_matrix, 'X'), true);
 
 weight = [];
+opt.keep_intermediate_results = true;
 imdl1 = mk_GREIT_model(img_2, 0.25, weight, opt);
 img1= inv_solve(imdl1,vh,vi);  
-sidx= sidx+1; subplot(3,3,sidx); show_slices(img1);
+sidx= sidx+1; subplot(4,4,sidx); show_slices(img1);
 
+unit_test_cmp('Expect PJT and X', isfield(imdl1.solve_use_matrix, 'PJt') & ...
+                                  isfield(imdl1.solve_use_matrix, 'X'), true);
 
-opt = rmfield(opt,'image_SNR'); opt.noise_figure = 0.5;
+opt = rmfield(opt,{'image_SNR', 'keep_intermediate_results'}); opt.noise_figure = 0.5;
 
 % use honogenous model 
 fmdl_1 = mdl_normalize(fmdl_1,0);
 imdl2 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img2= inv_solve(imdl2,vh,vi); 
-sidx= sidx+1; subplot(3,3,sidx); show_slices(img2);
+sidx= sidx+1; subplot(4,4,sidx); show_slices(img2);
 
 
 % specify targets for NF calc
 opt.noise_figure_targets = [-.5 0 .5 .2;.5 0 .5 .2;];
 imdl3 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img3= inv_solve(imdl3,vh,vi); 
-sidx= sidx+1; subplot(3,3,sidx); show_slices(img3);
+sidx= sidx+1; subplot(4,4,sidx); show_slices(img3);
 % cleanup
 opt = rmfield(opt,'noise_figure_targets');
 
@@ -517,7 +537,7 @@ fmdl_1 = mdl_normalize(fmdl_1,1);
 imdl4 = mk_GREIT_model(mk_image(fmdl_1,0.5), 0.25, [], opt);
 img4= inv_solve(imdl4,vh,vi); 
 
-sidx= sidx+1; subplot(3,3,sidx);
+sidx= sidx+1; subplot(4,4,sidx);
 show_slices([img1 img2 img3 img4])
 
 
@@ -541,8 +561,27 @@ opt.square_pixels = 1;
 imdl = mk_GREIT_model(fmdl2,0.25,3,opt);
 
 img = inv_solve(imdl,vh, vi);
-sidx= sidx+1; subplot(3,3,sidx);
+sidx= sidx+1; subplot(4,4,sidx);
 show_slices(img);
+
+
+% do the same again with image SNR and not NF
+opt = rmfield(opt,'noise_figure');
+opt.image_SNR = 1e-4; 
+weight = 0.5; % need to choose a weight that works with SNR
+imdl = mk_GREIT_model(fmdl2, 0.25, weight, opt);
+img = inv_solve(imdl,vh, vi);
+sidx= sidx+1; subplot(4,4,sidx); show_slices(img);
+
+opt.image_SNR_targets = [0.3 0.3  0.5 0.05;  0.3 -0.3 0.5 0.05; ...
+                         0.3 -0.3 0.5 0.05; -0.3 -0.3 0.5 0.05; ...
+                         0.3 0    0.5 0.05; -0.3  0   0.5 0.05; ...
+                         0   0.3  0.5 0.05;  0   -0.3 0.5 0.05]';
+opt.image_SNR = 3e-4; 
+weight = 1E-2; % need to choose a weight that works with SNR
+imdl = mk_GREIT_model(fmdl2, 0.25, weight, opt);
+img = inv_solve(imdl,vh, vi);
+sidx= sidx+1; subplot(4,4,sidx); show_slices(img);
 
 
 function do_performance_test
