@@ -4,6 +4,9 @@
 SRCDIR=~/netgen-update
 INSTDIR=~/netgen-update
 
+
+SFDL=https://sourceforge.net/projects
+
 # versions to install
 # TCL
 TCLVER=8.5.8
@@ -39,15 +42,15 @@ mkdir -p ${INSTDIR}
 # get files
 cd ${SRCDIR}
 [ ! -f "tcl${TCLVER}-src.tar.gz" ] && \
-  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tcl${TCLVER}-src.tar.gz || err "tcl download" )
+  ( wget ${SFDL}/tcl/files/tcl${TCLVER}-src.tar.gz || err "tcl download" )
 [ ! -f "tk${TKVER}-src.tar.gz" ] && \
-  ( wget --quiet http://prdownloads.sourceforge.net/tcl/tk${TKVER}-src.tar.gz || err "tk download" )
+  ( wget ${SFDL}/tcl/files/tk${TKVER}-src.tar.gz || err "tk download" )
 [ ! -f "tix${TIXVER}-src.tar.gz" ] && \
-  ( wget --quiet http://prdownloads.sourceforge.net/tix/files/tix/${TIXVER}/Tix${TIXVER}-src.tar.gz || err "tix download" )
+  ( wget ${SFDL}/tix/files/tix/${TIXVER}/Tix${TIXVER}-src.tar.gz || err "tix download" )
 [ ! -f "togl-${TOGLVER}.tar.gz" ] && \
-  ( wget --quiet http://prdownloads.sourceforge.net/togl/files/Togl/${TOGLVER}/Togl-${TOGLVER}.tar.gz || err "togl download" )
+  ( wget ${SFDL}/togl/files/Togl/${TOGLVER}/Togl-${TOGLVER}.tar.gz || err "togl download" )
 [ ! -f "netgen-${NGVER}.tar.gz" ] && \
-  ( wget --quiet http://prdownloads.sourceforge.net/netgen-mesher/files/netgen-mesher/${NGVER}/netgen-${NGVER}.tar.gz || err "netgen download" )
+  ( wget ${SFDL}/netgen-mesher/files/netgen-mesher/${NGVER}/netgen-${NGVER}.tar.gz || err "netgen download" )
 
 # unpack files
 [ ! -d "tcl${TCLVER}" ] && ( tar zxvf tcl${TCLVER}-src.tar.gz > /dev/null || err "tcl unpack" )
