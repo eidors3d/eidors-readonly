@@ -1,5 +1,5 @@
 space_list = linspace(0.2, 0.03, 6.0);
-angl = [0,30,80,100];
+angl = [330,200,80,100];
 for ii = 1:length(space_list);
    space = space_list(ii);
    ypts = space*[1,-1];
