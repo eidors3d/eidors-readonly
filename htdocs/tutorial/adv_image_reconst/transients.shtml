@@ -1,0 +1,32 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2> 
+Simulation of voltages over time due to transient current inputs
+</h2>
+
+EIDORS uses frequency-domain forward modelling (i.e. the model is
+solved for stimulus at a given frequency <i>f</i>=2&pi;<i>&omega;</i>).
+To use EIDORS to make time-domain simulations, we need to use
+Fourier synthesis.
+
+<pre>
+[% PROCESS "transients01.m" %]
+</pre>
+
+<center>
+<img src="transients01a.png">
+<br><i> Figure:</i>
+Regions of coductivity and permittivity in circular 2D model
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
