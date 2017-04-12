@@ -26,6 +26,26 @@ function img = this_mdl(conduc, z_contact, current);
          'elem_data', ones(n_el,1) * conduc );
    img.fwd_model = mdl;
 
+function V = analytic_soln(img);
+   % analytical solution
+   nodes = img.fwd_model.nodes;
+   wid_len= max(nodes) - min(nodes);
+   conduc =  mean(img.elem_data);
+   Block_R = wid_len(2) / wid_len(1) / conduc;
+   % Contact R reflects z_contact / width. There is no need to scale
+   %  by the scale, since this is already reflected in the size of the
+   %  FEM as created by the grid. This is different to the test_3d_resistor,
+   %  where the FEM is created first, and then scaled, so that the ww
+   %  and hh need to be scaled by the scale parameter.
+   z_contact = sum([img.fwd_model.electrode(:).z_contact]);
+   current = max(img.fwd_model.stimulation(1).stim_pattern(:));
+   Contact_R = z_contact/wid_len(1);
+   R = Block_R + Contact_R;
+
+   V= current*R;
+   fprintf('Solver %s: %f\n', 'analytic', V);
+   fprintf('Solver %s: %f\n', 'analytic (no z_contact)', V - 2*Contact_R*current);
+
 function vals = resistor_test;
 
    current= 4;  % Amps
@@ -35,22 +55,7 @@ function vals = resistor_test;
 
    show_fem(img.fwd_model);
 
-   % analytical solution
-   nodes = img.fwd_model.nodes;
-   wid_len= max(nodes) - min(nodes);
-   Block_R = wid_len(2) / wid_len(1) / conduc;
-   % Contact R reflects z_contact / width. There is no need to scale
-   %  by the scale, since this is already reflected in the size of the
-   %  FEM as created by the grid. This is different to the test_3d_resistor,
-   %  where the FEM is created first, and then scaled, so that the ww
-   %  and hh need to be scaled by the scale parameter.
-   Contact_R = z_contact/wid_len(1);
-   R = Block_R + 2*Contact_R;
-
-   V= current*R;
-   fprintf('Solver %s: %f\n', 'analytic', V);
-   fprintf('Solver %s: %f\n', 'analytic (no z_contact)', V - 2*Contact_R*current);
-   vals.analytic = V;
+   vals.analytic = analytic_soln(img);
 
 % AA_SOLVER
 img.fwd_model.solve = @fwd_solve_1st_order;
