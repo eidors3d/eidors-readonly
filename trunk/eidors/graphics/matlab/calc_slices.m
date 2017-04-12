@@ -83,9 +83,10 @@ function rimg = calc_this_slice( img, levels, np)
           rimg(:,:,:,lev_no) = calc_image_elems( elem_data, level, fwd_model, np);
        end
     elseif isfield(img,'node_data')
-       node_data= [img.node_data];
-       if size(node_data,1)==1; node_data=node_data';end
-       n_images= size(node_data,2);
+       [node_data, n_images] = get_img_data(img);
+%      node_data= [img.node_data];
+%      if size(node_data,1)==1; node_data=node_data';end
+%      n_images= size(node_data,2);
        clear rimg;
 
        for lev_no = fliplr(1:num_levs)
@@ -289,6 +290,14 @@ function do_unit_test
    img.fwd_model = rmfield(img.fwd_model,'mdl_slice_mapper');
    imc = calc_slices(img);
    unit_test_cmp('size n  1', size(imc), [40,40]);
+
+   im2= img;
+   im2.node_data =  ones(size(img.fwd_model.nodes,1),5);
+   imc = calc_slices(im2);
+   unit_test_cmp('size n x5', size(imc), [40,40,5]);
+   im2.get_img_data.frame_select = 2:3;
+   imc = calc_slices(im2);
+   unit_test_cmp('size n x2', size(imc), [40,40,2]);
 
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-150,150,20);
    img.fwd_model.mdl_slice_mapper.y_pts =-linspace(-150,150,23);
