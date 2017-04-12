@@ -47,6 +47,27 @@ Fourier series of input waveform.
 </center>
 
 
+<pre>
+[% PROCESS "transients04.m" %]
+</pre>
+
+<center>
+<img src="transients03a.png">
+<br><i> Figure:</i>
+Images of voltage as a function of time
+</center>
+
+
+<pre>
+[% PROCESS "transients05.m" %]
+</pre>
+
+<center>
+<img src="transients03a.png">
+<br><i> Figure:</i>
+Slice through the image centre as a function of time
+</center>
+
 </td></tr></table>
 <p>
 <small>

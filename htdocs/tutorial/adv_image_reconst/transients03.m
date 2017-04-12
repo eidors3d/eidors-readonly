@@ -6,8 +6,8 @@ fpul = fftshift(fft(puls));
 fax = linspace(0,fmax,tpts+1); fax(end)=[];
 fax = fftshift(fax);
 fax(fax>0.5*fmax) = fax(fax>0.5*fmax) - fmax;
-subplot(221); plot(tax, puls); ylim([-.1,1.1]);
-subplot(222); plot(fax, real(fpul),'.');
+subplot(221); plot(tax, puls); ylim([-.1,1.1]); box off;
+subplot(222); plot(fax, real(fpul),'.');        box off;
 
 clear vn; for i=fliplr(1:tpts)
    img.elem_data= red + ied*fax(i)*2j*pi;
