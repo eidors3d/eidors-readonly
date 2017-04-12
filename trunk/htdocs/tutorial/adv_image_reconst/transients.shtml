@@ -33,6 +33,20 @@ Patterns of current flow at
 (right) <i>f=100</i>.
 </center>
 
+<pre>
+[% PROCESS "transients03.m" %]
+</pre>
+
+<center>
+<img src="transients03a.png">
+<br><i> Figure:</i>
+Left:
+Pulsatile current input vs time (s).
+Right:
+Fourier series of input waveform.
+</center>
+
+
 </td></tr></table>
 <p>
 <small>
