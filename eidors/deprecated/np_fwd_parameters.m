@@ -26,6 +26,17 @@ function param = np_fwd_parameters( fwd_model )
 
 warning('EIDORS:deprecated','NP_FWD_PARAMETERS is deprecated as of 07-Jun-2012. ');
 
+try; switch fwd_model.type
+        case 'fwd_model'; % do nothing
+        case 'inv_model'; fwd_model = fwd_model.fwd_model;
+        case 'image';     fwd_model = fwd_model.fwd_model;
+        otherwise; error('np_fwd_parameters: requires fwd_model, inv_model or image object');
+        end
+catch
+     error('np_fwd_parameters: requires EIDORS object');
+end
+
+
 param = eidors_obj('get-cache', fwd_model, 'np_fwd_parameters');
 
 if ~isempty(param)
