@@ -21,6 +21,17 @@ Fourier synthesis.
 Regions of coductivity and permittivity in circular 2D model
 </center>
 
+<pre>
+[% PROCESS "transients02.m" %]
+</pre>
+
+<center>
+<img src="transients02a.png">
+<br><i> Figure:</i>
+Patterns of current flow at 
+(left) <i>f=0</i> and 
+(right) <i>f=100</i>.
+</center>
 
 </td></tr></table>
 <p>
