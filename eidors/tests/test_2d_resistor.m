@@ -93,6 +93,7 @@ mdl.solve = @fwd_solve_1st_order;
 mdl.jacobian = @jacobian_adjoint;
 Jaa= calc_jacobian(img);
 
+
 fprintf('Jacobians: Cols by Jaa, Jnp, Jp1, Jp2:\n')
 JJ = [Jaa;Jnp;Jp1;Jp2];
 disp(JJ(:,1:6))

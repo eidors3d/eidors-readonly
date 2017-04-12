@@ -14,8 +14,15 @@ function v_f= np_calc_3d_fields( fwd_model, img)
 
 warning('EIDORS:deprecated','NP_CALC_3D_FIELDS is deprecated as of 06-Jun-2012. ');
 
+if nargin==1 % normal way to call
+   img = fwd_model;
+   fwd_model = img.fwd_model;
+else
+   img.fwd_model = fwd_model; %force use of supplied fwd_model
+end
+
 p= np_fwd_parameters( fwd_model );
-s_mat= calc_system_mat( fwd_model, img );
+s_mat= calc_system_mat( img );
 
 %Set the tolerance for the pcg
 tol = 1e-5;
