@@ -14,7 +14,13 @@ function s_mat= np_calc_system_mat( fwd_model, img)
 
 warning('EIDORS:deprecated','NP_CALC_SYSTEM_MAT is deprecated as of 07-Jun-2012. Use SYSTEM_MAT_1ST_ORDER instead.');
 
-s_mat = eidors_obj('get-cache', {fwd_model, img}, 'np_system_mat');
+if nargin==1 %normally takes one parameter
+   img = fwd_model;
+   fwd_model = img.fwd_model;
+end
+   
+
+s_mat = eidors_obj('get-cache', {fwd_model, img}, 'np_calc_system_mat');
 
 if ~isempty(s_mat)
    eidors_msg('np_calc_system_mat: using cached value', 3);

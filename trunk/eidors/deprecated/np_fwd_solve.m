@@ -17,6 +17,11 @@ if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 warning('EIDORS:deprecated','NP_FWD_SOLVE is deprecated as of 07-Jun-2012. Use FWD_SOLVE_1ST_ORDER instead.');
 
+if nargin==1 %normally takes one parameter
+   img = fwd_model;
+   fwd_model = img.fwd_model;
+end
+
 p= np_fwd_parameters( fwd_model );
 
 %Set the tolerance for the forward solver
