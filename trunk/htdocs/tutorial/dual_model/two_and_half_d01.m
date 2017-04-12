@@ -1,28 +1,14 @@
-% Build 2D and 3D model $Id$
+% Models
+fmdl = mk_common_model('d2C',16); % fine model
+cmdl = mk_common_model('c2C',16); % coarse model
+c2f = mk_coarse_fine_mapping(fmdl.fwd_model, cmdl.fwd_model);
+imdl = fmdl;
+imdl.rec_model = cmdl.fwd_model;
+imdl.fwd_model.coarse2fine = c2f;
 
-demo_img = mk_common_model('n3r2',[16,2]);
-
-% Create 2D FEM of all NODES with z=0
-f_mdl = demo_img.fwd_model;
-n2d = f_mdl.nodes( (f_mdl.nodes(:,3) == 0), 1:2);
-e2d = delaunayn(n2d);
-c_mdl = eidors_obj('fwd_model','2d','elems',e2d,'nodes',n2d);
-
-subplot(121);
-show_fem(f_mdl); title('fine (3d) model');
-
-subplot(122);
-show_fem(c_mdl); title('coarse (2d) model');
-axis square
-
+clf; % figure 1
+subplot(121);show_fem(imdl.fwd_model);
+title('fine (2d) model'); axis square; axis off;
+subplot(122); show_fem(imdl.rec_model);
+title('coarse (2d) model'); axis square; axis off;
 print_convert two_and_half_d01a.png '-density 75'
-
-% Simulate data - inhomogeneous
-img = mk_image(demo_img,1);
-vi= fwd_solve(img);
-
-% Simulate data - homogeneous
-load( 'datacom.mat' ,'A','B')
-img.elem_data(A)= 1.15;
-img.elem_data(B)= 0.80;
-vh= fwd_solve(img);

@@ -1,19 +1,18 @@
-% Solve 2D and 3D model $Id$
+% Solve 2.5D
+% Create inverse Model: Classic
+imdl.hyperparameter.value = .1;
+imdl.reconst_type = 'difference';
+imdl.type = 'inv_model';
 
-c2f= mk_coarse_fine_mapping( f_mdl, c_mdl );
+% Classic and 2.5D (inverse crime) solver
+vh.type = 'data';
+vi.type = 'data';
+img2 = inv_solve(imdl, vh, vi);
+imdl.fwd_model.jacobian = @jacobian_adjoint_2p5d_1st_order;
+img25 = inv_solve(imdl, vh, vi);
 
-imdl.fwd_model.coarse2fine = c2f;
-img2= inv_solve(imdl, vh, vi);
-img2.elem_data= c2f*img2.elem_data;
-subplot(143)
-show_fem(img2); view(-62,28)
-
-% 2.5D reconstruct onto coarse model
-subplot(144)
-img3= inv_solve(imdl, vh, vi);
-img3.fwd_model= c_mdl;
-show_fem(img3);
-zlim([0,3]); xlim([-1,1]); ylim([-1,1]);
- axis equal; view(-62,28)
-
+clf;
+subplot(131); show_fem(fimg); title('model'); axis off; axis square;
+subplot(132); show_fem(img2); title('2D'); axis off; axis square;
+subplot(133); show_fem(img25);title('2.5D'); axis off; axis square;
 print_convert two_and_half_d03a.png

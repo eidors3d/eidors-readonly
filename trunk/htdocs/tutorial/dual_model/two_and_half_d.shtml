@@ -6,7 +6,7 @@
 Two and a half dim (2&frac12;D) image reconstruction
 </h2>
 
-The term "2&frac12;D" originates from geophysics.
+The term "2&frac12;D" or 2.5D originates from geophysics.
 Measurements are made around a medium (or in a borehole)
 in 3D. However, in order to simplify image reconstruction,
 the medium properties are assumed to be constant in
@@ -16,11 +16,31 @@ Thus, the <i>z</i> direction is part of the forward
 model, but not the inverse. It is thus "half" a 
 dimension.
 
+<h3>Fourier Approximation</h3>
+
 <p>
-This tutorial shows how to do this as a application
-of coarse/fine mapping, where the a fine (high density)
-forward model is used with a coarse (low density) 
-inverse model.
+The 2&frac12;D is typically built by constructing a 2D forward model and
+approximating the effect of the additional <i>z</i> direction through a
+summation of Fourier transform coefficients.
+Depending on the formulation, the Fourier summation may represent a finite
+region on either (for example, a cylinder) or an infinitely large region (for
+example, a half-space).
+Course/fine mapping can be applied on top of this to give a fine 2D forward model and a coarse 2D inverse model.
+The electrodes must all be at the <i>z</i>=0 plane.
+</p>
+
+<p>
+For an explanation of the formulation, see<br/>
+<ul>
+Modelling with 2.5D Approximations,
+Alistair Boyle, Andy Adler,
+17th Conference on Electrical Impedance Tomography, Stockholm, Sweden, June 19-23, 2016. 
+</ul></p>
+
+<p>Generally, the formulation used in geophysics uses Point Electrodes Models
+(PEM). Here we use the Complete Electrode Model (CEM) in the <i>x</i> and
+<i>y</i> directions, and the PEM in the <i>z</i> direction.
+
 <pre>
 [% PROCESS "two_and_half_d01.m" %]
 </pre>
@@ -28,18 +48,24 @@ inverse model.
 <center>
 <img src="two_and_half_d01a.png">
 <br><i> Figure:</i>
-<i>Left</i> fine (3d) model,
+<i>Left</i> fine (2d) model,
 <i>Right</i> coarse (2d) model
 </center>
 
-<h3> Image reconstruction </h3>
 
 First, show the simulated target and
-the reconstruction on the fine (<i>inverse crime</i>)
-mesh.
+the reconstruction on the (<i>inverse crime</i>)
+meshes. We check that the mapping is correct.
 <pre>
 [% PROCESS "two_and_half_d02.m" %]
 </pre>
+<center>
+<img src="two_and_half_d02a.png">
+<br><i> Figure:</i>
+<i>Left</i> coarse model
+<i>Centre</i> coarse data mapped to fine model
+<i>Right</i> fine model
+</center>
 
 Next, create geometries for the fine and
 coarse mesh. 
@@ -53,12 +79,60 @@ all cases)
 [% PROCESS "two_and_half_d03.m" %]
 </pre>
 
+<center>
+<img src="two_and_half_d03a.png">
+<br><i> Figure:</i>
+<i>Left</i> original model
+<i>Centre</i> 2d reconstruction
+<i>Right</i>  2&frac12; reconstruction onto coarse model
+</center>
+
+<h3>2D + 3D = 2.5D</h3>
+
+<p>
+The 2&frac12;D can also be built as an application
+of coarse/fine mapping, where the fine (high density)
+3D forward model is used with a coarse (low density) 
+2D inverse model.
+The 2D model is projected through the 3D model giving constant conductivity
+along the axis of the projection.
+<pre>
+[% PROCESS "two_and_half_d04.m" %]
+</pre>
+
+<center>
+<img src="two_and_half_d04a.png">
+<br><i> Figure:</i>
+<i>Left</i> fine (3d) model,
+<i>Right</i> coarse (2d) model
+</center>
+
+
+First, show the simulated target and
+the reconstruction on the fine (<i>inverse crime</i>)
+mesh.
+<pre>
+[% PROCESS "two_and_half_d05.m" %]
+</pre>
+
+Next, create geometries for the fine and
+coarse mesh. 
+Images are reconstructed by calling the
+<tt>coase_fine_solver</tt> function rather
+than the original. (<i>Note</i> this function
+still needs some work, it doesn't account for
+all cases)
+
+<pre>
+[% PROCESS "two_and_half_d06.m" %]
+</pre>
+
 Note the reconstructed image on the coarse
 mesh is extruded into 2D, as the assumptions
 require.
 
 <center>
-<img src="two_and_half_d03a.png">
+<img src="two_and_half_d06a.png">
 <br><i> Figure:</i>
 <i>Left</i> original (3d) model
 <i>Centre left</i> fine (3d) reconstruction
