@@ -10,11 +10,18 @@ function J= np_calc_jacobian( fwd_model, img)
 
 warning('EIDORS:deprecated','NP_CALC_JACOBIAN is deprecated as of 07-Jun-2012. Use CALC_JACOBIAN_ADJOINT instead.');
 
+if nargin==1 % normal way to call
+   img = fwd_model;
+   fwd_model = img.fwd_model;
+else
+   img.fwd_model = fwd_model; %force use of supplied fwd_model
+end
+
 p= np_fwd_parameters( fwd_model );
 
-s_mat= calc_system_mat( fwd_model, img );
+s_mat= calc_system_mat( img );
 
-v_f = np_calc_3d_fields( fwd_model, img );
+v_f = np_calc_3d_fields( img );
 
 tol = 1e-5; %tolerance for the forward solver
 
