@@ -6,52 +6,56 @@ if nargin>0 && strcmp(opt,'UNIT_TEST'); do_unit_test; return; end
 
 resistor_test;
 
+function img = this_mdl(conduc, z_contact, current);
+   nn= 12;     % number of nodes
+   ww=3;       % width = 4
+   scale = .35;
+   mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
+   mdl= rmfield(mdl,'coarse2fine'); % don't calc this.
+
+   mdl.gnd_node = 1;
+   elec_nodes= [1:ww];
+   elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
+   elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
+   stim.stim_pattern= [-1;1]*current;
+   stim.meas_pattern= [-1,1];
+   mdl.stimulation= stim;
+   mdl.electrode= elec;
+   n_el = size(mdl.elems,1);
+   img= eidors_obj('image','2D rectangle', ...
+         'elem_data', ones(n_el,1) * conduc );
+   img.fwd_model = mdl;
+
 function vals = resistor_test;
 
-nn= 12;     % number of nodes
-ww=3;       % width = 4
-if ~exist('conduc');conduc=  .4;end  % conductivity in Ohm-meters
-current= 4;  % Amps
-z_contact= 1e-1;
-scale = .35;
-mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
-mdl= rmfield(mdl,'coarse2fine'); % don't calc this.
+   current= 4;  % Amps
+   conduc=  .4; % conductivity in Ohm-meters
+   z_contact= 1e-1;
+   img = this_mdl( conduc, z_contact, current);
 
-mdl.gnd_node = 1;
-elec_nodes= [1:ww];
-elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
-elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
-stim.stim_pattern= [-1;1]*current;
-stim.meas_pattern= [-1,1];
-mdl.stimulation= stim;
-mdl.electrode= elec;
-show_fem(mdl);
-n_el = size(mdl.elems,1);
-img= eidors_obj('image','2D rectangle', ...
-      'elem_data', ones(n_el,1) * conduc );
+   show_fem(img.fwd_model);
 
-% analytical solution
-wid_len= max(mdl.nodes) - min(mdl.nodes) 
-Block_R = wid_len(2) / wid_len(1) / conduc;
-% Contact R reflects z_contact / width. There is no need to scale
-%  by the scale, since this is already reflected in the size of the
-%  FEM as created by the grid. This is different to the test_3d_resistor,
-%  where the FEM is created first, and then scaled, so that the ww
-%  and hh need to be scaled by the scale parameter.
-Contact_R = z_contact/wid_len(1);
-R = Block_R + 2*Contact_R;
+   % analytical solution
+   nodes = img.fwd_model.nodes;
+   wid_len= max(nodes) - min(nodes);
+   Block_R = wid_len(2) / wid_len(1) / conduc;
+   % Contact R reflects z_contact / width. There is no need to scale
+   %  by the scale, since this is already reflected in the size of the
+   %  FEM as created by the grid. This is different to the test_3d_resistor,
+   %  where the FEM is created first, and then scaled, so that the ww
+   %  and hh need to be scaled by the scale parameter.
+   Contact_R = z_contact/wid_len(1);
+   R = Block_R + 2*Contact_R;
 
-V= current*R;
-fprintf('Solver %s: %f\n', 'analytic', V);
-fprintf('Solver %s: %f\n', 'analytic (no z_contact)', V - 2*Contact_R*current);
-vals.analytic = V;
-show_fem(mdl)
+   V= current*R;
+   fprintf('Solver %s: %f\n', 'analytic', V);
+   fprintf('Solver %s: %f\n', 'analytic (no z_contact)', V - 2*Contact_R*current);
+   vals.analytic = V;
 
 % AA_SOLVER
-mdl.solve = @fwd_solve_1st_order;
-mdl.system_mat = @system_mat_1st_order;
-mdl.normalize_measurements = 0;
-img.fwd_model = mdl;
+img.fwd_model.solve = @fwd_solve_1st_order;
+img.fwd_model.system_mat = @system_mat_1st_order;
+img.fwd_model.normalize_measurements = 0;
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 vals.aa_solver = fsol.meas;
@@ -61,28 +65,26 @@ warning('off','EIDORS:Deprecated');
 
 
 % NP_SOLVER
-mdl.solve = @np_fwd_solve;
-mdl.system_mat = @np_calc_system_mat;
-img.fwd_model = mdl;
+img.fwd_model.solve = @np_fwd_solve;
+img.fwd_model.system_mat = @np_calc_system_mat;
 fsol= fwd_solve(img);
 fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
 vals.np_solver = fsol.meas;
 
 % NOW CALCULATE THE ANALYTICAL JACOBIAN
-mdl.solve = @np_fwd_solve;
-mdl.jacobian = @np_calc_jacobian;
+img.fwd_model.solve = @np_fwd_solve;
+img.fwd_model.jacobian = @np_calc_jacobian;
 
-img.fwd_model = mdl;
-img.elem_data= ones(n_el,1) * conduc ;
+img.elem_data= ones(num_elems(img),1) * conduc ;
 Jnp= calc_jacobian(img);
 
-mdl.jacobian = @jacobian_perturb;
+img.fwd_model.jacobian = @jacobian_perturb;
 Jp1= calc_jacobian(img);
 
-img.elem_data= ones(n_el,1) * conduc ;
+img.elem_data= ones(num_elems(img),1) * conduc ;
 Jp2= zeros(size(Jnp));
 delta= 1e-8;
-for i=1:n_el
+for i=1:num_elems(img)
    fsol_h= fwd_solve(img);
    img.elem_data(i) = img.elem_data(i) + delta;
    fsol_i= fwd_solve(img);
