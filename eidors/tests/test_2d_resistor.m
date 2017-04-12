@@ -25,6 +25,7 @@ function img = this_mdl(conduc, z_contact, current);
    img= eidors_obj('image','2D rectangle', ...
          'elem_data', ones(n_el,1) * conduc );
    img.fwd_model = mdl;
+   img.fwd_model.normalize_measurements = 0;
 
 function V = analytic_soln(img);
    % analytical solution
@@ -46,6 +47,14 @@ function V = analytic_soln(img);
    fprintf('Solver %s: %f\n', 'analytic', V);
    fprintf('Solver %s: %f\n', 'analytic (no z_contact)', V - 2*Contact_R*current);
 
+function V = first_order_solver( img );
+   % AA_SOLVER
+   img.fwd_model.solve = @fwd_solve_1st_order;
+   img.fwd_model.system_mat = @system_mat_1st_order;
+   fsol= fwd_solve(img);
+   fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
+   V = fsol.meas;
+
 function vals = resistor_test;
 
    current= 4;  % Amps
@@ -58,12 +67,7 @@ function vals = resistor_test;
    vals.analytic = analytic_soln(img);
 
 % AA_SOLVER
-img.fwd_model.solve = @fwd_solve_1st_order;
-img.fwd_model.system_mat = @system_mat_1st_order;
-img.fwd_model.normalize_measurements = 0;
-fsol= fwd_solve(img);
-fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
-vals.aa_solver = fsol.meas;
+   vals.aa_solver = first_order_solver(img);
 
 warn_state = warning('query','EIDORS:Deprecated');
 warning('off','EIDORS:Deprecated');
