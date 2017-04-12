@@ -55,6 +55,16 @@ function V = first_order_solver( img );
    fprintf('Solver %s: %f\n', fsol.name, fsol.meas);
    V = fsol.meas;
 
+function vals = RC_test;
+
+   current= 4;  % Amps
+   conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
+   z_contact= 1e-1;
+   img = this_mdl( conduc, z_contact, current);
+
+   vals.analytic = analytic_soln(img);
+   vals.aa_solver = first_order_solver(img);
+
 function vals = resistor_test;
 
    current= 4;  % Amps
@@ -171,4 +181,8 @@ function do_unit_test
 
   unit_test_cmp('Analytic vs AA', vals.analytic, vals.aa_solver, 1e-10);
   unit_test_cmp('Analytic vs NP', vals.analytic, vals.np_solver, 1e-10);
+
+  vals = RC_test;
+
+  unit_test_cmp('Analytic vs AA', vals.analytic, vals.aa_solver, 1e-10);
 
