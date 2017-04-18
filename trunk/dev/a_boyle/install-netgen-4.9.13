@@ -1,8 +1,7 @@
 #! /bin/bash
 
-# local install
-SRCDIR=~/netgen-update
-INSTDIR=~/netgen-update
+echo "last tested: 2017-04-18 with Ubuntu xenial 16.04.2 LTS"
+echo "run $(date)"
 
 
 SFDL=https://sourceforge.net/projects
@@ -15,7 +14,14 @@ TIXVER=8.4.3
 # Togl
 TOGLVER=1.7
 #NetGen version
-NGVER=4.9.13
+NGVER=$(basename $0)
+NGVER=${VER##*-}
+echo "netgen install version: $VER"
+# local install
+SRCDIR=${SRCDIR:-~/netgen-${VER}-src}
+INSTDIR=${INSTDIR:-~/netgen-${VER}}
+
+
 
 # TK version should probably match TCL version
 TKVER=${TCLVER}
@@ -129,5 +135,6 @@ LD_LIBRARY_PATH=\$L NETGENDIR=\$D \$D/netgen-exec \$*
 " > ${INSTDIR}/bin/netgen
 chmod +x ${INSTDIR}/bin/netgen
 
+echo "completed $(date)"
 echo "run netgen with '${INSTDIR}/bin/netgen'"
 
