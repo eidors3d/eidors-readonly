@@ -1,0 +1,186 @@
+#! /bin/bash
+
+echo "last tested: 2017-04-18 with Ubuntu xenial 16.04.2 LTS, also Gentoo Linux"
+echo "run $(date)"
+
+
+SFDL=https://sourceforge.net/projects
+
+# versions to install
+# TCL
+TCLVER=8.6.6
+# Tix
+TIXVER=8.4.3
+# Togl
+TOGLVER=1.7
+#NetGen version
+NGVER=$(basename $0)
+NGVER=${NGVER##*-}
+NGVER2=${NGVER%\.*}
+echo "netgen install version: ${NGVER} -> ${NGVER2}"
+# local install
+SRCDIR=${SRCDIR:-${HOME}/netgen-${NGVER}-src}
+INSTDIR=${INSTDIR:-${HOME}/netgen-${NGVER}}
+
+
+
+# TK version should probably match TCL version
+TKVER=${TCLVER}
+
+CFLAGS="$CFLAGS -I${INSTDIR}/include"
+CPPFLAGS="$CPPFLAGS ${CFLAGS}"
+
+function err() {
+  echo "$(basename $0) ERROR: $1"
+  exit 1
+}
+
+set -e
+set -x
+# make working directories if they don't exist
+mkdir -p ${SRCDIR}
+mkdir -p ${INSTDIR}
+export PATH="${INSTDIR}/bin:${PATH}"
+
+# get files
+cd ${SRCDIR}
+[ -f tcl${TCLVER}-src.tar.gz ] || wget ${SFDL}/tcl/files/tcl${TCLVER}-src.tar.gz
+[ -f tk${TKVER}-src.tar.gz ]   || wget ${SFDL}/tcl/files/tk${TKVER}-src.tar.gz
+[ -f Tix${TIXVER}-src.tar.gz ] || wget ${SFDL}/tix/files/tix/${TIXVER}/Tix${TIXVER}-src.tar.gz
+[ -f Togl-${TOGLVER}.tar.gz ]  || wget ${SFDL}/togl/files/Togl/${TOGLVER}/Togl-${TOGLVER}.tar.gz
+[ -f netgen-${NGVER}.tar.gz ]  || wget ${SFDL}/netgen-mesher/files/netgen-mesher/${NGVER2}/netgen-${NGVER}.tar.gz
+
+# unpack files
+tar zxvf tcl${TCLVER}-src.tar.gz > /dev/null
+tar zxvf tk${TKVER}-src.tar.gz > /dev/null
+tar zxvf Tix${TIXVER}-src.tar.gz > /dev/null
+tar zxvf Togl-${TOGLVER}.tar.gz > /dev/null
+tar zxvf netgen-${NGVER}.tar.gz > /dev/null
+
+# build tcl
+cd ${SRCDIR}/tcl${TCLVER}/unix
+./configure --prefix=${INSTDIR} --enable-threads --enable-shared --enable-64bit
+make
+make install
+
+# build tk
+cd ${SRCDIR}/tk${TKVER}/unix
+./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --enable-threads --enable-shared --enable-64bit
+make
+make install
+
+# build tix
+cd ${SRCDIR}/Tix${TIXVER}
+cat > tix-8.4.3-tcl8.6.patch << EOF
+--- a/generic/tixGrSort.c
++++ b/generic/tixGrSort.c
+@@ -447,8 +447,8 @@ SortCompareProc(first, second)
+ 	 * Parse the result of the command.
+ 	 */
+ 
+-	order = strtol(sortInterp->result, &end, 0);
+-	if ((end == sortInterp->result) || (*end != 0)) {
++	order = strtol(Tcl_GetStringResult(sortInterp), &end, 0);
++	if ((end == Tcl_GetStringResult(sortInterp)) || (*end != 0)) {
+ 	    Tcl_ResetResult(sortInterp);
+ 	    Tcl_AppendResult(sortInterp,
+ 		    "comparison command returned non-numeric result",
+EOF
+patch -p1 < tix-8.4.3-tcl8.6.patch
+./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib --enable-threads --enable-shared --enable-64bit
+make
+make install
+
+
+# build Togl
+cd ${SRCDIR}/Togl-${TOGLVER}
+./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib  --enable-threads --enable-shared --enable-64bit
+make
+make install
+
+ln -s ${INSTDIR}/lib/Togl${TOGLVER}/libTogl${TOGLVER}.so ${INSTDIR}/lib/libTogl${TOGLVER}.so
+ln -s ${INSTDIR}/lib/libTogl${TOGLVER}.so                ${INSTDIR}/lib/libTogl.so
+
+# build NetGen
+cd ${SRCDIR}/netgen-${NGVER}
+
+cat > netgen-5.3-gui.patch  << EOF
+--- /ng/drawing.tcl	2017-02-09 00:36:23.536565464 -0500
++++ /ng/drawing.tcl	2017-02-09 00:35:35.137284947 -0500
+@@ -11,7 +11,7 @@
+ # use this one for Togl 2.0
+ # if {[catch {togl .ndraw -width 400 -height 300  -rgba true -double true -depth true -privatecmap false -stereo false -indirect true -create init  -display draw -reshape reshape  }] } {    
+ 
+-if {[catch {togl .ndraw -width 400 -height 300  -rgba true -double true -depth true -privatecmap false -stereo false -indirect true }] } {    puts "no OpenGL" 
++if {[catch {togl .ndraw -width 400 -height 300  -rgba true -double true -depth true -privatecmap false -stereo false -indirect false }] } {    puts "no OpenGL" 
+ } {
+     #
+     pack .ndraw -expand true -fill both -padx 10 -pady 10
+EOF
+patch -p1 < netgen-5.3-gui.patch
+
+cat > netgen-5.3-opencascade.patch << EOF
+--- /libsrc/occ/occgeom.hpp	2017-02-09 01:34:38.172433886 -0500
++++ /libsrc/occ/occgeom.hpp	2017-02-09 01:34:45.283479486 -0500
+@@ -385,7 +385,7 @@
+       void GetNotDrawableFaces (stringstream & str);
+       bool ErrorInSurfaceMeshing ();
+ 
+-     void WriteOCC_STL(char * filename);
++//     void WriteOCC_STL(char * filename);
+ 
+      virtual int GenerateMesh (Mesh*& mesh, MeshingParameters & mparam, 
+          int perfstepsstart, int perfstepsend);
+--- /libsrc/occ/occgeom.cpp	2017-02-09 01:34:58.975567262 -0500
++++ /libsrc/occ/occgeom.cpp	2017-02-09 01:35:15.709674497 -0500
+@@ -1033,7 +1033,7 @@
+ 
+ 
+ 
+-
++#if 0
+    void OCCGeometry :: WriteOCC_STL(char * filename)
+    {
+       cout << "writing stl..."; cout.flush();
+@@ -1045,7 +1045,7 @@
+ 
+       cout << "done" << endl;
+    }
+-
++#endif
+ 
+ 
+    // Philippose - 23/02/2009
+EOF
+patch -p1 < netgen-5.3-opencascade.patch
+
+CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} ./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib --with-togl=${INSTDIR}/lib --with-tclinclude=${INSTDIR}/include
+make
+make install
+
+# clean up
+cd
+rm -rf "${SRCDIR}/tcl${TCLVER}"
+rm -rf "${SRCDIR}/tk${TKVER}"
+rm -rf "${SRCDIR}/Tix${TIXVER}"
+rm -rf "${SRCDIR}/Togl-${TOGLVER}"
+rm -rf "${SRCDIR}/netgen-${NGVER}"
+cp "$0" "${SRCDIR}"
+
+# fix path issues
+mv ${INSTDIR}/bin/netgen ${INSTDIR}/bin/netgen-exec
+echo "#! /bin/sh
+D=${INSTDIR}/bin
+L=${INSTDIR}/lib
+PATH="\$D:\$PATH" LD_LIBRARY_PATH=\$L NETGENDIR=\$D \$D/netgen-exec \$*
+" > ${INSTDIR}/bin/netgen
+chmod +x ${INSTDIR}/bin/netgen
+
+set +x
+set +e
+
+cat <<EOF
+compile completed $(date)
+
+run netgen with '${INSTDIR}/bin/netgen'
+EOF
