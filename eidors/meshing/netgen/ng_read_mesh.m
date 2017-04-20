@@ -28,18 +28,28 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % $Id$
 % (C) 2002-2012 (C) Licenced under the GPL
 
-eidors_msg('ng_read_mesh',3);
+eidors_msg(['ng_read_mesh ' filename],3);
 
+orig = filename;
+if strcmp(filename(end-2:end),'.gz')
+   if ~isunix
+       error(['can''t ungzip ' filename ' unless system is unix']);
+   end
+   filename = filename(1:end-3);
+   system(['gunzip -c ' orig ' > ' filename]);
+end
 
 fid = fopen(filename,'r');
 while 1
     tline = fgetl(fid);
     if ~ischar(tline); fclose(fid); break; end
 
-    if     strcmp(tline,'surfaceelementsgi')
+    if     strcmp(tline,'surfaceelementsgi') % netgen-4.x
        se= get_lines_with_numbers( fid, 11);
-    elseif strcmp(tline,'surfaceelements'); % NEW NETGEN VERSION
+    elseif strcmp(tline,'surfaceelements'); % netgen-5.x
        se= get_lines_with_numbers( fid, 8);
+    elseif strcmp(tline,'surfaceelementsuv'); % netgen-6.x
+       se= get_lines_with_numbers( fid, 14);
     elseif strcmp(tline,'volumeelements')
        ve= get_lines_with_numbers( fid, 6);
     elseif strcmp(tline,'edgesegmentsgi2')
@@ -49,6 +59,9 @@ while 1
     end
 end
 
+if strcmp(orig(end-2:end),'.gz')
+   system(['rm -f ' filename]);
+end
 
 srf = se(:,6:8);
 fc = se(:,1);
