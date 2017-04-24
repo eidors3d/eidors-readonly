@@ -61,6 +61,9 @@ function [dmat,opt] = distmat(xy,varargin)
 if nargin<1 || nargin>2;
    error('Call distmat with 1 or 2 args');
 end
+if ischar(xy) && strcmp(xy,'UNIT_TEST'); do_unit_test; return; end
+
+
 [n,dims] = size(xy);
 numels = n*n*dims;
 opt = 2; if numels > 5e4, opt = 3; elseif n < 20, opt = 1; end
@@ -93,3 +96,14 @@ switch opt
         b = a(ones(n,1),:);
         dmat = reshape(sqrt(sum((xy(b,:) - xy(b',:)).^2,2)),n,n);
 end
+
+function do_unit_test
+   a = 1:3; b=4:6;
+   xy= [a;b];
+   out = norm(a-b)*(1-eye(2));
+   unit_test_cmp('distmat 0', distmat(xy), out, 1e-14); 
+   unit_test_cmp('distmat 1', distmat(xy,1), out, 1e-14); 
+   unit_test_cmp('distmat 2', distmat(xy,2), out, 1e-14); 
+   unit_test_cmp('distmat 3', distmat(xy,3), out, 1e-14); 
+   unit_test_cmp('distmat 4', distmat(xy,4), out, 1e-14); 
+
