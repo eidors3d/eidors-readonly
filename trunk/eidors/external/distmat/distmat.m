@@ -58,10 +58,8 @@ function [dmat,opt] = distmat(xy,varargin)
 % Release Date: 5/29/07
 
 % process inputs
-if verLessThan('matlab','7.13')
-   error(nargchk(1,2,nargin));
-else
-   narginchk(1,2);
+if nargin<1 || nargin>2;
+   error('Call distmat with 1 or 2 args');
 end
 [n,dims] = size(xy);
 numels = n*n*dims;
