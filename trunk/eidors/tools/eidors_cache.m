@@ -116,7 +116,7 @@ function varargout=eidors_cache( command, varargin )
 %      to clear old variables
 %      to clear specific parts of structures
 
-if nargin==1 && isstr(command) && strcmp(command,'UNIT_TEST');
+if nargin==1 && ischar(command) && strcmp(command,'UNIT_TEST');
       do_unit_test; return; end
 
 global eidors_objects;

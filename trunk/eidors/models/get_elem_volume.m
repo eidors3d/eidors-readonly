@@ -10,7 +10,7 @@ function VOL = get_elem_volume( fwd_model, map_node )
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 switch fwd_model.type
   case 'fwd_model'; % do nothing, we're ok
