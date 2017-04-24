@@ -10,7 +10,7 @@ working these fields.
 <H3>Requirements</H3>
 <ul>
 <li> <a href="http://www.matlab.com">Matlab</a> (&ge;2008a or 7.6) or
-     <a href="http://www.octave.org">Octave</a> (&ge;3.6),
+     <a href="http://www.octave.org">Octave</a> (&ge;4.0),
 <li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional),
 (Direct link to 
 <a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.3/">Netgen 5.3</a>)
