@@ -75,7 +75,7 @@ function caller = get_caller(s)
     if length(caller) >= 15 && strcmp(caller(end-14:end),'cache_shorthand')
         caller = s(4).name;
     end
-    caller = octave_caller(caller);
+%   caller = octave_caller(caller);
     
 function caller = octave_caller(caller)
     if exist('OCTAVE_VERSION')
@@ -142,4 +142,4 @@ unit_test_cmp('dut2', val, 6);
 
 name = eidors_default('get','do_unit_test');
 unit_test_cmp('dut3', name, 'test_def');
-%delete('test_def.m');
+delete('test_def.m');
