@@ -14,6 +14,7 @@ v0e=v0.meas; v0all=v0.volt;
 %Change default eidors solvers
 fmdl.solve = @fwd_solve_higher_order;
 fmdl.system_mat = @system_mat_higher_order;
+fmdl.jacobian = @jacobian_adjoint_higher_order;
 
 %Add element type
 fmdl.approx_type    = 'tri3'; % linear
