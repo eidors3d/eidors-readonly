@@ -2,9 +2,12 @@ function show_slices_move( img, move, move_scale )
 % SHOW_SLICES_MOVE   Shows planar slices of a 3D FEM with movement vectors
 % if electrodes are visible on the slice.
 % Args:     img  - eidors_obj type image
-%           move - new position vectors for nodes [x,y,z] after movement 
+%           move - change in  position vectors for nodes [x,y,z] after movement 
 
 % $Id$
+
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
 
 num_levs = 3;
 
@@ -85,10 +88,31 @@ function hh= working_quiver( varargin )
 % quiver function which you can't call properly with different
 % versions of matlab.
 
-v = version;
-octave = exist('OCTAVE_VERSION') | str2num(v(1)) < 7;
-if octave
-    hh = quiver( varargin{:} );
-else
-    hh = quiver('v6', varargin{:} );
-end
+% Unfortunately, the idea of using 'v6' is now a warning.
+% We can't do too many version checks, giving up!
+
+hh = quiver( varargin{:} );
+
+%   v = version;
+%   octave = exist('OCTAVE_VERSION')
+%   if octave
+%       hh = quiver( varargin{:} );
+%   else
+%       hh = quiver('v6', varargin{:} );
+%   end
+
+
+function do_unit_test
+   subplot(221);
+   img = mk_image( mk_common_model('n3r2',[16,2]) );
+   show_slices_move(img);
+
+   subplot(222);
+   for i=1:length(img.fwd_model.electrode)
+     e_node = img.fwd_model.electrode(i).nodes;
+     move(i,:) = 0.01*mean( img.fwd_model.nodes(e_node,:),1);
+   end
+   show_slices_move(img,move);
+
+   subplot(223);
+   show_slices_move(img,move, 1000);
