@@ -11,7 +11,7 @@ function J= jacobian_adjoint( fwd_model, img)
 
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: jacobian_adjoint.m 4653 2015-01-11 08:54:47Z nolwenn85 $
+% $Id$
 
 if nargin == 1
    img= fwd_model;

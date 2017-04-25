@@ -20,7 +20,7 @@ function Reg= prior_laplace( inv_model )
 % for the element itself
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: prior_laplace.m 5112 2015-06-14 13:00:41Z aadler $
+% $Id$
 
 if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 

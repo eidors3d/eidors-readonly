@@ -45,7 +45,7 @@ function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
 % See also MK_C2F_CIRC_MAPPING
 
 % (C) 2007-2012 Andy Adler. License: GPL version 2 or version 3
-% $Id: mk_approx_c2f.m 5289 2016-11-02 08:43:12Z fab-b $
+% $Id$
 
 if ischar(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
 

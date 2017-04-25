@@ -11,7 +11,7 @@ function [V] = left_divide(E,I,tol,pp,V)
 % pp,V are old options from previous solver
 
 % (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL
-% $Id: left_divide.m 5169 2016-01-28 20:24:42Z alistair_boyle $
+% $Id$
 
 if ~exist('tol'); tol = 1e-8; end
 
