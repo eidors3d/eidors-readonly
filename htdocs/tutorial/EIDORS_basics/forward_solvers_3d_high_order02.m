@@ -4,7 +4,7 @@ img1n = rmfield(img1,'elem_data');
 img1n.node_data = v1all(1:size(fmdl.nodes,1),1); %add first stim data
 
 %Plot the distribution
-figure; subplot(121); show_slices(img1n,[inf,inf,2.5]);
+subplot(121); show_slices(img1n,[inf,inf,2.5]);
 eidors_colourbar(img1n);
 
 %Get internal voltage distribution for difference eidors/high order

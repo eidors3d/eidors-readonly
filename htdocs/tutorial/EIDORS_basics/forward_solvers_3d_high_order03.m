@@ -7,7 +7,7 @@ v2 = fwd_solve(img2);
 v2e=v2.meas; v2all=v2.volt;
 
 %Electrode voltages and difference for linear, quadratic and cubic
-figure; plot([v1e,v2e,[v2e-v0e]*1]);
+subplot(211); plot([v1e,v2e,[v2e-v0e]*1]);
 legend('1','2','(2-0) x 10','Location','NorthEast')
 xlim([1,100]);
 
