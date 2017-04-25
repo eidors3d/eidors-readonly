@@ -21,7 +21,7 @@ echo "netgen install version: ${NGVER} -> ${NGVER2}"
 # local install
 SRCDIR=${SRCDIR:-${HOME}/netgen-${NGVER}-src}
 INSTDIR=${INSTDIR:-${HOME}/netgen-${NGVER}}
-
+echo "SRCDIR=$SRCDIR   INSTDIR=$INSTDIR"
 
 
 # TK version should probably match TCL version
@@ -32,7 +32,8 @@ CPPFLAGS="$CPPFLAGS ${CFLAGS}"
 
 function err() {
   echo "$(basename $0) ERROR: $1"
-  exit 1
+  return
+# exit 1
 }
 
 set -e

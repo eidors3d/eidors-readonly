@@ -1,3 +1,4 @@
+ - allow solving on the image with multiple elements
  - debug calc_R_prior UNIT_TEST (ichol doesn't give a good estimate, also not posdef)
     
  - lookfor fminsearch_octave and see if current version still needs it.
