@@ -58,7 +58,20 @@ The electrode voltages for linear and quadratic approximation. The linear approx
 <center>
 <img src="forward_solvers_3d_high_order04a.png">
 <br><i> Figure:</i>
-The plot illustrates the difference between linear and quadratic approximation on the internal voltage distribution.
+Images of the linear (left) and the difference between linear and quadratic approximation (right) on the internal voltage distribution.
+</center>
+
+<pre>
+[% PROCESS "forward_solvers_3d_high_order05.m" %]
+</pre>
+
+<center>
+<img src="forward_solvers_3d_high_order05a.png">
+<br><i> Figure:</i>
+Images of a slice of the jacobian matrix:
+(upper row, left to right) 1st order (default solver), 1st order, 2nd order.
+(lower row, left to right) differences between upper solver and default.
+
 </center>
 
 
