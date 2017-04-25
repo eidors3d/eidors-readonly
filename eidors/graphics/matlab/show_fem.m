@@ -175,10 +175,6 @@ function hh= show_2d(img,mdl,opts)
      % 2012, none of this compensation code works any more. We
      % don't really understand what to do anymore, but this
      % seems best, for now ...
-    % if ~exist('OCTAVE_VERSION')
-    %    drawnow; colorbar('delete');
-    %    colours= calc_colours(img, [], opts.do_colourbar);
-    % end
    end
    if ~ishold
       fix_axis
@@ -447,13 +443,6 @@ function hh=show_2d_fem( mdl, colours, imgno )
   elseif size(colours,1) == num_elems(mdl);
      colours = squeeze(colours(:,imgno,:));
 
-% THE OCTAVE GNUPLOT INTERPRETER HAS BUGS - recommend FLTK
-%    ver= eidors_obj('interpreter_version');
-% 
-%    if ver.isoctave && size(colours,2)==1 %% Octave bug on CDataMapping
-%       colours = colours /(2*calc_colours('mapped_colour')+1);     
-%    end
-
      hh= patch('Faces',mdl.elems,'Vertices',mdl.nodes, 'facecolor','flat', ...
                'facevertexcdata',colours,'CDataMapping','direct'); 
   elseif size(colours,1) == num_nodes(mdl);
@@ -660,7 +649,6 @@ if ~ver.isoctave
 
    subplot(3,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
    title('with edge colours');
-
 end
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2]));
