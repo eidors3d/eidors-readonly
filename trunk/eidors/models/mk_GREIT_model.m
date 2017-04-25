@@ -163,12 +163,7 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
     if  log_level > 1
        log_level = eidors_msg( 'log_level', 1); % suppress messages
     end
-    if exist('OCTAVE_VERSION')
-       % octave doesn't currently (2013 Apr) include an fminsearch function
-       [weight, NF] = fminsearch_octave(f, weight,fms_opts);
-    else
-       [weight, NF] = fminsearch(f, weight,fms_opts);
-    end
+    [weight, NF] = fminsearch(f, weight,fms_opts);
     eidors_msg(['mk_GREIT_model: Optimal solution gives ', NoisPerfName, '=' ... 
         num2str(NF+target) ' with weight=' num2str(weight)],1);
     assert((sqrt(NF) / target) < 0.01, ...
