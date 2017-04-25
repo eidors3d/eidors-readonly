@@ -58,6 +58,7 @@ The electrode voltages for linear, quadratic and cubic approximation. The linear
 <img src="forward_solvers_2d_high_order04a.png">
 <br><i> Figure:</i>
 The left plot shows the difference between linear and quadratic approximation on the internal voltage distribution and the right plot shows the difference between linear and cubic approximation.
+The lower row shows a zoom into the upper plot
 </center>
 
 

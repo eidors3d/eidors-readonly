@@ -14,8 +14,8 @@ v3 = fwd_solve(img3);
 v3e=v3.meas; v3all=v3.volt;
 
 %Electrode voltages and difference for linear, quadratic and cubic
-clf;subplot(211); plot([v1e,v2e,v3e,[v2e-v0e,v3e-v0e]*10]);
-legend('1','2','3','(2-0) x 10','(3-0) x 10')
+clf;subplot(211); plot([v1e,v2e,v3e,[v2e-v0e,v3e-v0e,v2e-v3e]*10]);
+legend('1st order','2nd order','3rd order','(2-1) x 10','(3-1) x 10','(3-2) x 10')
 xlim([1,100]);
 
 print_convert forward_solvers_2d_high_order03a.png
