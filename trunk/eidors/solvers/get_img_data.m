@@ -26,19 +26,25 @@ if ~isfield(img,'elem_data')
    img = data_mapper(img);
 end
 
-if isfield(img,'elem_data')
-   try 
-      img_data= [img.elem_data(:,img.get_img_data.frame_select)];
-   catch
-      % concatenate img.elem_data for each img
-      img_data= [img.elem_data];
+if isfield(img(1),'elem_data')
+   for i=1:length(img(:))
+      try 
+         img_data{i}= [img(i).elem_data(:,img(i).get_img_data.frame_select)];
+      catch
+         % concatenate img.elem_data for each img
+         img_data{i}= [img(i).elem_data];
+      end
    end
+   img_data = [img_data{:}];
 elseif isfield(img,'node_data')
-   try 
-      img_data= [img.node_data(:,img.get_img_data.frame_select)];
-   catch
-      img_data= [img.node_data];
+   for i=1:length(img(:))
+      try 
+         img_data{i}= [img(i).node_data(:,img(i).get_img_data.frame_select)];
+      catch
+         img_data{i}= [img(i).node_data];
+      end
    end
+   img_data = [img_data{:}];
 else
    error('No field elem_data or node_data found on img');
 end
@@ -78,17 +84,29 @@ function do_unit_test
 
    imgk = img; imgk.elem_data = img.elem_data*[1,2];
    imgk.get_img_data.frame_select = 2;
-   unit_test_cmp('elem_07', get_img_data(imgk), 2*ones(64,1) )
+   unit_test_cmp('elem_06', get_img_data(imgk), 2*ones(64,1) )
    % TODO: This fails because we need a loop in the test function.
    %   Lookup whether this can be vectorized in matlab
 
    imgk(2) = imgk(1); imgk(2).elem_data = img.elem_data*[3,4];
    imgk(2).get_img_data.frame_select = 2;
-   unit_test_cmp('elem_06', get_img_data(imgk), 2*ones(64,1) )
+   unit_test_cmp('elem_07', get_img_data(imgk), ones(64,1)*[2,4] )
+   imgk(2).get_img_data.frame_select = 1:2;
+   unit_test_cmp('elem_08', get_img_data(imgk), ones(64,1)*[2,3,4] )
 
-   nd =ones(size(img.fwd_model.nodes,1),1);
+   nd =ones(num_nodes(img),1);
    imgn = rmfield(img,'elem_data'); imgn.node_data=nd;
    unit_test_cmp('node_01', get_img_data(imgn), nd)
+
+   imgn.node_data = nd*[3,4,5];
+   unit_test_cmp('node_02', get_img_data(imgn), nd*[3,4,5]);
+   imgn(2) = imgn;
+   unit_test_cmp('node_03', get_img_data(imgn), nd*[3,4,5,3,4,5]);
+   imgn(1).get_img_data.frame_select = 1;
+   unit_test_cmp('node_04', get_img_data(imgn), nd*[3,3,4,5]);
+   imgn(2).get_img_data.frame_select = 3;
+   unit_test_cmp('node_05', get_img_data(imgn), nd*[3,5]);
+   
 
    i2 = mk_common_model('b2c0',8); fmdl2= i2.fwd_model;
    c2f = mk_coarse_fine_mapping(fmdl2, img.fwd_model);
