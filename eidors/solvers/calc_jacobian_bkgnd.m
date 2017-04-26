@@ -62,7 +62,7 @@ end
 
 function do_unit_test
 imdl = mk_common_model('d2c2');
-test = calc_jacobian_bkgnd(imdl)
+test = calc_jacobian_bkgnd(imdl);
 unit_test_cmp('t1:type',  test.type, 'image');
 unit_test_cmp('t1:elem_data',  test.elem_data, ones(1024,1));
 
@@ -88,7 +88,8 @@ imdl = rmfield(imdl,'jacobian_bkgnd');
 imdl.jacobian_bkgnd.resistivity.elem_data = 3;
 img = calc_jacobian_bkgnd(imdl);
 
-unit_test_cmp('t5:resistivity',  img, struct( ...
+expect = struct( ...
     'type','image', 'name', 'background image', ...
     'fwd_model', imdl.fwd_model, 'resistivity', ...
-     imdl.jacobian_bkgnd.resistivity ));
+     imdl.jacobian_bkgnd.resistivity );;
+unit_test_cmp('t5:resistivity',  img, expect);
