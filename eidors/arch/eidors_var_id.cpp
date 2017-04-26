@@ -284,9 +284,9 @@ recurse_hash( hash_context *c, const mxArray *var ) {
 {
        mxClassID category = mxGetClassID(var);
 
-      printf("st= %d nnz=%d\n",sSZT,nnz);
+      printf("st= %ld nnz=%d\n",sSZT,nnz);
 
-      printf("doing sparse on %d byte (size_t = %d): Sparse CLASS=",sizeof(mwIndex), sizeof(size_t));
+      printf("doing sparse on %ld byte (size_t = %ld): Sparse CLASS=",sizeof(mwIndex), sizeof(size_t));
        switch (category) {
           case mxLOGICAL_CLASS:  printf("mxLOGICAL_CLASS\n");   break;
           case mxCHAR_CLASS:     printf("mxCHAR_CLASS\n");      break;
@@ -364,15 +364,16 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     }
   } else
   if ( mxIsChar(var) ) {
-        #ifdef VERBOSE    
-          mexPrintf("Char ClassID ( %d ):", mxGetClassID( var ) );
-        #endif
     // string variable. Each char is packed into 2 bytes in Matlab
-#ifdef OCTAVE_API
+#ifdef OCTINTERP_API /* Are we using octave */
 #define CHARBYTES 1
 #else
 #define CHARBYTES 2
 #endif
+        #ifdef VERBOSE    
+          mexPrintf("Char ClassID ( %d ) CHARBYTES=%d nel=%d:", mxGetClassID( var ), CHARBYTES,
+                  mxGetNumberOfElements( var ) ); // gives correct len of UTF8 encoded
+        #endif
     double * pr = mxGetPr( var );
     hash_process( c, (unsigned char *) pr,
                   CHARBYTES*mxGetNumberOfElements( var ) );
