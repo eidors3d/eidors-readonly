@@ -56,9 +56,9 @@ function do_unit_test
     v0 = add_noise(.9, v1, v2, 'norm' );
     SNR_test(.9, v0.meas - v1 , (v1 - v2)./v2);
 
-    rng('default');
+    randn('state',0); % rng('default');
     v0 = add_noise( 2, v1);
-    rng('default');
+    randn('state',0); % rng('default');
     v1 = add_noise( 2, v1);
     unit_test_cmp('RNG reset', v0, v1);
 
