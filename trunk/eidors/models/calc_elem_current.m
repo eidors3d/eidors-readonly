@@ -72,13 +72,13 @@ function do_unit_test
    unit_test_cmp('simple_mdl:', e_curr, [-1,0;-1,0],1e-12);
 
 
-   imdl= mk_common_model('d2d2c',8);
+   imdl= mk_common_model('d2c2',8);
    img = calc_jacobian_bkgnd( imdl );
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve(img);
    show_current(img, vh.volt(:,1));
    e_curr = calc_elem_current(img);
-   unit_test_cmp('d2d2c:', e_curr([1,10,100],:), ...
-          [0.699355766676898, -0.125037402698306;
-          -0.305348472551630, -1.265340146208961;
-           0.391495483986891,  2.356301798342790],1e-12);
+   unit_test_cmp('d2c2:', e_curr([1,10,100],:), ...
+          [2.422593061890268, -0.920998260630422;
+           2.887551382948032, -1.051869372020626;
+           1.349507157073426, -0.842871247870084],1e-12);
