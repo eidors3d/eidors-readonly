@@ -68,7 +68,12 @@ function gnd_node = find_gnd_node( fwd_model );
    if isfield(fwd_model,'gnd_node')
       gnd_node = fwd_model.gnd_node;
    else
-      error('no gnd_node on fwd_model')
+      % try to find one in the model center
+      ctr =  mean(fwd_model.nodes,1);
+      d2  =  sum((fwd_model.nodes - ones(num_nodes(fwd_model),1)*ctr).^2,2);
+      [~,gnd_node] = min(d2);
+      gnd_node = gnd_node(1);
+      eidors_msg('Warning: no ground node found: choosing node %d',gnd_node,1);
    end
 
 function vv = meas_from_v_els( v_els, stim)
@@ -117,16 +122,23 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
 function do_unit_test
    img = mk_image( mk_common_model('b2c2',16),1);
    vh = fwd_solve_1st_order(img);
-plot(vh.meas);
-   unit_test_cmp('b2c2 TEST', vh.meas(1:5), ...
-  [ 0.959567140078593; 0.422175237237900; 0.252450963869202; ...
-    0.180376116490602; 0.143799778367518], 1e-8);
+   tst = [ ...
+    0.959567140078593; 0.422175237237900; 0.252450963869202; ...
+    0.180376116490602; 0.143799778367518];
+   unit_test_cmp('b2c2 TEST', vh.meas(1:5), tst, 1e-8);
+
+   img.fwd_model = rmfield(img.fwd_model,'gnd_node');
+   vh = fwd_solve_1st_order(img);
+   unit_test_cmp('b2c2 gnd_node', vh.meas(1:5), tst, 1e-8);
+
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
 plot(vh.volt);
 
    test_2d_resistor;
    test_3d_resistor;
+
+
 
 function test_2d_resistor
    current= 4;  % Amps
@@ -154,7 +166,7 @@ function test_2d_resistor
    img.fwd_model.solve = @fwd_solve_1st_order;
    img.fwd_model.system_mat = @system_mat_1st_order;
 
-   vs = fwd_solve( img);
+   vs = fwd_solve_1st_order( img);
 
 % Analytic
    nodes = img.fwd_model.nodes;
@@ -210,7 +222,7 @@ function test_3d_resistor
          'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
          'fwd_model', mdl); 
 
-   vs= fwd_solve(img);
+   vs= fwd_solve_1st_order(img);
 
    % analytical solution
    Block_R =  ll / ww / hh / scale/ conduc;
