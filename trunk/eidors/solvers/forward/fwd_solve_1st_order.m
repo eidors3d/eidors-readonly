@@ -133,15 +133,23 @@ function do_unit_test
 
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
-plot(vh.volt);
+    plot(vh.volt);
 
-   test_2d_resistor;
-   test_3d_resistor;
+   %2D resistor
+   current = 4; measure=1;
+   [R,img] = test_2d_resistor(current,measure);
+   vs = fwd_solve_1st_order( img);
+   va= measure*current*R; % analytic
+   unit_test_cmp('2D resistor test', va, vs.meas, 1e-15);
+
+   [R,img] = test_3d_resistor(current,measure);
+   vs = fwd_solve_1st_order( img);
+   va= current*R;
+   unit_test_cmp('3D resistor test', va, vs.meas, 1e-10);
+   %3D resistor
 
 
-
-function test_2d_resistor
-   current= 4;  % Amps
+function [R,img] = test_2d_resistor(current,measure)
    conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
    z_contact= 1e-1;
    nn= 12;     % number of nodes
@@ -155,7 +163,7 @@ function test_2d_resistor
    elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
    elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
    stim.stim_pattern= [-1;1]*current;
-   stim.meas_pattern= [-1,1];
+   stim.meas_pattern= [-1,1]*measure;
    mdl.stimulation= stim;
    mdl.electrode= elec;
    n_el = size(mdl.elems,1);
@@ -166,7 +174,6 @@ function test_2d_resistor
    img.fwd_model.solve = @fwd_solve_1st_order;
    img.fwd_model.system_mat = @system_mat_1st_order;
 
-   vs = fwd_solve_1st_order( img);
 
 % Analytic
    nodes = img.fwd_model.nodes;
@@ -183,16 +190,12 @@ function test_2d_resistor
    Contact_R = z_contact/wid_len(1);
    R = Block_R + Contact_R;
 
-   va= current*R;
 
-   unit_test_cmp('2D resistor test', va, vs.meas, 1e-15);
-
-function test_3d_resistor
+function [R,img] = test_3d_resistor(current,measure);
    ll=5*1; % length
    ww=1*2; % width
    hh=1*3; % height
    conduc= .13;  % conductivity in Ohm-meters
-   current= 4;  % Amps
    z_contact= 1e-1;
    scale = .46;
    nn=0;
@@ -211,7 +214,7 @@ function test_3d_resistor
    elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
    elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
    stim.stim_pattern= [-1;1]*current;
-   stim.meas_pattern= [-1,1];
+   stim.meas_pattern= [-1,1]*measure;
    mdl.stimulation= stim;
    mdl.electrode= elec;
    mdl = mdl_normalize(mdl,0);
@@ -222,8 +225,6 @@ function test_3d_resistor
          'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
          'fwd_model', mdl); 
 
-   vs= fwd_solve_1st_order(img);
-
    % analytical solution
    Block_R =  ll / ww / hh / scale/ conduc;
    Contact_R = z_contact/(ww*hh)/scale^2;
@@ -233,5 +234,3 @@ function test_3d_resistor
    %  where the FEM is created scaled, so that the ww
    %  don't need to be scaled by the scale parameter.
    R = Block_R + 2*Contact_R;
-   va= current*R;
-   unit_test_cmp('3D resistor test', va, vs.meas, 1e-10);
