@@ -40,9 +40,15 @@ idx= 1:size(s_mat.E,1);
 gnd_node = find_gnd_node( fwd_model );
 idx( gnd_node ) = [];
 
+% I = Y*V
 v= zeros(pp.n_node,pp.n_stim);
-
 v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:));
+
+% How much is flowing out ground
+Ignd = s_mat.E(gnd_node,:)*v;
+if norm(Ignd)>1e-10
+   warning('current flowing through ground node. Check stimulation pattern')
+end
 
 % calc voltage on electrodes
 
@@ -134,6 +140,14 @@ function do_unit_test
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
     plot(vh.volt);
+
+   % bad stim patterns (flow through ground node)
+   img.fwd_model.stimulation(1).stim_pattern(2) = 0;
+   vh = fwd_solve_1st_order(img);
+   lastw = lastwarn;
+   unit_test_cmp('gnd_node warning', lastw, ...
+    'current flowing through ground node. Check stimulation pattern');
+
 
    %2D resistor
    current = 4; measure=1;
