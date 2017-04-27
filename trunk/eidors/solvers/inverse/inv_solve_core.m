@@ -2195,7 +2195,7 @@ function pass=do_unit_test(solver)
 % TODO the ..._rec2 unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
 
 function [imdl, vh, imgi, vi] = unit_test_imdl()
-   imdl = mk_geophysics_model('h2c',32);
+   imdl = mk_geophysics_model('h22c',32);
    imdl.solve = 'inv_solve_core';
    imdl.inv_solve_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
    imdl.inv_solve_core.verbose = 0;
@@ -2326,7 +2326,7 @@ function do_unit_test_rec1(solver)
 % Create simulation data $Id$
 %  http://eidors3d.sourceforge.net/tutorial/adv_image_reconst/basic_iterative.shtml
 % 3D Model
-[imdl, imgi, vh, vi] = unit_test_imdl();
+[imdl, vh, imgi, vi] = unit_test_imdl();
 imdl.solve = solver;
 imdl.reconst_type = 'absolute';
 imdl.inv_solve_core.prior_data = 1;
