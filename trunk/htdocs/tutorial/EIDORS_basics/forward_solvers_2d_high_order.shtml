@@ -61,6 +61,22 @@ The left plot shows the difference between linear and quadratic approximation on
 The lower row shows a zoom into the upper plot
 </center>
 
+<h3> 
+Iterate over model options (including solver and Jacobian)
+</h3>
+
+<pre>
+[% PROCESS "forward_solvers_2d_high_order05.m" %]
+</pre>
+
+<center>
+<img src="forward_solvers_2d_high_order05a.png">
+<br><i> Figure:</i>
+(top) plot of foward solutions and the differences between
+FEM orders
+(middle) a slice of the Jacobian for different FEM orders
+(bottom) difference between Jacobian values for different FEM orders
+</center>
 
 </td></tr></table>
 <p>
