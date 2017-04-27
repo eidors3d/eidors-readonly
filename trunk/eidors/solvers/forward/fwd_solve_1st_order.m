@@ -37,17 +37,21 @@ pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 s_mat= calc_system_mat( img );
 
 idx= 1:size(s_mat.E,1);
-gnd_node = find_gnd_node( fwd_model );
-idx( gnd_node ) = [];
+[dirichlet_nodes, dirichlet_values, gnd_node]= ...
+         find_dirichlet_nodes( fwd_model, s_mat );
+idx( dirichlet_nodes ) = [];
 
 % I = Y*V
 v= zeros(pp.n_node,pp.n_stim);
-v(idx,:)= left_divide( s_mat.E(idx,idx), pp.QQ(idx,:));
+v(idx,:)= left_divide( s_mat.E(idx,idx), ...
+          pp.QQ(idx,:) - s_mat.E(idx,:)*dirichlet_values);
 
-% How much is flowing out ground
-Ignd = s_mat.E(gnd_node,:)*v;
-if norm(Ignd)>1e-10
-   warning('current flowing through ground node. Check stimulation pattern')
+% If model has a ground node (rather than voltage stim electrodes)
+if gnd_node
+   Ignd = s_mat.E(dirichlet_nodes,:)*v;
+   if norm(Ignd)>1e-10
+      warning('current flowing through ground node. Check stimulation pattern')
+   end
 end
 
 % calc voltage on electrodes
@@ -70,16 +74,22 @@ try; if img.fwd_solve.get_all_nodes== 1
 end; end
 
 
-function gnd_node = find_gnd_node( fwd_model );
+% gnd_node = flag if the model has a gnd_node
+function [dirichlet_nodes, dirichlet_values, gnd_node] = ...
+    find_dirichlet_nodes( fwd_model, s_mat );
+   dirichlet_values = sparse(size(s_mat.E,1), ...
+                             length(fwd_model.stimulation));
    if isfield(fwd_model,'gnd_node')
-      gnd_node = fwd_model.gnd_node;
+      dirichlet_nodes = fwd_model.gnd_node;
+      gnd_node= 1;
    else
       % try to find one in the model center
       ctr =  mean(fwd_model.nodes,1);
       d2  =  sum((fwd_model.nodes - ones(num_nodes(fwd_model),1)*ctr).^2,2);
       [~,gnd_node] = min(d2);
-      gnd_node = gnd_node(1);
-      eidors_msg('Warning: no ground node found: choosing node %d',gnd_node,1);
+      dirichlet_nodes = gnd_node(1);
+      eidors_msg('Warning: no ground node found: choosing node %d',gnd_node(1),1);
+      gnd_node= 1;
    end
 
 function vv = meas_from_v_els( v_els, stim)
@@ -131,15 +141,22 @@ function do_unit_test
    tst = [ ...
     0.959567140078593; 0.422175237237900; 0.252450963869202; ...
     0.180376116490602; 0.143799778367518];
-   unit_test_cmp('b2c2 TEST', vh.meas(1:5), tst, 1e-8);
+   unit_test_cmp('b2c2 TEST', vh.meas(1:5), tst, 1e-12);
 
    img.fwd_model = rmfield(img.fwd_model,'gnd_node');
    vh = fwd_solve_1st_order(img);
-   unit_test_cmp('b2c2 gnd_node', vh.meas(1:5), tst, 1e-8);
+   unit_test_cmp('b2c2 gnd_node', vh.meas(1:5), tst, 1e-12);
 
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
     plot(vh.volt);
+
+   img = mk_image( mk_common_model('b2C2',16),1);
+   vh = fwd_solve_1st_order(img);
+   tst = [ 0.385629619754662; 0.235061644846908; 0.172837756982388
+           0.142197580506776; 0.126808900182258; 0.120605655110661];
+   unit_test_cmp('b2C2 (CEM) TEST', vh.meas(15:20), tst, 1e-12);
+
 
    % bad stim patterns (flow through ground node)
    img.fwd_model.stimulation(1).stim_pattern(2) = 0;
