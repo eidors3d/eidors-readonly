@@ -5,7 +5,7 @@ function RM= calc_TSVD_RM(mdl,hp)
 %   RM    => reconstruction matrix
 %   mdl   => an inverse or forward model structure 
 %   hp    => hyperparameter. Ratio between the last kept and the first SV
-%            in percent (default: 1)
+%            in percent (default: .1)
 % 
 % SEE ALSO: inv_solve_TSVD, solve_use_matrix
 
@@ -29,7 +29,7 @@ switch (mdl.type)
 end
 
 if nargin < 2
-    hp = 1;
+    hp = .1;
 end
 J= calc_jacobian(bkgnd_img);
 copt.fstr = 'calc_TSVD_RM';

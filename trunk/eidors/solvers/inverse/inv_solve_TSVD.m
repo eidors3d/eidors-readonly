@@ -8,6 +8,8 @@ function sol = inv_solve_TSVD(inv_model, data1, data2)
 %   inv_model  => inverse model struct. Requires:
 %                 inv_model.hyperparameter.value OR
 %                 inv_model.hyperparameter.func (and possibly others)
+%   hp    => hyperparameter. Ratio between the last kept and the first SV
+%            in percent (default: .1)
 %
 % SEE ALSO: calc_TSVD_RM, calc_hyperpameter, solve_use_matrix
 
@@ -45,5 +47,13 @@ function do_unit_test
     imdl.fwd_model = fmdl;
     
     % solve
+subplot(221);
+    show_slices(img,[inf,inf,0]);
+subplot(222);
+    rimg = inv_solve(imdl, vh, vi);
+    show_slices(rimg,[inf,inf,0]);
+
+subplot(223);
+    imdl.hyperparameter.value = .1;
     rimg = inv_solve(imdl, vh, vi);
     show_slices(rimg,[inf,inf,0]);
