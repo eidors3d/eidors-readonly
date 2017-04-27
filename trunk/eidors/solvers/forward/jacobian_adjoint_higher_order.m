@@ -1,6 +1,39 @@
 function J = jacobian_adjoint_higher_order(fwd_model,img)
 %Find the Jacobian associated with an image (and forward model)
 %Derivative of discretization method
+% 
+% Example (2D):
+%  imdl = mk_common_model('c2C',16); img=mk_image(imdl.fwd_model,1);
+%  img.fwd_model.solve = @fwd_solve_higher_order;
+%  img.fwd_model.system_mat = @system_mat_higher_order;
+%  img.fwd_model.jacobian = @jacobian_adjoint_higher_order;
+%  
+%  vve=[]; JJ4=[];
+%  for i= 1:3; switch i;
+%     case 1; img.fwd_model.approx_type = 'tri3'; % linear
+%     case 2; img.fwd_model.approx_type = 'tri6'; % quadratic
+%     case 3; img.fwd_model.approx_type = 'tri10'; % cubic;
+%     end %switch
+%     vv=fwd_solve(img);      vve(:,i)=vv.meas;
+%     JJ=calc_jacobian(img);  JJ4(:,i)=JJ(4,:)';
+%  end
+%
+% Example (3D):
+%  imdl = mk_common_model('b3cr',16);  img=mk_image(imdl.fwd_model,1);
+%  img.fwd_model.solve = @fwd_solve_higher_order;
+%  img.fwd_model.system_mat = @system_mat_higher_order;
+%  img.fwd_model.jacobian = @jacobian_adjoint_higher_order;
+%  
+%  vve=[]; JJ4=[];
+%  for i= 1:2; switch i;
+%     case 1; img.fwd_model.approx_type = 'tet4'; % linear
+%     case 2; img.fwd_model.approx_type = 'tet10'; % quadratic
+%     end %switch
+%     vv=fwd_solve(img);      vve(:,i)=vv.meas;
+%     JJ=calc_jacobian(img);  JJ4(:,i)=JJ(4,:)';
+%  end
+
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin == 1
    img= fwd_model;
@@ -138,5 +171,93 @@ end
 
 %Negative Jacobian for injected currents??
 J= -J;  
+end
 
+function do_unit_test
+   tol = 1e-14;
+   JJ = do_unit_test_2D;
+   JJ_ref = [
+   0.898225115241117   0.921510761628436   0.928516596253320
+   0.406398239528486   0.412406966923347   0.413938179536629
+   0.248067950415984   0.250212111398160   0.250609888163540
+   0.179592593985273   0.179643951982781   0.179734695991927];
+
+   unit_test_cmp('2D: 1st order',JJ(1:4,1),JJ_ref(1:4,1),tol);
+   unit_test_cmp('2D: 2nd order',JJ(1:4,2),JJ_ref(1:4,2),tol);
+   unit_test_cmp('2D: 3rd order',JJ(1:4,3),JJ_ref(1:4,3),tol);
+   JJ = do_unit_test_3D;
+   JJ_ref = [
+   1.404189968566952   1.410900674463290
+   0.403207625837809   0.402992578774667
+   0.198517193844915   0.201211971071238
+   0.133852904079284   0.133841105904217];
+   unit_test_cmp('3D: 1st order',JJ(1:4,1),JJ_ref(1:4,1),tol);
+   unit_test_cmp('3D: 2nd order',JJ(1:4,2),JJ_ref(1:4,2),tol);
+
+end
+function JJ4=do_unit_test_2D
+   imdl = mk_common_model('c2C',16); img = mk_image(imdl.fwd_model,1);
+   vv=fwd_solve(img);      v0e=vv.meas;
+   JJ=calc_jacobian(img);  J04=JJ(4,:)';
+
+   %High-order EIDORS solver %Change default eidors solvers
+   img.fwd_model.solve = @fwd_solve_higher_order;
+   img.fwd_model.system_mat = @system_mat_higher_order;
+   img.fwd_model.jacobian = @jacobian_adjoint_higher_order;
+
+   vve=[]; JJ4=[];
+   for i= 1:3; switch i;
+      case 1; img.fwd_model.approx_type = 'tri3'; % linear
+      case 2; img.fwd_model.approx_type = 'tri6'; % quadratic
+      case 3; img.fwd_model.approx_type = 'tri10'; % cubic;
+      end %switch
+      vv=fwd_solve(img);      vve(:,i)=vv.meas;
+      JJ=calc_jacobian(img);  JJ4(:,i)=JJ(4,:)';
+   end
+
+   subplot(321);
+   plot([v0e,vve,(v0e*[1,1,1]-vve)*10]);
+   legend('Default','linear','quadratic','cubic','(1-0)x10','(2-0)x10','(3-0)x10');
+   xlim([1,100]);
+
+   imgJJ=img; imgJJ.elem_data = JJ4;
+   imgJJ.show_slices.img_cols = 3;
+
+   subplot(323); show_slices(imgJJ); eidors_colourbar(imgJJ);
+
+   imgJJ.elem_data = JJ4 - J04*[1,1,1];
+   subplot(325); show_slices(imgJJ); eidors_colourbar(imgJJ);
+end
+function JJ4=do_unit_test_3D
+   imdl = mk_common_model('b3cr',16); img = mk_image(imdl.fwd_model,1);
+   vv=fwd_solve(img);      v0e=vv.meas;
+   JJ=calc_jacobian(img);  J04=JJ(4,:)';
+
+   %High-order EIDORS solver %Change default eidors solvers
+   img.fwd_model.solve = @fwd_solve_higher_order;
+   img.fwd_model.system_mat = @system_mat_higher_order;
+   img.fwd_model.jacobian = @jacobian_adjoint_higher_order;
+
+   vve=[]; JJ4=[];
+   for i= 1:2; switch i;
+      case 1; img.fwd_model.approx_type = 'tet4'; % linear
+      case 2; img.fwd_model.approx_type = 'tet10'; % quadratic
+      end %switch
+      vv=fwd_solve(img);      vve(:,i)=vv.meas;
+      JJ=calc_jacobian(img);  JJ4(:,i)=JJ(4,:)';
+   end
+
+   subplot(322);
+   plot([v0e,vve,(v0e*[1,1]-vve)*10]);
+   legend('Default','linear','quadratic','(1-0)x10','(2-0)x10');
+   xlim([1,100]);
+
+   imgJJ=img; imgJJ.elem_data = JJ4;
+   imgJJ.show_slices.img_cols = 2;
+
+   level = [inf,inf,0.3];
+   subplot(324); show_slices(imgJJ,level); eidors_colourbar(imgJJ);
+
+   imgJJ.elem_data = JJ4 - J04*[1,1];
+   subplot(326); show_slices(imgJJ,level); eidors_colourbar(imgJJ);
 end
