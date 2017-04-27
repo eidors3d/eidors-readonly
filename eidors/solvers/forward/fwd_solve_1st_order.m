@@ -152,15 +152,26 @@ function do_unit_test
    %2D resistor
    current = 4; measure=1;
    [R,img] = test_2d_resistor(current,measure);
+   img.fwd_solve.get_all_nodes = 1;
    vs = fwd_solve_1st_order( img);
-   va= measure*current*R; % analytic
-   unit_test_cmp('2D resistor test', va, vs.meas, 1e-15);
+   va= measure*current*sum(R); % analytic
+   unit_test_cmp('2D resistor test', va, vs.meas, 1e-12);
 
-   [R,img] = test_3d_resistor(current,measure);
-   vs = fwd_solve_1st_order( img);
-   va= current*R;
-   unit_test_cmp('3D resistor test', va, vs.meas, 1e-10);
+   unit_test_cmp('2D R voltages', vs.volt(1:3:10), ...
+                 R(1)*current*linspace(0,1,4)', 1e-12);
+   unit_test_cmp('2D R z_contact', [vs.volt(13), vs.volt(14)-vs.volt(12)], ...
+                 R(2)/2*current*[-1,1], 1e-12);
+
    %3D resistor
+   [R,img] = test_3d_resistor(current,measure);
+   img.fwd_solve.get_all_nodes = 1;
+   vs = fwd_solve_1st_order( img);
+   va= current*sum(R);
+   unit_test_cmp('3D resistor test', va, vs.meas, 1e-10);
+   unit_test_cmp('3D R voltages', vs.volt(1:12:72), ...
+                 R(1)*current*linspace(0,1,6)', 1e-10);
+   unit_test_cmp('3D R z_contact', [vs.volt(73), vs.volt(74)-vs.volt(72)], ...
+                 R(2)/2*current*[-1,1], 1e-10);
 
 
 function [R,img] = test_2d_resistor(current,measure)
@@ -202,7 +213,7 @@ function [R,img] = test_2d_resistor(current,measure)
    z_contact = sum([img.fwd_model.electrode(:).z_contact]);
    current = max(img.fwd_model.stimulation(1).stim_pattern(:));
    Contact_R = z_contact/wid_len(1);
-   R = Block_R + Contact_R;
+   R = [Block_R, Contact_R];
 
 
 function [R,img] = test_3d_resistor(current,measure);
@@ -247,4 +258,4 @@ function [R,img] = test_3d_resistor(current,measure);
    %  FEM as created by the grid. This is different to the test_2d_resistor,
    %  where the FEM is created scaled, so that the ww
    %  don't need to be scaled by the scale parameter.
-   R = Block_R + 2*Contact_R;
+   R =[ Block_R , 2*Contact_R];
