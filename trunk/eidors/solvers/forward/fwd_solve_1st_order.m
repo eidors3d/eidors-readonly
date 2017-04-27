@@ -37,7 +37,8 @@ pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 s_mat= calc_system_mat( img );
 
 idx= 1:size(s_mat.E,1);
-idx( fwd_model.gnd_node ) = [];
+gnd_node = find_gnd_node( fwd_model );
+idx( gnd_node ) = [];
 
 v= zeros(pp.n_node,pp.n_stim);
 
@@ -61,6 +62,14 @@ end; end
 try; if img.fwd_solve.get_all_nodes== 1
    data.volt = v;                % all, including CEM nodes
 end; end
+
+
+function gnd_node = find_gnd_node( fwd_model );
+   if isfield(fwd_model,'gnd_node')
+      gnd_node = fwd_model.gnd_node;
+   else
+      error('no gnd_node on fwd_model')
+   end
 
 function vv = meas_from_v_els( v_els, stim)
    try
@@ -115,3 +124,102 @@ plot(vh.meas);
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
 plot(vh.volt);
+
+   test_2d_resistor;
+   test_3d_resistor;
+
+function test_2d_resistor
+   current= 4;  % Amps
+   conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
+   z_contact= 1e-1;
+   nn= 12;     % number of nodes
+   ww=3;       % width = 4
+   scale = .35;
+   mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
+   mdl= rmfield(mdl,'coarse2fine'); % don't calc this.
+
+   mdl.gnd_node = 1;
+   elec_nodes= [1:ww];
+   elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
+   elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
+   stim.stim_pattern= [-1;1]*current;
+   stim.meas_pattern= [-1,1];
+   mdl.stimulation= stim;
+   mdl.electrode= elec;
+   n_el = size(mdl.elems,1);
+   img= eidors_obj('image','2D rectangle', ...
+         'elem_data', ones(n_el,1) * conduc );
+   img.fwd_model = mdl;
+   img.fwd_model.normalize_measurements = 0;
+   img.fwd_model.solve = @fwd_solve_1st_order;
+   img.fwd_model.system_mat = @system_mat_1st_order;
+
+   vs = fwd_solve( img);
+
+% Analytic
+   nodes = img.fwd_model.nodes;
+   wid_len= max(nodes) - min(nodes);
+   conduc =  mean(img.elem_data);
+   Block_R = wid_len(2) / wid_len(1) / conduc;
+   % Contact R reflects z_contact / width. There is no need to scale
+   %  by the scale, since this is already reflected in the size of the
+   %  FEM as created by the grid. This is different to the test_3d_resistor,
+   %  where the FEM is created first, and then scaled, so that the ww
+   %  and hh need to be scaled by the scale parameter.
+   z_contact = sum([img.fwd_model.electrode(:).z_contact]);
+   current = max(img.fwd_model.stimulation(1).stim_pattern(:));
+   Contact_R = z_contact/wid_len(1);
+   R = Block_R + Contact_R;
+
+   va= current*R;
+
+   unit_test_cmp('2D resistor test', va, vs.meas, 1e-15);
+
+function test_3d_resistor
+   ll=5*1; % length
+   ww=1*2; % width
+   hh=1*3; % height
+   conduc= .13;  % conductivity in Ohm-meters
+   current= 4;  % Amps
+   z_contact= 1e-1;
+   scale = .46;
+   nn=0;
+   for z=0:ll; for x=0:ww; for y=0:hh
+      nn=nn+1;
+      mdl.nodes(nn,:) = [x,y,z];
+   end; end; end
+   mdl= eidors_obj('fwd_model','3D rectangle');
+   mdl= mk_grid_model([],0:ww,0:hh,0:ll);
+   mdl.nodes= mdl.nodes*scale;
+   mdl= rmfield(mdl,'coarse2fine');
+
+   mdl.boundary= find_boundary(mdl.elems);
+   mdl.gnd_node = 1;
+   elec_nodes= [1:(ww+1)*(hh+1)];
+   elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
+   elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
+   stim.stim_pattern= [-1;1]*current;
+   stim.meas_pattern= [-1,1];
+   mdl.stimulation= stim;
+   mdl.electrode= elec;
+   mdl = mdl_normalize(mdl,0);
+
+   mdl.solve = @fwd_solve_1st_order;
+   mdl.system_mat = @system_mat_1st_order;
+   img= eidors_obj('image','3D rectangle', ...
+         'elem_data', ones(size(mdl.elems,1),1) * conduc, ...
+         'fwd_model', mdl); 
+
+   vs= fwd_solve(img);
+
+   % analytical solution
+   Block_R =  ll / ww / hh / scale/ conduc;
+   Contact_R = z_contact/(ww*hh)/scale^2;
+   % Contact R reflects z_contact / (width/scale)^2. Here we need to use
+   %  the scale, since this is not reflected in the size of the
+   %  FEM as created by the grid. This is different to the test_2d_resistor,
+   %  where the FEM is created scaled, so that the ww
+   %  don't need to be scaled by the scale parameter.
+   R = Block_R + 2*Contact_R;
+   va= current*R;
+   unit_test_cmp('3D resistor test', va, vs.meas, 1e-10);
