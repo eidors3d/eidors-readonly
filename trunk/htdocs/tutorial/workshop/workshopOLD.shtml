@@ -1,4 +1,4 @@
-[% PROCESS "../nav-sidebar.shtml" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
 <h2>Samples for the EIDORS Workshop</h2>
 To run these tutorials, you need to 
 <a href="../download.shtml">download and install</a>
