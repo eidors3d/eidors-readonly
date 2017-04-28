@@ -58,7 +58,7 @@
       >&minus; GREIT</a><br>
 <a href="[% root %]tutorial/old-tutorials.shtml"
       >&minus; Old tutorials</a><br>
-<a href="[% root %]tutorial/workshop.shtml"
+<a href="[% root %]tutorial/workshop/workshop.shtml"
       >&minus; <i>Workshop</i></a><br>
 [% END %]
 <a href="[% root %]download.shtml"
