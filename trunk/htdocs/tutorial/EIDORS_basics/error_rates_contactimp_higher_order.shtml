@@ -19,13 +19,8 @@ The implementation of high order finite elements for the CEM, the following conv
 
    <li>
 	 M G Crabb.
-   Convergence study of CEM with high order finite elements.
-   <i>16th Int. Conf. on Biomed. App. of EIT</i>, pp. 97, 2015
-
-   <li>
-	 M G Crabb.
-   A convergence study of forward problem of electrical impedance tomography with high order finite elements
-   <i>In preparation Physiol. Meas.</i> 2015
+   Convergence study of 2D forward problem of electrical impedance tomography with high-order finite elements.
+   <i>Inverse Problems in Science and Engineering</i>, 2016.
 </ul>
 
 <h3> Methods and Results </h3>
