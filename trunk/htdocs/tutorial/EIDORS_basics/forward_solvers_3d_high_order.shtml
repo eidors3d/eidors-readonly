@@ -66,11 +66,11 @@ Iterate over model options (including solver and Jacobian)
 </h3>
 
 <pre>
-[% PROCESS "forward_solvers_2d_high_order05.m" %]
+[% PROCESS "forward_solvers_3d_high_order05.m" %]
 </pre>
 
 <center>
-<img src="forward_solvers_2d_high_order05a.png">
+<img src="forward_solvers_3d_high_order05a.png">
 <br><i> Figure:</i>
 (top) plot of foward solutions and the differences between
 FEM orders
