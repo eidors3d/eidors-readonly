@@ -8,14 +8,18 @@
 Solving the forward problem for EIT in 3D with higher order finite elements
 </h3>
 
-The implementation and convergence analysis (in 2D) of the high order finite elements for CEM are described in detail at
+The implementation (and convergence analysis in 2D) of the high order finite elements for CEM are described in detail at
 <ul>
    <li>
    M G Crabb.
    EIT Reconstruction Algorithms for Respiratory Intensive Care.
    <i>PhD Thesis</i>, University of Manchester, 2014.
-</ul>
 
+   <li>
+	 M G Crabb.
+   Convergence study of 2D forward problem of electrical impedance tomography with high-order finite elements.
+   <i>Inverse Problems in Science and Engineering</i>, 2016.
+</ul>
 
 Create a common model with EIDORS and solve using default solver. Swap the default forward solvers to the high order solvers, and the element type ('tet4' is linear and 'tet10' is quadratic).
 

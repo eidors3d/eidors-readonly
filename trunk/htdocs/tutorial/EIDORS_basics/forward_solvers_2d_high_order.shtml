@@ -8,7 +8,7 @@
 Solving the forward problem for EIT in 2D with higher order finite elements
 </h3>
 
-The implementation and convergence analysis of the high order finite elements for CEM are described in detail at
+The implementation (and convergence analysis in 2D) of the high order finite elements for CEM are described in detail at
 <ul>
    <li>
    M G Crabb.
