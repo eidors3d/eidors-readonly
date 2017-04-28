@@ -38,7 +38,7 @@ s_mat= calc_system_mat( img );
 
 idx= 1:size(s_mat.E,1);
 [dirichlet_nodes, dirichlet_values, gnd_node]= ...
-         find_dirichlet_nodes( fwd_model, s_mat );
+         find_dirichlet_nodes( fwd_model, pp );
 idx( dirichlet_nodes ) = [];
 
 % I = Y*V
@@ -81,10 +81,15 @@ end; end
 
 % gnd_node = flag if the model has a gnd_node
 function [dirichlet_nodes, dirichlet_values, gnd_node] = ...
-    find_dirichlet_nodes( fwd_model, s_mat );
-   dirichlet_values = sparse(size(s_mat.E,1), ...
+    find_dirichlet_nodes( fwd_model, pp );
+   dirichlet_values = sparse(size(pp.N2E,2), ...
                              length(fwd_model.stimulation));
-   if isfield(fwd_model,'gnd_node')
+   fnanQQ = find(isnan(real(pp.QQ)));
+   if any(fnanQQ)
+      dirichlet_nodes = fnanQQ;
+      dirichlet_values(fnanQQ) = imag(pp.QQ(fnanQQ));
+      gnd_node = 0; % don't need one
+   elseif isfield(fwd_model,'gnd_node')
       dirichlet_nodes = fwd_model.gnd_node;
       gnd_node= 1;
    else
@@ -141,6 +146,20 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
         
 
 function do_unit_test
+   img = mk_image( mk_common_model('b2C2',16),1);
+
+   stim = zeros(16,1); stim(1) = NaN+1i; stim(4) = NaN+2i;
+   img.fwd_model = rmfield(img.fwd_model,'stimulation');
+   img.fwd_model.stimulation.stim_pattern = stim;
+   img.fwd_model.stimulation.meas_pattern = [1,-1,zeros(1,14)];
+   img.fwd_solve.get_all_meas = 1;
+   vh = fwd_solve_1st_order(img);
+
+   imgn = rmfield(img,'elem_data');
+   imgn.node_data = vh.volt;
+   show_fem(imgn,1);
+
+
    img = mk_image( mk_common_model('b2c2',16),1);
    vh = fwd_solve_1st_order(img);
    tst = [ ...
