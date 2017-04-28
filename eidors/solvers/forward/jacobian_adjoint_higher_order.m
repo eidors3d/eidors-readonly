@@ -44,6 +44,10 @@ elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'
 end
 fwd_model= img.fwd_model;
 
+if mdl_normalize(fwd_model)
+     fwd_solve_data= fwd_solve( img );   
+end
+
 %Modify the forward model to be of my type
 if ~isfield(fwd_model,'approx_type')    || ...
    strcmp(fwd_model.approx_type,'tri3') || ...
@@ -165,8 +169,8 @@ end;
 
 %Get the Jacobian and normalize measurements (if field exists)
 if mdl_normalize(fwd_model)
-%    data= fwd_solve( img );   
-%    J= J ./ (data.meas(:)*ones(1,nelems));
+     data= fwd_solve_data; % must calculate first, because fwd_model is changed
+     J= J ./ (data.meas(:)*ones(1,nelems));
 end
 
 %Negative Jacobian for injected currents??
@@ -175,7 +179,7 @@ end
 
 function do_unit_test
    tol = 1e-14;
-   JJ = do_unit_test_2D;
+   JJ = do_unit_test_2D(0); % not normalized
    JJ_ref = -1e-4*[
    2.440415272063380   2.705754096983918   2.721135010947898
    2.578623854199123   2.327923064064513   2.342086727271722
@@ -185,19 +189,28 @@ function do_unit_test
    unit_test_cmp('2D: 1st order',JJ(1:4,1),JJ_ref(1:4,1),tol);
    unit_test_cmp('2D: 2nd order',JJ(1:4,2),JJ_ref(1:4,2),tol);
    unit_test_cmp('2D: 3rd order',JJ(1:4,3),JJ_ref(1:4,3),tol);
-   JJ = do_unit_test_3D;
+
+   [JJ1,vve]= do_unit_test_2D(1); for i=1:3
+   unit_test_cmp('2D: (normalize)',JJ1(:,i),JJ(:,i)/vve(4,i),tol);
+   end
+
+   JJ = do_unit_test_3D(0);
    JJ_ref = -1e-5*[
    1.246064580179371   1.585061706092707
    1.332632578853691   1.354929239220232
    0.712061825721561   0.443297935900921
    0.625493827047241   0.604174950085724];
+   [JJ1,vve]= do_unit_test_3D(1); for i=1:2
+   unit_test_cmp('3D: (normalize)',JJ1(:,i),JJ(:,i)/vve(4,i),tol);
+   end
 
    unit_test_cmp('3D: 1st order',JJ(1:4,1),JJ_ref(1:4,1),tol);
    unit_test_cmp('3D: 2nd order',JJ(1:4,2),JJ_ref(1:4,2),tol);
 
 end
-function JJ4=do_unit_test_2D
+function [JJ4,vve]=do_unit_test_2D(normalize_flag)
    imdl = mk_common_model('c2C',16); img = mk_image(imdl.fwd_model,1);
+   img.fwd_model.normalize_measurements = normalize_flag;
    vv=fwd_solve(img);      v0e=vv.meas;
    JJ=calc_jacobian(img);  J04=JJ(4,:)';
 
@@ -229,8 +242,9 @@ function JJ4=do_unit_test_2D
    imgJJ.elem_data = JJ4 - J04*[1,1,1];
    subplot(325); show_slices(imgJJ); eidors_colourbar(imgJJ);
 end
-function JJ4=do_unit_test_3D
+function [JJ4,vve]=do_unit_test_3D(normalize_flag)
    imdl = mk_common_model('b3cr',16); img = mk_image(imdl.fwd_model,1);
+   img.fwd_model.normalize_measurements = normalize_flag;
    vv=fwd_solve(img);      v0e=vv.meas;
    JJ=calc_jacobian(img);  J04=JJ(4,:)';
 
