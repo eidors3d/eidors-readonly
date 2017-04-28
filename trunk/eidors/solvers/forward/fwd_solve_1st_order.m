@@ -73,8 +73,9 @@ try; if img.fwd_solve.get_all_nodes== 1
    data.volt = v;                % all, including CEM nodes
 end; end
 try; if img.fwd_solve.get_elec_curr== 1
-%idx = find(any(pp.N2E));
-   data.elec_curr = pp.N2E * s_mat.E * v;
+%  data.elec_curr = pp.N2E * s_mat.E * v;
+   idx = find(any(pp.N2E));
+   data.elec_curr = pp.N2E(:,idx) * s_mat.E(idx,:) * v;
 end; end
 
 
@@ -150,6 +151,11 @@ function do_unit_test
    img.fwd_model = rmfield(img.fwd_model,'gnd_node');
    vh = fwd_solve_1st_order(img);
    unit_test_cmp('b2c2 gnd_node', vh.meas(1:5), tst, 1e-12);
+
+   img.fwd_solve.get_elec_curr = 1;
+   vh = fwd_solve_1st_order(img);
+   pp = fwd_model_parameters( img.fwd_model); EC = pp.N2E*pp.QQ;
+   unit_test_cmp('b2b2 (CEM) elec_curr', vh.elec_curr, EC, 1e-11);
 
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
