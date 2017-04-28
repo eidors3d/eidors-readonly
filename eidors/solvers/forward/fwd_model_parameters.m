@@ -160,6 +160,11 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    end
    N2E = N2E(:, 1:(n+cem_electrodes));
 
+% If N2E can be made a logical (0-1) matrix, do it.
+   if all(N2E(find(N2E(:)))==1)
+      N2E = logical(N2E);
+   end
+
 
 function [QQ, n_meas] = calc_QQ_slow(N2E, stim, p)
    QQ = sparse(size(N2E,2),1,p);
