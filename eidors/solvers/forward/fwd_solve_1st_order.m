@@ -1,6 +1,6 @@
 function data =fwd_solve_1st_order(fwd_model, img)
 % FWD_SOLVE_1ST_ORDER: data= fwd_solve_1st_order( img)
-% Fwd solver for Andy Adler's EIT code
+% First order FEM forward solver
 % Input:
 %    img       = image struct
 % Output:
@@ -8,9 +8,9 @@ function data =fwd_solve_1st_order(fwd_model, img)
 % Options: (to return internal FEM information)
 %    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
 %    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
+%    img.fwd_solve.get_elec_curr= 1 (data.elec_curr = current on electrodes)
 
-% (C) 1995-2002 Andy Adler. License: GPL version 2 or version 3
-% Ref: Adler & Guardo (1996) IEEE T. Med Imaging
+% (C) 1995-2017 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 % correct input paralemeters if function was called with only img
@@ -71,6 +71,10 @@ try; if img.fwd_solve.get_all_meas == 1
 end; end
 try; if img.fwd_solve.get_all_nodes== 1
    data.volt = v;                % all, including CEM nodes
+end; end
+try; if img.fwd_solve.get_elec_curr== 1
+%idx = find(any(pp.N2E));
+   data.elec_curr = pp.N2E * s_mat.E * v;
 end; end
 
 
@@ -157,6 +161,10 @@ function do_unit_test
            0.142197580506776; 0.126808900182258; 0.120605655110661];
    unit_test_cmp('b2C2 (CEM) TEST', vh.meas(15:20), tst, 1e-12);
 
+   img.fwd_solve.get_elec_curr = 1;
+   vh = fwd_solve_1st_order(img);
+   pp = fwd_model_parameters( img.fwd_model); EC = pp.N2E*pp.QQ;
+   unit_test_cmp('b2C2 (CEM) elec_curr', vh.elec_curr, EC, 1e-11);
 
    % bad stim patterns (flow through ground node)
    img.fwd_model.stimulation(1).stim_pattern(2) = 0;
@@ -178,6 +186,9 @@ function do_unit_test
                  R(1)*current*linspace(0,1,4)', 1e-12);
    unit_test_cmp('2D R z_contact', [vs.volt(13), vs.volt(14)-vs.volt(12)], ...
                  R(2)/2*current*[-1,1], 1e-12);
+
+   %2D resistor - voltage and current
+%  img.fwd_model.stimulation(1).stim_pattern = [+1i];
 
    %3D resistor
    [R,img] = test_3d_resistor(current,measure);

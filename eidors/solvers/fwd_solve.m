@@ -20,6 +20,7 @@ function data = fwd_solve(fwd_model, img)
 % Options: (not available on all solvers)
 %    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
 %    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
+%    img.fwd_solve.get_elec_curr= 1 (data.elec_curr = current on electrodes)
 %
 % Parameters:
 %    fwd_model.background = constant conductivity offset added to elem_data
