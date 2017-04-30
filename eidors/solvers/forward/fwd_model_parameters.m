@@ -1,7 +1,6 @@
 function param = fwd_model_parameters( fwd_model, opt )
 % FWD_MODEL_PARAMETERS: data= fwd_solve_1st_order( fwd_model, image)
-% Extract parameters from a 'fwd_model' struct which are 
-% appropriate for Andy Adler's EIT code
+%   Internal function to extract parameters from a fwd_model
 %   param.n_elem     => number of elements
 %   param.n_elec     => number of electrodes
 %   param.n_node     => number of nodes (vertices)
@@ -12,7 +11,9 @@ function param = fwd_model_parameters( fwd_model, opt )
 %   param.boundary   => FEM boundary
 %   param.NODE       => vertex matrix
 %   param.ELEM       => connection matrix
-%   param.QQ         => Current into each NODE
+%   param.QQ         => Current into each NODE (Neuman Boundary Conditions)
+%   param.VV         => Voltage driven into each NODE (Dirichlet BC - only where QQ is NaN)
+%   param.YY         => Output Admittance (1/Impedance) of each node current (for each value in QQ)
 %   param.VOLUME     => Volume (or area) of each element
 %   param.normalize  => difference measurements normalized?
 %   param.N2E        => Node to electrode converter
