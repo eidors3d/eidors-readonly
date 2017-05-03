@@ -84,7 +84,7 @@ copt.fstr = 'calculate_N2E';
 
 if p>0
   stim = fwd_model.stimulation;
-  [pp.QQ, pp.n_meas] = calc_QQ_fast(N2E, stim, p);
+  [pp.QQ, pp.VV, pp.n_meas] = calc_QQ_fast(N2E, stim, p);
 end
 
 % pack into a parameter return list
@@ -144,7 +144,7 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
        if length(elec_nodes) ==1 % point electrode (maybe inside body)
           N2E(i, elec_nodes) = 1;
        elseif length(elec_nodes) ==0
-          error('zero length electrode specified');
+         error('EIDORS:fwd_model_parameters:electrode','zero length electrode specified');
        else
           bdy_idx= find_electrode_bdy( bdy, [], elec_nodes);
 
@@ -167,23 +167,27 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    end
 
 
-function [QQ, n_meas] = calc_QQ_slow(N2E, stim, p)
-   QQ = sparse(size(N2E,2),1,p);
+function [QQ, VV, n_meas] = calc_QQ_slow(N2E, stim, p)
+   QQ = sparse(size(N2E,2),p);
+   VV = sparse(size(N2E,2),p); N2E0 = N2E>0;
    n_meas= 0; % sum total number of measurements
    for i=1:p
        src= zeros(size(N2E,2),1);
-       try;  src =        N2E'* stim(i).stim_pattern; end
-       try;  src = src +  stim(i).interior_sources;   end
+       try;  src =       N2E' * stim(i).stim_pattern; end
+       try;  src = src + stim(i).interior_sources;    end
        if all(size(src) == [1,1]) && src==0
           error('no stim_patterns or interior_sources provided for pattern #%d',i);
        end
        
        QQ(:,i) = src;
        n_meas = n_meas + size(stim(i).meas_pattern,1);
+
+       vlt= zeros(size(N2E,2),1);
+       try;  vlt =      N2E0' * stim(i).volt_pattern; end
+       VV(:,i) = vlt;
    end
 
-function [QQ, n_meas] = calc_QQ_fast(N2E, stim, p)
-   QQ = sparse(size(N2E,2),1,p);
+function [QQ, VV, n_meas] = calc_QQ_fast(N2E, stim, p)
    try
    ncols = arrayfun(@(x) size(x.stim_pattern,2), stim);
    end
@@ -193,21 +197,28 @@ function [QQ, n_meas] = calc_QQ_fast(N2E, stim, p)
             [str, sprintf('#%d ',find(ncols>1))]);
    end
    idx = 1:p; idx(ncols==0)= [];
+
+   QQ = sparse(size(N2E,2),p);
    try
    QQ(:,idx) = N2E' * horzcat( stim(:).stim_pattern );
    end
+   VV = sparse(size(N2E,2),p);
+   % For voltages, we just need to know which N2E, not the size
+
+
 
    try
-   ncols = arrayfun(@(x) size(x.interior_sources,2), stim);
+   ncols = arrayfun(@(x) size(x.volt_pattern,2), stim);
    end
    if any(ncols>1);
-      str = 'multiple columns in interior_sources for patterns: ';
-      error('EIDORS:fwd_model_parameters:interior_points',...
+      str = 'multiple columns in volt_pattern for patterns: ';
+      error('EIDORS:fwd_model_parameters:volt_pattern', ...
             [str, sprintf('#%d ',find(ncols>1))]);
    end
    idx = 1:p; idx(ncols==0)= [];
+
    try
-   QQ(:,idx) = QQ(:,idx) +  N2E' * horzcat( stim(:).interior_sources );
+   VV(:,idx) = (N2E>0)' * horzcat( stim(:).volt_pattern );
    end
 
    n_meas = size(vertcat(stim(:).meas_pattern),1);
@@ -217,16 +228,37 @@ function [QQ, n_meas] = calc_QQ_fast(N2E, stim, p)
 function do_unit_test
    imdl = mk_common_model('a2c2',16); fmdl = imdl.fwd_model;
    pp = fwd_model_parameters(fmdl);
-   [QQ1, n1m] = calc_QQ_slow(pp.N2E, fmdl.stimulation, pp.n_stim);
-   [QQ2, n2m] = calc_QQ_fast(pp.N2E, fmdl.stimulation, pp.n_stim);
+   [QQ1, VV1, n1m] = calc_QQ_slow(pp.N2E, fmdl.stimulation, pp.n_stim);
+   [QQ2, VV2, n2m] = calc_QQ_fast(pp.N2E, fmdl.stimulation, pp.n_stim);
    unit_test_cmp('calc_QQ', norm(QQ1-QQ2,'fro') + norm(n1m-n2m), 0, 1e-15);
+   unit_test_cmp('calc_VV1', norm(VV1,'fro'), 0, 1e-15);
+   unit_test_cmp('calc_VV2', norm(VV2,'fro'), 0, 1e-15);
 
-   fmdl.stimulation(8).stim_pattern = fmdl.stimulation(8).stim_pattern*[1,2]; 
-   err= 0;
-   try;  pp = fwd_model_parameters(fmdl);
-   catch e
-      if strcmp(e.identifier, 'EIDORS:fwd_model_parameters:stim_pattern');
-         err = 1;
+   for i=1:5;
+      imdl = mk_common_model('a2C0',4); fmdl = imdl.fwd_model;
+      switch i
+         case 1; fmdl.stimulation(3).stim_pattern = fmdl.stimulation(3).stim_pattern*[1,2]; 
+                 expected_err = 'EIDORS:fwd_model_parameters:stim_pattern';
+         case 2; fmdl.stimulation(1).stim_pattern = [];
+                 expected_err = ''; expected = zeros(45,4);
+                 expected(42:45,2:4) = [0,0,1;-1,0,0;1,-1,0;0,1,-1]*10;
+                 param = 'QQ';
+         case 3; fmdl.electrode(1).nodes = [];
+                 expected_err = 'EIDORS:fwd_model_parameters:electrode';
+         case 4; fmdl.stimulation(1).volt_pattern = [zeros(3,1);6];
+                 expected_err = ''; expected = zeros(45,4); expected(45,1) = 6;
+                 param = 'VV';
+         case 5; fmdl.stimulation(3).volt_pattern = [ones(4,2)];
+                 expected_err = 'EIDORS:fwd_model_parameters:volt_pattern';
+      end
+      err= '';
+      try;  pp = fwd_model_parameters(fmdl);
+      catch e
+         err= e.identifier;
+      end
+      if length(expected_err)>0;
+         unit_test_cmp(['expected error:',num2str(i)], err, expected_err);
+      else
+         unit_test_cmp(['case:',num2str(i)], full(pp.(param)), expected);
       end
    end
-   unit_test_cmp('error', err, 1);
