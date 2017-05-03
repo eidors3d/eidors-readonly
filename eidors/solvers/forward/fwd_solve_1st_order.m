@@ -42,7 +42,7 @@ idx= 1:size(s_mat.E,1);
 idx( dirichlet_nodes ) = [];
 
 % I = Y*V
-v= full(dirichlet_values);
+v= full(dirichlet_values); % Pre fill in matrix
 v(idx,:)= left_divide( s_mat.E(idx,idx), ...
           neumann_nodes(idx,:) - s_mat.E(idx,:)*dirichlet_values);
 
@@ -82,13 +82,14 @@ end; end
 % gnd_node = flag if the model has a gnd_node
 function [dirichlet_nodes, dirichlet_values, neumann_nodes, gnd_node]= ...
             find_dirichlet_nodes( fwd_model, pp );
+keyboard
    dirichlet_values = sparse(size(pp.N2E,2), ...
                              length(fwd_model.stimulation));
-   neumann_nodes = real(pp.QQ);
-   fnanQQ = find(isnan(real(pp.QQ)));
+   neumann_nodes = pp.QQ;
+   fnanQQ = find(isnan(pp.QQ));
    if any(fnanQQ)
       dirichlet_nodes = fnanQQ;
-      dirichlet_values(fnanQQ) = imag(pp.QQ(fnanQQ));
+      dirichlet_values(fnanQQ) = pp.VV(fnanQQ);
       neumann_nodes(fnanQQ) = 0;
       gnd_node = 0; % don't need one
    elseif isfield(fwd_model,'gnd_node')
@@ -148,12 +149,12 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
         
 
 function do_unit_test
-   img = mk_image( mk_common_model('a2c2',16),1);
+   img = mk_image( mk_common_model('a2C2',16),1);
 
-   stim = zeros(16,1); stim(1) = NaN+1i; stim(4) = NaN+2i;
-%  stim = zeros(16,1); stim(1) = NaN+1i; stim(4) = NaN+1i;
+   stim = zeros(16,1); volt=stim; stim([1,4]) = NaN; volt([1,4]) = [1,2];
    img.fwd_model = rmfield(img.fwd_model,'stimulation');
    img.fwd_model.stimulation.stim_pattern = stim;
+   img.fwd_model.stimulation.volt_pattern = volt;
    img.fwd_model.stimulation.meas_pattern = [1,-1,zeros(1,14)];
    img.fwd_solve.get_all_meas = 1;
    vh = fwd_solve_1st_order(img);
@@ -162,6 +163,18 @@ function do_unit_test
    imgn.node_data = vh.volt;
    imgn.calc_colours.clim = 1;
    show_fem(imgn,1);
+
+   stim = zeros(16,1); volt=stim; stim([2,5]) = NaN; volt([2,5]) = [1,2];
+   img.fwd_model.stimulation(2).stim_pattern = stim;
+   img.fwd_model.stimulation(2).volt_pattern = volt;
+   img.fwd_model.stimulation(2).meas_pattern = [1,-1,zeros(1,14)];
+   vh = fwd_solve_1st_order(img);
+
+keyboard
+
+
+
+
 
    img = mk_image( mk_common_model('b2c2',16),1);
    vh = fwd_solve_1st_order(img);
