@@ -18,8 +18,8 @@ if ischar(pp) && strcmp(pp,'UNIT_TEST'); do_unit_test; return, end;
 if nargin == 1
    clk = 1;
 end
-if size(pp,1) == 1;  % only one element in loop, no need to order
-  p = pp; n=1;
+if size(pp,1) <= 1;  % only one element in loop, no need to order
+  p = pp; n=size(pp,1);
   return
 end
 
