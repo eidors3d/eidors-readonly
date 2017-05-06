@@ -36,19 +36,22 @@ img = convert_img_units(img, 'conductivity');
 pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 s_mat= calc_system_mat( img );
 
-idx= 1:size(s_mat.E,1);
-[dirichlet_nodes, dirichlet_values, neumann_nodes, gnd_node]= ...
+[dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
          find_dirichlet_nodes( fwd_model, pp );
-idx( dirichlet_nodes ) = [];
 
-% I = Y*V
-v= full(dirichlet_values); % Pre fill in matrix
-v(idx,:)= left_divide( s_mat.E(idx,idx), ...
-          neumann_nodes(idx,:) - s_mat.E(idx,:)*dirichlet_values);
+v= full(horzcat(dirichlet_values{:})); % Pre fill in matrix
+for i=1:length(dirichlet_nodes)
+   idx= 1:size(s_mat.E,1);
+   idx( dirichlet_nodes{i} ) = [];
+   if length(dirichlet_nodes) == 1; rhs = 1:size(pp.QQ,2);
+   else                           ; rhs = i; end
+   v(idx,rhs)= left_divide( s_mat.E(idx,idx), ...
+             neumann_nodes{i}(idx,:) - s_mat.E(idx,:)*dirichlet_values{i});
+end
 
 % If model has a ground node (rather than voltage stim electrodes)
-if gnd_node
-   Ignd = s_mat.E(dirichlet_nodes,:)*v;
+if has_gnd_node
+   Ignd = s_mat.E(dirichlet_nodes{1},:)*v;
    if norm(Ignd)>1e-10
       warning('current flowing through ground node. Check stimulation pattern')
    end
@@ -79,30 +82,44 @@ try; if img.fwd_solve.get_elec_curr== 1
 end; end
 
 
-% gnd_node = flag if the model has a gnd_node
-function [dirichlet_nodes, dirichlet_values, neumann_nodes, gnd_node]= ...
+% has_gnd_node = flag if the model has a gnd_node => can warn if current flows
+function [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
             find_dirichlet_nodes( fwd_model, pp );
-keyboard
-   dirichlet_values = sparse(size(pp.N2E,2), ...
-                             length(fwd_model.stimulation));
-   neumann_nodes = pp.QQ;
-   fnanQQ = find(isnan(pp.QQ));
+   fnanQQ = isnan(pp.QQ);
    if any(fnanQQ)
-      dirichlet_nodes = fnanQQ;
-      dirichlet_values(fnanQQ) = pp.VV(fnanQQ);
-      neumann_nodes(fnanQQ) = 0;
-      gnd_node = 0; % don't need one
+      has_gnd_node = 0; % no ground node is specified
+      % Are all dirichlet_nodes the same
+      if all(std(fnanQQ,[],2)==0)
+         dirichlet_nodes{1} = find(fnanQQ(:,1));
+         dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
+         dirichlet_values{1}(fnanQQ) = pp.VV(fnanQQ);
+         neumann_nodes{1} = pp.QQ;
+         neumann_nodes{1}(fnanQQ) = 0;
+      else % one at a time
+         for i=1:size(fnanQQ,2)
+            fnanQQi= fnanQQ(:,i);
+            dirichlet_nodes{i} = find(fnanQQi);
+            dirichlet_values{i} = sparse(size(pp.N2E,2), 1);
+            dirichlet_values{i}(fnanQQi) = pp.VV(fnanQQi,i);
+            neumann_nodes{i} = pp.QQ(:,i);
+            neumann_nodes{i}(fnanQQi) = 0;
+         end
+      end
    elseif isfield(fwd_model,'gnd_node')
-      dirichlet_nodes = fwd_model.gnd_node;
-      gnd_node= 1;
+      dirichlet_nodes{1} = fwd_model.gnd_node;
+      dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
+      neumann_nodes{1}   = pp.QQ;
+      has_gnd_node= 1;
    else
       % try to find one in the model center
       ctr =  mean(fwd_model.nodes,1);
       d2  =  sum((fwd_model.nodes - ones(num_nodes(fwd_model),1)*ctr).^2,2);
       [~,gnd_node] = min(d2);
-      dirichlet_nodes = gnd_node(1);
+      dirichlet_nodes{1} = gnd_node(1);
+      dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
+      neumann_nodes{1} = pp.QQ;
       eidors_msg('Warning: no ground node found: choosing node %d',gnd_node(1),1);
-      gnd_node= 1;
+      has_gnd_node= 1;
    end
 
 function vv = meas_from_v_els( v_els, stim)
@@ -147,33 +164,70 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
         v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
     end
         
-
-function do_unit_test
-   img = mk_image( mk_common_model('a2C2',16),1);
-
+function unit_test_voltage_stims;
    stim = zeros(16,1); volt=stim; stim([1,4]) = NaN; volt([1,4]) = [1,2];
-   img.fwd_model = rmfield(img.fwd_model,'stimulation');
-   img.fwd_model.stimulation.stim_pattern = stim;
-   img.fwd_model.stimulation.volt_pattern = volt;
-   img.fwd_model.stimulation.meas_pattern = [1,-1,zeros(1,14)];
-   img.fwd_solve.get_all_meas = 1;
+   stimulv.stim_pattern = stim;
+   stimulv.volt_pattern = volt;
+   stimulv.meas_pattern = [1,0,0,-1,zeros(1,12)];
+
+   img = mk_image( mk_common_model('a2c2',16),1);
+   img.fwd_model.stimulation = stimulv;
+   img.fwd_solve.get_all_nodes = 1;
    vh = fwd_solve_1st_order(img);
+   unit_test_cmp('a2c2 Vstim #1', vh.meas, diff(volt(1:2)), 1e-14);
+   unit_test_cmp('a2c2 Vstim #2', vh.volt(27+[1,4]), volt([1,4]), 1e-14);
+   tst = [ ...
+   1.503131926779798; 1.412534629974291; 1.529078332819747;
+   1.354399248512161; 1.546241676995996];
+   unit_test_cmp('a2c2 Vstim #3', vh.volt(1:5:25), tst, 1e-14);
 
-   imgn = rmfield(img,'elem_data');
-   imgn.node_data = vh.volt;
-   imgn.calc_colours.clim = 1;
-   show_fem(imgn,1);
+   imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt;
+   imgn.calc_colours.clim = 1; subplot(221); show_fem(imgn,1);
 
-   stim = zeros(16,1); volt=stim; stim([2,5]) = NaN; volt([2,5]) = [1,2];
+   img = mk_image( mk_common_model('a2C2',16),1);
+   img.fwd_model.stimulation = stimulv;
+   img.fwd_solve.get_all_nodes = 1;
+   vh = fwd_solve_1st_order(img);
+   unit_test_cmp('a2C2 Vstim #1', vh.meas, diff(volt(1:2)), 1e-14);
+   unit_test_cmp('a2C2 Vstim #2', vh.volt(num_nodes(img)+[1,4]), volt([1,4]), 1e-14);
+   tst = [ ...
+   1.499999999999998; 1.302478674263331; 1.609665333411830; ...
+   1.215039511028270; 1.691145536046686];
+   unit_test_cmp('a2C2 Vstim #3', vh.volt(1:5:25), tst, 1e-14);
+
+   imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt(1:num_nodes(img));
+   imgn.calc_colours.clim = 1; subplot(222); show_fem(imgn,1);
+
+   stim = zeros(16,1); volt=stim; stim([1,4]) = NaN; stim(8)=1; volt([1,4]) = [1,1];
    img.fwd_model.stimulation(2).stim_pattern = stim;
    img.fwd_model.stimulation(2).volt_pattern = volt;
    img.fwd_model.stimulation(2).meas_pattern = [1,-1,zeros(1,14)];
    vh = fwd_solve_1st_order(img);
+   unit_test_cmp('a2C2 Vstim #4', vh.volt(num_nodes(img)+[1,4],1), [1;2], 1e-14);
+   unit_test_cmp('a2C2 Vstim #5', vh.volt(1:5:25,1), tst, 1e-14);
+   unit_test_cmp('a2C2 Vstim #6', vh.volt(num_nodes(img)+[1,4],2), [1;1], 1e-14);
+   tst = [ 1.029942389400905; 1.024198991581187; ...
+           1.048244746016660; 1.006551737030278; 1.057453501332724];
+   unit_test_cmp('a2C2 Vstim #6', vh.volt(1:5:25,2), tst, 1e-14);
 
-keyboard
+   imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt(1:num_nodes(img),2);
+   subplot(223); show_fem(imgn,1);
+
+   stim = zeros(16,1); volt=stim; stim([3,6]) = NaN;  volt([3,6]) = [1,2];
+   img.fwd_model.stimulation(3).stim_pattern = stim;
+   img.fwd_model.stimulation(3).volt_pattern = volt;
+   img.fwd_model.stimulation(3).meas_pattern = [1,-1,zeros(1,14)];
+   vh = fwd_solve_1st_order(img);
+
+   imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt(1:num_nodes(img),3);
+   imgn.calc_colours.clim = 1; subplot(224); show_fem(imgn,1);
+
+   unit_test_cmp('a2C2 Vstim #7', vh.volt(num_nodes(img)+[3,6],3), [1;2], 1e-14);
 
 
 
+function do_unit_test
+   unit_test_voltage_stims;
 
 
    img = mk_image( mk_common_model('b2c2',16),1);
