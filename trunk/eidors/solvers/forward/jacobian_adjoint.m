@@ -13,6 +13,8 @@ function J= jacobian_adjoint( fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
 if nargin == 1
    img= fwd_model;
 elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'on')
@@ -103,7 +105,7 @@ end
 %        S_k is change in conductivity on element k
 function DE = jacobian_calc(pp, zi2E, FC, sv, c2f)
 d= pp.n_dims+1;
-dfact= (d-1)*(d-2); % Valid for d<=3
+dfact= factorial(d);
 
 do_c2f = ( nargin==5 );
 zi2E_FCt = zi2E * FC';
@@ -188,3 +190,6 @@ function str = supported_params
            'log_conductivity'
            'log_resistivity'};
       
+
+function do_unit_test
+   error('jacobian_adjoint: no tests yet');
