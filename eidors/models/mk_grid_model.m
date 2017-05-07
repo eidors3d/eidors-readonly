@@ -51,7 +51,10 @@ if ~isempty( fmdl)
     end
 end
 
-cmdl.normalize_measurements = @eidors_default;
+cmdl.normalize_measurements = 0;% @eidors_default;
+cmdl.solve =      @eidors_default;
+cmdl.system_mat = @eidors_default;
+cmdl.jacobian   = @eidors_default;
 
 
 function c2f= calc_c2f_2d( fmdl, xvec, yvec);
