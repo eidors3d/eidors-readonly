@@ -277,13 +277,10 @@ function do_unit_test
    va= measure*current*sum(R); % analytic
    unit_test_cmp('2D resistor test', va, vs.meas, 1e-12);
 
-   unit_test_cmp('2D R voltages', vs.volt(1:3:10), ...
+   unit_test_cmp('2D R z_contact', [diff(vs.volt([13,1])), diff(vs.volt([14,12]))], ...
+                 R(2)/2*current*[1,-1], 1e-12);
+   unit_test_cmp('2D R voltages', vs.volt(1:3:10)-vs.volt(1), ...
                  R(1)*current*linspace(0,1,4)', 1e-12);
-   unit_test_cmp('2D R z_contact', [vs.volt(13), vs.volt(14)-vs.volt(12)], ...
-                 R(2)/2*current*[-1,1], 1e-12);
-
-   %2D resistor - voltage and current
-%  img.fwd_model.stimulation(1).stim_pattern = [+1i];
 
    %3D resistor
    [R,img] = test_3d_resistor(current,measure);
@@ -299,45 +296,18 @@ function do_unit_test
 
 function [R,img] = test_2d_resistor(current,measure)
    conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
-   z_contact= 1e-1;
-   nn= 12;     % number of nodes
-   ww=3;       % width = 4
-   scale = .35;
-   mdl=mk_grid_model([],3+scale*(1:ww), scale*(1:nn/ww));
-   mdl= rmfield(mdl,'coarse2fine'); % don't calc this.
+   z_contact= .1; wid = 3; len = 12; 
 
-   mdl.gnd_node = 1;
-   elec_nodes= [1:ww];
-   elec(1).nodes= elec_nodes;      elec(1).z_contact= z_contact;
-   elec(2).nodes= nn-elec_nodes+1; elec(2).z_contact= z_contact;
-   stim.stim_pattern= [-1;1]*current;
-   stim.meas_pattern= [-1,1]*measure;
-   mdl.stimulation= stim;
-   mdl.electrode= elec;
-   n_el = size(mdl.elems,1);
-   img= eidors_obj('image','2D rectangle', ...
-         'elem_data', ones(n_el,1) * conduc );
-   img.fwd_model = mdl;
-   img.fwd_model.normalize_measurements = 0;
-   img.fwd_model.solve = @fwd_solve_1st_order;
-   img.fwd_model.system_mat = @system_mat_1st_order;
+   fmdl=mk_grid_model([],linspace(0,wid,3), linspace(0,len,4));
+   fmdl.electrode(1).nodes = find(fmdl.nodes(:,2) ==   0);
+   fmdl.electrode(2).nodes = find(fmdl.nodes(:,2) == len);
+   [fmdl.electrode(:).z_contact] = deal(z_contact);
+   fmdl.stimulation = stim_meas_list([1,2,1,2],2,current,measure);
+   img= mk_image(fmdl,conduc);
 
-
-% Analytic
-   nodes = img.fwd_model.nodes;
-   wid_len= max(nodes) - min(nodes);
-   conduc =  mean(img.elem_data);
-   Block_R = wid_len(2) / wid_len(1) / conduc;
-   % Contact R reflects z_contact / width. There is no need to scale
-   %  by the scale, since this is already reflected in the size of the
-   %  FEM as created by the grid. This is different to the test_3d_resistor,
-   %  where the FEM is created first, and then scaled, so that the ww
-   %  and hh need to be scaled by the scale parameter.
-   z_contact = sum([img.fwd_model.electrode(:).z_contact]);
-   current = max(img.fwd_model.stimulation(1).stim_pattern(:));
-   Contact_R = z_contact/wid_len(1);
-   R = [Block_R, Contact_R];
-
+   Block_R = len / wid / conduc;
+   Contact_R = z_contact/wid;
+   R = [Block_R, 2*Contact_R];
 
 function [R,img] = test_3d_resistor(current,measure);
    ll=5*1; % length
