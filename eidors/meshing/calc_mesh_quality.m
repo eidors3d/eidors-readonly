@@ -164,7 +164,7 @@ Q.tri.kappa        = tri_kappa(mdl);
 Q.tri.min_angle    = tri_min_angle(mdl);
 
 % only report measures for boundary triangles
-f = fields(Q.tri);
+f = fieldnames(Q.tri);
 for i = 1:length(f)
    Q.tri.(f{i}) = Q.tri.(f{i})(mdl.boundary_face);
 end
@@ -190,7 +190,7 @@ end
 
 function display_figs(Q);
 f = figure; set(f,'Name','Surface triangle quality');
-f = fields(Q.tri);
+f = fieldnames(Q.tri);
 for i = 1:length(f)
    subplot(3,3,i)
    hist(Q.tri.(f{i}),100);
@@ -200,7 +200,7 @@ for i = 1:length(f)
 end
 if ~isfield(Q,'tet'), return, end;
 f = figure;  set(f,'Name','Tetrahedron quality');
-f = fields(Q.tet);
+f = fieldnames(Q.tet);
 for i = 1:length(f)
    subplot(3,3,i)
    hist(Q.tet.(f{i}),100);
@@ -290,7 +290,7 @@ function A = solid_angles(mdl)
 for i = 1:4
    E = mdl.elems';
    idx = 1:numel(E); idx(i:4:end) = [];
-   N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(i:4:end),:)',3,[]),3,[])';
+   N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(i:4:end),:)',3,1),3,[])';
    nmrtr = abs(det3(N));
    L = sqrt(sum(N.^2,2)); % length of each vector
    dnmtr = L(1:3:end).*L(2:3:end).*L(3:3:end) ...
@@ -319,7 +319,7 @@ function R = circumsphere_radius(mdl)
 ne = size(mdl.elems,1);
 E = mdl.elems';
 idx = 1:numel(E); idx(1:4:end) = [];
-N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(1:4:end),:)',3,[]),3,[])';
+N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(1:4:end),:)',3,1),3,[])';
 % prepare a matrix for solving a system
 % A = sparse(length(N),length(N));
 X = repmat((1:3*ne)',1,3);
@@ -368,7 +368,7 @@ A = sum(mdl.face_area(mdl.elem2face),2);
 function V = elem_volume(mdl)
 E = mdl.elems';
 idx = 1:numel(E); idx(1:4:end) = [];
-N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(1:4:end),:)',3,[]),3,[])';
+N = mdl.nodes(E(idx),:) - reshape(repmat(mdl.nodes(E(1:4:end),:)',3,1),3,[])';
 V = abs(det3(N))/6;
 
 function do_unit_test
@@ -380,15 +380,18 @@ cube = eidors_obj('fwd_model','cube','nodes', nodes, 'elems', elems);
 % note the the 5th element is a regular tet
 Q = calc_mesh_quality(cube);
 
-f = fields(Q);
-for i = 1:length(f)
-   disp(f{i});
-   f2 = fields(Q.(f{i}));
-   for j = 1:length(f2)
-      disp([' .' f2{j}]);
-      disp(Q.(f{i}).(f2{j})');
+if 0
+   f = fieldnames(Q);
+   for i = 1:length(f)
+      disp(f{i});
+      f2 = fieldnames(Q.(f{i}));
+      for j = 1:length(f2)
+         disp([' .' f2{j}]);
+         disp(Q.(f{i}).(f2{j})');
+      end
    end
 end
+
 unit_test_cmp('CUBE:tri.NSR', Q.tri.NSR, 0.828427124746190, 1e-8);
 unit_test_cmp('CUBE:tri.mu', Q.tri.mu, 0.717438935214301, 1e-8);
 unit_test_cmp('CUBE:tri.eta', Q.tri.eta, 0.866025403784439, 1e-8);
