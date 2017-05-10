@@ -18,6 +18,13 @@ if strcmp(txt,'SHOW_COUNTER');
   end
   return;
 end
+if strcmp(txt,'UNIT_TEST_FCN');
+  unit_test_cmp('RESET_COUNTER');
+  feval(a,'UNIT_TEST');
+  unit_test_cmp( 'SHOW_COUNTER',a);
+  return
+end
+
 
 if strcmp(txt,'UNIT_TEST'); do_unit_test; return; end
 
