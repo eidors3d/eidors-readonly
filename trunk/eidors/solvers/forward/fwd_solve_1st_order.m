@@ -89,7 +89,7 @@ function [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
    if any(fnanQQ)
       has_gnd_node = 0; % no ground node is specified
       % Are all dirichlet_nodes the same
-      if all(std(fnanQQ,[],2)==0)
+      if all(std(full(fnanQQ),[],2)==0)
          dirichlet_nodes{1} = find(fnanQQ(:,1));
          dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
          dirichlet_values{1}(fnanQQ) = pp.VV(fnanQQ);
@@ -193,7 +193,7 @@ function unit_test_voltage_stims;
    tst = [ ...
    1.499999999999998; 1.302478674263331; 1.609665333411830; ...
    1.215039511028270; 1.691145536046686];
-   unit_test_cmp('a2C2 Vstim #3', vh.volt(1:5:25), tst, 1e-14);
+   unit_test_cmp('a2C2 Vstim #3', vh.volt(1:5:25), tst, 1e-13);
 
    imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt(1:num_nodes(img));
    imgn.calc_colours.clim = 1; subplot(222); show_fem(imgn,1);
@@ -204,7 +204,7 @@ function unit_test_voltage_stims;
    img.fwd_model.stimulation(2).meas_pattern = [1,-1,zeros(1,14)];
    vh = fwd_solve_1st_order(img);
    unit_test_cmp('a2C2 Vstim #4', vh.volt(num_nodes(img)+[1,4],1), [1;2], 1e-14);
-   unit_test_cmp('a2C2 Vstim #5', vh.volt(1:5:25,1), tst, 1e-14);
+   unit_test_cmp('a2C2 Vstim #5', vh.volt(1:5:25,1), tst, 1e-13);
    unit_test_cmp('a2C2 Vstim #6', vh.volt(num_nodes(img)+[1,4],2), [1;1], 1e-14);
    tst = [ 1.029942389400905; 1.024198991581187; ...
            1.048244746016660; 1.006551737030278; 1.057453501332724];
@@ -277,7 +277,8 @@ function do_unit_test
    va= measure*current*sum(R); % analytic
    unit_test_cmp('2D resistor test', va, vs.meas, 1e-12);
 
-   unit_test_cmp('2D R z_contact', [diff(vs.volt([13,1])), diff(vs.volt([14,12]))], ...
+   unit_test_cmp('2D R z_contact', ...
+                 [diff(vs.volt([13,1])), diff(vs.volt([14,12]))], ...
                  R(2)/2*current*[1,-1], 1e-12);
    unit_test_cmp('2D R voltages', vs.volt(1:3:10)-vs.volt(1), ...
                  R(1)*current*linspace(0,1,4)', 1e-12);
@@ -288,10 +289,11 @@ function do_unit_test
    vs = fwd_solve_1st_order( img);
    va= current*sum(R);
    unit_test_cmp('3D resistor test', va, vs.meas, 1e-10);
-   unit_test_cmp('3D R voltages', vs.volt(1:12:72), ...
+   unit_test_cmp('3D R voltages', vs.volt(1:12:72)-vs.volt(1), ...
                  R(1)*current*linspace(0,1,6)', 1e-10);
-   unit_test_cmp('3D R z_contact', [vs.volt(73), vs.volt(74)-vs.volt(72)], ...
-                 R(2)/2*current*[-1,1], 1e-10);
+   unit_test_cmp('3D R z_contact', ...
+                 [diff(vs.volt([73,1])), diff(vs.volt([74,72]))], ...
+                 R(2)/2*current*[1,-1], 1e-10);
 
 
 function [R,img] = test_2d_resistor(current,measure)
@@ -309,7 +311,22 @@ function [R,img] = test_2d_resistor(current,measure)
    Contact_R = z_contact/wid;
    R = [Block_R, 2*Contact_R];
 
-function [R,img] = test_3d_resistor(current,measure);
+function [R,img] = test_3d_resistor(current,measure);;
+   conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
+   z_contact= .1; wid = 2; len = 5; hig=3; 
+
+   fmdl=mk_grid_model([],0:wid, 0:hig, 0:len);
+   fmdl.electrode(1).nodes = find(fmdl.nodes(:,3) ==   0);
+   fmdl.electrode(2).nodes = find(fmdl.nodes(:,3) == len);
+   [fmdl.electrode(:).z_contact] = deal(z_contact);
+   fmdl.stimulation = stim_meas_list([1,2,1,2],2,current,measure);
+   img= mk_image(fmdl,conduc);
+
+   Block_R =  len / wid / hig / conduc;
+   Contact_R = z_contact/(wid*hig);
+   R = [Block_R, 2*Contact_R];
+
+function [R,img] = test_3d_resistor_old(current,measure);
    ll=5*1; % length
    ww=1*2; % width
    hh=1*3; % height
