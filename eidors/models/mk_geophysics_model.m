@@ -154,11 +154,16 @@ if ~exist('hmax_rec','var') % allow hmax_rec to depend on configured hmax_fwd
 end
 
 if save_model_to_disk
+   isOctave = exist('OCTAVE_VERSION');
+   if isOctave
+      octavestr='-octave-';
+   else
+      octavestr='-';
+   end
    % NOTE models are stored in the directory specified by eidors_cache('cache_path')
-   filename=fullfile(eidors_cache('cache_path'),sprintf('mk_geophysics_model-imdl-%s-%03del.mat',str,ne));
+   filename=fullfile(eidors_cache('cache_path'),sprintf('mk_geophysics_model%simdl-%s-%03del.mat',octavestr,str,ne));
    if exist(filename, 'file') == 2
-      tmp = matfile(filename);
-      tmp = whos(tmp, 'SALT');
+      tmp = whos('-file',filename,'SALT');
       if length(tmp) > 0
          tmp = load(filename,'SALT');
          fSALT = tmp.SALT;
@@ -464,7 +469,7 @@ B=p' + dot( xyz(end,:) - p, N ) * N/norm(N)^2;
 
 % rotate line to +y-axis
 a = N/norm(N);
-b = [ 1 0 0 ]; % +x
+b = [ 1 0 0 ]'; % +x
 % http://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d
 v = cross(a, b);
 s = norm(v); c = dot(a, b); % sin, cos
