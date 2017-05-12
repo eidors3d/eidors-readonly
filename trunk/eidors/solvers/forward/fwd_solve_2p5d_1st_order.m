@@ -113,6 +113,7 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
 
 function do_unit_test
    ne = 16;
+   isOctave= exist('OCTAVE_VERSION');
    % 2D
    imdl2 = mk_geophysics_model('h2a', ne);
    imdl2.fwd_model.stimulation = stim_pattern_geophys(ne, 'Wenner');
@@ -134,11 +135,15 @@ function do_unit_test
    img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
    v2p5q = fwd_solve_2p5d_1st_order(img2);
    fprintf('fwd_solve_2p5d_1st_order 2D t= %f s (%d k''s, quadv)\n', toc, length(img2.fwd_model.fwd_solve_2p5d_1st_order.k));
-   tic
-   img2.fwd_model.fwd_solve_2p5d_1st_order.method = 'integral';
-   img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
-   v2p5i = fwd_solve_2p5d_1st_order(img2);
-   fprintf('fwd_solve_2p5d_1st_order 2D t= %f s (%d k''s, integral)\n', toc, length(img2.fwd_model.fwd_solve_2p5d_1st_order.k));
+   if isOctave
+      fprintf('fwd_solve_2p5d_1st_order 2D t= --- s (-- k''s, integral) SKIPPED [not supported in Octave]\n');
+   else
+      tic
+      img2.fwd_model.fwd_solve_2p5d_1st_order.method = 'integral';
+      img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
+      v2p5i = fwd_solve_2p5d_1st_order(img2);
+      fprintf('fwd_solve_2p5d_1st_order 2D t= %f s (%d k''s, integral)\n', toc, length(img2.fwd_model.fwd_solve_2p5d_1st_order.k));
+   end
    tic
    img2.fwd_model.fwd_solve_2p5d_1st_order.k = 0;
    img2.fwd_model.nodes(1,:) = img2.fwd_model.nodes(1,:) + rand(1,2)*1e-8; % defeat cache
@@ -165,7 +170,9 @@ function do_unit_test
    unit_test_cmp('2.5D (h2a + 2.5D, k=0)        vs 2D       TEST', norm(v2.meas - v2p5k0.meas), 0, tol);
    unit_test_cmp('2.5D (h2a + 2.5D trapz,2*tol) vs analytic TEST', norm(vh.meas - v2p5t.meas),   0, 2*tol);
    unit_test_cmp('2.5D (h2a + 2.5D quadv**)     vs analytic TEST', norm(vh.meas - v2p5q.meas),   0, tol);
-   unit_test_cmp('2.5D (h2a + 2.5D integral)    vs analytic TEST', norm(vh.meas - v2p5i.meas),   0, tol);
+   if ~isOctave
+      unit_test_cmp('2.5D (h2a + 2.5D integral)    vs analytic TEST', norm(vh.meas - v2p5i.meas),   0, tol);
+   end
    unit_test_cmp('3D   (h3b)                    vs analytic TEST', norm(vh.meas - v3.meas),     0, 2*tol);
 pause(2);
 clf; h=plot([vh.meas, v2p5q.meas, v3.meas, v2.meas],':');
