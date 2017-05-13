@@ -86,10 +86,13 @@ end; end
 function [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
             find_dirichlet_nodes( fwd_model, pp );
    fnanQQ = isnan(pp.QQ);
+   lstims = size(pp.QQ,2);
    if any(fnanQQ)
       has_gnd_node = 0; % no ground node is specified
       % Are all dirichlet_nodes the same
-      if all(std(full(fnanQQ),[],2)==0)
+
+      % Don't use all on sparse, it will make them full
+      if ~any(any(fnanQQ(:,1)*ones(1,lstims) - fnanQQ,2))
          dirichlet_nodes{1} = find(fnanQQ(:,1));
          dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
          dirichlet_values{1}(fnanQQ) = pp.VV(fnanQQ);
