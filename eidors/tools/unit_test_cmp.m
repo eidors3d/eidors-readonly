@@ -4,6 +4,9 @@ function unit_test_cmp(txt,a,b,tol)
 % if tol = -negative it is an expected fail
 % if tol = -inf then expented fail with no tolerance
 % if a==b print ok, otherwise print fail
+%
+% To run unit tests and keep statistics
+%   unit_test_cmp UNIT_TEST_FCN fun_name
 
 % License GPL v2 or v3: $Id$
 
