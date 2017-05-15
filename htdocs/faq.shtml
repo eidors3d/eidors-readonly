@@ -202,6 +202,51 @@ and claim that your code is vastly superior than EIDORS' best shot
 This is a toolkit of routines for you to build a code which suits your
 application.
 
+<p><li id="netgencompile"><b>
+Compiling Netgen under Linux
+</b><p>
+Over the years there have been a number of people who have asked for
+help compiling and installing Netgen. I had a script or two from years
+back that I have, at various times, suggested people use as a starting
+point for compiling under linux. It is, generally, not easy to
+successfully compile as there are a number of patches and the build
+options and dependencies can be a bit tricky to work through. I've
+recently gone back through my notes and those build scripts and got
+them fully operational again. There are now scripts available in my
+dev/a_boyle directory for three versions of netgen: 4.9.13, 5.3.1 and
+6.0_beta.</p>
+
+<p>All versions apply necessary patches, compile, install to a designated
+location (either local or system wide), and provide a netgen wrapper
+which sets necessary environment variables to allow netgen to run
+under Matlab/EIDORS. The builds have been tested on Gentoo
+(2017-04-25), Ubuntu (16.04) and will most likely work on other
+gnu/linux distributions. These are not for Mac or Windows.</p>
+
+<p><ol>
+<li><a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/dev/a_boyle/install-netgen-4.9.13">install-netgen-4.9.13</a></li>
+<li><a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/dev/a_boyle/install-netgen-5.3.1">install-netgen-5.3.1</a></li>
+<li><a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/dev/a_boyle/install-netgen-6.0-beta">install-netgen-6.0-beta</a></li>
+</ol></p>
+
+<p>Note that under Ubuntu, you need dependencies:<br/>
+<pre>
+$ sudo apt-get install libxmu-dev mesa-common-dev libglu1-mesa-dev libx11-dev
+</pre></p>
+
+<p>If you happen to be using Gentoo, there is an ebuild which automates
+the compile from source and installs into the system; these are the builds that
+I use (and maintain) in production.<br/>
+<a href="https://github.com/boyle/boyle-portage-tree/tree/master/sci-mathematics/netgen">Netgen ebuilds for Gentoo Linux</a></p>
+
+<p id="badnetgen4913"><b><em>Warning:</em></b> The 4.9.13 version of netgen will crash when it is executed due to a
+buffer overflow that is detected by modern compilers when meshing
+simple geometries. Versions 5.3.1 and 6.0_beta seem to work correctly
+for me.</p>
+
+<p>Good luck!</p>
+
+
 <p><li id="netgen"><b>
     I'm struggling to use the EIDORS Netgen functions?
 </b><p>
