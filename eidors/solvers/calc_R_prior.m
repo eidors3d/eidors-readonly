@@ -40,7 +40,8 @@ if isfield(inv_model.fwd_model,'coarse2fine')
    c2f= inv_model.fwd_model.coarse2fine;
    if size(R_prior,1)==size(c2f,1)
 %     we need to take into account coarse2fine - using a reasonable tol
-      R_prior=R_prior*c2f;
+      f2c = c2f';         
+      R_prior = f2c*R_prior*c2f;
    end
 end
 
