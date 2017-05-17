@@ -82,6 +82,7 @@ end
 
 %% prepare imdl
 imdlTmp = imdl;
+imdlTmp.prior_use_fwd_not_rec = 0;  
 % if isfield(imdl.fwd_model,'coarse2fine')
 %     imdlTmp.fwd_model = rmfield(imdlTmp.fwd_model,'coarse2fine');
 % end
@@ -196,39 +197,56 @@ function doUnitTest()
 % Load some data
 load iirc_data_2006
 
-% Get a 2D image reconstruction model
-imdl= mk_common_model('c2c');
-imdl.fwd_model.stimulation = mk_stim_patterns(16,1,[0,1],[0,1],{'meas_current'},1);
-imdl.fwd_model = rmfield( imdl.fwd_model, 'meas_select');
-imdl.RtR_prior = @prior_tikhonov;
+stim = mk_stim_patterns(16,1,[0,1],[0,1],{'meas_current'},1);
 
-% load the real data
-vi = real(v_rotate)/1e4; vh = real(v_reference)/1e4;
-% allow double precision, else we run into (unexplainable) problems
-vi = double(vi); vh = double(vh);   
+for iRun = 1
+% for iRun = [0 1]
+    % Get a 2D image reconstruction model
+    if iRun 
+        % more advanced 3D model which includes coarse2fine mapping which
+        % makes all crash
+        fmdl = mk_library_model('adult_male_16el');
+        fmdl.stimulation = stim;
+        opts = [];
+        opts.noise_figure = 0.5;
+        imdl = mk_GN_model(fmdl, opts, []);
+    else
+        % simple one
+        imdl= mk_common_model('c2c');
+        imdl.fwd_model.stimulation = stim;
+        imdl.fwd_model = rmfield( imdl.fwd_model, 'meas_select');
+        imdl.RtR_prior = @prior_tikhonov;
+    end
 
-% get the hyperparameter value via L-curve
-figure
-lambdas_lcc = calc_lambda_regtools(imdl,vh,vi,'LCC',true);
+    % load the real data
+    vi = real(v_rotate)/1e4; vh = real(v_reference)/1e4;
+    % allow double precision, else we run into (unexplainable) problems
+    vi = double(vi); vh = double(vh);   
 
-% get the hyperparameter value via GCV
-lambdas_gcv = calc_lambda_regtools(imdl,vh,vi,'GCV',true);
+    % get the hyperparameter value via L-curve
+    figure
+    lambdas_lcc = calc_lambda_regtools(imdl,vh,vi,'LCC',true);
 
-% visualize
-FramesOfInterest = [10 35 60 85];
-figure(1);
-subplot(121);
-imdl.hyperparameter.value = median(lambdas_lcc);
-imgs_lcc = inv_solve(imdl, vh, vi(:,FramesOfInterest));
-imgs_lcc.show_slices.img_cols = 1;
-show_slices(imgs_lcc);
-title('L-curve');
+    % get the hyperparameter value via GCV
+    lambdas_gcv = calc_lambda_regtools(imdl,vh,vi,'GCV',true);
 
-subplot(122);
-imdl.hyperparameter.value = median(lambdas_gcv);
-imgs_gcv = inv_solve(imdl, vh, vi(:,FramesOfInterest));
-imgs_gcv.show_slices.img_cols = 1;
-show_slices(imgs_gcv);
-title('GCV');
+    % visualize
+    FramesOfInterest = [10 35 60 85];
+    fig = figure(1 + iRun);
+    subplot(121);
+    imdl.hyperparameter.value = median(lambdas_lcc);
+    imgs_lcc = inv_solve(imdl, vh, vi(:,FramesOfInterest));
+    imgs_lcc.show_slices.img_cols = 1;
+    show_slices(imgs_lcc);
+    title('L-curve');
+
+    subplot(122);
+    imdl.hyperparameter.value = median(lambdas_gcv);
+    imgs_gcv = inv_solve(imdl, vh, vi(:,FramesOfInterest));
+    imgs_gcv.show_slices.img_cols = 1;
+    show_slices(imgs_gcv);
+    title('GCV');
+
+end
 
 end
