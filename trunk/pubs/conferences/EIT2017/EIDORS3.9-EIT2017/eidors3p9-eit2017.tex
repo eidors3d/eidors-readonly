@@ -15,6 +15,8 @@
 \usepackage{enumitem}
 \usepackage{booktabs}
 \usepackage[small,compact]{titlesec}
+\usepackage{xcolor}
+\usepackage[printwatermark]{xwatermark}
 % Fix titlesec for the 2.10.1 version in ubuntu 16.04
 %  https://bugs.launchpad.net/ubuntu/+source/texlive-extra/+bug/1574052
 \makeatletter
@@ -75,15 +77,16 @@
 \author[1]{Alistair~Boyle}
 \author[2]{Fabian~Braun}
 \author[3]{Michael~G.~Crabb}
-\author[4]{Bart{\l}omiej~Grychtol}
+\author[4,5]{Bart{\l}omiej~Grychtol}
 \author[3]{William~R.~B.~Lionheart}
-\author[3]{Henry~Tredigo}
-\author[5]{Rebecca~Yerworth}
+\author[3]{Henry~F.~J.~Tregidgo}
+\author[6]{Rebecca~Yerworth}
 \affil[1]{Carleton University, Ottawa, Canada}
-\affil[2]{University of Manchester, Manchester, UK}
-\affil[3]{Centre Suisse d'Électronique et de Microtechnique, Neuchâtel, Switzerland}
+\affil[2]{Centre Suisse d'Électronique et de Microtechnique, Neuchâtel, Switzerland}
+\affil[3]{University of Manchester, Manchester, UK}
 \affil[4]{Fraunhofer Project Group for Automation in Medicine and Biotechnology PAMB, Mannheim, Germany}
-\affil[5]{University College London, UK}
+\affil[5]{Medical Fakulty Mannheim, University of Heidelberg, Mannheim, Germany}
+\affil[6]{University College London, UK}
 \date{}
 %----------------------------------------------------------------------------- %
 
@@ -95,6 +98,7 @@
 \thispagestyle{empty}
 
 \begin{multicols}{2}
+%\newwatermark[allpages,color=red!50,angle=45,scale=3,xpos=0,ypos=0]{DRAFT}
 
 \noindent {\bf Abstract:}
 This paper announces the release of version 3.9 of the
@@ -104,7 +108,7 @@ discusses recent successes and challenges.
 \section{Introduction}
 We are pleased to announce the release of EIDORS~3.9 (fig.~\ref{fig:logo}),
 which is available for the 18th Int Conf on Biomedical Applications of EIT.
-The software is available at \href{eidors.org} licensed under the GNU GPLv2 or GPLv3.
+The software is available at \href{eidors.org}\ licensed under the GNU GPLv2 or GPLv3.
 
 EIDORS aims to provide free software algorithms for forward modelling
 and inverse solutions
@@ -131,17 +135,17 @@ algorithms, adding and improving a number of aspects.
 
 \item Updated ability to load device file formats
 
-\item Improved support for GREIT reconstructions in 3D
+\item Improved support for GREIT reconstructions in 3D \cite{grychtol2016}
 
 \item Improved testing framework esp.\ for core solver algs
 
 \item Faster solver times for real conductivities
 
-\item New hyperparameter selection approaches
+\item New hyperparameter selection approaches \cite{braun2017}
 
-\item Interface to ``Regularization Toolbox'' \cite{Hansen}
+\item Interface to ``Regularization Toolbox'' \cite{hansen2007}
 
-\item Gmsh-based human 3D model interface
+\item Gmsh-based human 3D model interface \cite{grychtol2016}
 
 \item Point and CEM models
 
@@ -277,6 +281,13 @@ NSERC Canada, EPSRC UK.
    {\em Meas Sci and Tech}, 13:1871--1883, 2002.
 \bibitem{adler2006}
    Adler A, Boyle A, {\em et al}, {\em Proc.\ EIT 2017}, 
+\bibitem{hansen2007}
+   Hansen, PC {\em Numerical algorithms}, 46.2:189--194, 2007
+\bibitem{braun2017}
+   Braun, F et al {\em IEEE TBME}, \href{http://dx.doi.org/10.1109/TBME.2017.2659540}{DOI:10.1109/TBME.2017.2659540}, 2017.
+\bibitem{grychtol2016}
+   Grychtol B, M\"uller B, Adler A,
+   {\em Physiol Meas}, 37(6):785--800
 \end{thebibliography}
 \end{multicols}
 
