@@ -106,9 +106,12 @@ EIDORS software suite. We review its new features, and
 discusses recent successes and challenges.
 
 \section{Introduction}
-We are pleased to announce the release of EIDORS~3.9 (fig.~\ref{fig:logo}),
-which is available for the 18th Int Conf on Biomedical Applications of EIT.
-The software is available at \href{eidors.org}\ licensed under the GNU GPLv2 or GPLv3.
+We proudly announce the release of EIDORS version 3.9,
+for the 18th Int Conf on Biomedical Applications of EIT,
+in June 2017.
+The software is available at \href{www.eidors.org}{eidors.org}\, and licensed under the GNU GPLv2 or GPLv3. Archived versions are now available on Zenodo
+\cite{eidors3p9} (and v3.8 \cite{eidors3p8}).
+
 
 EIDORS aims to provide free software algorithms for forward modelling
 and inverse solutions
@@ -116,21 +119,10 @@ of Electrical Impedance and (to some extent) Diffusion-based Optical Tomography,
 medical, industrial and geophysical settings and to share data and promote
 collaboration.
 
-\begin{figure}[H]
-  \vspace{-4.5mm}
-\centering
-\includegraphics[width=.75\columnwidth]{mesh-eidors3p9.png}
-\caption{\label{fig:logo}%
-  EIDORS 3.9: featuring flexible parametrization, meshing, absolute solver and visualization improvements.
-  Image shows current streamlines on a thorax-shaped finite element model.
-}
-\end{figure}
-\vspace{-1.5em}
-
 \section{New Features}
 Release 3.9 of EIDORS builds upon a strong foundation in reconstruction
 algorithms, adding and improving a number of aspects.
-\begin{enumerate}
+\begin{itemize}
 \item Improved support for Octave
 
 \item Updated ability to load device file formats
@@ -186,7 +178,7 @@ algorithms, adding and improving a number of aspects.
 \item Support for Dr\"ager and Swisstom file formats
 
 \item Expanded shape library
-\end{enumerate}
+\end{itemize}
 
 \section{Growth}
 EIDORS-related citations continue to grow. Current citation results are
@@ -224,24 +216,24 @@ contributions in progress.
 \caption{\label{tbl:cite} EIDORS Citations
  (May 2019, scholar.google.com).
 }
-\begin{tabular}{lcr}
+\begin{tabular}{r@{\hspace{1mm}}lcr}
   \toprule
-  Paper & Date & \hspace{-2mm}Citations \\
+  & Paper & Date & \hspace{-2mm}Citations \\
   %{@{\extracolsep{\fill}}@{}|c|ccc|r|}
   \midrule
-  \cite{vauhkonen2001} A MATLAB package for the EIDORS project {\tiny ...}  
+  \cite{vauhkonen2001} & A MATLAB package for the EIDORS project {\tiny ...}  
     & 2001 & 207 \\
-  \cite{polydorides2002phd} Image reconstruction algorithms for {\tiny ...}  
+  \cite{polydorides2002phd} & Image reconstruction algorithms for {\tiny ...}  
     & 2002 & 127 \\
-  \cite{polydorides2002matlab} A Matlab toolkit for three-dimensional {\tiny ...}  
+  \cite{polydorides2002matlab} & A Matlab toolkit for three-dimensional {\tiny ...}  
     & 2002 & 368 \\
-  \cite{adler2005} EIDORS: Towards a community-based extensible \ldots
+  \cite{adler2005} & EIDORS: Towards a community-based \ldots
     & 2005 & 10 \\
-  \cite{adler2006} Uses and abuses of {EIDORS}: An extensible {\tiny ...} 
+  \cite{adler2006} & Uses and abuses of {EIDORS}: An extensible {\tiny ...} 
     & 2006 & 332 \\
-  \cite{adler2008} Simple FEMs aren't as good \ldots
+  \cite{adler2008} & Simple FEMs aren't as good as we \ldots
     & 2008 &  19 \\
-  \cite{adler2015} EIDORS version 3.8
+  \cite{adler2015} & EIDORS version 3.8
     & 2015 & 4 \\
   \bottomrule
 \end{tabular}
@@ -260,34 +252,52 @@ Presenting version 3.9!
 
 \section*{Acknowledgements}
 Recent funding for EIDORS development thanks to
-NSERC Canada, EPSRC UK.
+NSERC Canada and EPSRC UK.
 
 \footnotesize
-\begin{thebibliography}{}
+\begin{thebibliography}{99}
 \bibitem{eidors3p8}
-   Adler A, Boyle A, Crabb MG et al,
-   {\em EIDORS v3.8}, Zenodo,
+   Adler A, {\em et al}, ``EIDORS v3.8'',
    \href{http://dx.doi.org/10.5281/zenodo.17559}{DOI:10.5281/zenodo.17559},
     2015.
-\bibitem{vauhkonen2001}
-   Vauhkonen M, Lionheart WRB, Heikkinen L et al,
-   {\em  Physiol Meas}, 22:107--111, 2001.
-\bibitem{polydorides2002phd}
-   Polydorides N,
- {\em Image Reconstruction Algorithms for Soft-Field Tomography}, Ph.D. thesis,
-   University of Manchester, UK, 2002.
-\bibitem{polydorides2002matlab}
-   Polydorides N, Lionheart WRB,
-   {\em Meas Sci and Tech}, 13:1871--1883, 2002.
-\bibitem{adler2006}
-   Adler A, Boyle A, {\em et al}, {\em Proc.\ EIT 2017}, 
+\bibitem{eidors3p9}
+   Adler A, {\em et al}, ``EIDORS v3.9'',
+   NEED DOI FROM ZENODO
+    2017.
 \bibitem{hansen2007}
    Hansen, PC {\em Numerical algorithms}, 46.2:189--194, 2007
 \bibitem{braun2017}
-   Braun, F et al {\em IEEE TBME}, \href{http://dx.doi.org/10.1109/TBME.2017.2659540}{DOI:10.1109/TBME.2017.2659540}, 2017.
+   Braun, F {\em et al} \href{http://dx.doi.org/10.1109/TBME.2017.2659540}{IEEE T Biomed Eng}, 2017.
 \bibitem{grychtol2016}
-   Grychtol B, M\"uller B, Adler A,
-   {\em Physiol Meas}, 37(6):785--800
+   Grychtol B, Müller B, Adler A,
+   {\em Physiol Meas}, 37:785--800, 2016.
+\bibitem{vauhkonen2001}
+   Vauhkonen M, Lionheart WRB,  et al,
+   {\em  Physiol Meas}, 22:107--111, 2001.
+\bibitem{polydorides2002phd}
+   Polydorides N,
+%{\em Image Reconstruction Algorithms for Soft-Field Tomography},
+ Ph.D. thesis, U Manchester, UK, 2002.
+\bibitem{polydorides2002matlab}
+   Polydorides N, Lionheart WRB,
+   {\em Meas Sci Tech}, 13:1871--1883, 2002.
+\bibitem{adler2005}
+Adler A, Lionheart WRB,
+%"EIDORS: Towards a community-based extensible software base for EIT." 6th Conference on Biomedical Applications of Electrical Impedance Tomography, London, UK. 2005.
+{\em Proc EIT2015}, London, UK, 2015
+%
+\bibitem{adler2006}
+Adler A, Lionheart WRB,
+{\em Physiol Meas} 27:S25--S42, 2006.
+
+\bibitem{adler2008}
+Adler A, Borsic A {\em et al},
+%Simple FEMs aren't as good as we \ldots
+{\em Proc EIT2008}, Hannover, NH, USA, 2008.
+\bibitem{adler2015}
+Adler A {\em et al}, %Alistair Boyle, Michael G Crabb, Hervé Gagnon, Bartłomiej Grychtol, Nolwenn Lesparre, William R.B. Lionheart,
+\href{https://zenodo.org/record/17752}{\em Proc EIT2015}, p.19, 
+ Neuchâtel, Switzerland, 2015
 \end{thebibliography}
 \end{multicols}
 
