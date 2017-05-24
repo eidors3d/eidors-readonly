@@ -39,7 +39,7 @@ function  [c_data,data_aux, stats]= frame_timing_correct(filename, method)
 %end
 
 if nargin<=2
-   method='linear'; % other choice is linear 
+   method='fft'; % other choice is linear 
 end
 
 %generate protocol
@@ -66,11 +66,11 @@ fclose(infile); %close file
     
 switch upper(method)
    case 'FFT'
-        NFFT=size(data,2);  %seems fast enough without truncateing data set to 2^n values
+        NFFT=size(data2,2);  %seems fast enough without truncateing data set to 2^n values
         c_ave=zeros(prt_len,floor(NFFT/2));
         c_data=zeros(prt_len,NFFT);
         for e=1:prt_len % for each electrode combination
-            Y = fft(Ehub.raw(e,1:NFFT)',NFFT)/NFFT;
+            Y = fft(raw(e,1:NFFT)',NFFT)/NFFT;
             a=angle(Y(2:floor(NFFT/2)))-2*pi*(1:NFFT/2-1)'*prt_time(e)/NFFT;
             c_ave(e,1)=Y(1); %Y_phase corrected
             c_ave(e,2:floor(NFFT/2))=2*(cos(a).*abs(Y(2:floor(NFFT/2)))+1i*sin(a).*abs(Y(2:floor(NFFT/2))));
