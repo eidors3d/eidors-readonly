@@ -65,6 +65,9 @@
 \setlength{\affilsep}{1ex}
 \renewcommand\Authands{, }
 \setlength{\droptitle}{-1.634cm}
+\makeatletter
+\renewcommand\AB@affilsepx{\quad\protect\Affilfont} % put affiliations into one line
+\makeatother
 % ============================================================================ %
 
 
@@ -103,7 +106,7 @@
 \noindent {\bf Abstract:}
 This paper announces the release of version 3.9 of the
 EIDORS software suite. We review its new features, and 
-discusses recent successes and challenges.
+discusses the growth and citations.
 
 \section{Introduction}
 We proudly announce the release of EIDORS version 3.9,
@@ -123,10 +126,6 @@ collaboration.
 Release 3.9 of EIDORS builds upon a strong foundation in reconstruction
 algorithms, adding and improving a number of aspects.
 \begin{itemize}
-\item Improved support for Octave
-
-\item Updated ability to load device file formats
-
 \item Improved support for GREIT reconstructions in 3D \cite{grychtol2016}
 
 \item Improved testing framework esp.\ for core solver algs
@@ -139,43 +138,36 @@ algorithms, adding and improving a number of aspects.
 
 \item Gmsh-based human 3D model interface \cite{grychtol2016}
 
-\item Point and CEM models
+\item Correction of artefacts caused by low frame rates \cite{yerworth2016}
+
+\item Improved support for mixed Point and CEM electrode models
 
 %  - 5358 model reduction: added tutorial for diodes: model reduction from fem to resistor mesh
+
+\item Support for 2$\frac{1}{2}$D solvers (including a rank-1 2$\frac{1}{2}$D movement Jacobian)
+   \cite{boyle2016model2p5}
+
+\item Solver supporting model reduction (i.e.\ efficient precalculation of
+       out-of-field regions) \cite{adler2016model}
+
 %  - improved swisstom and draeger file loaders
 %  - 5288 new 2.5D rank-1 movement jacobian
+
+
+\item Improved support for geophysical FEM models
 %  - mk geophysics model improvements
 %  - efficiency improvements
 %  - 5266 Serial correct files added to R_yerworth folder
 %  - 5218 l-curve/GCV hyperparameter
 
-\item More stable
-  iterative absolute inverse solvers (both Gauss-Newton and
-  Conjugate-Gradient).
-% DEPENDS ON ABS SOLVER
 
-\item Greater flexibility in parametrization choices.
-% DEPENDS ON ABS SOLVER
+\item Improved support for Octave
+
+\item Updated ability to load recent device file formats including
+       auxiliary data (Dr\"ager and Swisstom file formats)
 
 
-\item Speed optimizations: improved Jacobian calculation, faster cache handling, and 
-% Improvements to {\tt stim\_meas\_list} generated structures, resulting in
-  faster forward solutions.
-%  Also, the ability to
-%  convert between a stimulus structure and a list of stimulus and measurement electrode pairs.
-% An implementation of the parallel Jacobian calculator (pending MEX issues).
 
-%\item Attempts to work around broken matlab MEX file handling (cross-platform mex compile).
-
-\item Improved interfaces to Netgen and visualization.
-      Compound and point electrodes in Netgen.
-
-\item Analytic calculation of dual-mesh interpolations (coarse to fine)
-% as well as, Quad and hex shaped mesh elements %rev 4392
-
-\item Support for second and third order mesh elements.
-
-\item Support for Dr\"ager and Swisstom file formats
 
 \item Expanded shape library
 \end{itemize}
@@ -189,26 +181,6 @@ improving test coverage, refining performance and implementing new features
 (fig.~\ref{fig:loc}). In 2012, a {\tt dev} staging area was created for
 contributions in progress.
 
-\begin{figure}[H]
-  \vspace{-2.5mm}
-\centering
-% trim=left botm right top
-%\includegraphics[width=.96\columnwidth]{fig_loc.pdf}
-      \setlength{\unitlength}{6mm}
-   \begin{picture}(10,3)
-   \put(0.3,0.3){\vector(1,0){10}}
-   \put(0.3,0.3){\vector(0,1){3}}
-   \put(2,2){\Large Lines of code graph}
-   \qbezier(1,1)(5,5)(9,0.5)
-   \end{picture}
-\caption{\label{fig:loc}%
-%graph and table combo chart, including line for test code.
-  Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
-   (red), Eidors (i.e.\ release branch, yellow), Tutorials (green), development code (blue).
-   Releases are indicated by gray bars.
-}
-\end{figure}
-\vspace{-1.5em}
 \begin{table}[H]
   \footnotesize
 \centering
@@ -240,6 +212,19 @@ contributions in progress.
 \vspace{-1em}
 \end{table}
 
+\begin{figure}[H]
+  \vspace{-2.5mm}
+\centering
+% trim=left botm right top
+ \includegraphics[width=.96\columnwidth]{fig_loc.pdf}
+\caption{\label{fig:loc}%
+%graph and table combo chart, including line for test code.
+  Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
+   (red), Eidors (i.e.\ release branch, yellow), Tutorials (green), development code (blue).
+   Releases are indicated by gray bars.
+}
+\end{figure}
+
 \section{Conclusion}
 The structure of EIDORS has been relatively stable due, in part, to some early design choices:
 a modular framework and data structure,
@@ -256,21 +241,34 @@ NSERC Canada and EPSRC UK.
 
 \footnotesize
 \begin{thebibliography}{99}
-\bibitem{eidors3p8}
-   Adler A, {\em et al}, ``EIDORS v3.8'',
-   \href{http://dx.doi.org/10.5281/zenodo.17559}{DOI:10.5281/zenodo.17559},
-    2015.
 \bibitem{eidors3p9}
    Adler A, {\em et al}, ``EIDORS v3.9'',
    NEED DOI FROM ZENODO
     2017.
+\bibitem{eidors3p8}
+   Adler A, {\em et al}, ``EIDORS v3.8'',
+   \href{http://dx.doi.org/10.5281/zenodo.17559}{DOI:10.5281/zenodo.17559},
+    2015.
 \bibitem{hansen2007}
    Hansen, PC {\em Numerical algorithms}, 46.2:189--194, 2007
+
 \bibitem{braun2017}
    Braun, F {\em et al} \href{http://dx.doi.org/10.1109/TBME.2017.2659540}{IEEE T Biomed Eng}, 2017.
 \bibitem{grychtol2016}
    Grychtol B, Müller B, Adler A,
    {\em Physiol Meas}, 37:785--800, 2016.
+
+\bibitem{boyle2016model2p5}
+Boyle A, Adler A,
+{\em Proc EIT2016}, p.100, Stockholm,  2016.
+
+\bibitem{adler2016model}
+Adler A, Lionheart WRB, 
+%Model Reduction for FEM Forward Solutions
+{\em Proc EIT2016}, p.116, Stockholm,  2016.
+
+\bibitem{yerworth2016}
+Yerworth R {\em et al}, \href{http://dx.doi.org/10.1007/s10877-016-9920-y}{J Clin Monit Comput}, 2016
 \bibitem{vauhkonen2001}
    Vauhkonen M, Lionheart WRB,  et al,
    {\em  Physiol Meas}, 22:107--111, 2001.
