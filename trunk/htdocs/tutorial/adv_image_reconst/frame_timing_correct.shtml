@@ -39,18 +39,37 @@ Correct using GUI
 </H3>
 
 <pre>
-frame_data_correct_gui
+frame_timing_correct_gui
 % Navigate to location of data
 %    Choose file nm18.get
 % New file is saved as [ORIGINALNAME].get = nm18-corrected.get
+% print_convert frame_timing_correct01a.jpg
 </pre>
+
+Outputs:   *_corrected.get &amp; associated *_corrected.prl files (if the original *.prl file is in the same directory). These can now be reconstructed with using your normal method.
+<p>
+The absolute percentage difference between original and corrected data as mean (+/- std) of all electrode combinations is displayed in a pop up box. 
+<p>
+ 
+In addition, the function checks for reciprocity errors. Reciprocity is a measure of the quality and reliability of the data, including the improvement in quality due to lag correction (see Reciprocity theory box, below). If any electrode combination has a median reciprocity error greater than a predetermined threshold a message box pops up, stating the percentage of electrode combinations affected, and optionally provides a graphical representation of the reciprocity errors (click display). 
+<p>
+              
+The threshold is currently set at the arbitrary value of 5%, based in experience that human data with errors less than this, on most electrode combinations, can usually be obtained.  
+The upper plot, of the graphical representation, is reciprocity errors as a function of time and would show, for example, an electrode developing a permanent or temporary fault during the experiment, and when this occurred.   The lower plot shows the mean (+/- std) for each electrode combination. Electrode combinations using the same drive pair are grouped together, and the x-axis is labelled to reflect this. The number of electrodes exceeding the threshold will always be zero or an even number, since each electrode combination has a reciprocal pair, and it is not know which of them is most accurate.
+
+
+<center>
+<img src="frame_timing_correct01a.jpg">
+<br><i> Figure:</i>
+In this example, all reciprocities are stable over time, with one pair of combinations at ~40% error and a few around 25%. 
+</center>
 
 <H3>
 Create inverse model of neonate using FEM model from EIDORS library
 </H3>
 
 <pre>
-[% PROCESS "frame_data_correct02.m" %]
+[% PROCESS "frame_timing_correct02.m" %]
 </pre>
 
 <H3>
@@ -58,7 +77,7 @@ Load original and corrected data, and reconstruct images of last breath, using t
 </H3>
 
 <pre>
-[% PROCESS "frame_data_correct03.m" %]
+[% PROCESS "frame_timing_correct03.m" %]
 </pre>
 
 <H3>
@@ -66,12 +85,12 @@ Display images from last breath
 </H3>
 
 <pre>
-[% PROCESS "frame_data_correct04.m" %]
+[% PROCESS "frame_timing_correct04.m" %]
 </pre>
 
 
 <center>
-<img src="frame_data_correct01a.png">
+<img src="frame_timing_correct01a.png">
 <br><i> Figure:</i>
 The first image is the top left, continuing in normal reading order to the
 bottom row, right hand image. Red indicates relative impedance increases
