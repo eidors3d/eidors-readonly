@@ -69,7 +69,7 @@ Create inverse model of neonate using FEM model from EIDORS library
 </H3>
 
 <pre>
-[% PROCESS "frame_timing_correct02.m" %]
+[% PROCESS "frame_timing_correct01.m" %]
 </pre>
 
 <H3>
@@ -77,7 +77,7 @@ Load original and corrected data, and reconstruct images of last breath, using t
 </H3>
 
 <pre>
-[% PROCESS "frame_timing_correct03.m" %]
+[% PROCESS "frame_timing_correct02.m" %]
 </pre>
 
 <H3>
@@ -85,12 +85,12 @@ Display images from last breath
 </H3>
 
 <pre>
-[% PROCESS "frame_timing_correct04.m" %]
+[% PROCESS "frame_timing_correct03.m" %]
 </pre>
 
 
 <center>
-<img src="frame_timing_correct01a.png">
+<img src="frame_timing_correct03a.jpg">
 <br><i> Figure:</i>
 The first image is the top left, continuing in normal reading order to the
 bottom row, right hand image. Red indicates relative impedance increases
