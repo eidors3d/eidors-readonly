@@ -1,0 +1,105 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2> 
+Correction for effect of serial data collection
+</h2>
+
+Most EIT systems use serial data collection which, if uncorrected, results in
+image distortion, particularly when breathing rates are high compared to the
+acquisition frame rate.
+
+This tutorial demonstrates use of the correction tool documented in the published papers
+<ul>
+<LI>
+Yerworth, R., Frerichs, I. &amp; Bayford, R., 2016. Analysis and compensation for errors in electrical impedance tomography images and ventilation-related measures. Journal of Clinical Monitoring and Computing, <a href="http://iopscience.iop.org/0967-3334/34/6/659/pdf/0967-3334_34_6_659.pdf">doi:10.1007/s10877-016-9920-y</a>
+<LI>
+Yerworth, R. &amp; Bayford, R. 2013. The effect of serial data collection on the accuracy of electrical impedance tomography images. Physiological Measurement 34:6 p659-669 
+</ul>
+This tool <tt>frame_timing_correct.m</tt> corrects serially collected *.get
+data so that each frame appears to come from an instantaneous point in time. 
+(future versions of the code will correct data from other data formats)
+
+<p>
+The original versions of this software and a compiled tool (for windows only) are
+ <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/dev/r_yerworth/">available</a>
+
+<H3>
+Example
+</H3>
+Download example 
+<a href="http://eidors3d.sourceforge.net/data_contrib/if-neonate-ventilated/if-neonate-ventilated.zip">data</a>
+set (<a
+ href="http://eidors3d.sourceforge.net/data_contrib/if-neonate-ventilated/index.shtml"
+>ventilated neonate</a>) and unzip to a known location.
+
+<H3>
+Correct using GUI
+</H3>
+
+<pre>
+frame_data_correct_gui
+% Navigate to location of data
+%    Choose file nm18.get
+% New file is saved as [ORIGINALNAME].get = nm18-corrected.get
+</pre>
+
+<H3>
+Create inverse model of neonate using FEM model from EIDORS library
+</H3>
+
+<pre>
+[% PROCESS "frame_data_correct02.m" %]
+</pre>
+
+<H3>
+Load original and corrected data, and reconstruct images of last breath, using the average of all frames as the reference.
+</H3>
+
+<pre>
+[% PROCESS "frame_data_correct03.m" %]
+</pre>
+
+<H3>
+Display images from last breath
+</H3>
+
+<pre>
+[% PROCESS "frame_data_correct04.m" %]
+</pre>
+
+
+<center>
+<img src="frame_data_correct01a.png">
+<br><i> Figure:</i>
+The first image is the top left, continuing in normal reading order to the
+bottom row, right hand image. Red indicates relative impedance increases
+(inspiration) and blue relative impedance decreases (expiration).  Changes in
+the upper left of each image occur sooner in the original than the corrected
+series, and the left and right sides appear more unbalanced in the original
+series. If a different reconstruction algorithm is used the images will be
+slightly different, but similar trends should be expected. 
+</center>
+
+<H3>
+Note on reciprocity:
+</H3>
+EIT images are reconstructed from sets of 4-electrode impedance measurements
+i.e. current is injected via one pair of electrodes (j,k)  and measured with a
+separate pair (m,n). Theoretically the same result would be obtained if the
+electrodes were reversed – i.e. injection m,n, measurement j,k. However this is
+not so in in practice due to non-idealities in the system and electrode/skin
+interface. The absolute difference between the two measurements is termed the
+reciprocity error and is normally expressed as a percentage relative to the
+mean of the two measurements.  Many EIT systems collect from all electrode
+combinations, enabling reciprocity to checked after data collection.
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
