@@ -16,6 +16,8 @@ function  frame_timing_correct_gui()
 %  DOI: 10.1088/0967-3334/34/6/659
 %  PUBMED:  23719130
 % 
+% ISSUES WITH CODE:
+%   - Code works only with *.get files
 %%
 %try
  %   citeme(serial_correction)
@@ -49,9 +51,23 @@ for i=1:max(size(filenames))
         return
     elseif file_type == 1
         [a,b,ext]=fileparts(filename);%work out filetype
+% Should use eidors_readdata
+        infile=fopen(filename,'r'); %open file for reading
+        if infile==-1;
+           errordlg(['Cannot find the file: ',filename,'.get']);
+           return
+        end;
+        fseek(infile,0,'eof');
+        eframe=ftell(infile)/256/4;%number of frames in file
+        fseek(infile,0,'bof');
+        raw(:,1:eframe,1)=fread(infile,[208,inf],'208*float32',48*4);%[read 208 boundary voltages, skip 48 pieces of other info] per frame
+                    %%Loading of addition information.
+        fseek(infile,208*4,'bof');
+        data2=fread(infile,[48,inf],'48*float32',208*4);
+        fclose(infile); %close file
     end
     
-  [c_data,data2,stats]= frame_timing_correct(filename, method);
+  [c_data,stats]= frame_timing_correct(raw, method);
 
 %output corrected file
    c_data(209:208+48,:)=data2; %attach V, I & auxillary data to cleaned data.  
