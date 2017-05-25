@@ -106,11 +106,11 @@
 \noindent {\bf Abstract:}
 This paper announces the release of version 3.9 of the
 EIDORS software suite. We review its new features, and 
-discusses the growth and citations.
+discusses its growth and citations.
 
 \section{Introduction}
 We proudly announce the release of EIDORS version 3.9,
-for the 18th Int Conf on Biomedical Applications of EIT,
+for the 18th Int.\ Conf.\ on Biomedical Applications of EIT,
 in June 2017.
 The software is available at \href{www.eidors.org}{eidors.org}\, and licensed under the GNU GPLv2 or GPLv3. Archived versions are now available on Zenodo
 \cite{eidors3p9} (and v3.8 \cite{eidors3p8}).
@@ -126,11 +126,11 @@ collaboration.
 Release 3.9 of EIDORS builds upon a strong foundation in reconstruction
 algorithms, adding and improving a number of aspects.
 \begin{itemize}
+\item Faster forward solve times for real conductivity distributions
+
 \item Improved support for GREIT reconstructions in 3D \cite{grychtol2016}
 
 \item Improved testing framework esp.\ for core solver algs
-
-\item Faster solver times for real conductivities
 
 \item New hyperparameter selection approaches \cite{braun2017}
 
@@ -140,15 +140,15 @@ algorithms, adding and improving a number of aspects.
 
 \item Correction of artefacts caused by low frame rates \cite{yerworth2016}
 
-\item Improved support for mixed Point and CEM electrode models
+\item Improved support for mixed point and CEM electrode models
 
 %  - 5358 model reduction: added tutorial for diodes: model reduction from fem to resistor mesh
 
 \item Support for 2$\frac{1}{2}$D solvers (including a rank-1 2$\frac{1}{2}$D movement Jacobian)
    \cite{boyle2016model2p5}
 
-\item Solver supporting model reduction (i.e.\ efficient precalculation of
-       out-of-field regions) \cite{adler2016model}
+\item Forward solve supporting model reduction (i.e.\ efficient
+       precalculation of out-of-field regions) \cite{adler2016model}
 
 %  - improved swisstom and draeger file loaders
 %  - 5288 new 2.5D rank-1 movement jacobian
@@ -164,7 +164,7 @@ algorithms, adding and improving a number of aspects.
 \item Improved support for Octave
 
 \item Updated ability to load recent device file formats including
-       auxiliary data (Dr\"ager and Swisstom file formats)
+       auxiliary data (Dr\"ager and Swisstom formats)
 
 
 
@@ -176,9 +176,11 @@ algorithms, adding and improving a number of aspects.
 EIDORS-related citations continue to grow. Current citation results are
 shown in table~\ref{tbl:cite}.
 %
-The EIDORS code-base is stable with significant effort being applied to
-improving test coverage, refining performance and implementing new features
-(fig.~\ref{fig:loc}). In 2012, a {\tt dev} staging area was created for
+The EIDORS code-base is growing
+(fig.~\ref{fig:loc})
+ with significant effort being applied to
+improving test coverage, refining performance and implementing new features.
+ In 2012, a {\tt dev} (development) staging area was created for
 contributions in progress.
 
 \begin{table}[H]
@@ -220,12 +222,12 @@ contributions in progress.
 \caption{\label{fig:loc}%
 %graph and table combo chart, including line for test code.
   Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
-   (red), Eidors (i.e.\ release branch, yellow), Tutorials (green), development code (blue).
+   (red), Eidors (i.e.\ release branch, brown), Tutorials (green), development code (blue).
    Releases are indicated by gray bars.
 }
 \end{figure}
 
-\section{Conclusion}
+\section{Discussion}
 The structure of EIDORS has been relatively stable due, in part, to some early design choices:
 a modular framework and data structure,
 cross-platform support, integration of meshing,
@@ -256,10 +258,10 @@ NSERC Canada and EPSRC UK.
 \bibitem{braun2017}
    Braun F, Proença M, Solà J {\em et al}, \href{http://dx.doi.org/10.1109/TBME.2017.2659540}{IEEE T Biomed Eng}, 2017.
 \bibitem{hansen2007}
-   Hansen PC, {\em Numerical algorithms}, 46.2:189--194, 2007
+   Hansen PC, {\em Numerical algorithms}, 46.2:189--194, 2007.
 
 \bibitem{yerworth2016}
-Yerworth R, Frerichs I, Bayford R, \href{http://dx.doi.org/10.1007/s10877-016-9920-y}{J Clin Monit Comput}, 2016
+Yerworth R, Frerichs I, Bayford R, \href{http://dx.doi.org/10.1007/s10877-016-9920-y}{J Clin Monit Comput}, 2016.
 
 \bibitem{boyle2016model2p5}
 Boyle A, Adler A,
@@ -283,7 +285,7 @@ Adler A, Lionheart WRB,
 \bibitem{adler2005}
 Adler A, Lionheart WRB,
 %"EIDORS: Towards a community-based extensible software base for EIT." 6th Conference on Biomedical Applications of Electrical Impedance Tomography, London, UK. 2005.
-{\em Proc EIT2015}, London, UK, 2015
+{\em Proc EIT2015}, London, UK, 2015.
 %
 \bibitem{adler2006}
 Adler A, Lionheart WRB,
@@ -296,7 +298,7 @@ Adler A, Borsic A {\em et al},
 \bibitem{adler2015}
 Adler A {\em et al}, %Alistair Boyle, Michael G Crabb, Hervé Gagnon, Bartłomiej Grychtol, Nolwenn Lesparre, William R.B. Lionheart,
 \href{https://zenodo.org/record/17752}{\em Proc EIT2015}, p.19, 
- Neuchâtel, Switzerland, 2015
+ Neuchâtel, Switzerland, 2015.
 \end{thebibliography}
 \end{multicols}
 
