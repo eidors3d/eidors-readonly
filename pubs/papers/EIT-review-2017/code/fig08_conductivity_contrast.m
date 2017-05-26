@@ -34,5 +34,8 @@ xlim([min(space), max(space)])
 set(gca,'xtick',[1e-3,1e-2,1e-1,1,1e1,1e2,1e3]);
 set(gcf,'PaperPosition',[2,2,6,3.0]);
 box off
-print -depsc2 fig09_conductivity_contrast.eps
+%print -depsc2 fig08_conductivity_contrast.eps  -- open office can no longer use these
+print -dsvg fig08_conductivity_contrast.png
+!LD_LIBRARY_PATH="" pdfcrop fig08_conductivity_contrast.pdf fig08_conductivity_contrast.pdf 
+% Open in openoffice. Then open into the file
 
