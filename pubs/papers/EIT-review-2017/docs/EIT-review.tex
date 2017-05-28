@@ -102,12 +102,6 @@ research and development.
 %\end{keywords}
 
 \section{Introduction}
-\TODO{
-  - cite Wolf
-  - cite Brazil system
-  - fix openoffice
-  - upload code to eidors - do we want it there?
-}
 
 Electrical Impedance Tomography (EIT) is a technique to 
 image the electrical properties within a body using
@@ -117,11 +111,11 @@ EIT is useful when the
 anatomical or physiological phenomena of interest
 create contrasts in the tissue electrical properties.
 Examples of anatomical contrasts are 
-the differing electrical impedance spectrum of
+the altered electrical impedance spectra of
 cancerous \cite{Jossinet1998Breast} and
 ischemic \cite{Packham2012Frequency} tissues.
 Functional contrasts are created by changes
-in the conductivity of tissue or movement of
+in the conductivity of tissue or the movement of
 conductively contrasting fluids or gasses, such as during
 breathing, blood flow, digestive or nervous activity.
 
@@ -130,8 +124,8 @@ the non-invasive attachment to a patient with electrodes and wires
 is convenient for continuous monitoring applications;
 it does not use ionizing radiation;
 it is capable of functioning at high frame rates giving
-good temporal resolution; and
-it is potentially inexpensive, using off-the-shelf low frequency electronics components. 
+good temporal resolution; 
+it is potentially inexpensive, using off-the-shelf low-frequency electronics components. 
 On the other hand, EIT has poor spatial resolution, and 
 is prone to artefacts from electrode
 movement and poor contact quality.
@@ -231,9 +225,10 @@ monitoring of blood perfusion
 \cite{Leonhardt2012EIT, Nguyen2012Perfusion}.
 This review paper is designed to contribute a novel viewpoint
 to this literature, focusing on the connections between 
-the aspects of image interpretation from tissue
+the aspects of image interpretation -- from tissue
 properties, through EIT hardware, the forward and inverse problems
-and EIT measures to the clinical interpretation.
+
+to the EIT measures relevant to clinical interpretation.
 %\TODO{Add this after the accept}
 % This review forms part
 %of a collection of four reviews of tomographic techniques
@@ -242,41 +237,30 @@ and EIT measures to the clinical interpretation.
 
 \subsection{Modalities of EIT}
 
-Applications of EIT can be classified between those focussing on
-providing individual images or for functional monitoring of changes over
+Applications of EIT can be classified between those for
+providing images or for functional monitoring over
 time.
 As an {\em imaging modality}, EIT estimates an anatomical
-image of a conductivity distribution. A reconstruction
-of the resistivity distribution at a given time from a single
+image of the distribution of conductivity. A reconstruction
+a given time from a single
 set of measurements is called absolute EIT (aEIT). Unfortunately,
 aEIT has proved to be very sensitive to errors
 such as inaccuracies in the assumed
 model geometry, and non-ideal properties of electrodes
-and amplifiers, which
-often produce images with a large number of artefacts
+and amplifiers
  \cite{Adler2015Hard, Nissinen2009Errors}.
-
-Another approach for anatomical imaging has been frequency-difference
+Another approach to anatomical imaging is frequency-difference
 EIT (fdEIT) in which measurements at two or more excitation frequencies
 are used to calculate an image of the difference
-in electrical properties between these frequencies. Some tissues,
-such as skin, muscle and deflated lung, display properties
-with low-frequency characteristics
-\cite{Gabriel2009Frequencies}; but much of 
-the interesting changes in tissue electrical properties
-occur in the MHz range, as current begins to flow accross the
-cell membrane. MHz range stimulation is above the maximum operating frequency
-of most EIT systems.
+in electrical properties between these frequencies.
 
 As a {\em functional monitoring} technology, EIT is sensitive
 to changes in tissue properties over time, using
-time-difference (tdEIT) image reconstruction.
-tdEIT is typically more stable than absolute
-EIT because it is able to compensate for many sources
-of interference (such as inaccuracies in the assumed
-model geometry, and non-ideal properties of electrodes
-and amplifiers)
-that remain stable over time \cite{Brown2003EIT,Adler2015Hard}.
+time-difference (tdEIT) image reconstruction, which 
+is more stable 
+is it can compensate for sources
+of interference 
+that remain stable over time \cite{Brown2003EIT}.
 Many physiological processes involve 
 changes of conductivity.
 The main application of tdEIT 
@@ -286,12 +270,11 @@ air) and heart activity (moving conductive blood).
 \subsection{Applications of EIT}
 
 
-Table \ref{tbl:EIT_Applications}  provides a general overview of the many
-medical applications which have been proposed for EIT, including one or two
-of the main references for each use. 
-Applications of EIT can be divided into those focused on
-imaging (using aEIT or fdEIT, and indicated with $^\dagger$) or functional
-monitoring (using tdEIT).
+Many medical applications have been proposed for EIT, and an
+overview is shown in table \ref{tbl:EIT_Applications},
+ including one or two of the main references for each use. 
+Those based on imaging (using aEIT or fdEIT) are indicated with $^\dagger$, while
+the others use tdEIT.
 For a detailed review of thoracic applications of EIT, see \cite{Frerichs2017Chest} and
 for other applications see \cite{Holder2004Book}.
 
@@ -310,7 +293,7 @@ Lung function &
  - Regions of overdistension, atelectasis
                 \cite{Gomez2012Overdistension, Costa??}
       \newline
- - Recruitment/derecruitment of lung tissue \cite{Frerichs2003??}
+ - Recruitment/derecruitment of lung tissue \cite{Frerichs2003Regional}
       \newline
  - Respiratory system mechanics 
       \newline
@@ -376,7 +359,7 @@ Other &
        \newline
  - Bladder volume and emptying \cite{Leonhardt2011Bladder}
        \newline
- - $^\dagger$Edema \cite{Newell1996,Abboud1995Peripheral}
+ - $^\dagger$Edema \cite{Abboud1995Peripheral, Newell1996}
        \newline
  - $^\dagger$Hemorrhage and blood accumulation \cite{Sadleir2009blood}
 \\
@@ -388,28 +371,26 @@ Other &
 \end{table}
 
 Imaging applications of EIT have primarily focused on detection
-and localization of: cancerous tissue (in the breast
+and localization of pathologies: cancerous tissue (in the breast
 \cite{Assenheimer2001TScan,Cherepenin2001Breast} prostate
 \cite{Borsic2009Prostate}) where the electrical properties of cancerous tissue
-differ from benign \cite{Jossinet1998Breast}; iscchemic tissue (as seen in
+differ from benign \cite{Jossinet1998Breast}; ischemic tissue (as seen in
 stroke) where electrical properties vary with ionic concentrations
 \cite{Holder1992Ischaemia}; and hemorrhage and blood pooling (characterized by
-the presence of conductive blood with its characteristic impedance spectra)
+the presence of conductive blood).
 
-The main monitoring applications of EIT have been for characterize the air and
-blood movement in the thorax.
-The largest application has been for 
-monitoring of ventilatory support.
- \cite{Frerichs2017Chest}, where
+The main monitoring application of EIT is for monitoring of breathing
+and blood flow
+ \cite{Frerichs2017Chest}. For mechanical ventilation,
 there are dangers to both too much and too little
-support pressure, and EIT shows potential as a way to guide a
-patient-specific level of support\cite{Wolf2013Mechanical}.
+support pressure, and EIT shows potential to guide a
+patient-specific level of support \cite{Wolf2013Mechanical}.
 For obstructive lung diseases, such as chronic obstructive pulmonary disease
-(COPD) and asthma, lung heterogeneity is an important component of the burden
-of disease, but is not measured by current diagnostic
-tools, and EIT shows an increased diagnostic sensitivity for these
-patients \cite{Vogt2016Heterogeneity}.
-EIT has shown an ability to monitor several important 
+(COPD) and asthma, lung heterogeneity 
+is not measured by current diagnostic
+tools, and EIT shows an increased diagnostic sensitivity
+\cite{Vogt2016Heterogeneity}.
+EIT has can measure 
 heart and blood-flow parameters, including 
 cardiac output \cite{vonkNoordegraaf2000},
 pulmonary perfusion \cite{Frerichs2002Perfusion},
@@ -417,17 +398,16 @@ systemic \cite{Sola2011Central} and pulmonary
 arterial \cite{Proenca2016Noninvasive} pressure.
 
 Many other monitoring applications of EIT are promising.
-Neural and brain activity have been successfully imaged,
+Neural and brain activity have been imaged,
 where the opening of ion channels during 
-neural action produces a change in tissue
-conductivity \cite{Aristovich2014Neural}.
-Gastric motility can be measured by EIT 
-as well as pharyngeal transit times \cite{Mangnall1987}.
-Other applications include the:
-fluid volume of the bladder \cite{Leonhardt2011Bladder};
+neural action produces a conductivity change \cite{Aristovich2014Neural}.
+Gastric motility and pharyngeal transit times
+ can be measured by EIT \cite{Mangnall1987}.
+Other applications include the
+fluid volume of the bladder \cite{Leonhardt2011Bladder},
 accumulation of edema in the lungs \cite{Newell1996}
-brain or peripheral tissue \cite{Abboud1995Peripheral}, as
-well as hemorrhage \cite{Sadleir2009blood}.
+brain or peripheral tissue \cite{Abboud1995Peripheral}, and
+hemorrhage and blood pooling \cite{Sadleir2009blood}.
 
 
 
@@ -497,15 +477,24 @@ by a single time constant), but the curve is
 called dielectric dispersions. Biological materials
 have high dielectric constants compared to homogeneous
 materials due to biological membrane surfaces and macromolecules.
-The most common reference for the electrical 
-properties of biological materials is \cite{Gabriel1996Dielectric}.
-Differences in the $\sigma^*$ spectrum between
-tissue types is the source of contrasts in fdEIT images.
 For example cancerous breast tissue
 shows a different conductivity spectrum
 from non-malignant tissues \cite{Jossinet1998Breast},
 where the effects were explained
 as a result of the increased density of tumor stroma.
+
+The most common reference for the electrical 
+properties of biological materials is \cite{Gabriel1996Dielectric}.
+Differences in the $\sigma^*$ spectrum between
+tissue types is the source of contrasts in fdEIT images.
+Some tissues
+such as skin, muscle and deflated lung, display properties
+with identifiable low-frequency charateristics 
+\cite{Gabriel2009Frequencies}. Unfortunately, much of 
+the interesting tissue electrical properties
+occur in the MHz range, as current begins to flow accross the
+cell membranes; however, MHz stimulation is above the maximum operating frequency
+of most EIT systems.
 
 For functional EIT imaging, the changes in tissue
 electrical properties are caused by the movement of
@@ -554,10 +543,10 @@ during image reconstruction to yield useful results
 \subsection{EIT Electrodes \& Measurement Electronics}
 
 
-EIT normally makes measurements at electrodes on the body surface,
-although internal electrodes have been proposed in the
+EIT normally makes measurements at electrodes on the body surface 
+(although internal electrodes have been proposed in the
 esophagus \cite{Schuessler1995Esophageal}
- and for prostate imaging \cite{Borsic2009Prostate}.
+ and for prostate imaging \cite{Borsic2009Prostate}).
 For ease of application, electrodes are sometimes incorporated into a belt or
 harness \cite{Waldmann2017Interface}, but are also applied individually. 
 Both non-polarizable (ECG-type Ag/AgCl electrodes) and 
@@ -1666,6 +1655,18 @@ I Frerichs
 ``Regional lung  perfusion  as  determined  by  electrical
   impedance  tomography  in  comparison  with  electron beam CT imaging''
 {\em IEEE T Med Imag} 21:646--652, 2002.
+
+\bibitem{Frerichs2003Regional}
+\ifmaxthree{
+I Frerichs, PA Dargavillle, T Dudykevych, PM Rimensberger,
+}{
+I Frerichs
+}
+``Electrical Impedance Tomography -- a method for monitoring
+   regional lung aeration and tidal volume distribution?'',
+{\em Int Care Med} 29:2312--2316, 2003.
+
+
 
 \bibitem{Frerichs2014EIT}
 I Frerichs, T Becher, N Weiler; 
