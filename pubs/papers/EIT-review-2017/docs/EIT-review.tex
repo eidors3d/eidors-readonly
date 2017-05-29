@@ -288,10 +288,10 @@ for other applications see \cite{Holder2004Book}.
 \multicolumn{1}{c}{\em Description} \\
 \hline
 Lung function &
- - Distribution of tidal volume \TODO{Cite??}
+ - Distribution of tidal volume \cite{Hahn1995Distribution}
       \newline
  - Regions of overdistension, atelectasis
-                \cite{Gomez2012Overdistension, Costa??}
+                \cite{Gomez2012Overdistension, Costa2009Bedside}
       \newline
  - Recruitment/derecruitment of lung tissue \cite{Frerichs2003Regional}
       \newline
@@ -299,7 +299,7 @@ Lung function &
       \newline
  - Regional compliance ($\Delta Z/\Delta P$) 
       \newline
- - Opening and closing pressures \cite{Pulletz??}
+ - Opening and closing pressures \cite{Pulletz2012Opening}
       \newline
  - Edema and extra-vascular lung water \cite{Trepte2016Edema}
       \newline
@@ -314,7 +314,7 @@ cardiac \newline function &
       \newline
  - Contrast-based perfusion measurement \cite{Frerichs2002Perfusion}
       \newline
- - Pulsatility-based perfusion measurement \cite{??}
+ - Pulsatility-based perfusion measurement \cite{Smit2003Perfusion}
       \newline
  - Cardiac output 
       \newline
@@ -362,11 +362,11 @@ Other &
  - $^\dagger$Edema \cite{Abboud1995Peripheral, Newell1996}
        \newline
  - $^\dagger$Hemorrhage and blood accumulation \cite{Sadleir2009blood}
-\\
-\multicolumn{2}{l}{%
-    $^\dagger$ indicates use of aEIT or fdEIT imaging;
-    others use tdEIT
-}
+% \\
+% \multicolumn{2}{l}{%
+%     $^\dagger$ indicates use of aEIT or fdEIT imaging;
+%     others use tdEIT
+%}
 \end{tabular}
 \end{table}
 
@@ -930,7 +930,8 @@ An efficient implementation of both methods results
 in the same underlying algorithm\cite{Adler2017Jacobian}.
 It is also possible to approximate $\JB$ 
 by making small changes in each image region, and calculate a ``perturbation
-Jacobian''\TODO{REF}.  Efficient calculation of both the forward solution and
+Jacobian'' \cite{Yorkey1987Comparing}.
+Efficient calculation of both the forward solution and
 Jacobian are important to the performance of EIT solvers \cite{Boyle2012Compute}.
 The perturbation approach is generally slower to execute but easiest to
 implement making it suitable for validating alternate implementations.
@@ -1136,8 +1137,7 @@ into $\QB$. In GREIT, this is done via a larger ``desired'' image
 region and spatial correlations in the covariance, $\SG_t$. 
 $\QB$ has also been designed to impose a 
 high-pass spatial filter
-to penalize non-smooth image content \cite{Adler1996Constrast},
-\TODO{CITE Borsic}
+to penalize non-smooth image content \cite{Borsic2002Anisotropic}
 most commonly using a Laplace filter \cite{Polydorides2002EIDORS}.
 
 As the ``hyperparameter'', $\lambda$,
@@ -1247,26 +1247,67 @@ EIT image analysis is most developed for thoracic EIT, in which a
 large number of functional EIT (fEIT) algorithms are available.
 Examples are given here, and an extensive overview of fEIT techniques
 is given in  \cite{Frerichs2017Chest}.
+Here, fEIT approaches are classified according to the 
+physiological parameters of interest: ventilation distribution,
+ventioation- and cardiac-frequency impednace changes, 
+aeration change, respiratory system mechanics, ventilation
+timing, and tissue response classification.
 
 An fEIT image is calculated from  analysis of each raw image voxel
 over a time-sequence
-of EIT images to calculate a specific parameter. Examples are
-the
-``Tidal Variation'' fEIT image,
+of EIT images to calculate a specific parameter.
+ Examples of fEIT images are:
+\begin{itemize}
+\item
+{\em Tidal Variation}$^\dagger$, as a measure of the
+distribution of ventilation, which calculates
 the difference between the end-inspiratory and
-end-expiratory voxel values, and
-the
-``Expiration time'' fEIT image, representing the delay
-in inspiration (or expiration) between an individual
-voxel and the global waveform.
+end-expiratory voxel values \cite{Hahn1995Distribution}
+(the first step of \fref{fig:fEIT_eg_silent_spaces})
+\item
+{\em Ventilation- and Cardiac-frequency}$^\dagger$, which
+ characterize the breathing- and heart-related components
+of the image sequence, using an corresponding frequency
+filter \cite{Ferrario2012morphological}, or ensemble average 
+\item
+{\em Expiration time constant}$^\dagger$, as a characterization
+of regional lung mechanics, but fitting the expiratory part of
+the EIT waveform to a exponential function and reporting the
+exponential time constant \cite{Pulletz2012Dynamics}
+\item
+{\em Pulse propagation time}$^\dagger$, measuring the for the cardiac-related
+EIT pulse to lung voxels after the QRS peak, as a measure of pulmonary
+arterial pressure \cite{Proenca2016Noninvasive} 
+\item
+{\em Opening- and Closing Pressures}, measuring the time delay
+between the start of a slow-flow inflation (deflation) and the image voxel
+crossing a threshold, as a measure of the pressure required to hold
+open lung regions \cite{Pulletz2012Opening}  
+\item
+{\em Neural activation delay}, measuring the activation delay between
+neural stimulation and EIT activity in cortical regions, as
+a way to characterize neural pathways \cite{Aristovich2014Neural}
+\end{itemize}
+
+Some functional images ($^\dagger$ in list) are ``protocol free'' and can be
+calculated continuously as a function of time. In other cases, an intervention
+(lung inflation manoeuvre, neural activation, bolus injection of contrast
+agent \cite{Frerichs2002Perfusion}) are required.
 
 
-
-
-  From the processed image, specific
-EIT measures may be calculated, to determine the state of the subject
+EIT measures are values calculated from an image sequence designed
+characterize tissue state. These measures are designed to represent
+diagnostically useful information, to determine the state of the subject
 and assess trends.
-As an example,
+ Three types of EIT measures
+have been defined \cite{Frerichs2017Chest}: 
+average regional measures calculate the average fEIT image
+either globally, or over a ROI \cite{Ferrario2012morphological}
+(e.g.\ average tidal variation);
+characterizations of spatial distribution of the fEIT image
+(e.g. geometric center of ventilation, inhomogeneity index);
+and examination-specific EIT measures.
+The latter type can involve many steps; for example, 
 \fref{fig:fEIT_eg_silent_spaces} shows the
 calculation of the hypoventilated lung fEIT measure 
 (introduced as ``silent spaces'' by \cite{Waldmann2015Silent}),
@@ -1288,26 +1329,6 @@ are identified (bottom row) and the fraction of such pixels calculated.
 \label{fig:fEIT_eg_silent_spaces}
 \end{figure}
 
-\TODO{
-Other stuff
- - Identification of ROIs
- - Separation of cardiac and ventilation
- - estimation of timing
- - Protocol-based vs. protocol-free
-}
-
-Many other functional EIT analysis approaches have also been proposed,
-and we highlight two examples.
-Dynamic analysis was used by
-\cite{Aristovich2014Neural}
-to study
-the propagaion of evoked neural activity in the cortex following
-sensory stimulation.  Functional images of the activation delay
-of brain regions were calculated to measure connection pathways.
-The pulse propagation time between the heart and lung regions
-of interest was measured by \cite{Proenca2016Noninvasive} and
-shown to correlate with pulmonary arterial pressure.
-
 For absolute imaging, EIT image processing and measures are less
 well developed than for tdEIT applications. Typically, the
 average reconstructed impedance in a region of interest
@@ -1318,16 +1339,14 @@ regions \cite{Wan2013Transrectal}.
 
 \section{Discussion and Perspectives}
 
-In this review, we aim to focus
+In this review of EIT, we focus
 on the steps involved in interpretation
 of EIT images, from the electrical properties of the
 tissue (which by themselves are rarely of direct
 clinical relevance) to diagnostically-useful,
 EIT-based measures. With a systems-level perspective,
-we hope to help clarify the relevance of components,
-such as a new contact gel, electrode cofiguration on 
-the body, a functional imaging protocol.
-\TODO{rewrite}
+we hope to help clarify how various components of an EIT system
+relate to each other and to eventual diagnostic value of the measures.
 
 In the opinion of the authors, EIT is at a time of transition.
 For many of its applications, EIT is reliable
@@ -1351,8 +1370,7 @@ To achieve this, we recommend a focus on:
    EIDORS framework \cite{Adler2006EIDORS};  
 2) {\em availability} of EIT devices (for phantom, animal and clinical
    use) as well as reference data;
-3) {\em standards} for access to EIT data and images (such as a DICOM class)
-   \TODO{ADD Ref};
+3) {\em standards} for access to EIT data and images (such as a DICOM class);
 4) {\rm robustness} against electrode contact errors and interference
    (automatic compensation being the most important technical 
    requirement);
@@ -1374,7 +1392,7 @@ EIT images internal electrical properties using
 body-surface measurements; it has high temporal but low
 spatial resolution, and has the advantage of being non-invasive
 and potentially low cost.
-It offers exciting possibilities for imaging and fuctional 
+It offers exciting possibilities for imaging and functional 
 monitoring in several applications, and is currently
 seeing clinical use for ventilation monitoring.
 In this paper, we have reviewed the applications of
@@ -1406,10 +1424,10 @@ A Adler, R Guardo, Y Berthiaume.
 ``Impedance imaging of lung ventilation: do we need to account for chest expansion?''
 {\em  IEEE T Biomed Eng}, 43:414--420, 1996.
 
-\bibitem{Adler1996Constrast}
-A Adler, R Guardo.
-``Electrical impedance tomography: regularized imaging and contrast detection.''
-{\em IEEE T Medical Imag} 15:170--179, 1996.
+% \bibitem{Adler1996Constrast}
+% A Adler, R Guardo.
+% ``Electrical impedance tomography: regularized imaging and contrast detection.''
+% {\em IEEE T Medical Imag} 15:170--179, 1996.
 
 \bibitem{Adler2006EIDORS}
 A Adler, WRB Lionheart
@@ -1476,7 +1494,7 @@ O Scherzer (Ed), Springer, 2016.
 \bibitem{Adler2017Jacobian}
 A Adler, A Boyle, WRB Lionheart
 ``Efficient computations of the Jacobian matrix using different approaches are equivalent''
-{\em Proc. Conf. EIT2017}, p ??, Dartmouth, USA, Jun 21--24, 2017.
+{\em Proc. Conf. EIT2017}, p.74 Dartmouth, USA, Jun 21--24, 2017.
 \TODO{missing from EIT2017 proceedings}
 
 \bibitem{Allaud1977}
@@ -1532,6 +1550,11 @@ L Borcea;
 ``Electrical impedance tomography.''
 {\em  Inverse Prob} 18:R99--R136, 2002.
 
+\bibitem{Borsic2002Anisotropic}
+A Borsic, WR Lionheart, CN McLeod CN,
+``Generation of anisotropic-smoothness regularization filters for EIT. IEEE transactions on medical imaging.''
+21:579-587, 2002.
+
 \bibitem{Borsic2009Prostate}
 \ifmaxthree{
 A Borsic, R Halter R, Y Wan, A Hartov, KD Paulsen,
@@ -1540,7 +1563,6 @@ A Borsic
 }
 ``Sensitivity study and optimization of a 3D electric impedance tomography prostate probe``
 {\em Physiol Meas} 30:S1--S19, 2009.
-
 \bibitem{Borsic2012PDIPM}
 A Borsic, A Adler,
 ``A primal dual-interior point framework for using the L1-norm or the L2-norm on the data and regularization terms of inverse problems''
@@ -1622,6 +1644,16 @@ EL Costa, RG Lima, MB Amato MB;
 ``Electrical impedance tomography.''
 {\em Curr Opin Crit Care} 15:18--24, 2009.
 
+\bibitem{Costa2009Bedside}
+\ifmaxthree{
+EL Costa, JB Borges, A Melo, F Suarez-Sipmann, C Toufen Jr., SH Böhm, MB Amato
+}{
+EL Costa
+}
+``Bedside estimation of recruitable alveolar collapse and hyperdistension by electrical
+impedance tomography.''
+{\em Int Care Med} 35:1132--1137, 2009.
+
 \bibitem{Coulombe2005Parametric}
 \ifmaxthree{
 N Coulombe, H Gagnon, F Marquis, Y Skrobik, R Guardo
@@ -1640,6 +1672,15 @@ AM Dijkstra
 }
 ``Review clinical applications of electrical impedance tomography''
 {\em J Medical Eng Technol}, 17:89--98, 1993.
+
+\bibitem{Ferrario2012morphological}
+\ifmaxthree{
+D Ferrario, B Grychtol, A Adler, J Sola, SH Böhm, M Bodenstein
+}{
+D Ferrario
+}
+``Toward morphological thoracic EIT: major signal sources correspond to respective organ locations in CT``
+{\em  IEEE T Biomed Eng} 59:3000--3008, 2012.
 
 \bibitem{Frerichs2000EIT}
 I Frerichs;
@@ -1745,6 +1786,15 @@ RJ Halter
 }
 ``Electrical impedance spectroscopy of the human prostate.''
 {\em IEEE T Biomed Eng} 54:1321-7, 2007. % Jul;54(7):1321-7.
+
+\bibitem{Hahn1995Distribution}
+\ifmaxthree{
+Hahn G, Šipinková I, Baisch F, Hellige G.
+}{
+G Hahn
+}
+``Changes in the thoracic impedance distribution under different ventilatory conditions'',
+{\em Physiol Meas} 16:A161--173, 1995.
 
 \bibitem{Hartinger2007Hardware}
 AE Hartinger, H Gagnon, R Guardo,
@@ -1877,7 +1927,7 @@ WRB Lionheart, K Paridis,
 HA Lorentz,
 ``The theorem of Poynting concerning the energy in the electromagnetic
 field and two general propositions concerning the propagation of light''
-{\em  Amsterdammer Akademie der Wetenschappen} 4:176--??, 1896.
+{\em  Amsterdammer Akademie der Wetenschappen} 4:176--187, 1896.
 \TODO{end page number missing}
 
 
@@ -1981,6 +2031,26 @@ M Proença
 ``Non-invasive monitoring of pulmonary artery pressure from timing information by EIT: experimental evaluation during induced hypoxia''
 {\em Physiol Meas} 37:713--726, 2016.
 
+\bibitem{Pulletz2012Opening}
+\ifmaxthree{
+S Pulletz, A Adler, M Kott, G Elke, B Gawelczyk, D Schädler, G Zick, N Weiler, I Frerichs
+}{
+S Pulletz
+}
+``Regional lung opening and closing pressures in patients with acute lung injurys'',
+{\em J Critical Care}, 27:3:323.e11--323.e18, 2012. 
+
+\bibitem{Pulletz2012Dynamics}
+\ifmaxthree{
+S Pulletz, M Kott, G Elke, D Schadler, B Vogt, N Weiler, I Frerichs
+}{
+S Pulletz
+}
+``Dynamics of
+regional lung aeration determined by electrical impedance tomography in patients with acute
+respiratory distress syndrome'',
+{\em Multidiscip Respir Med} 7:44, 2012.
+
 \bibitem{Rapin2015Cooperative}
 \ifmaxthree{
 M Rapin, M Proença, F Braun, J Solà, O Chételat,
@@ -2047,6 +2117,16 @@ D Silvera-Tawil
 }
 Electrical Impedance Tomography for Artificial Sensitive Robotic Skin: A Review
 {\em IEEE Sensors J}, 15:2001--2016, 2015.
+
+\bibitem{Smit2003Perfusion}
+\ifmaxthree{
+HJ Smit, ML Handoko, A Vonk Noordegraaf, TJ Faes, PE Postmus, PM de Vries, A Boonstra
+}{
+HJ Smit
+}
+``Electrical impedance tomography to measure pulmonary perfusion: Is the
+reproducibility high enough for clinical practice?''
+{\em Physiol Meas} 24:491-499, 2003.
 
 \bibitem{Sola2011Central}
 \ifmaxthree{
