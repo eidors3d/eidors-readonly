@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 # Sequentially checkout versions 
-REPO="$HOME/docs/eidors-git";
+REPO=${1:-"$HOME/docs/eidors-git"}
 OUTF=datafile.m
-LASTREV=`svn info --show-item revision`;
+LASTREV=$(cd $REPO && git svn log --oneline HEAD^^^^^..HEAD | head -1 | cut -f1 -d'|' | sed 's/r//')
 echo 'loc = [ % all(/)  htdocs   dev   version  date' > $OUTF
 for ver in `seq 5300 $LASTREV`; do 
    echo "$REPO: VER=$ver";
