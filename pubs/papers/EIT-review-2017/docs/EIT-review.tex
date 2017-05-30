@@ -1,6 +1,6 @@
 % Use regular document class for writing it, then IEEEtran
-%\documentclass[10pt,journal]{IEEEtran}\def\TBLWIDA{15mm}\def\TBLWIDB{60mm}
- \documentclass[12pt]{article} \usepackage[margin=3cm]{geometry} \usepackage[margin=20pt,font=small,labelfont=bf]{caption}\def\TBLWIDA{35mm}\def\TBLWIDB{95mm}
+ \documentclass[10pt,journal]{IEEEtran}\def\TBLWIDA{15mm}\def\TBLWIDB{60mm}
+%\documentclass[12pt]{article} \usepackage[margin=3cm]{geometry} \usepackage[margin=20pt,font=small,labelfont=bf]{caption}\def\TBLWIDA{35mm}\def\TBLWIDB{95mm}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{tikz}
@@ -67,18 +67,18 @@
 Electrical Impedance Tomography (EIT) uses electrical
 stimulation and measurement at the body surface to
 image the electrical properties of internal tissues.
-It has the advantage of a non-invasiveness and
+It has the advantage of non-invasiveness and
 high temporal resolution but suffers from poor spatial
 resolution and sensitivity to electrode movement and
 contact quality.
 EIT can be useful to applications where there are conductive contrasts between
 tissues, fluids or gasses, such as imaging of cancerous
-or ischemic tissue or the functional monitoring
+or ischemic tissue or functional monitoring
 of breathing, blood flow, gastric motility
 and neural activity.
 The past decade has seen clinical application and commercial
 activity using EIT for ventilation monitoring.
-Clinical interpretation of EIT-based measures is complex, and
+Interpretation of EIT-based measures is complex, and
 this review paper focuses on 
 describing the image interpretation ``pathway'', from:
 {\em Tissue Electrical Properties},
@@ -89,10 +89,10 @@ describing the image interpretation ``pathway'', from:
 to 
 {\em EIT Measures}.
 The relationship is discussed between the 
-clinically-relevant parameters and measured or
-reconstructed properties, and 
-an overview given of areas of EIT application,
-and our perspectives for
+clinically-relevant parameters and the 
+reconstructed properties.
+An overview given of areas of EIT application 
+and of our perspectives for
 research and development.
 \end{abstract}
 
@@ -179,7 +179,7 @@ shows a sharp increase after 2000.
 
 The concepts behind EIT were invented in the 
 geophysical community in 1911 \cite{Allaud1977}, where
-the technique has been called electrical resistivity
+the technique is called electrical resistivity
 tomography (ERT). ERT can
 image conductive (i.e.\ metal-bearing) ore
 and the presence and movement of liquids
@@ -195,7 +195,7 @@ and as pressure sensitive skin for robotics applications
 A brief note on terminology: EIT is named for
 ``impedance'' even though the volumetric property which is
 imaged is the impedivity or resistivity (or the inverse,
-              admittivity or conductivity)\cite{Bayford2006Bioimpendace}.
+              admittivity or conductivity) \cite{Bayford2006Bioimpendace}.
 This terminology follows the convention that 
 tomographic modalities are named after the source measurements;
 EIT uses multi-port impedance measurements
@@ -218,15 +218,14 @@ ventilation
       Frerichs2014EIT,
       Frerichs2000EIT,
       Lundin2012EIT,
-      Riedel2010EIT},
-with some recent reviews focusing specifically on 
+      Riedel2010EIT} 
+with some recent reviews on 
 monitoring of blood perfusion
 \cite{Leonhardt2012EIT, Nguyen2012Perfusion}.
 This review paper is designed to contribute a novel viewpoint
 to this literature, focusing on the connections between 
 the aspects of image interpretation -- from tissue
 properties, through EIT hardware, the forward and inverse problems
-
 to the EIT measures relevant to clinical interpretation.
 %\TODO{Add this after the accept}
 % This review forms part
@@ -237,11 +236,10 @@ to the EIT measures relevant to clinical interpretation.
 \subsection{Modalities of EIT}
 
 Applications of EIT can be classified between those for
-providing images or for functional monitoring over
-time.
+providing images and for functional monitoring.
 As an {\em imaging modality}, EIT estimates an anatomical
 image of the distribution of conductivity. A reconstruction
-a given time from a single
+at given time from a single
 set of measurements is called absolute EIT (aEIT). Unfortunately,
 aEIT has proved to be very sensitive to errors
 such as inaccuracies in the assumed
@@ -251,17 +249,15 @@ and amplifiers
 Another approach to anatomical imaging is frequency-difference
 EIT (fdEIT) in which measurements at two or more excitation frequencies
 are used to calculate an image of the difference
-in electrical properties between these frequencies.
+in electrical properties between the frequencies.
 
 As a {\em functional monitoring} technology, EIT is sensitive
 to changes in tissue properties over time, using
 time-difference (tdEIT) image reconstruction, which 
-is more stable 
-is it can compensate for sources
+is more stable,
+as it can compensate for sources
 of interference 
 that remain stable over time \cite{Brown2003EIT}.
-Many physiological processes involve 
-changes of conductivity.
 The main application of tdEIT 
 has been for breathing (moving non-conductive
 air) and heart activity (moving conductive blood).
@@ -271,7 +267,7 @@ air) and heart activity (moving conductive blood).
 
 Many medical applications have been proposed for EIT, and an
 overview is shown in table \ref{tbl:EIT_Applications},
- including one or two of the main references for each use. 
+ including some early references for each use. 
 Those based on imaging (using aEIT or fdEIT) are indicated with $^\dagger$, while
 the others use tdEIT.
 For a detailed review of thoracic applications of EIT, see \cite{Frerichs2017Chest} and
@@ -294,7 +290,7 @@ Lung function &
       \newline
  - Recruitment/derecruitment of lung tissue \cite{Frerichs2003Regional}
       \newline
- - Respiratory system mechanics 
+ - Respiratory system mechanics \cite{Pulletz2012Dynamics}
       \newline
  - Regional compliance ($\Delta Z/\Delta P$) 
       \newline
@@ -307,9 +303,7 @@ Lung function &
     \hline
 Perfusion  \& \newline
 cardiac \newline function & 
- - Regional Distribution of blood flow 
-      \newline
- - Regional defects in perfusion 
+ - Regional Distribution of blood flow \cite{Smit2003Perfusion}
       \newline
  - Contrast-based perfusion measurement \cite{Frerichs2002Perfusion}
       \newline
@@ -338,7 +332,7 @@ brain activity &
           \newline
  - Cerebral activation pattern for evoked potentials
           \newline
- - Cerebral edema
+ - Cerebral edema \cite{Holder1992Ischaemia}
 \\
     \hline
 Cancerous tissue &
@@ -473,26 +467,23 @@ $\sigma^*$ and $f$. Through most frequency ranges, $\sigma^*$
 increases monotonically with $f$ (characterized
 by a single time constant), but the curve is
  interspersed with a sequence of plateaus
-called dielectric dispersions. Biological materials
+called dielectric dispersions \cite{Gabriel1996Dielectric}. Biological materials
 have high dielectric constants compared to homogeneous
 materials due to biological membrane surfaces and macromolecules.
-For example cancerous breast tissue
+For example, cancerous breast tissue
 shows a different conductivity spectrum
 from non-malignant tissues \cite{Jossinet1998Breast},
 where the effects were explained
 as a result of the increased density of tumor stroma.
-
-The most common reference for the electrical 
-properties of biological materials is \cite{Gabriel1996Dielectric}.
 Differences in the $\sigma^*$ spectrum between
 tissue types is the source of contrasts in fdEIT images.
-Some tissues
+Some tissues,
 such as skin, muscle and deflated lung, display properties
 with identifiable low-frequency charateristics 
 \cite{Gabriel2009Frequencies}. Unfortunately, much of 
 the interesting tissue electrical properties
 occur in the MHz range, as current begins to flow accross the
-cell membranes; however, MHz stimulation is above the maximum operating frequency
+cell membranes, but MHz stimulation is above the maximum operating frequency
 of most EIT systems.
 
 For functional EIT imaging, the changes in tissue
@@ -523,7 +514,7 @@ Chemical and pH changes in tissue, such as those due to
 muscular fatigue and ischemia, change $\sigma^*$
 \cite{Packham2012Frequency}.
 Neural and muscular tissue also have electrical properties
-which change as the action potentials trigger tissue activity.
+which change when active.
 For low-frequency electrical stimulation, the opening of
 ion channels in cellular membranes \cite{Aristovich2014Neural}
 creates conductivity contrasts. 
@@ -554,7 +545,7 @@ have been used. When operating at stimulation frequencies above
 the kHz range (as do most systems), the polarization of electrodes is
 a less significant effect.
 
-Current levels are limited by electrical safety considerations.
+Electrical current levels are limited by electrical safety considerations.
 The relevant standard is the ``patient auxiliary current''
 defined by IEC 60601-1 \cite{IEC60601}, which has been interpreted
 as limiting the maximum total stimulation current into the body over all
@@ -574,7 +565,6 @@ where the current density is highest. Two main changes are of
 concern: movement of electrodes, and changes in contact quality.
 Electrodes move during breathing and with changes in posture,
 which introduces artefacts \cite{Adler1996Expansion}.
-
 Ensuring a good electrode connection to the skin is vital to 
 the quality of EIT data. Many gels and liquids appear to
 improve contact quality \cite{Waldmann2017Interface};
@@ -636,13 +626,11 @@ be further processed.
 \label{fig:blockdiaPairdrive}
 \end{figure}
 
-EIT systems typically apply sinusiodal currents (at frequency $f$) to the
+EIT systems typically apply sinusiodal currents to the
 body and make voltage measurements. The most common configuration
 is pair-drive, in which current is applied across one pair
 of electrodes while the voltage across all other pairs
-of electrodes are measured. A serial implementation
-of a such a system (the most common type) is shown
-and described in \fref{fig:blockdiaPairdrive}.
+of electrodes is measured (\fref{fig:blockdiaPairdrive}).
  Early systems used analog demodulation,
 while most modern systems demodulate the digitized signal
 numerically.
@@ -661,9 +649,9 @@ with a ``skip'' distance between the driven and measurement electrodes.
    \subcaptionbox{\centering Adjacent [1,2],[3,4]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip11.png}}\hfil%
    \subcaptionbox{\centering Adjacent [1,2],[4,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip12.png}}\hfil%
    \subcaptionbox{\centering Adjacent [2,3],[4,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip13.png}}\\
-   \subcaptionbox{\centering Skip2 [1,4],[2,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip21.png}}\hfil
-   \subcaptionbox{\centering Skip2 [1,4],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip22.png}}\hfil
-   \subcaptionbox{\centering Skip2 [2,5],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip23.png}}\\
+   \subcaptionbox{\centering Skip\,2 [1,4],[2,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip21.png}}\hfil
+   \subcaptionbox{\centering Skip\,2 [1,4],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip22.png}}\hfil
+   \subcaptionbox{\centering Skip\,2 [2,5],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip23.png}}\\
 \caption{%
 Illustration of pair-drive stimulation and measurement patterns for an 8
    electrode system using (top row) an adjacent pattern, and (bottom row) a
@@ -695,14 +683,13 @@ and placed near or within the electrodes \cite{Li1996Active},
 in order to reduce interference onto the weak measured signals.
 Finally, some systems stimulate the body with an applied
 voltage rather than an applied current \cite{Khan2015FPGA}
-which is technically simpler, but more sensitive to $Z_\textrm{C,EB}$.
+which is technically simpler, but more sensitive to the contact impedance.
 
 In order to achieve good performance from an EIT system, there
 are several challenges to overcome. The dynamic range of
 measured signals is high because voltages are much larger near
 driven electrodes; systems thus require either a high
 A/D converter resolution, or adjustable channel gain.
-
 When considering the electrical characteristics of the
 electrode contact with the skin, there are two relevant parameters
 both of which have unfortunately been called ``contact impedance''.
@@ -730,7 +717,7 @@ Polarization of electrodes is less significant at the high
 frequencies used in medical EIT, but it is important to ensure
 that complete current cycles are used for
 each measurement, otherwise a net DC current can be passed
-to the electrodes.
+to the body.
 Finally, the signal to noise ratio is limited by the number 
 of cycles. For example, a serial 32 electrode system
  operating at 50 frames/s
@@ -758,8 +745,8 @@ possible on $N_E$ electrodes is
  $\frac{1}{2}N_E(N_E-1)$, due to reciprocity (i.e.\ the sensitivity
 is unchanged if drive and measurements are interchanged).
 In the EIT literature, the reciprocity principle is commonly cited as
-\cite{Geselowitz1971Reciprocity}, although it was known much much earlier:
-\cite{Lorentz1896Reciprocity}, and probably by Maxwell.
+\cite{Geselowitz1971Reciprocity}, although it was known much much earlier 
+\cite{Lorentz1896Reciprocity}.
 Measurements, $\vB$, can have complex values
 indicating the in- and out of-phase components, although it is
 common to only consider the in-phase component, which dominates
@@ -768,7 +755,7 @@ at low frequencies.
 The current density, $\JV$, and electric field, $\EV$,
 in the body are related by Ohm's law, $\JV = \sigma \EV$,
 where $\sigma(\xV, t)$ is the tissue conductivity
-and may varies in space and time.
+and may vary in space and time.
 Since $\EV$ varies
 sinusoidally with the drive current, it can be represented
 as a phasor and a complex conductivity $\sigma^*$
@@ -829,7 +816,7 @@ in the region of a drive and measurement electrode.
 Current streamlines near drive and measurement electrodes, with
 $Z_{C,ES} = 0.01\,\Omega\cdot{\rm m}$, $\sigma=1\,\Omega^{-1}{\rm m}$. When the
 impedance of the electrode material is significantly lower than the 
-body, current can take a ``short-cut'' through a measurement electrode,
+body, current can take a ``short-cut'' through a measurement electrode 
 and tends to have highest density near the edges of drive electrodes.
 }
 \label{fig:electrode_currents}
@@ -861,12 +848,12 @@ For aEIT, $\yB = \vB$, and for
 difference EIT, $\yB= \vB - \vB_r$, as it reconstructs
 the changes 
 between the measurement of interest, $\vB$, and a reference $\vB_r$,
-For normalized difference EIT, $\yB= (\vB - \vB_r) ./ \vB$
+For normalized difference EIT, $\yB= (\vB - \vB_r) ./ \vB_r$
 where $\cdot ./ \cdot$ is the element-wise (Hadamard) division operator.
 Algorithms for fdEIT are based on difference imaging, in which
-$\vB$ are the measurements at the stimulation frequency of
-interest, and
-$\vB_r$ are measurements at the reference frequency. 
+$\vB$ is the measurements at the stimulation frequency of
+interest and
+$\vB_r$ the measurements at the reference frequency. 
 These algorithms requre data to be scaled appropriately,
 using a $k$ such that,
 such that $\yB= \vB - k \vB_r$ \cite{Seo2008fdEIT}.
@@ -879,7 +866,7 @@ The FEM-based forward calculation is thus
 \begin{equation}
 \yB = \left. F(\xB) \right|_{\sG = \sG_r},
 \end{equation}
-where, for difference EIT, $\vB_r$ is calculated as an assumed
+where, for difference EIT, $\vB_r$ is calculated at an assumed
 ``background conductivity'', $\sG_r$.
 
 \begin{figure} \centering
@@ -926,7 +913,7 @@ are integrated over each image element.
 The first requires a custom FEM solver, while the
 later technique can accept the output of standard FEM algorithms.
 An efficient implementation of both methods results
-in the same underlying algorithm\cite{Adler2017Jacobian}.
+in the same underlying algorithm \cite{Adler2017Jacobian}.
 It is also possible to approximate $\JB$ 
 by making small changes in each image region, and calculate a ``perturbation
 Jacobian'' \cite{Yorkey1987Comparing}.
@@ -977,7 +964,7 @@ as the sensitivity is very small.
 \caption{%
 Off-plane sensititivity for a cross section through an elliptical
 model of a uniform thorax, for 
-(lefe)  single 32-electrode plane (skip 5), and
+(left)  single 32-electrode plane (skip 5), and
 (right) two 16-electrodes planes  (skip 5 square pattern).
 The relative sensitivity of each vertical
 pixel is calculated with respect to the on-plane value, and shown by
@@ -1008,10 +995,10 @@ ones \cite{Adler2015Perturbations}.
    \includegraphics[width=0.95\columnwidth]{../figs/fig08_conductivity_contrast.pdf}
 \caption{%
 The relative EIT sensitivity as a function of the shape and
-conductivity of an ROI. The stimulation configuration (subfigure at right)
+conductivity of a ROI. The stimulation configuration (subfigure at right)
 has 16 electrodes in a central plane (dotted), and a 
 has a contrasting cylindrical ROI with a height/diameter, $H$, and conductivity 
-$\sigma_c$, while elsewhere $\sigma=1$.
+$\sigma_c$ while elsewhere $\sigma=1$.
 The graph shows the
 normalized EIT signal, $S(\sigma_c)$, as a function of
 $\sigma_c$ for four values of $H$.
@@ -1026,7 +1013,7 @@ an estimate, $\xH$, of
 the distribution of internal properties, $\xB$, which is most consistent
 with the measurements, $\yB$, and is ``reasonable'' in some sense (e.g. smoothness). 
 Image reconstruction can be understood as an ``inverse sensitivity''
-process, and is very poorly conditioned, since EIT is much more
+process. It is poorly conditioned, since EIT is much more
 sensitive to contrasts near the electrodes than in the body center.
 In most cases, reconstruction is also ill-posed, because the
 parameter space of $\xB$ is larger than the acquired measurements, $\yB$.
@@ -1048,9 +1035,7 @@ $\WB$ can be used to represent this reliability during
 reconstruction \cite{Mamatjan2013Quality}.
 The second term is the mismatch between the reconstruction
 estimate, $\xH$, and an {\em a priori} estimate of its value, $\xB_0$.
-For aEIT, $\xB_0$ is typically a uniform, homogeneous value;
-accurate estimation of this value is important for convergence of aEIT
-algorithms.
+For aEIT, accurate estimation of this value is important for convergence.
 For difference EIT, $\xB_0=0$, since increases and decreases are
 equally likely.
 $\QB$ is the ``regularization matrix'' discussed later.
@@ -1060,7 +1045,7 @@ large, solutions tend to be smooth and more similar to the prior;
 while, for small $\lambda$, solutions have higher spatial resolution,
 but are noisier and less well conditioned.
 
-A reconstructed solution, $\xH$, minimizes (\ref{eqn:minimize_norm})
+The reconstructed solution, $\xH$, minimizes (\ref{eqn:minimize_norm})
 and is most commonly calculated via
 an iterative update, $\xH^{(k+1)} = \xH^{(k)} + \Delta\xH^{k}$ 
 starting at $\xH = \xB_0$, using
@@ -1226,11 +1211,9 @@ position error,
 resolution, ringing, and shape deformation \cite{Adler2009GREIT}.
 For experimental data, images can be compared to 
 physiological ``knowns'' \cite{Grychtol2014Validation}.
-Additionally, EIT images commonly show artefacts due
-to changes at the electrodes (movement or changing contact
-quality) or mismatches between instrumentation and models.
-In many cases, low-quality data can be detected
-and corrected \cite{Mamatjan2013Quality}
+In many cases, low-quality data (due to movement or
+poor contact) can be managed
+\cite{Mamatjan2013Quality}
  via modifications to matrix $\WB$.
 Electrode movement can be addressed to a large extent by introducing
 a conductivity change Jacobian \cite{Soleimani2006Movement} in
@@ -1243,12 +1226,11 @@ Raw EIT images do not directly give relevant clinical information.
 Instead images must be analysed to calculate application-relevant images
 and measures. 
 EIT image analysis is most developed for thoracic EIT, in which a
-large number of functional EIT (fEIT) algorithms are available.
-Examples are given here, and an extensive overview of fEIT techniques
-is given in  \cite{Frerichs2017Chest}.
-Here, fEIT approaches are classified according to the 
+large number of functional EIT (fEIT) algorithms are available
+\cite{Frerichs2017Chest},
+fEIT approaches are classified according to the 
 physiological parameters of interest: ventilation distribution,
-ventioation- and cardiac-frequency impednace changes, 
+ventilation- and cardiac-frequency impedance changes, 
 aeration change, respiratory system mechanics, ventilation
 timing, and tissue response classification.
 
@@ -1266,7 +1248,7 @@ end-expiratory voxel values \cite{Hahn1995Distribution}
 \item
 {\em Ventilation- and Cardiac-frequency}$^\dagger$, which
  characterize the breathing- and heart-related components
-of the image sequence, using an corresponding frequency
+of the image sequence, using a corresponding frequency
 filter \cite{Ferrario2012morphological}, or ensemble average 
 \item
 {\em Expiration time constant}$^\dagger$, as a characterization
@@ -1274,8 +1256,8 @@ of regional lung mechanics, but fitting the expiratory part of
 the EIT waveform to a exponential function and reporting the
 exponential time constant \cite{Pulletz2012Dynamics}
 \item
-{\em Pulse propagation time}$^\dagger$, measuring the for the cardiac-related
-EIT pulse to lung voxels after the QRS peak, as a measure of pulmonary
+{\em Pulse propagation time}$^\dagger$, measuring the time for cardiac-related
+EIT pulses to arrive at lung voxels after the QRS peak, as a measure of pulmonary
 arterial pressure \cite{Proenca2016Noninvasive} 
 \item
 {\em Opening- and Closing Pressures}, measuring the time delay
@@ -1300,7 +1282,7 @@ diagnostically useful information, to determine the state of the subject
 and assess trends.
  Three types of EIT measures
 have been defined \cite{Frerichs2017Chest}: 
-average regional measures calculate the average fEIT image
+average measures calculate the mean fEIT image
 either globally, or over a ROI \cite{Ferrario2012morphological}
 (e.g.\ average tidal variation);
 characterizations of spatial distribution of the fEIT image
@@ -1322,7 +1304,7 @@ fraction of hypoventilated lung \cite{Waldmann2015Silent}.
 From raw EIT images (top row), pixel waveforms are analyzed
 to calculate the tidal variation (TV) fEIT image (middle row).
 Within the lung ROI (identified from an anatomical atlas),
-regions with less than a threshold $T=10\%$ of the maximum ventilation
+regions with ventilation fraction below a threshold $T=10\%$
 are identified (bottom row) and the fraction of such pixels calculated.
 }
 \label{fig:fEIT_eg_silent_spaces}
@@ -1345,7 +1327,7 @@ tissue (which by themselves are rarely of direct
 clinical relevance) to diagnostically-useful,
 EIT-based measures. With a systems-level perspective,
 we hope to help clarify how various components of an EIT system
-relate to each other and to eventual diagnostic value of the measures.
+relate to each other and to the eventual diagnostic value.
 
 In the opinion of the authors, EIT is at a time of transition.
 For many of its applications, EIT is reliable
@@ -1365,8 +1347,7 @@ information.
 
 To achieve this, we recommend a focus on:
 1) {\em availability} of EIT software (for modeling, algorithm comparison,
-   and reuse) as well as reference data, possibly building on the
-   EIDORS framework \cite{Adler2006EIDORS};  
+   and reuse) as well as reference data;
 2) {\em availability} of EIT devices (for phantom, animal and clinical
    use) as well as reference data;
 3) {\em standards} for access to EIT data and images (such as a DICOM class);
@@ -1395,14 +1376,11 @@ It offers exciting possibilities for imaging and functional
 monitoring in several applications, and is currently
 seeing clinical use for ventilation monitoring.
 In this paper, we have reviewed the applications of
-EIT with the goal to elucidate an image interpretation ``pathway''
-of the process of image interpretation,
+EIT with the goal to elucidate
+the process of image interpretation,
 by elaborating each of the processes though which 
 potentially diagnostically-relevant measures are determined
 from the underlying tissue properties.
-Each step from the tissue, hardware, forward \& inverse problem,
-image processing and measures are described, in order
-to clarify the advantages and disadvantages of various approaches.
 
 
 
@@ -1450,13 +1428,7 @@ A Adler, M Faulkner, K Aristovich, S Hannan, J Avery, DS Holder
 A Adler
 }
 ``Cerebral perfusion imaging using EIT'',
-Accepted: {\em EIT 2017}, Dartmouth, NH, USA, June 21--24, 2017
-
-\bibitem{Adler2017Sensitibity}
-A Adler, A Boyle, WRB Lionheart
-``Efficient computations of the Jacobian matrix using different
-approaches are equivalent'',
-Accepted: {\em EIT 2017}, Dartmouth, NH, USA, June 21--24, 2017
+{\em Proc EIT 2017}, p.43, Dartmouth, NH, USA, June 21--24, 2017
 
 
 \bibitem{Adler2011Adjacent}
@@ -1515,7 +1487,7 @@ M Assenheimer, O Laver-Moskovitz, D Malonek, D Manor, U Nahaliel, R Nitzan, A Sa
 }{
 M Assenheimer
 }
-``The T-SCANTM technology: electrical impedance as a diagnostic tool for breast cancer detection.''
+``The T-SCAN technology: electrical impedance as a diagnostic tool for breast cancer detection.''
 {\em Physiol Meas} 22:1--8, 2001. % Feb;22(1):1.
 
 \bibitem{Barber1983}
@@ -1523,10 +1495,10 @@ DC Barber, BH Brown, IL Freeston;
 ``Imaging Spatial distributions of resistivity using Applied Potential Tomography''.
 {\em Electronics Letters} 19:93--95, 1983.
 
-\bibitem{Barber1984}
-DC Barber, BH Brown;
-``Applied Potential Tomography''.
-{\em  J Phys E:Sci Instrum} 17:723--733, 1984.
+% \bibitem{Barber1984}
+% DC Barber, BH Brown;
+% ``Applied Potential Tomography''.
+% {\em  J Phys E:Sci Instrum} 17:723--733, 1984.
 
 \bibitem{Bayford2006Bioimpendace}
 RH Bayford; 
@@ -1561,6 +1533,7 @@ A Borsic
 }
 ``Sensitivity study and optimization of a 3D electric impedance tomography prostate probe``
 {\em Physiol Meas} 30:S1--S19, 2009.
+
 \bibitem{Borsic2012PDIPM}
 A Borsic, A Adler,
 ``A primal dual-interior point framework for using the L1-norm or the L2-norm on the data and regularization terms of inverse problems''
@@ -1863,14 +1836,14 @@ J Jossinet,
 ``The impedivity of freshly excised human breast tissue''
 {\em Physiol Meas} 19:61--75, 1998.
 
-\bibitem{Kerner2002Spectroscopy}
-\ifmaxthree{
-TE Kerner, KD Paulsen, A Hartov, SK Soho, SP Poplack,
-}{
-TE Kerner
-}
-``Electrical impedance spectroscopy of the breast: clinical imaging results in 26 subjects.''
-{\em  IEEE T Med Imag} 21:638--645, 2002.
+% \bibitem{Kerner2002Spectroscopy}
+% \ifmaxthree{
+% TE Kerner, KD Paulsen, A Hartov, SK Soho, SP Poplack,
+% }{
+% TE Kerner
+% }
+% ``Electrical impedance spectroscopy of the breast: clinical imaging results in 26 subjects.''
+% {\em  IEEE T Med Imag} 21:638--645, 2002.
 
 \bibitem{Khan2015FPGA}
 \ifmaxthree{
