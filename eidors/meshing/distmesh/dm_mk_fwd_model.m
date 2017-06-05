@@ -114,7 +114,7 @@ function [vtx,simp,srf] = call_distmesh(fd,fh,h0,bbox, ...
    end
 
    % Test and remove if distmesh creates degenerate elements
-   vol = get_elem_volume(struct('nodes',vtx,'elems',simp));
+   vol = get_elem_volume(struct('nodes',vtx,'elems',simp,'type','fwd_model'));
    mvol = mean(vol);
    degen = find(vol/mvol < 1e-10); 
    if length(degen)>0

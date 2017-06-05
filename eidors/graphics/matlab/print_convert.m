@@ -29,7 +29,7 @@ function print_convert(filename, varargin)
 %  Examples
 %   print_convert('outname.png')         % uses default options
 %   print_convert outname.png
-%   print_conver outname.png -r150       % set dpi=150
+%   print_convert outname.png -r150       % set dpi=150
 %   print_convert('outname.png',opts);   % use options
 %
 % See also IMWRITE
@@ -60,7 +60,8 @@ set(gcf,'InvertHardCopy','off');
 set(gcf,'Color','w');
 
 set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
-print('-dpng ',pp.resolution,tmpnam);
+%%% The -dpng driver is broken in R2014a on linux (and maybe others);
+print('-dpng',pp.resolution,tmpnam);
 set(gcf,'PaperPosition',pp.page);
  
 set(gcf,'InvertHardCopy',old_ihc); % 

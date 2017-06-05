@@ -12,6 +12,14 @@ function VOL = get_elem_volume( fwd_model, map_node )
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
 
+% If it looks like a fwd model
+if ~isfield(fwd_model,'type');
+  if isfield(fwd_model,'nodes') && isfield(fwd_model,'elems')
+     fwd_model.type = 'fwd_model';
+  end
+end
+   
+
 switch fwd_model.type
   case 'fwd_model'; % do nothing, we're ok
   case 'rec_model'; % do nothing, we're ok
