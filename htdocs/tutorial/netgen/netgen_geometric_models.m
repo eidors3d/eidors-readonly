@@ -1,7 +1,7 @@
 
 
 %CASE  1 %%%%
-disp('#### 01 ####');clear;
+disp('#### 01 ####');clear *;
 body_geometry.cylinder = struct;
 fmdl = ng_mk_geometric_models(body_geometry);
 show_fem( fmdl );
@@ -9,7 +9,7 @@ print_convert netgen_geometric_models01.png
 
 
 %CASE  2 %%%%
-disp('#### 02 ####');clear;
+disp('#### 02 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -23,7 +23,7 @@ print_convert netgen_geometric_models02.png
 
 
 %CASE  3 %%%%
-disp('#### 03 ####');clear;
+disp('#### 03 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -38,7 +38,7 @@ print_convert netgen_geometric_models03.png
 
 
 %CASE  4 %%%%
-disp('#### 04 ####');clear;
+disp('#### 04 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -54,7 +54,7 @@ print_convert netgen_geometric_models04.png
 
 
 %CASE  5 %%%%
-disp('#### 05 ####');clear;
+disp('#### 05 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -70,7 +70,7 @@ print_convert netgen_geometric_models05.png
 
 
 %CASE  6 %%%%
-disp('#### 06 ####');clear;
+disp('#### 06 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -87,7 +87,7 @@ print_convert netgen_geometric_models06.png
 
 
 %CASE  7 %%%%
-disp('#### 07 ####');clear;
+disp('#### 07 ####');clear *;
 body_geometry.cylinder = struct;
 body_geometry.sphere.center = [0 0 1];
 n_elect = 16;
@@ -103,7 +103,7 @@ print_convert netgen_geometric_models07.png
 
 
 %CASE  8 %%%%
-disp('#### 08 ####');clear;
+disp('#### 08 ####');clear *;
 body_geometry.cylinder  = struct;
 body_geometry.sphere(1) = struct;  
 body_geometry.sphere(2).center = [0 0 1];         
@@ -120,7 +120,7 @@ print_convert netgen_geometric_models08.png
 
 
 %CASE  9 %%%%
-disp('#### 09 ####');clear;
+disp('#### 09 ####');clear *;
 body_geometry.intersection.cylinder(1) = struct;
 body_geometry.intersection.cylinder(2).radius     = 0.5;
 body_geometry.intersection.cylinder(2).complement_flag = 1;   
@@ -137,7 +137,7 @@ print_convert netgen_geometric_models09.png
 
 
 %CASE 10 %%%%
-disp('#### 10 ####');clear;
+disp('#### 10 ####');clear *;
 body_geometry.intersection(1).sphere(1).radius     = 0.5;
 body_geometry.intersection(1).sphere(1).center     = [0 0 2];
 body_geometry.intersection(1).sphere(1).complement_flag = 1;
@@ -159,7 +159,7 @@ print_convert netgen_geometric_models10.png
 
 
 %CASE 11 %%%%
-disp('#### 11 ####');clear;
+disp('#### 11 ####');clear *;
 body_geometry.intersection.union(1).sphere.radius = 0.5;
 body_geometry.intersection.union(1).sphere.center = [0 0 2];
 body_geometry.intersection.union(1).cylinder.radius = 0.5;
@@ -180,7 +180,7 @@ print_convert netgen_geometric_models11.png
 
 
 %CASE 12 %%%%
-disp('#### 12 ####');clear;
+disp('#### 12 ####');clear *;
 body_geometry.cone = struct; 
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -195,7 +195,7 @@ print_convert netgen_geometric_models12.png
 
 
 %CASE 13 %%%%
-disp('#### 13 ####');clear;
+disp('#### 13 ####');clear *;
 body_geometry.cone = struct; 
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -209,7 +209,7 @@ print_convert netgen_geometric_models13.png
 
 
 %CASE 14 %%%%
-disp('#### 14 ####');clear;
+disp('#### 14 ####');clear *;
 body_geometry.cone(1).top_center = [0 0 1.5];
 body_geometry.cone(1).bottom_center = [0 0 0.5];
 body_geometry.cone(2).top_center = [0 0 -1.5];
@@ -232,7 +232,7 @@ print_convert netgen_geometric_models14.png
 
 
 %CASE 15 %%%%
-disp('#### 15 ####');clear;
+disp('#### 15 ####');clear *;
 body_geometry.ortho_brick = struct;
 fmdl = ng_mk_geometric_models(body_geometry);
 show_fem( fmdl );
@@ -240,7 +240,7 @@ print_convert netgen_geometric_models15.png
 
 
 %CASE 16 %%%%
-disp('#### 16 ####');clear;
+disp('#### 16 ####');clear *;
 body_geometry.intersection.ortho_brick.opposite_corner_a = [0 0 0];
 body_geometry.intersection.ortho_brick.opposite_corner_b = [5 5 4];
 for i = 1:4; 
@@ -257,7 +257,7 @@ print_convert netgen_geometric_models16.png
 
 
 %CASE 17 %%%%
-disp('#### 17 ####');clear;
+disp('#### 17 ####');clear *;
 body_geometry.intersection.ortho_brick.opposite_corner_a = [0 0 0];
 body_geometry.intersection.ortho_brick.opposite_corner_a = [0 0 0];
 body_geometry.intersection.ortho_brick.opposite_corner_b = [5 5 4];
@@ -281,7 +281,7 @@ print_convert netgen_geometric_models17.png
 
 
 %CASE 18 %%%%
-disp('#### 18 ####');clear;
+disp('#### 18 ####');clear *;
 body_geometry.parallelepiped  = struct;
 body_geometry.max_edge_length = 0.15;
 fmdl = ng_mk_geometric_models(body_geometry);
@@ -290,7 +290,7 @@ print_convert netgen_geometric_models18.png
 
 
 %CASE 19 %%%%
-disp('#### 19 ####');clear;
+disp('#### 19 ####');clear *;
 body_geometry.parallelepiped.vertex   = [ 0;  0;  0];
 body_geometry.parallelepiped.vector_a = [ 1;  1;  0];
 body_geometry.parallelepiped.vector_b = [ 0;  1;  1];
@@ -302,7 +302,7 @@ print_convert netgen_geometric_models19.png
 
 
 %CASE 20 %%%%
-disp('#### 20 ####');clear;
+disp('#### 20 ####');clear *;
 body_geometry.intersection.ortho_brick.opposite_corner_a = [-15, -15, 0];
 body_geometry.intersection.ortho_brick.opposite_corner_b = [15, 15, 5];
 body_geometry.intersection.half_space.point = [0, 0, 5];
@@ -314,7 +314,7 @@ print_convert netgen_geometric_models20.png
 
 
 %CASE 21 %%%%
-disp('#### 21 ####');clear;
+disp('#### 21 ####');clear *;
 body_geometry.ellipsoid.axis_a = [1 0 0];
 body_geometry.ellipsoid.axis_b = [0 2 0];
 body_geometry.ellipsoid.axis_c = [0 0 3];
@@ -324,7 +324,7 @@ print_convert netgen_geometric_models21.png
 
 
 %CASE 22 %%%%
-disp('#### 22 ####');clear;
+disp('#### 22 ####');clear *;
 body_geometry.ellipsoid.axis_a = [1 0 0];
 body_geometry.ellipsoid.axis_b = [0 1 1];
 body_geometry.ellipsoid.axis_c = [0 -2 2];
@@ -334,7 +334,7 @@ print_convert netgen_geometric_models22.png
 
 
 %CASE 23 %%%%
-disp('#### 23 ####');clear;
+disp('#### 23 ####');clear *;
 body_geometry.elliptic_cylinder.top_center = [0, 0, 10];
 body_geometry.elliptic_cylinder.bottom_center = [0, 0, 0];           
 body_geometry.elliptic_cylinder.axis_a = [1 0 0];
@@ -345,7 +345,7 @@ print_convert netgen_geometric_models23.png
 
 
 %CASE 24 %%%%
-disp('#### 24 ####');clear;
+disp('#### 24 ####');clear *;
 body_geometry.elliptic_cylinder.top_center = [0, 5, 5];
 body_geometry.elliptic_cylinder.bottom_center = [0, 0, 0];           
 body_geometry.elliptic_cylinder.axis_a = [1 0 0];
@@ -356,7 +356,7 @@ print_convert netgen_geometric_models24.png
 
 
 %CASE 25 %%%%
-disp('#### 25 ####');clear;
+disp('#### 25 ####');clear *;
 body_geometry.body_of_revolution = struct;
 body_geometry.max_edge_length = 0.15;
 fmdl = ng_mk_geometric_models(body_geometry);
@@ -365,7 +365,7 @@ print_convert netgen_geometric_models25.png
 
 
 %CASE 26 %%%%
-disp('#### 26 ####');clear;
+disp('#### 26 ####');clear *;
 body_geometry.body_of_revolution.points   = [1 1; 1 2; 2 1.5; 2 1];
 body_geometry.body_of_revolution.segments = [1 2; 2 3; 3 4; 4 1];
 body_geometry.max_edge_length = 0.15;
@@ -375,7 +375,7 @@ print_convert netgen_geometric_models26.png
 
 
 %CASE 27 %%%%
-disp('#### 27 ####');clear;
+disp('#### 27 ####');clear *;
 n_points = 24;
 theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
 body_geometry.body_of_revolution.points   = 2 + [sin(theta) cos(theta)];
@@ -387,7 +387,7 @@ print_convert netgen_geometric_models27.png
 
 
 %CASE 28 %%%%
-disp('#### 28 ####');clear;
+disp('#### 28 ####');clear *;
 n_points = 24;
 theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
 body_geometry.body_of_revolution.points   = 2 + [sin(theta) cos(theta)];
@@ -399,7 +399,7 @@ print_convert netgen_geometric_models28.png
 
 
 %CASE 29 %%%%
-disp('#### 29 ####');clear;
+disp('#### 29 ####');clear *;
 body_geometry{1}.cylinder(1).radius        = 0.5;
 body_geometry{1}.cylinder(1).top_center    = [0 0 0.75];
 body_geometry{1}.cylinder(1).bottom_center = [0 0 0.25];
@@ -419,7 +419,7 @@ print_convert netgen_geometric_models29.png
 
 
 %CASE 30 %%%%
-disp('#### 30 ####');clear;
+disp('#### 30 ####');clear *;
 body_geometry{1}.sphere.radius     = 0.25;
 body_geometry{1}.sphere.center     = [0 0 0.5];
 body_geometry{1}.name              = 'Sphere';
@@ -437,7 +437,7 @@ print_convert netgen_geometric_models30.png
 
 
 %CASE 31 %%%%
-disp('#### 31 ####');clear;
+disp('#### 31 ####');clear *;
 n_sphere = 8;
 theta = linspace(0, 2*pi, n_sphere+1); theta(end) = [];   
 for i = 1:n_sphere
@@ -461,7 +461,7 @@ print_convert netgen_geometric_models31.png
 
 
 %CASE 32 %%%%
-disp('#### 32 ####');clear;
+disp('#### 32 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -474,7 +474,7 @@ print_convert netgen_geometric_models32.png
 
 
 %CASE 33 %%%%
-disp('#### 33 ####');clear;
+disp('#### 33 ####');clear *;
 body_geometry.cylinder = struct;
 n_elect = 16;
 theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
@@ -494,7 +494,7 @@ print_convert netgen_geometric_models33.png
 
 
 %CASE 34 %%%%
-disp('#### 34 ####');clear;
+disp('#### 34 ####');clear *;
 body_geometry.body_of_extrusion = struct;
 body_geometry.max_edge_length = 0.15;
 fmdl = ng_mk_geometric_models(body_geometry);
@@ -503,7 +503,7 @@ print_convert netgen_geometric_models34.png
 
 
 %CASE 35 %%%%
-disp('#### 35 ####');clear;
+disp('#### 35 ####');clear *;
 body_geometry.body_of_extrusion.path_points   = [0 0 0; 0.25 0 1; 0.25 0 2; 0.25 0 3; 0 0 4];
 body_geometry.body_of_extrusion.path_segments = [1 2; 2 3; 3 4; 4 5];
 body_geometry.max_edge_length = 0.15;
@@ -513,7 +513,7 @@ print_convert netgen_geometric_models35.png
 
 
 %CASE 36 %%%%
-disp('#### 36 ####');clear;
+disp('#### 36 ####');clear *;
 n_points = 16;
 theta = linspace(0, 2*pi, n_points+1)'; theta(end) = [];
 body_geometry.body_of_extrusion.profile_points   = 0.2*(2 + [0.75*sin(theta) cos(theta)]);
