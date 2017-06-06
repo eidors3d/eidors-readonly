@@ -1,5 +1,7 @@
 % create reconstruction models and select hyperparameter with different approaches
 % $Id$
+if ~exist('rms'); rms = @(n,dim) sqrt(mean(n.^2,dim)); end % define @rms if toolbox not avail
+
 if ~exist('USE_GREIT_NOT_GN', 'var') || ~USE_GREIT_NOT_GN
     lambda_sel_approach = {'NF', 'SNR', 'LCC', 'GCV'};
     imdl_creation_fun = @(img, opts, lambda) mk_GN_model(img, opts, lambda);    
