@@ -33,7 +33,7 @@ xlab = xlabel('x'); set(xlab,'FontSize',14);
 ylab = ylabel('y'); set(ylab,'FontSize',14);      
 
 %Refine model
-mdl_h2=h_refine(mdl); img_h2=mk_image(mdl_h2,1);
+mdl_h2=h_refine_square_domain(mdl); img_h2=mk_image(mdl_h2,1);
 subplot(122); show_fem(img_h2); hold on;
 plot(img_h2.fwd_model.nodes(bound_nodes_not_elecs,1),...
 img_h2.fwd_model.nodes(bound_nodes_not_elecs,2),'r*');
