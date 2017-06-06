@@ -93,17 +93,11 @@ function hh= working_quiver( nn,mm )
 % versions of matlab.
 %
 % Last I checked, the V7 version of quiver was horrible, so
-%  we use the v6 one.
+%  we use the v6 one. But now (v8) that option is gone, too.
 
 % TODO: Write a new, fixed quiver function that can do 3D
 
-ver= eidors_obj('interpreter_version');
-if ver.isoctave || ver.ver<7;
-    hh = quiver( nn(:,1),nn(:,2), mm(:,1),mm(:,2),0);
-else
-    warning('off','MATLAB:quiver:DeprecatedV6Argument');
-    hh = quiver('v6', nn(:,1),nn(:,2), mm(:,1),mm(:,2),0);
-end
+hh = quiver( nn(:,1),nn(:,2), mm(:,1),mm(:,2),0);
 
 function do_unit_test;
    subplot(231);
