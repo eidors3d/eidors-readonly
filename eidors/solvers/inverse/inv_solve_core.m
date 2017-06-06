@@ -30,7 +30,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 % 'inv_model.parameters.*'.
 %
 % Parameters (inv_model.inv_solve_core.*):
-%   verbose (show progress)                (default 4)
+%   verbose (show progress)                (default 2)
 %      0: quiet
 %    >=1: print iteration count
 %    >=2: print details as the algorithm progresses
@@ -1282,8 +1282,8 @@ function opt = parse_options(imdl)
    % 1: print iteration count
    % 2: print details as the algorithm progresses
    if ~isfield(opt,'verbose')
-      opt.verbose = 4;
-      fprintf('  inv_model.inv_solve_core.verbosity not set; defaulting to verbosity=4. See help for details.\n');
+      opt.verbose = 2;
+      fprintf('  inv_model.inv_solve_core.verbosity not set; defaulting to verbosity=2. See help for details.\n');
    end
    if opt.verbose > 1
       fprintf('  setting default parameters\n');
