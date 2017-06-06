@@ -14,6 +14,7 @@ imdl.hyperparameter.value = imdl.hyperparameter.value/pf(1)^2;
 
 img = inv_solve(imdl, vh, vi);
 img.calc_colours.cb_shrink_move = [0.5,0.8,0.02];
+img.calc_colours.ref_level = 0;
 clf; show_fem(img,[1,1]); axis off; axis image
 
 print_convert('rpi_data04a.png','-density 60');
