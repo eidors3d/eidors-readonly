@@ -52,7 +52,8 @@ end
 % If model has a ground node (rather than voltage stim electrodes)
 if has_gnd_node
    Ignd = s_mat.E(dirichlet_nodes{1},:)*v;
-   if norm(Ignd)>1e-10
+   Irel = Ignd./sum(abs(pp.QQ)); % relative 
+   if max(abs(Irel))>1e-6
       warning('current flowing through ground node. Check stimulation pattern')
    end
 end

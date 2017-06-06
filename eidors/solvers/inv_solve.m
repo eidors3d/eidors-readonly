@@ -124,7 +124,7 @@ img = orderfields(img);
 try 
    do_calc = inv_model.inv_solve.calc_solution_error;
 catch
-   eidors_msg('inv_solve: Calculation of solution residual disabled (inv_model.inv_solve.calc_solution_error = 1 to enable)',2);
+   eidors_msg('inv_solve: not calculting solution residual',3);
    do_calc = false;
 end
 if ~do_calc;
