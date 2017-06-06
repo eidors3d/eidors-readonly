@@ -78,6 +78,7 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     addpath([HOMEDIR, '/solvers']);
     addpath([HOMEDIR, '/solvers/inverse']);
     addpath([HOMEDIR, '/solvers/forward']);
+    addpath([HOMEDIR, '/solvers/forward/tools-beta']); % Tools for MC's solvers which are not yet general
     addpath([HOMEDIR, '/algorithms']);
     addpath([HOMEDIR, '/interface']);
     addpath([HOMEDIR, '/models']);

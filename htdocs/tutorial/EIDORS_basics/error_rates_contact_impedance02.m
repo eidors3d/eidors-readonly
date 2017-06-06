@@ -13,23 +13,23 @@ tic;
   fprintf(1,'H1 Lin');
   [lin_errL2(1,z_cj),lin_errH1(1,z_cj),lin_errH1tot(1,z_cj),lin_errI(1,z_cj), ...
    lin_errUS(1,z_cj),lin_errUM(1,z_cj),lin_errUSM(1,z_cj), ...
-   lin_timing_solver(1,z_cj),lin_DOF(1,z_cj)]= error_2D_squ_CEM(img,'tri3',1);
+   lin_timing_solver(1,z_cj),lin_DOF(1,z_cj)]= calc_error_norms_for_square_domain(img,'tri3',1);
 toc;
 tic;
   fprintf(1,'H1 Quad');
   [quad_errL2(1,z_cj),quad_errH1(1,z_cj),quad_errH1tot(1,z_cj),quad_errI(1,z_cj), ...
   quad_errUS(1,z_cj),quad_errUM(1,z_cj),quad_errUSM(1,z_cj), ...
-  quad_timing_solver(1,z_cj),quad_DOF(1,z_cj)]= error_2D_squ_CEM(img,'tri6',1);
+  quad_timing_solver(1,z_cj),quad_DOF(1,z_cj)]= calc_error_norms_for_square_domain(img,'tri6',1);
 toc;
 tic; fprintf(1,'H1 Cub'); 
 	[cub_errL2(1,z_cj),cub_errH1(1,z_cj),cub_errH1tot(1,z_cj),...
 	cub_errI(1,z_cj),cub_errUS(1,z_cj),cub_errUM(1,z_cj),cub_errUSM(1,z_cj),cub_timing_solver(1,z_cj),...
-	cub_DOF(1,z_cj)]=error_2D_squ_CEM(img,'tri10',1); toc;           
+	cub_DOF(1,z_cj)]=calc_error_norms_for_square_domain(img,'tri10',1); toc;           
 
 %Loop over different refinements
 for ii=1:nmesh-1
     %Refine model uniformly and find errors with lin, quad, cubic                
-    mdl=h_refine(mdl);  img=mk_image(mdl,1);        
+    mdl=h_refine_square_domain(mdl);  img=mk_image(mdl,1);        
     tic; fprintf(1,'H1 Lin'); 
 			[lin_errL2(ii+1,z_cj),lin_errH1(ii+1,z_cj),...
 			lin_errH1semi(ii+1,z_cj),lin_errI(ii+1,z_cj),lin_errUS(ii+1,z_cj),lin_errUM(ii+1,z_cj),...
@@ -47,7 +47,7 @@ for ii=1:nmesh-1
 end
 
 %Refine model uniformly and find errors with lin               
-mdl=h_refine(mdl);  img=mk_image(mdl,1);        
+mdl=h_refine_square_domain(mdl);  img=mk_image(mdl,1);        
 tic; fprintf(1,'H1 Lin'); 
 	[lin_errL2(nmesh+1,z_cj),lin_errH1(nmesh+1,z_cj),...
 	lin_errH1semi(nmesh+1,z_cj),lin_errI(nmesh+1,z_cj),lin_errUS(nmesh+1,z_cj),...
