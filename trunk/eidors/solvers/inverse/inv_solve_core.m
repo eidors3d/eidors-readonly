@@ -145,13 +145,13 @@ function img= inv_solve_core( inv_model, data0, data1);
 %    measurements are calculated via fwd_solve.
 %   return_working_variables               (default: 0)
 %    If 1, return the last working variables to the user
-%     img.var.J   Jacobian
-%     img.var.dx  descent direction
-%     img.var.sx  search direction
-%     img.var.alpha  line search result
-%     img.var.beta   conjugation parameter
-%     img.var.r   as:
-%       [ residual, mesurement misfit, element misfit ]
+%     img.inv_solve_{type}.J   Jacobian
+%     img.inv_solve_{type}.dx  descent direction
+%     img.inv_solve_{type}.sx  search direction
+%     img.inv_solve_{type}.alpha  line search result
+%     img.inv_solve_{type}.beta   conjugation parameter
+%     img.inv_solve_{type}.r   as:
+%       [ residual, measurement misfit, element misfit ]
 %       with one row per iteration
 %   show_fem                       (default: @show_fem)
 %    Function with which to plot each iteration's
@@ -917,25 +917,27 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
          end
       end
    end
-   % and try a show_fem with the pixel sensitivity
-   try
-      clf;
-      imgb.elem_data = log(sqrt(sum(J.^2,1)));
-      for i = 1:length(imgb.current_params)
-         imgb.current_params{i} = [ 'log_sensitivity_' imgb.current_params{i} ];
+   if opt.verbose >= 4
+      % and try a show_fem with the pixel sensitivity
+      try
+         clf;
+         imgb.elem_data = log(sqrt(sum(J.^2,1)));
+         for i = 1:length(imgb.current_params)
+            imgb.current_params{i} = [ 'log_sensitivity_' imgb.current_params{i} ];
+         end
+         if isfield(imgb.inv_model,'rec_model')
+            imgb.fwd_model = imgb.inv_model.rec_model;
+         end
+         feval(opt.show_fem,imgb,1);
+         title(sprintf('sensitivity @ iter=%d',k));
+         drawnow;
+         if isfield(opt,'fig_prefix')
+            print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+            print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
+            saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
+         end
+      catch % no worries if it didn't work... carry on
       end
-      if isfield(imgb.inv_model,'rec_model')
-         imgb.fwd_model = imgb.inv_model.rec_model;
-      end
-      feval(opt.show_fem,imgb,1);
-      title(sprintf('sensitivity @ iter=%d',k));
-      drawnow;
-      if isfield(opt,'fig_prefix')
-         print('-dpng',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-         print('-dpdf',sprintf('%s-Js%d-%s',opt.fig_prefix,k,strrep(J_str,'_','')));
-         saveas(gcf,sprintf('%s-Js%d-%s.fig',opt.fig_prefix,k,strrep(J_str,'_','')));
-      end
-   catch % no worries if it didn't work... carry on
    end
 
 % -------------------------------------------------
