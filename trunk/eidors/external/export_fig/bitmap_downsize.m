@@ -1,4 +1,4 @@
-function A = downsize(A, factor)
+function A = bitmap_downsize(A, factor)
 %BITMAP_DONWSIZE scale down an image (anti-aliasing)
 % A = downsize(A, N) downsizes image array A by a factor N (natural number)
 %
