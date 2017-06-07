@@ -28,6 +28,11 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(filename)
 % $Id$
 % (C) 2002-2012 (C) Licenced under the GPL
 
+% Filenames cause problems under windows. Change \ to /
+if ~isunix
+   filename(filename=='\') = '/';
+end
+
 eidors_msg(['ng_read_mesh ' filename],3);
 
 orig = filename;
