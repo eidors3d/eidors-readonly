@@ -42,12 +42,18 @@ contrasts.
 </center>
 
 <h3> 
-Error norm
+Residuals
 </h3>
+To show the residuals, we can use
+<pre>
+[% PROCESS "basic_iterative03.m" %]
+</pre>
 
-Using these difference data sets, an
-image may be reconstructed.
-
+<center>
+<img src="basic_iterative03a.png">
+<br><i> Figure:</i>
+Residals and misfit curves vs iteration
+</center>
 In order to view the decreasing norm of the
 difference
  (<i>V</i><sub>sim</sub> &minus;
