@@ -35,7 +35,7 @@ algorithms written by Nick Polydorides
 <img src="basic_iterative02a.png">
 <br><i> Figure:</i>
 Images from GN reconstructions. From left to right:
-1 iteration, 2 iterations, 6 iterations. Little
+1 iteration, 2 iterations, 4 iterations. Little
 difference is seen in this case, mostly because
 this is a difference imaging problem with small 
 contrasts.
@@ -52,14 +52,15 @@ In order to view the decreasing norm of the
 difference
  (<i>V</i><sub>sim</sub> &minus;
   <i>V</i><sub>meas</sub>), one can do the 
-following.
+following (using <tt>img.inv_solve_gn.return_working_variables = 1;</tt>)
 <pre>
-&gt;&gt;eidors_msg('log_level',3);
-EIDORS:[ iter=2, norm(err)= 0.005008 ]
-EIDORS:[ iter=3, norm(err)= 0.002842 ]
-EIDORS:[ iter=4, norm(err)= 0.002186 ]
-EIDORS:[ iter=5, norm(err)= 0.001872 ]
-EIDORS:[ iter=6, norm(err)= 0.001687 ]
+&gt;&gt;rec_img.inv_solve_gn.r(:,1)
+ans =
+    0.0365
+    0.0090
+    0.0043
+    0.0028
+    0.0028
 </pre>
 
 </td></tr></table>
