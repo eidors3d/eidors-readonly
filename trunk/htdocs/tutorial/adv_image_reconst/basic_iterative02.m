@@ -1,18 +1,15 @@
 % Reconstruct images $Id$
 
-% Set reconstruction parameters
-imdl_3d.solve= @np_inv_solve;
-imdl_3d.RtR_prior= @np_calc_image_prior;
-imdl_3d.np_calc_image_prior.parameters= [3 1];
+% Set reconstruction inv_solve_gn
+imdl_3d.solve= @inv_solve_gn;
+imdl_3d.RtR_prior= @prior_laplace;
 imdl_3d.hyperparameter.value= .01;
+imdl_3d.inv_solve_gn.return_working_variables = 1;
+iter_res = @(img) [size(img.inv_solve_gn.r,1)-1, img.inv_solve_gn.r(end,1)];
 
-imdl_3d.fwd_model.solve=      @np_fwd_solve;
-imdl_3d.fwd_model.jacobian=   @np_calc_jacobian;
-imdl_3d.fwd_model.system_mat= @np_calc_system_mat;
 
 % Number of iterations and tolerance (defaults)
-imdl_3d.parameters.max_iterations = 1;
-imdl_3d.parameters.term_tolerance = 1e-3;
+imdl_3d.inv_solve_gn.max_iterations = 1;
 
 %Add 30dB SNR noise to data
 noise_level= std(inh_data.meas - homg_data.meas)/10^(30/20);
@@ -22,22 +19,25 @@ inh_data.meas = inh_data.meas + noise_level* ...
 
 % Reconstruct Images: 1 Iteration
 subplot(131)
-imdl_3d.parameters.max_iterations = 1;
+imdl_3d.inv_solve_gn.max_iterations = 1;
 rec_img= inv_solve(imdl_3d, homg_data, inh_data);
 show_slices(rec_img,slice_posn);
+title(sprintf('iter=%d resid=%5.3f',iter_res(rec_img)));
 
 
 % Reconstruct Images: 2 Iterations
 subplot(132)
-imdl_3d.parameters.max_iterations = 2;
+imdl_3d.inv_solve_gn.max_iterations = 2;
 rec_img= inv_solve(imdl_3d, homg_data, inh_data);
 show_slices(rec_img,slice_posn);
+title(sprintf('iter=%d resid=%5.3f',iter_res(rec_img)));
 
-% Reconstruct Images: 6 Iterations
+% Reconstruct Images: 5 Iterations -- but stops at 4 (not improving)
 subplot(133)
-imdl_3d.parameters.max_iterations = 6;
+imdl_3d.inv_solve_gn.max_iterations = 5;
 rec_img= inv_solve(imdl_3d, homg_data, inh_data);
 show_slices(rec_img,slice_posn);
+title(sprintf('iter=%d resid=%5.3f',iter_res(rec_img)));
 
 
 print -r75 -dpng basic_iterative02a.png
