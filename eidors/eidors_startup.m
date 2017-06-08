@@ -111,15 +111,10 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     if ver.isoctave
         archdir= strcat('/arch/octave/',computer);
     else
-        % I don't know when matlab stopped using DLL as the extension
-        % for WIN32 mex files. Last I know of is 7.3
-        if any(findstr(computer,'PCWIN')) && ( ver.ver < 7.003 )
-            archdir= '/arch/matlab/dll';
-        elseif ver.ver <  7.012
-            archdir= '/arch/matlab/7.011';
-        else
-            archdir= '/arch/matlab';
-        end
+        % problem was that MSVC compiles depended on versions of MSVCRT1xx.dll.
+	% which was not available with all windows/matlab versions.
+	% New concept is to try building with MINGW compiler
+        archdir= '/arch/matlab';
     end
     addpath([HOMEDIR, archdir]);
     fname = [HOMEDIR, archdir, '/eidors_var_id.', mexext];
@@ -196,7 +191,6 @@ function compile_mex(HOMEDIR,archdir, ver)
     if ver.isoctave
          curdir = cd;
          cd(sprintf('%s/arch',HOMEDIR));
-%        mkoctfile -v --mex eidors_var_id.cpp
          mex eidors_var_id.cpp
          system(sprintf('mkdir -p ..%s',archdir));
 %    Has to be absolute paths because Matlab coders are so stupid!!
@@ -212,14 +206,8 @@ function compile_mex(HOMEDIR,archdir, ver)
     cmd = sprintf('mex %s "%s/arch/eidors_var_id.cpp"', flags, HOMEDIR);
 % it seems to be better to use matlabs mex, especially since
 % there is a latex derivative called mex to interfere with us
-if 0
-    tmppath= getenv('PATH');
-    setenv('PATH',[tmppath,pathsep,matlabroot,'/bin']); % add matlab to path if required
-    system_cmd(cmd);
-    setenv('PATH',tmppath); % restore path
-else
     eval(cmd);
-end
+
 % the assholes at matlab don"t respect the 'f' flag in their own
 % documentation. this means we need to rewrite the whole file move.
 % after 60 years of pcs you would think that copying files is 
