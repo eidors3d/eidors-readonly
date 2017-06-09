@@ -152,7 +152,7 @@ rm -rf "${SRCDIR}/tk${TKVER}"
 rm -rf "${SRCDIR}/Tix${TIXVER}"
 rm -rf "${SRCDIR}/Togl-${TOGLVER}"
 rm -rf "${SRCDIR}/netgen-${NGVER}"
-cp "$0" "${SRCDIR}"
+#cp "$0" "${SRCDIR}"
 
 # fix path issues
 mv ${INSTDIR}/bin/netgen ${INSTDIR}/bin/netgen-exec

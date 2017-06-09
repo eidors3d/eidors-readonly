@@ -11,6 +11,7 @@ function list = stim_meas_to_list(stim)
 %
 % (C) A. Boyle 2014
 
+
 if ~isstruct(stim)
   error('expecting EIDORS stimulus strucutre');
 end
