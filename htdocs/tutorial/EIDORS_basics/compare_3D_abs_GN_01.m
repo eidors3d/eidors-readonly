@@ -2,11 +2,11 @@
 cond_h=1.0; cond_inc=2.0;
 cc.ref_level = cond_h; cc.clim = 0.6; cc.cb_shrink_move = [.3,.8,.00];
 
-e_idx = [ 1, 4, 5, 8, 9,12,13,16,17,20,21,24,25,28,29,32; % square
-          2, 3, 6, 7,10,11,14,15,18,19,22,23,26,27,30,31]';
 
 %3D forward model without inclusion 
 mdl_h= ng_mk_cyl_models([1 .7],[16,.25,.75],[0.075,0.3]);
+
+e_idx = elec_rearrange([16,2],'square'); %Square electrode pattern
 mdl_h.electrode(e_idx) =  mdl_h.electrode;
 
 %3D forward model with inclusion 
@@ -35,5 +35,5 @@ show_3d_slices(img_i,0.6,0.3,0.3); view(-24,12);
 eidors_colourbar(img_i);
 print_convert compare_3D_abs_GN_01a.png
 
-show_fem(img_i);
+show_fem_enhanced(img_i,[0,1]);
 print_convert compare_3D_abs_GN_01b.png
