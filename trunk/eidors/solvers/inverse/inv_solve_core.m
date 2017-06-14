@@ -319,11 +319,11 @@ if opt.verbose >= 5 % we only save the measurements at each iteration if we are 
   dvall = ones(size(data0.meas,1),opt.max_iterations+1)*NaN;
 end
 while 1
-  if opt.verbose > 1
+  if opt.verbose >= 1
      if k == 0
-        fprintf('  iteration start up\n')
+        fprintf('  inv_solve_core: start up\n');
      else
-        fprintf('  iteration %d\n', k)
+        fprintf('  inv_solve_core: iteration %d (residual = %g)\n', k, r(k,1));
      end
   end
 
@@ -383,7 +383,7 @@ end
 if isfield(inv_model, 'rec_model')
   img.fwd_model = inv_model.rec_model;
 end
-if opt.verbose > 1
+if opt.verbose >= 1
    if k==1; itrs=''; else itrs='s'; end
    fprintf('  %d fwd_solves required for this solution in %d iteration%s\n', ...
            opt.fwd_solutions, k, itrs);
@@ -1284,8 +1284,8 @@ function opt = parse_options(imdl)
    % 1: print iteration count
    % 2: print details as the algorithm progresses
    if ~isfield(opt,'verbose')
-      opt.verbose = 2;
-      fprintf('  inv_model.inv_solve_core.verbosity not set; defaulting to verbosity=2. See help for details.\n');
+      opt.verbose = 1;
+      fprintf('  selecting inv_model.inv_solve_core.verbosity=1\n');
    end
    if opt.verbose > 1
       fprintf('  setting default parameters\n');
