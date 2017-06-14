@@ -15,7 +15,7 @@ mdl_i= ng_mk_cyl_models([1 .7],[16,.25,.75],[0.075,0.3],extra);
 mdl_i.electrode(e_idx) =  mdl_i.electrode;
 
 %Stimulation patterns and add to models
-stim=mk_stim_patterns(16,2,'{ad}','{ad}');
+stim=mk_stim_patterns(32,1,[0,5],[0,5]); % skip 4
 mdl_h.stimulation=stim; mdl_i.stimulation=stim;
 
 %Create two images
