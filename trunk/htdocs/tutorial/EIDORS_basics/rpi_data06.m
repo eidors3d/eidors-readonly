@@ -7,7 +7,7 @@ imdl.hyperparameter.value = 2.0;
 imdl.solve = @inv_solve_abs_GN;
 
 for iter = [1,2,3, 5];
-   imdl.parameters.max_iterations = iter;
+   imdl.inv_solve_gn.max_iterations = iter;
    img = inv_solve(imdl , vi);
    img.calc_colours.cb_shrink_move = [0.5,0.8,0.02];
    img.calc_colours.ref_level = 0.6;
