@@ -31,9 +31,9 @@ function elec_idx = elec_rearrange( pattern, newarrange )
    end
 
    idx = reshape(1:(p.n_elecs*p.n_layers),p.n_layers,p.n_elecs);
-   switch newarrange
-     case 'none';      return
-     case 'odd_even';
+   switch lower(newarrange)
+     case 'none'; % nothing required
+     case {'odd_even','zigzag'};
         idx = reshape(idx,2,[])';
      case 'square'  ;
         idx = reshape(idx,2,[])';
@@ -45,17 +45,26 @@ function elec_idx = elec_rearrange( pattern, newarrange )
 
 function do_unit_test
    sqV = [1,2;4,3;5,6;8,7;9,10;12,11;13,14;16,15]';
+   oeV = [1,2;3,4;5,6;7,8;9,10;11,12;13,14;15,16]';
 
 
    elec= reshape([1:16],8,2)';
    idx = elec_rearrange(size(elec'),'square');
-   idx = reshape(idx,size(elec'))';
-   unit_test_cmp('Sq [8,2]', idx, sqV);
+   unit_test_cmp('Sq#1 [8,2]', reshape(idx,size(elec'))', sqV);
+
+   idx = elec_rearrange(size(elec'),'odd_even');
+   unit_test_cmp('OE#1 [8,2]', reshape(idx,size(elec'))', oeV);
+
+   idx = elec_rearrange(size(elec'),'zigZaG');
+   unit_test_cmp('OE#2 [8,2]', reshape(idx,size(elec'))', oeV);
+
+   idx = elec_rearrange(size(elec'),'none');
+   unit_test_cmp('OE#2 [8,2]', idx', 1:16);
 
    p.n_elecs = 8; p.n_layers = 2;
    idx = elec_rearrange(p,'square');
    idx = reshape(idx,size(elec'))';
-   unit_test_cmp('Sq [8,2]', idx, sqV);
+   unit_test_cmp('Sq#2 [8,2]', idx, sqV);
 
    elec= [1:32]';
    idx = elec_rearrange(size(elec),'square');
