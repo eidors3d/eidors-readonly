@@ -1,9 +1,11 @@
-function elec_idx = elec_rearrange( pattern, newarrange )
+function [elec_idx, new_fmdl] = elec_rearrange( pattern, newarrange, fwd_model )
 % ELEC_REARRANGE: rearrange electrodes for given pattern
 %
 % Usage: 
 %     elec_idx = elec_rearrange( pattern, newarrange );
 %     fmdl.electrode = fmdl.electrode( elec_idx );
+%   OR;
+%     [~,new_fmdl] = elec_rearrange( pattern, newarrange, fwd_model );
 %
 % pattern    = [Elecs/row, rows]  (eg [16,2])
 %   or a structure with (p.n_elecs, p.n_layers)
@@ -43,6 +45,11 @@ function elec_idx = elec_rearrange( pattern, newarrange )
    end
   elec_idx = idx(:);
 
+  if nargin >= 3
+     new_fmdl = fwd_model;
+     new_fmdl.electrode(elec_idx) = new_fmdl.electrode;
+  end
+
 function do_unit_test
    sqV = [1,2;4,3;5,6;8,7;9,10;12,11;13,14;16,15]';
    oeV = [1,2;3,4;5,6;7,8;9,10;11,12;13,14;15,16]';
@@ -71,9 +78,17 @@ function do_unit_test
    idx= reshape(idx,[16,2])';
    unit_test_cmp('Sq [16,2]', idx(:,1:8), sqV);
 
-   imdl = mk_common_model('n3r2',[16,2]); fmdl = imdl.fwd_model;
+   imdl = mk_common_model('n3r2',[16,2]); fmdl1= imdl.fwd_model;
+   subplot(221);
    idx = elec_rearrange([16,2],'square');
-   fmdl.electrode(idx) = fmdl.electrode;
-   show_fem_enhanced(fmdl,[0,1]);
+   fmdl1.electrode(idx) = fmdl1.electrode;
+   show_fem_enhanced(fmdl1,[0,1]);
    view(10,82);
-   
+
+   subplot(222);
+   [~,fmdl2] = elec_rearrange([16,2],'square', imdl.fwd_model);
+   show_fem_enhanced(fmdl2,[0,1]);
+   view(10,82);
+
+   unit_test_cmp('fmdl#1', [fmdl1.electrode([5,9]).nodes], [156 157 219 220 128 129 191 192]);
+   unit_test_cmp('fmdl#2', fmdl1.electrode, fmdl2.electrode) 
