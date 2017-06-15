@@ -63,11 +63,15 @@ if ~exist('doPlot', 'var') || isempty(doPlot)
 end
 
 %% check for existence of the regtools package
-RegtoolsDir = [fileparts(mfilename('fullpath')), filesep, 'regtools'];
-if exist(RegtoolsDir, 'dir')
-	addpath(RegtoolsDir);
+if exist('regudemo.m')==2  % file is already on path
+% Do nothing. We're OK
+elseif exist('./regtools', 'dir') %check if in current folder
+   addpath('./regtools');
+%%% What should this do?
+elseif exist([fileparts(mfilename('fullpath')), filesep, 'regtools'])
+   addpath([fileparts(mfilename('fullpath')), filesep, 'regtools'])
 else
-	error('Regtools are required but are not available, please download them from <a href="matlab: web http://www.mathworks.com/matlabcentral/fileexchange/52-regtools -browser">File Exchange</a> or <a href="matlab: web http://www2.compute.dtu.dk/~pcha/Regutools/ -browser">P.C. Hansen''s website</a> and store them in the subfolder called ''regtools''. In order to allow for a fast execution it is recommended to disable (uncomment) all plotting functions in l_cuve.m and gcv.m.');
+   error('Regtools are required but are not available, please download them from <a href="matlab: web http://www.mathworks.com/matlabcentral/fileexchange/52-regtools -browser">File Exchange</a> or <a href="matlab: web http://www2.compute.dtu.dk/~pcha/Regutools/ -browser">P.C. Hansen''s website</a> and store them in the subfolder called ''regtools''. In order to allow for a fast execution it is recommended to disable (uncomment) all plotting functions in l_cuve.m and gcv.m.');
 end
 
 % AA: 3feb2017: Please make changes so
