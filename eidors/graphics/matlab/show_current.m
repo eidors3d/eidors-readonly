@@ -50,6 +50,14 @@ end
 dims = size(img.fwd_model.nodes,2);
 
 elemcur = [zeros(1,dims); e_curr ];
+try
+   if strcmp(img.calc_colours.component, 'real')
+       elemcur = real(elemcur);
+   end
+   if strcmp(img.calc_colours.component, 'imag')
+       elemcur = imag(elemcur);
+   end
+end  % if no calc_colours.component field, do nothing
 
 if isfield(img.fwd_model, 'mdl_slice_mapper');
    if dims == 2;

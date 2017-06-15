@@ -1,4 +1,5 @@
-imgn = rmfield(img,'elem_data');
+img.calc_colours.component = 'real'; % display real component of current
+
 for i=1:2
    if i==1; cplx= .01;
    else   ; cplx= .01 - pi*2i *100; end
