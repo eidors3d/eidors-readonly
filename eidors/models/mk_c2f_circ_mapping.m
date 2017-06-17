@@ -31,11 +31,23 @@ function [mapping, failed] = circ_mapping(mdl,xyzr,copt)
     failed = false;% not all subfunctions set this
     mdl = fix_model(mdl);
     switch size(xyzr,1)
-      case 3; mapping = contained_elems_2d( mdl, xyzr );
-      case 4; [mapping failed] = contained_elems_3d( mdl, xyzr );
+      case 3; % use for 2D or for cylinder mapping in 3D
+         mapping = contained_elems_2d( mdl, xyzr );
+         if mdl_dim(mdl) == 2;
+            correctmap = pi*xyzr(end,:).^2;
+         else
+            % No analytic way to calculate correct value (for non extruded models)
+            correctmap = (get_elem_volume(mdl)'*mapping);
+         end
+      case 4; % use for 3D and spherical maps
+         [mapping failed] = contained_elems_3d( mdl, xyzr );
+         correctmap = 4/3*pi*xyzr(end,:).^3;
       otherwise; error('size of xyzr incorrect');
     end
 
+    % Correct
+    vol = get_elem_volume(mdl)';
+    mapping = bsxfun(@times, mapping, correctmap./(vol*mapping));
     
 % Mapping depends only on nodes and elems - remove the other stuff
 function c_obj = cache_obj(mdl, xyzr)
@@ -206,50 +218,52 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
    failed(1:Nc) = false;
    % We fill sparse by columns, due to CCS storage, this is fairly efficient
    mapping = sparse( Ne, Nc );
-    if 0
-   % INterpolate
-   n_interp = 4; % 7-df
-   m_pts = interp_mesh( mdl, n_interp); 
-   for i=1:Nc
-     mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
-   end
-    else
 
-   % 4. Make a tmp model with only the remaining elems
-   % 5. Interpolate
-   % 6. Merge
+       % 4. Make a tmp model with only the remaining elems
+       % 5. Interpolate
+       % 6. Merge
+       
+       too_far = elems_too_far( mdl, xyr );
+       
+       tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
+       %mapping = sparse( Ne, Nc );
+       try   
+           n_interp_min = mdl.interp_mesh.n_points;
+       catch
+           n_interp_min = 4;
+       end
+       n_interp_max = 10;
 
-   too_far = elems_too_far( mdl, xyr );
-   
-   tmp = eidors_obj('fwd_model','tmp','nodes',mdl.nodes,'elems',mdl.elems);
-   %mapping = sparse( Ne, Nc );
-   try   
-       n_interp_min = mdl.interp_mesh.n_points;
-   catch
-       n_interp_min = 4;
-   end
-   n_interp_max = 10;
-   progress_msg('mk_c2f_circ_mapping: calculate mapping',0,Nc);
-   for i=1:Nc
-       progress_msg(i,Nc);
-       good = ~too_far(:,i);
-       if ~any(good), continue, end %point outside the mesh
-       tmp.elems = mdl.elems(good,:);
-       n_interp = n_interp_min-1;
-       log_level = eidors_msg('log_level',1);
-       while(sum(mapping(good,i))==0 && n_interp < n_interp_max-1)
-           n_interp = n_interp+1;
-           m_pts = interp_mesh( tmp, n_interp);
-           mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
+   if 0
+       % INterpolate
+       n_interp = 4; % 7-df
+       m_pts = interp_mesh( mdl, n_interp); 
+       for i=1:Nc
+         mapping(:,i) = contained_elem_pts(m_pts, xyr(:,i));
        end
-       eidors_msg('log_level', log_level);
-       if (sum(mapping(good,i)) == 0)
-           failed(i) = true;
-           eidors_msg(['mk_c2f_circ_mapping: Interpolation failed for point ' num2str(i)]);
+   else
+
+       progress_msg('mk_c2f_circ_mapping: calculate mapping',0,Nc);
+       for i=1:Nc
+           progress_msg(i,Nc);
+           good = ~too_far(:,i);
+           if ~any(good), continue, end %point outside the mesh
+           tmp.elems = mdl.elems(good,:);
+           n_interp = n_interp_min-1;
+           log_level = eidors_msg('log_level',1);
+           while(sum(mapping(good,i))==0 && n_interp < n_interp_max-1)
+               n_interp = n_interp+1;
+               m_pts = interp_mesh( tmp, n_interp);
+               mapping(good,i) = contained_elem_pts(m_pts, xyr(:,i));
+           end
+           eidors_msg('log_level', log_level);
+           if (sum(mapping(good,i)) == 0)
+               failed(i) = true;
+               eidors_msg(['mk_c2f_circ_mapping: Interpolation failed for point ' num2str(i)]);
+           end
        end
+       progress_msg(Inf);
    end
-   progress_msg(Inf);
-    end
    
    
 function frac= contained_elem_pts(m_pts, xyr);
@@ -265,9 +279,9 @@ function frac= contained_elem_pts(m_pts, xyr);
            (m_pts(:,3,:) - xyr(3)).^2;     % zc =
      inpts = inr < xyr(4)^2;
 
-%    frac= mean( inpts ,3);
+     frac= mean( inpts ,3);
 %    FIXME: Octave doesn't like to mean on logical
-     frac= mean( int8( inpts ) ,3);
+%    frac= mean( int8( inpts ) ,3);
      if sum(inpts(:))==0
          % TODO: This message is outdated
          eidors_msg(['mk_c2f_circ_mapping: Interpolation failed: increase ', ...
@@ -275,6 +289,29 @@ function frac= contained_elem_pts(m_pts, xyr);
      end
 
 function do_unit_test
+   fmdl = ng_mk_cyl_models([0,1,.1],[16,1],.03);
+   vol = get_elem_volume(fmdl)';
+   xyr = ones(3,1)*linspace(-.5,.5,7);
+   rr = .1; VV = pi*rr^2; xyr(3,:) = rr;
+   [c2f,fail] = mk_c2f_circ_mapping(fmdl,xyr);
+   unit_test_cmp('2D #1.1:',sum(fail),0);
+   unit_test_cmp('2D #1.2(r=.1):',vol*c2f/VV,1,1e-2);
+
+   fmdl = ng_mk_cyl_models([2,1,.1],[16,1],.03);
+   fmdl.nodes(:,3) = fmdl.nodes(:,3) - 1;
+   vol = get_elem_volume(fmdl)';
+   xyzr = ones(4,1)*linspace(-.5,.5,7);
+
+   rr = .1; VV = pi*4/3*rr^3; xyzr(4,:) = rr;
+   [c2f,fail] = mk_c2f_circ_mapping(fmdl,xyzr);
+   unit_test_cmp('3D #1.1:',sum(fail),0);
+   unit_test_cmp('3D #1.2(r=.1):',vol*c2f/VV,1,1e-2);
+
+   rr = .01; VV = pi*4/3*rr^3; xyzr(4,:) = rr;
+   [c2f,fail] = mk_c2f_circ_mapping(fmdl,xyzr);
+   unit_test_cmp('3D #1.1(r=.01):',sum(fail),0);
+   unit_test_cmp('3D #1.2:',vol*c2f/VV,1,1e-2);
+
    %2D example
    imdl = mk_common_model('a2c2',16); fmdl=imdl.fwd_model;
    xyc = [0,0.27,0.18;0,-0.1,0.03;0,0.1,0.2;0.1,0.37,0.1]';
@@ -283,28 +320,31 @@ function do_unit_test
    yy=[0*th+1]*xyc(2,:)+cos(th)*xyc(3,:);
    show_fem(fmdl,[0,0,1]); set(line(xx,yy),'LineWidth',2);
 
-   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0.1] );
-   t1= all( abs(c2f(1:4)-0.2857)<.001 ) & all( c2f(5:end)==0 );
-   unit_test_cmp('2D ex 1:',t1,1);
+   % split over four elements
+   rr= 0.1;c2f= mk_c2f_circ_mapping( fmdl, [0;0;rr] );
+   tt= zeros(size(c2f)); tt(1:4) = pi*rr^2/4; tt= tt./get_elem_volume(fmdl);
+   unit_test_cmp('2D ex 1:',c2f,tt,1e-10);
 
-   c2f= mk_c2f_circ_mapping( fmdl, [.0;.05;0.03]); 
-   t2= abs( c2f(1) - 0.1429) < .001 & all( c2f(2:end)==0 );
-   unit_test_cmp('2D ex 2:',t2,1);
+   % all in element #1
+   rr= 0.03;c2f= mk_c2f_circ_mapping( fmdl, [.0;.05;rr]); 
+   tt= zeros(size(c2f)); tt(1) = pi*rr^2; tt= tt./get_elem_volume(fmdl);
+   unit_test_cmp('2D ex 2:',c2f,tt,1e-10);
       
    %3D example - cylinder
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
-   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0.1]); 
-   t3= all( abs(c2f(1:4)-0.1714)<.001 ) & all( c2f(5:64)==0 );
-   unit_test_cmp('3D ex 1:',t2,1);
+   fmdl.nodes = 1.1*fmdl.nodes;
+   rr=0.1;c2f= mk_c2f_circ_mapping( fmdl, [0;0;rr]); 
+   V = pi*rr^2*(max(fmdl.nodes(:,3)) - min(fmdl.nodes(:,3)));
+   unit_test_cmp('3D ex 1 (cylinder):',get_elem_volume(fmdl)'*c2f,V,1e-2);
 
-   %3D example - cylinder
+   %3D example - sphere
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
-   c2f= mk_c2f_circ_mapping( fmdl, [0;0;0;0.1]); 
-   unit_test_cmp('3D ex 2a:',c2f(193:196),.0571,.001);
+   rr=0.05;c2f= mk_c2f_circ_mapping( fmdl, [0;0;0;rr]); 
+   tt = 4/3*pi*rr^3/24./get_elem_volume(fmdl);
+   unit_test_cmp('3D ex 2a:',c2f(193:196),tt(193:196),1e-10);
    unit_test_cmp('3D ex 2b:',c2f(1:64),0);
 
-   %3D example - cylinder - 2 pts
    imdl = mk_common_model('a3cr',16); fmdl=imdl.fwd_model;
-   c2f= mk_c2f_circ_mapping( fmdl, [0 0;0 0;0 0;0.1 0.2]); 
-   unit_test_cmp('3D ex 3a:',c2f(193:196),.0571,.001);
-   unit_test_cmp('3D ex 3b:',c2f(1:64),0);
+   rr=0.05;c2f= mk_c2f_circ_mapping( fmdl, [0 0;0 0;0 0;rr,rr]); 
+   unit_test_cmp('3D ex 3a:',c2f(193:196,:),tt(193:196)*[1,1],1e-10);
+   unit_test_cmp('3D ex 3b:',c2f(1:64,:),0);

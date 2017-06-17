@@ -1,9 +1,16 @@
+ - continue automatic manage renumbering/renaming of electrodes (started).
+
+ - add ability measure currents (ie with voltage drive)
+
+ - For mk_c2f_circ_mapping find a way to correct cylindrical maps
+
+POST 3.9
  - allow solving on the image with multiple elements
  - debug calc_R_prior UNIT_TEST (ichol doesn't give a good estimate, also not posdef)
     
- - lookfor fminsearch_octave and see if current version still needs it.
+ + lookfor fminsearch_octave and see if current version still needs it.
 
- - mk_c2f_circ_mapping doesn't give very accurate results
+ + mk_c2f_circ_mapping doesn't give very accurate results
      even when a large n_interp_min value is given
     - see test code from 19jan2017 (AA)
 
@@ -15,9 +22,9 @@
      (specify that nodes get joined)
      
 
- - Add ability to do voltage drive, with current measure.
+ + Add ability to do voltage drive.
  
- - automatic manage renumbering/renaming of electrodes.
+ + automatic manage renumbering/renaming of electrodes (started).
 
  + ng_mk_geometric_models give lots of warnings
 
@@ -87,15 +94,13 @@
  - Make analytic c2f the default
     - think of better tests
 
- - Make analytic c2f the default
-
  - Colourmap managing
     - experimental image_field in calc_colours (see cg_ards_recruitment_04)
     - cmap_type = 'draeger' does draeger colours, but not the offset
         in the colourbar. Add a centre_move option to eidors_colourbar
     - show_fem_enhanced does own stuff with colours
 
- - check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
+ + check that latest octave has fminsearch and remove switch from mk_GREIT_model line 139
 
  - Mods to show_slices to only show part of the slice
 
