@@ -3,9 +3,11 @@ function VOL = get_elem_volume( fwd_model, map_node )
 % Calculate volume (or area) of each element in model
 %
 % If the model has a 'coarse2fine' element, then the
-% returned VOL applies to the coarse matrix
+% returned VOL applies to the coarse matrix (unless map_node <0)
 %
-% if map_node == 1, then calculated volumes are the volume fraction for each node
+% if map_node < 0, do not apply coarse2fine (if it exists)
+%
+% if abs(map_node) == 1, then calculated volumes are the volume fraction for each node
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -36,7 +38,7 @@ if nargin==1; map_node= 0; end
 NODE = fwd_model.nodes';
 ELEM = fwd_model.elems';
 
-copt.cache_obj = {NODE, ELEM};
+copt.cache_obj = {NODE, ELEM,map_node};
 copt.fstr = 'elem_volume';
 copt.boost_priority = -4;
 
@@ -95,3 +97,6 @@ function do_unit_test
   out = get_elem_volume(mk_image(imdl,1));
   unit_test_cmp('image:', out(1:4), 0.03125*ones(4,1),1e-10);
 
+  fmdl = imdl.fwd_model;
+  out = get_elem_volume(fmdl,1);
+keyboard
