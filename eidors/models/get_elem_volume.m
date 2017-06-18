@@ -8,6 +8,7 @@ function VOL = get_elem_volume( fwd_model, map_node )
 % if map_node < 0, do not apply coarse2fine (if it exists)
 %
 % if abs(map_node) == 1, then calculated volumes are the volume fraction for each node
+% BUGS: can't currently apply coarse2fine on map_node.
 
 % (C) 2009 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -44,13 +45,14 @@ copt.boost_priority = -4;
 
 VOL = eidors_cache(@calc_volume, {NODE, ELEM}, copt);
 
-if isfield(fwd_model,'coarse2fine')
+if isfield(fwd_model,'coarse2fine') && map_node>=0
    VOL= fwd_model.coarse2fine' * VOL;
 end
 
 % Calculate the mapping of each element onto the associated node
 % Map(i,j) = 1/Ne if elem j has node i
-if map_node
+if abs(map_node)==1
+   [d,e]= size(ELEM);
    map = sparse( ELEM, ones(d,1)*(1:e), 1/d, size(NODE,2),e);
    VOL = map * VOL;
 end
@@ -90,13 +92,34 @@ function VOL = calc_volume(NODE,ELEM)
 
 function do_unit_test
   imdl = mk_common_model('a2c2',8);
+  tt = 0.03125*ones(4,1);
   out = get_elem_volume(imdl.fwd_model);
-  unit_test_cmp('fmdl:',  out(1:4), 0.03125*ones(4,1),1e-10);
+  unit_test_cmp('fmdl:',  out(1:4), tt, 1e-10);
   out = get_elem_volume(imdl);
-  unit_test_cmp('imdl:',  out(1:4), 0.03125*ones(4,1),1e-10);
+  unit_test_cmp('imdl:',  out(1:4), tt, 1e-10);
   out = get_elem_volume(mk_image(imdl,1));
-  unit_test_cmp('image:', out(1:4), 0.03125*ones(4,1),1e-10);
+  unit_test_cmp('image:', out(1:4), tt, 1e-10);
 
   fmdl = imdl.fwd_model;
-  out = get_elem_volume(fmdl,1);
-keyboard
+  unit_test_cmp('fmdl (size 1):',  size(out,1), [num_elems(fmdl)]);
+  out0= get_elem_volume(fmdl,0);
+  unit_test_cmp('fmdl (size 1):',  size(out0,1), [num_elems(fmdl)]);
+
+  out1= get_elem_volume(fmdl,1);
+  unit_test_cmp('fmdl (size 1):',  size(out1,1),[num_nodes(fmdl)]);
+  unit_test_cmp('fmdl (nodes 1):',  sum(out), sum(out1), 1e-10);
+  ttn(1) = 0.041666666666667; ttn(2:5) = 0.088388347648318;
+  unit_test_cmp('fmdl (nodes 2):',  out1(1:5), ttn(:), 1e-10);
+
+  fmdl.coarse2fine = zeros(num_elems(fmdl),2);
+  fmdl.coarse2fine(1:4,1) = 1;
+  fmdl.coarse2fine(5:end,2) = 1;
+  outc= get_elem_volume(fmdl,-2); % don't use
+  unit_test_cmp('fmdl (c2f 1):',  out0, outc);
+  outc= get_elem_volume(fmdl,0); % use c2f
+  unit_test_cmp('fmdl (c2f 2):',  outc(1), sum(tt), 1e-10);
+  unit_test_cmp('fmdl (c2f 3):',  sum(outc), sum(out0), 1e-10);
+  unit_test_cmp('fmdl (c2f 4):',  size(outc), [2,1]);
+
+  outc= get_elem_volume(fmdl,-1); % use c2f and map_node
+  unit_test_cmp('fmdl (nodes 2):',  outc(1:5), ttn(:), 1e-10);
