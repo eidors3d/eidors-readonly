@@ -74,7 +74,6 @@ copt.fstr = 'mk_tri2tet_c2f';
 c2f(fmdl_idx,rmdl_idx) = eidors_cache(@do_mk_tri2tet_c2f,{fmdl,rmdl,opt},copt);
 % c2f = eidors_cache(@do_mk_tri2tet_c2f,{fmdl,rmdl,opt},copt);
 
-
 end
 
 function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
@@ -364,7 +363,7 @@ function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
                      cp = bsxfun(@rdivide, cp, l);
                      % counteract colinear vectors in different directions
                      cp = abs(cp); 
-                     un = uniquetol(cp,1e-14,'ByRows',true,'DataScale',1);
+                     un = uniquetol(cp,1e-12,'ByRows',true,'DataScale',1);
                      ok = ok | size(un,1) == 1; % co-linear points
                   end
                   if ~ok
@@ -771,8 +770,8 @@ function fmdl = prepare_tet_mdl(fmdl)
    fmopt.face2elem = true;
    fmopt.node2elem = true;
    fmopt.normals   = true;
-   fmopt.linear_reorder = false; % this is slow and not needed
    ll = eidors_msg('log_level',1);
+   fmopt.linear_reorder = false; % this is slow and not needed
    fmdl = fix_model(fmdl,fmopt);
    eidors_msg('log_level',ll);
    fmdl.node2elem = logical(fmdl.node2elem);
@@ -864,6 +863,7 @@ function do_unit_test
    do_small_test
    do_inf_test
    do_realistic_test
+   do_centre_slice; % failing code from tutorial
 end
 
 function do_inf_test
@@ -985,3 +985,10 @@ function do_realistic_test
 end
  
  
+function do_centre_slice; % failing code from tutorial
+   imdl = mk_common_model('b3cr',[16,2]);
+   f_mdl= imdl.fwd_model;
+   imdl2d= mk_common_model('b2c2',16);
+   c_mdl= imdl2d.fwd_model;
+   c2f= mk_coarse_fine_mapping( f_mdl, c_mdl);
+end
