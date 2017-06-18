@@ -146,7 +146,7 @@ delete(fnamein2d);
 delete(fnamevol); 
 
 mdl.nodes(:,3) = [];
-if ~isempty(elec_pos{1})
+if ~all(cellfun(@isempty,elec_pos))
     mdl = find_electrodes(mdl, points(find(eidx),:), nonzeros(eidx));
 end
 mdl.boundary = find_boundary(mdl);
@@ -175,7 +175,7 @@ opt.boundary_face = 1;
 mdl = fix_model(mdl, opt); % in case there are multi-point electrodes
 
 nel = max(e_idx);
-npts = length(elec_pts);
+npts = size(elec_pts,1);
 nn  = length(mdl.nodes);
 e = elec_pts';
 d = repmat(e(:)',nn,1) - repmat(mdl.nodes,1,npts);
