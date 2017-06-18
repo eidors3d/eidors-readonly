@@ -30,7 +30,6 @@ curprms = jnk.current_params;
 if strcmp(curprms, 'conductivity') && ~isfield(img,'conductivity')
    curprms = '';
 end
-
 % solve one time to get the size
 d0= fwd_solve( img );
 
@@ -79,50 +78,25 @@ function do_unit_test
 % Perturbation Jacobians
 % $Id$
 
-% imdl= mk_common_model('c2c2',16);
-  imdl= mk_common_model('a3cr',16);
-% imdl= mk_common_model('n3r2',[16,2]);
-  imdl.fwd_model.nodes = imdl.fwd_model.nodes*.25;
-  img= calc_jacobian_bkgnd(imdl);
+  models ={'c2c2','a3cr','n3r2'};
+  for i = 1:length(models)
+     imdl= mk_common_model(models{i},16);
+     imdl.fwd_model.nodes = imdl.fwd_model.nodes*.25;
+     img= calc_jacobian_bkgnd(imdl);
 
-  img.fwd_model = mdl_normalize(img.fwd_model, 0);
+     img.fwd_model = mdl_normalize(img.fwd_model, 0);
 
-  img.fwd_model.jacobian=   @jacobian_adjoint;
-  img.fwd_model.system_mat= @system_mat_1st_order;
-  img.fwd_model.solve=      @fwd_solve_1st_order;
-  J_aa= calc_jacobian( img ); % 2 for bug in my code
+     img.fwd_model.jacobian=   @jacobian_adjoint;
+     img.fwd_model.system_mat= @system_mat_1st_order;
+     img.fwd_model.solve=      @fwd_solve_1st_order;
+     J_aa= calc_jacobian( img ); % 2 for bug in my code
 
-  img.fwd_model.jacobian=   @jacobian_perturb;
-  img.fwd_model.system_mat= @system_mat_1st_order;
-  img.fwd_model.solve=      @fwd_solve_1st_order;
-  J_aa_p= calc_jacobian( img ); % 2 for bug in my code
+     img.fwd_model.jacobian=   @jacobian_perturb;
+     J_aa_p= calc_jacobian( img ); % 2 for bug in my code
 
-  img.fwd_model.jacobian=   @np_calc_jacobian;
-  img.fwd_model.system_mat= @np_calc_system_mat;
-  img.fwd_model.solve=      @np_fwd_solve;
-  J_np= calc_jacobian( img );
+     unit_test_cmp('J_ - J_p', norm(J_aa - J_aa_p,'fro')/norm(J_aa,'fro'), 0, 1e-3);
+   end
 
-  img.fwd_model.jacobian=   @jacobian_perturb;
-  img.fwd_model.system_mat= @np_calc_system_mat;
-  img.fwd_model.solve=      @np_fwd_solve;
-  J_np_p= calc_jacobian( img );
-
-  tol = 4e-4;
-  unit_test_cmp('J_aa - J_aa_p', norm(J_aa - J_aa_p,'fro')/norm(J_aa,'fro'), 0, tol);
-  unit_test_cmp('J_np - J_np_p', norm(J_np - J_np_p,'fro')/norm(J_np,'fro'), 0, tol);
-  unit_test_cmp('J_np - J_aa_p', norm(J_np - J_aa_p,'fro')/norm(J_np,'fro'), 0, tol);
-  unit_test_cmp('J_np - J_aa  ', norm(J_np - J_aa  ,'fro')/norm(J_np,'fro'), 0, tol);
-
-% Demo model with EIDORS3D
-  imdl= mk_common_model('n3r2',[16,2]);
-  img= calc_jacobian_bkgnd(imdl);
-  for i=1:16; imdl.fwd_model.electrode(i).z_contact= .01;end
-
-% Calculate the normal Jacobian
-  img.fwd_model.jacobian=   @np_calc_jacobian;
-  img.fwd_model.system_mat= @np_calc_system_mat;
-  img.fwd_model.solve=      @np_fwd_solve;
-  J_np= calc_jacobian( img );
 
 function display_jacobian_deltas
 % Calculate the perturbation Jacobian
