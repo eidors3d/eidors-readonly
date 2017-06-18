@@ -47,9 +47,6 @@ function [mapping, failed] = circ_mapping(mdl,xyzr,copt)
 
     % Correct
     vol = get_elem_volume(mdl)';
-disp([size(vol), size(correctmap), size(mapping)])
-    keyboard
-%     1   995     1     7   995     7
 
     mapping = bsxfun(@times, mapping, correctmap./(vol*mapping));
     
