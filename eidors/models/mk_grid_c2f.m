@@ -487,7 +487,7 @@ function m = prepare_vox_mdl(rmdl,opt)
 
     m.faces = mk_faces(voxels,opt);
     if DEBUG || eidors_debug('query','mk_grid_c2f:mk_faces')
-        test_faces(rmdl,voxels(m.faces,:),opt); title('mk\_faces');
+        test_faces(rmdl,m.faces,opt); title('mk\_faces');
     end
 
     m.vox2face = mk_vox2face(opt);
