@@ -84,8 +84,8 @@ function imdl = Basic_GN_Dif( imdl );
 function imdl = Basic_GN_Abs( imdl );
    imdl.RtR_prior = @prior_laplace;
    try; imdl = rmfield(imdl,'R_prior'); end
-   imdl.solve= @inv_solve_abs_GN;
-   imdl.inv_solve.max_iterations= 10;
+   imdl.solve= @inv_solve_gn;
+   imdl.inv_solve_gn.max_iterations= 10;
    imdl.reconst_type= 'absolute';
 
 function imdl = TV_solve_Dif( imdl );
