@@ -21,6 +21,8 @@ function Reg= prior_gaussian_HPF( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+
 fwd_model= inv_model.fwd_model;
 try 
     diam_frac= fwd_model.prior_gaussian_HPF.diam_frac;
@@ -99,3 +101,5 @@ function [x,xc,y,yc] = interp_points(NODE,ELEM,np);
 
   xc= mean(xt,2)/taille(1);
   yc= mean(yt,2)/taille(2);
+
+function do_unit_test
