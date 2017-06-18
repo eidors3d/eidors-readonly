@@ -54,19 +54,9 @@ function R_prior = calc_from_RtR_prior(inv_model)
       RtR_prior= eidors_cache( inv_model.RtR_prior, inv_model );
    end
    
-   % chol generates an error for rank deficient RtR_prior
-   %     R_prior = chol (RtR_prior);
-   % Instead we calculate cholinc with a droptol of 1e-5.
-   %  For priors, this should be fine, since exact values
-   %  especially far away, are not necessary
-   ver = eidors_obj('interpreter_version');
-   opts.droptol = 1e-5; 
-   
-   if ver.isoctave  || ver.ver < 7.012
-      R_prior = cholinc(RtR_prior,opts.droptol);
-   else
-      R_prior = ichol(RtR_prior);
-   end
+   [L,D,P] = ldl(RtR_prior);
+   R_prior = sqrt(D)*L'*P';
+   [L,D,P] = ldl(RtR_prior);
 
 function inv_model = rec_or_fwd_model( inv_model);
 
@@ -86,17 +76,22 @@ function inv_model = rec_or_fwd_model( inv_model);
    end
 
 function do_unit_test
-   imdl = mk_common_model('a2c2',16);
 
    priors={'prior_tikhonov',
-           'prior_laplace'};
+           'prior_laplace',
+           'prior_gaussian_HPF',
+           'prior_movement'};
+   models= {'a2c0','f2c2','n3r2'};
 
-   for i = 1:length(priors);
-      imdl.RtR_prior = feval(priors{i},imdl);
+   for j= 1:length(models);
+      imdl = mk_common_model(models{j},16);
+      for i = 1:length(priors);
+         imdl.RtR_prior = feval(priors{i},imdl);
 
-      R   = calc_R_prior(imdl);
-      RtR = calc_RtR_prior(imdl);  
-      unit_test_cmp(['P:',priors{i}], R'*R, RtR, 1e-10);
+         R   = calc_R_prior(imdl);
+         RtR = calc_RtR_prior(imdl);  
+         unit_test_cmp(['P:',priors{i}], R'*R, RtR, 1e-10);
+      end
    end
 
 
