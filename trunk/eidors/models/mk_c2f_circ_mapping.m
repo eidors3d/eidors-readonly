@@ -46,7 +46,7 @@ function [mapping, failed] = circ_mapping(mdl,xyzr,copt)
     end
 
     % Correct
-    vol = get_elem_volume(mdl)';
+    vol = get_elem_volume(mdl,-2)'; %-2 => don't use c2f
 
     mapping = bsxfun(@times, mapping, correctmap./(vol*mapping));
     
