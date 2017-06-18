@@ -1,3 +1,5 @@
+ - Fix prior_gaussian_HPF to accept 3D models
+
  - the code in cg_ards_recruitment_ zip files have many issues
      - use deprecated gaussian_hpf_prior
      - needs filter toolboxes
