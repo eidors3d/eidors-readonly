@@ -1,3 +1,7 @@
+ - the code in cg_ards_recruitment_ zip files have many issues
+     - use deprecated gaussian_hpf_prior
+     - needs filter toolboxes
+
  - continue automatic manage renumbering/renaming of electrodes (started).
 
  - add ability measure currents (ie with voltage drive)

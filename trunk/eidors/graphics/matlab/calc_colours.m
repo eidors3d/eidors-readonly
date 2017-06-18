@@ -550,7 +550,7 @@ function colours=set_mapped_colour(pp, backgnd, img_data)
 
    %FIXME - come up with a general way to handle blocks in image field
    if isfield(pp,'image_field')
-      warning(['calc_colours: image_field is an experimental feature' ...
+      warning(['calc_colours: image_field is an experimental feature ' ...
                               'and will be re-implemented']);
       infmask = isinf(img_data);
       mindata = min(img_data(~infmask));
