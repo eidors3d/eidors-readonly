@@ -5,7 +5,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 % data0      => EIT data
 % data0, data1 => difference EIT data
 %
-% This function is parameterized and uses function pointers where possible to
+% This function is parametrized and uses function pointers where possible to
 % allow its use as a general iterative solver framework. There are a large
 % number of parameters and functions contained here. Sensible defaults are
 % used throughout. You do not need to set every parameter.
@@ -53,7 +53,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 %   ntol (estimate of machine precision) (default eps)
 %   tol (stop iter if r_k < tol)           (default 0)
 %   dtol                              (default -0.01%)
-%    stop iter if (r_k - r_{k-1}) < dtol AND
+%    stop iter if (r_k - r_{k-1})/r_1 < dtol AND
 %                 k >= dtol_iter
 %   dtol_iter                              (default 0)
 %    apply dtol stopping criteria if k >= dtol_iter
@@ -131,7 +131,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 %   meas_working                   (default 'voltage')
 %    Similarly to elem_working/output, conversion
 %    between 'voltage' and 'apparent_resistivity' and
-%    their log/log10 varients are handled internally.
+%    their log/log10 variants are handled internally.
 %    If meas_input == meas_working no conversions take
 %    place. The normalization factor 'N' is calculated
 %    if 'apparent_resistivity' is used.
@@ -165,7 +165,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 %    e   - prior misfit
 %    dv  - change in voltage
 %    de  - change in image elements
-%    W   - measurement inverse covarience matrix
+%    W   - measurement inverse covariance matrix
 %    hp2 - hyperparameter squared, see CALC_HYPERPARAMETER
 %    RtR - regularization matrix squared --> hp2RtR = hp2*RtR
 %
@@ -179,7 +179,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 %    data0 - the true measurements     (dv = N*data - N*data0)
 %    img0  - the image background (de = img - img0)
 %    N     - a measurement normalization factor, N*dv
-%    W     - measurement inverse covarience matrix
+%    W     - measurement inverse covariance matrix
 %    hp2   - hyperparameter squared, see CALC_HYPERPARAMETER
 %    RtR   - regularization matrix squared --> hp2RtR = hp2*RtR
 %    dv    - change in voltage
@@ -1359,7 +1359,6 @@ function opt = parse_options(imdl)
       % terminate iterations if residual slope is greater than dtol
       % generally, we would want dtol to be -0.01 (1% decrease) or something similar
       %  ... as progress levels out, stop working
-      %opt.dtol = +inf;
       opt.dtol = -1e-4; % --> -0.01% slope (really slow)
    end
    if opt.dtol > 0
