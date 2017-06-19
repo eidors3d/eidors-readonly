@@ -1,9 +1,8 @@
 %Constrained Gauss Newton solver
 imdl.solve = @inv_solve_gn;
 imdl.hyperparameter.value = hp;
-imdl.inv_solve_gn.min_value = 0.9;
-imdl.inv_solve_gn.max_value = 1.1;
-cc.clim = 0.2;
+% limit conductivity to be greater than 0 with a log parametrization
+imdl.inv_solve_gn.elem_working = 'log_conductivity';
 
 img   = inv_solve(imdl, v_i);    img.calc_colours   = cc;
 img_n = inv_solve(imdl, v_i_n);  img_n.calc_colours = cc;
