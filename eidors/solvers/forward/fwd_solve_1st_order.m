@@ -20,7 +20,7 @@ function data =fwd_solve_1st_order(fwd_model, img)
 %       where the functionputs a struct with fields: main_region, regions
 %       OR
 %    img.fwd_model.model_reduction.main_region = vector, and 
-%    img.fwd_model.model_reduction.region = struct
+%    img.fwd_model.model_reduction.regions = struct
 
 % (C) 1995-2017 Andy Adler. License: GPL version 2 or version 3
 % $Id$
