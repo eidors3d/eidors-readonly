@@ -79,7 +79,9 @@ end
 copt.fstr = 'fwd_solve';
 copt.cache_obj = img;
 data = eidors_cache(solver, {img}, copt);
+   eidors_cache('boost_priority', -2); % fmdl evaluations are low priority
 data= eidors_obj('data',data);  % create data object
+   eidors_cache('boost_priority', 2);
 
 
 if isa(fwd_model.solve,'function_handle')
