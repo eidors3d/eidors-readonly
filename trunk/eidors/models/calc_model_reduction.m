@@ -26,8 +26,8 @@ switch fmdl(1).type
       error('can''t process model of type %s', fmdl.type );
 end
 
-mr.main_region = logical(ones(1:num_nodes(fmdl))'); 
-mr.regions     = struct();
+mr.main_region = logical(ones(1,num_nodes(fmdl))'); 
+mr.regions     = struct([]);
 if ~isfield(fmdl,'coarse2fine'); return; end % not needed without
 
 
@@ -39,6 +39,32 @@ copt.log_level = 4;
 mr= eidors_cache(@calc_model_reducton_fn,{fwd_model},copt );
 
 function mr = calc_model_reducton_fn(fwd_model);
+   ne = num_elems(fwd_model);
+   el = fwd_model.elems; ei=(1:ne)';
+   e2n = sparse(el,ei*ones(1,elem_dim(fwd_model)+1),1);
+
+   c2n = e2n*fwd_model.coarse2fine;
+
+% get the number of the c2n mapping. But only work on those with one
+   ac2n = c2n>0;
+   ac2n(sum(ac2n,2)>1,:) = 0;
+   region = ac2n*(1:nc)';
+   region0 = region==0;
+   FC = system_mat_fields(img.fwd_model); S= FC'*FC;
+   region0(end+1:size(FC,2)) = logical(1);
+   k=0;
+   for i=1:max(region);
+      ff=find(region==i);
+      if length(ff)>1;
+         imgn.node_data(ff) = 1+0.5*(k)/5; k=k+1;
+        %invEi = S(region0,ff)*inv(S(ff,ff))*S(ff,region0);
+         invEi =(S(region0,ff)/S(ff,ff))*S(ff,region0);
+         regions(k) = struct('nodes',ff,'field',i,'invE',invEi);
+      end;
+   end
+
+   mr.main_region = region0;
+   mr.regions = regions;
 
 function do_unit_test
    fmdl = mk_common_model('a2c0',16); img = mk_image(fmdl,1);
@@ -64,8 +90,14 @@ function do_unit_test
 
    vs1 = fwd_solve( img);
 
-   imgmr = img; imgmr.model_reduction = @calc_model_reduction;
+   imgmr = img; imgmr.fwd_model.model_reduction = @calc_model_reduction;
    vs2 = fwd_solve( imgmr);
    unit_test_cmp('1-2',vs1.meas,vs2.meas,1e-10);
 
+   imgm3 = img; img.fwd_model.model_reduction = calc_model_reduction( fmdl);
+   vs3 = fwd_solve( imgm3);
+   unit_test_cmp('1-3',vs1.meas,vs3.meas,1e-10);
 
+   imgm4 = img; img.fwd_model.model_reduction = @calc_model_reduction;
+   vs4 = fwd_solve( imgm4);
+   unit_test_cmp('1-4',vs1.meas,vs3.meas,1e-10);

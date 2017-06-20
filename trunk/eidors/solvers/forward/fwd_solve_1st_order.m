@@ -52,8 +52,6 @@ s_mat= calc_system_mat( img );
 if isfield(fwd_model,'model_reduction')
    [s_mat.E, main_idx, pp] = mdl_reduction(s_mat.E, ...
            img.fwd_model.model_reduction, img, pp );
-else
-%  pp.mr_mapper = 1:length(pp.n_node);
 end
 
 % Normally EIT uses current stimulation. In this case there is
