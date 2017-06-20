@@ -52,6 +52,8 @@ s_mat= calc_system_mat( img );
 if isfield(fwd_model,'model_reduction')
    [s_mat.E, main_idx, pp] = mdl_reduction(s_mat.E, ...
            img.fwd_model.model_reduction, img, pp );
+else
+   pp.mr_mapper = 1:size(s_mat.E,1);
 end
 
 % Normally EIT uses current stimulation. In this case there is
@@ -94,10 +96,10 @@ data.meas= meas_from_v_els(v_els, fwd_model.stimulation);
 data.time= NaN; % unknown
 data.name= 'solved by fwd_solve_1st_order';
 try; if img.fwd_solve.get_all_meas == 1
-   data.volt = v(1:pp.n_node,:); % but not on CEM nodes
+   data.volt(pp.mr_mapper,:) = v(1:pp.n_node,:); % but not on CEM nodes
 end; end
 try; if img.fwd_solve.get_all_nodes== 1
-   data.volt = v;                % all, including CEM nodes
+   data.volt(pp.mr_mapper,:) = v;                % all, including CEM nodes
 end; end
 try; if img.fwd_solve.get_elec_curr== 1
 %  data.elec_curr = pp.N2E * s_mat.E * v;
