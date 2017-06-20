@@ -46,11 +46,14 @@ end
 img = convert_img_units(img, 'conductivity');
 
 pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
+pp = set_gnd_node(fwd_model, pp);
 s_mat= calc_system_mat( img );
 
 if isfield(fwd_model,'model_reduction')
-   [s_mat.E, main_idx] = mdl_reduction(s_mat.E, ...
-           img.fwd_model.model_reduction, img );
+   [s_mat.E, main_idx, pp] = mdl_reduction(s_mat.E, ...
+           img.fwd_model.model_reduction, img, pp );
+else
+%  pp.mr_mapper = 1:length(pp.n_node);
 end
 
 % Normally EIT uses current stimulation. In this case there is
@@ -131,21 +134,24 @@ function [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
             neumann_nodes{i}(fnanQQi) = 0;
          end
       end
-   elseif isfield(fwd_model,'gnd_node')
-      dirichlet_nodes{1} = fwd_model.gnd_node;
+   elseif isfield(pp,'gnd_node')
+      dirichlet_nodes{1} = pp.gnd_node;
       dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
       neumann_nodes{1}   = pp.QQ;
       has_gnd_node= 1;
    else
+      error('no required ground node on model');
+   end
+
+function pp = set_gnd_node(fwd_model, pp);
+   if isfield(fwd_model,'gnd_node');
+      pp.gnd_node = fwd_model.gnd_node;
+   else
       % try to find one in the model center
       ctr =  mean(fwd_model.nodes,1);
-      d2  =  sum((fwd_model.nodes - ones(num_nodes(fwd_model),1)*ctr).^2,2);
-      [~,gnd_node] = min(d2);
-      dirichlet_nodes{1} = gnd_node(1);
-      dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
-      neumann_nodes{1} = pp.QQ;
+      d2  =  sum(bsxfun(@minus,fwd_model.nodes,ctr).^2,2);
+      [~,pp.gnd_node] = min(d2);
       eidors_msg('Warning: no ground node found: choosing node %d',gnd_node(1),1);
-      has_gnd_node= 1;
    end
 
 function vv = meas_from_v_els( v_els, stim)
@@ -191,9 +197,9 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
     end
 
 
-function [E, m_idx] = mdl_reduction(E, mr, img);
+function [E, m_idx, pp] = mdl_reduction(E, mr, img, pp);
    % if mr is a string we assume it's a function name
-   if function_handle(mr) || isstr(mr)
+   if isa(mr,'function_handle') || isstr(mr)
       mr = feval(mr);
    end
    % mr is now a struct with fields: main_region, regions
@@ -201,8 +207,24 @@ function [E, m_idx] = mdl_reduction(E, mr, img);
    E = E(m_idx, m_idx);
    for i=1:length(mr.regions)
       invEi=   mr.regions(i).invE;
-      sigma = img.elem_data(mr.regions(i).field);
+% FIXME:!!! data_mapper has done the c2f. But we don't want that here.
+%  kludge is to reach into the fine model field. This is only ok because
+%  model_reduction is only valid if one parameter describes each field
+      field = mr.regions(i).field; 
+      field = find(img.fwd_model.coarse2fine(:,field));
+      field = field(1); % they're all the same - by def of model_reduction
+      sigma = img.elem_data(field);
       E = E - sigma*invEi;
+   end
+
+   % Adjust the applied current and measurement matrices
+   pp.QQ = pp.QQ(m_idx,:);
+   pp.VV = pp.VV(m_idx,:);
+   pp.N2E= pp.N2E(:,m_idx);
+   pp.mr_mapper = cumsum(m_idx); %must be logical
+   pp.gnd_node = pp.mr_mapper(pp.gnd_node);
+   if pp.gnd_node==0
+      error('model_reduction removes ground node');
    end
    
         
