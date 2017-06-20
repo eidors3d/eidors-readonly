@@ -9,6 +9,18 @@ function data =fwd_solve_1st_order(fwd_model, img)
 %    img.fwd_solve.get_all_meas = 1 (data.volt = all FEM nodes, but not CEM)
 %    img.fwd_solve.get_all_nodes= 1 (data.volt = all nodes, including CEM)
 %    img.fwd_solve.get_elec_curr= 1 (data.elec_curr = current on electrodes)
+%
+% Model Reduction: use precomputed fields to reduce the size of
+%    the forward solution. Nodes which are 1) not used in the output
+%    (i.e. not electrodes) 2) all connected to the same conductivity via
+%    the c2f mapping are applicable.
+% see: Model Reduction for FEM Forward Solutions, Adler & Lionheart, EIT2016
+%
+%    img.fwd_model.model_reduction = @calc_model_reduction;
+%       where the functionputs a struct with fields: main_region, regions
+%       OR
+%    img.fwd_model.model_reduction.main_region = vector, and 
+%    img.fwd_model.model_reduction.region = struct
 
 % (C) 1995-2017 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -36,6 +48,16 @@ img = convert_img_units(img, 'conductivity');
 pp= fwd_model_parameters( fwd_model, 'skip_VOLUME' );
 s_mat= calc_system_mat( img );
 
+if isfield(fwd_model,'model_reduction')
+   [s_mat.E, main_idx] = mdl_reduction(s_mat.E, ...
+           img.fwd_model.model_reduction, img );
+end
+
+% Normally EIT uses current stimulation. In this case there is
+%  only a ground node, and this is the only dirichlet_nodes value.
+%  In that case length(dirichlet_nodes) is 1 and the loop runs once
+% If voltage stimulation is done, then we need to loop on the
+%  matrix to calculate faster. 
 [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
          find_dirichlet_nodes( fwd_model, pp );
 
@@ -167,6 +189,22 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
         n_meas  = size(meas_pat,1);
         v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
     end
+
+
+function [E, m_idx] = mdl_reduction(E, mr, img);
+   % if mr is a string we assume it's a function name
+   if function_handle(mr) || isstr(mr)
+      mr = feval(mr);
+   end
+   % mr is now a struct with fields: main_region, regions
+   m_idx = mr.main_region;
+   E = E(m_idx, m_idx);
+   for i=1:length(mr.regions)
+      invEi=   mr.regions(i).invE;
+      sigma = img.elem_data(mr.regions(i).field);
+      E = E - sigma*invEi;
+   end
+   
         
 function unit_test_voltage_stims;
    stim = zeros(16,1); volt=stim; stim([1,4]) = NaN; volt([1,4]) = [1,2];
