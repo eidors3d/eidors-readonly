@@ -151,7 +151,7 @@ function pp = set_gnd_node(fwd_model, pp);
       ctr =  mean(fwd_model.nodes,1);
       d2  =  sum(bsxfun(@minus,fwd_model.nodes,ctr).^2,2);
       [~,pp.gnd_node] = min(d2);
-      eidors_msg('Warning: no ground node found: choosing node %d',gnd_node(1),1);
+      eidors_msg('Warning: no ground node found: choosing node %d',pp.gnd_node(1),1);
    end
 
 function vv = meas_from_v_els( v_els, stim)
