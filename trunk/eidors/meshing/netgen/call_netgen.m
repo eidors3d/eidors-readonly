@@ -105,44 +105,57 @@ while( 1 )
          end
          if strcmp(ng_name,'e'); error('user requested'),end;
       else
-         fprintf([ ...
-            'Netgen call failed. Is netgen installed and on the search path?\n' ...
-            'If you are running under windows, I can attempt to create\n' ...
-            'a batch file to access netgen.\n' ...
-            'Please enter the directory in which to find netgen.exe.\n' ...
-            'A typical path is "C:\\Program Files (x86)\\Netgen-5.0_x64\\bin"\n' ...
-            'If you don''t have a copy, download it from' ...
-            'http://sourceforge.net/projects/netgen-mesher/ \n\n']);
-         netgen_path = input('netgen_path? [or i=ignore, e=error] ','s');
-         if strcmp(ng_name,'i'); break;end
-         if strcmp(ng_name,'e'); error('user requested'),end;
-         if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) || ...
-               exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
-            disp('Found netgen version 4.4 or higher');
-            netgen_exe = netgen_path;
-            if exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
-               netgen_exe = [netgen_path '/bin'];
-            end
-            
-            
+         % Check for a version of netgen shipped with eidors
+         % Fixme if we ship a different version of netgen
+         netgen_path = [eidors_cache('eidors_path') '/../Netgen-5.3_x64/bin'];
+         if exist(netgen_path)
+            fprintf('Creating batch file to access Netgen.\n')
             fid= fopen([cache_path, '/ng.bat'],'w');
             if fid<0; error('Unable to write to %s',cache_path); end
             fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
             fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
-            fprintf(fid,'"%s/netgen.exe" %%*\n', netgen_exe);
-            fclose(fid);
-         elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )
-            disp('Found netgen version 4.3.1');
-            fid= fopen([cache_path, '/ng.bat'],'w');
-            if fid<0; error('Unable to write to %s',cache_path); end
-            fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
-            fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
-            fprintf(fid,'"%s/ng431.exe" %%*\n', netgen_path);
+            fprintf(fid,'"%s/netgen.exe" %%*\n', netgen_path);
             fclose(fid);
          else
-            warning(['cannot find a version of netgen that I know about\n' ...
-               'Install netgen or check the path\n']);
+            fprintf([ ...
+               'Netgen call failed. Is netgen installed and on the search path?\n' ...
+               'If you are running under windows, I can attempt to create\n' ...
+               'a batch file to access netgen.\n' ...
+               'Please enter the directory in which to find netgen.exe.\n' ...
+               'A typical path is "C:\\Program Files (x86)\\Netgen-5.0_x64\\bin"\n' ...
+               'If you don''t have a copy, download it from' ...
+               'http://sourceforge.net/projects/netgen-mesher/ \n\n']);
+            netgen_path = input('netgen_path? [or i=ignore, e=error] ','s');
+            if strcmp(ng_name,'i'); break;end
+            if strcmp(ng_name,'e'); error('user requested'),end;
+            if exist( sprintf('%s/netgen.exe',netgen_path) , 'file' ) || ...
+                  exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
+               disp('Found netgen version 4.4 or higher');
+               netgen_exe = netgen_path;
+               if exist( sprintf('%s/bin/netgen.exe',netgen_path) , 'file' )
+                  netgen_exe = [netgen_path '/bin'];
+               end
+               
+               fid= fopen([cache_path, '/ng.bat'],'w');
+               if fid<0; error('Unable to write to %s',cache_path); end
+               fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path); % REQ for ng <= 4.4
+               fprintf(fid,'set TIX_LIBRARY=%s/lib/tix8.1\n', netgen_path); % REQ for ng <= 4.4
+               fprintf(fid,'set NETGENDIR=%s\n', netgen_path); % REQ for ng >= 4.9
+               fprintf(fid,'"%s/netgen.exe" %%*\n', netgen_exe);
+               fclose(fid);
+            elseif exist( sprintf('%s/ng431.exe',netgen_path) , 'file' )
+               disp('Found netgen version 4.3.1');
+               fid= fopen([cache_path, '/ng.bat'],'w');
+               if fid<0; error('Unable to write to %s',cache_path); end
+               fprintf(fid,'set TCL_LIBRARY=%s/lib/tcl8.3\n', netgen_path);
+               fprintf(fid,'set TIX_LIBRARY=%s/lib/tcl8.2\n', netgen_path);
+               fprintf(fid,'"%s/ng431.exe" %%*\n', netgen_path);
+               fclose(fid);
+            else
+               warning(['cannot find a version of netgen that I know about\n' ...
+                  'Install netgen or check the path\n']);
+            end
          end
       end
    catch e
