@@ -10,9 +10,16 @@
 
  - For mk_c2f_circ_mapping find a way to correct cylindrical maps
 
-##### POST RELEASE 3.9 ITEMS
+ - CEM will not get added for electrode defined on internal nodes.
+     Corrected code to be added to system_mat_fields
+     Ensure electrode goes in both directions
+     OR: have a way to break and join models
+     (specify that nodes get joined)
+
  - allow solving on the image with multiple elements
- - debug calc_R_prior UNIT_TEST (ichol doesn't give a good estimate, also not posdef)
+
+##### POST RELEASE 3.9 ITEMS
+ + debug calc_R_prior UNIT_TEST (ichol doesn't give a good estimate, also not posdef)
     
  + lookfor fminsearch_octave and see if current version still needs it.
 
@@ -20,12 +27,6 @@
      even when a large n_interp_min value is given
     - see test code from 19jan2017 (AA)
 
-
- - CEM will not get added for electrode defined on internal nodes.
-     Corrected code to be added to system_mat_fields
-     Ensure electrode goes in both directions
-     OR: have a way to break and join models
-     (specify that nodes get joined)
      
 
  + Add ability to do voltage drive.
@@ -87,7 +88,7 @@
        Why search1,2 etc? Why not bisection search?
     - Debug and change or add comments
 
- - show_fem_enhanced - handle resistors (tutorial020a)
+ + show_fem_enhanced - handle resistors (tutorial020a)
 
  - force all inv_model to have fwd_model and rec_model
     - rewrite prior code to assume rec_model is available.
