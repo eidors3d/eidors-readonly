@@ -161,7 +161,7 @@ step6:
 
 # erase too big files
 step7:
-	find $P -size +$(SZLIM) -and -not -iname \*html | xargs rm -f
+	find $P -type f -size +$(SZLIM) -and -not -iname \*html | xargs rm -f
 	find $P -name \*-s.html.bak | xargs rm -f
 
 # export the latest eidors svn
@@ -172,13 +172,13 @@ step8:
 
 # do not uncomment cd ~/eidors-release
 step9:
-	@echo "BUILD LOCAL DOCS: run build_doc.m making sure variable=1"
+	@echo "BUILD LOCAL DOCS: run build_doc.m making sure VERSION=1"
 
 step9a:
 	cp README $P/..
 	cp -r ../htdocs/doc $P
 
-VERSION=v3.8
+VERSION=v3.9
 step10:
 	mkdir -p $(REL)
 	rm -f $P/robots.txt
