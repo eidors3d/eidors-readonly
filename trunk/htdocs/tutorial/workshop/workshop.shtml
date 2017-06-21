@@ -99,7 +99,7 @@ Challenge problem:
 <br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
 <br>img= inv_solve(imdl,vh,vi);
 </font> show_fem(img); </tt>
-<li>Compare images for different stimulation patterns
+<li>Compare images for skip 4 stimulation/measurement pattern
     (see <a href="./tutorial/GREIT/GREIT_test_params.shtml">here</a>)
 </ol>
 </table>
