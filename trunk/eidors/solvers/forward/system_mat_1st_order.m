@@ -66,7 +66,12 @@ else
 
 end
 
-s_mat.E= FC' * ES * FC;
+% System matrix is symmetric (but not hermitian)
+%   so use the .'  (not ')
+E= FC.' * ES * FC;
+% This will force E to by symmetric, so that the
+% solver won't mistakenly use LU rather than Chol 
+s_mat.E= 1/2*(E.' + E);
 
 function elem_data = check_elem_data(fwd_model, img);
    elem_data = img.elem_data; 
