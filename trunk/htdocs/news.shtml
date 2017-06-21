@@ -50,7 +50,7 @@ While proud of the great things EIDORS can now do, Blobby is sad
 to note that the Mathworks is making Matlab worse faster than
 he can make EIDORS better. While in the past it was possible
 to support a decade of Matlab versions, we can now only support
-2015&minus;2017. In the limit, the quality of Matlab tends to
+2015&minus;2017. In the limit, as the quality of Matlab tends to
 zero, and it does not appear easy to make an infinite-quality
 EIDORS to compensate.
 
@@ -58,7 +58,7 @@ EIDORS to compensate.
   21 June 2017
    </b><br>
 <b>EIDORS Workshop at <a href="http://www.eit2017.org">EIT 2017</a></b>
-<p>Time 13h00&minus;17h00
+<p>Time 13h00&minus;17h00, Location: 210 MacLean Engineering Science Center, Darmouth 
 <p><b>Synopsis:</b>
  The EIDORS workshop is for beginners and more advanced users of the EIDORS.org
       software. We will begin by helping everyone to install and use the software; we
