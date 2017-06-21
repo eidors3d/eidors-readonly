@@ -45,6 +45,11 @@ EIDORSUSER= aadler
 upload: all
 	rsync --exclude=.svn -rltzuv -O --no-perms $(BUILD_DOCS) $(EIDORSUSER)@web.sourceforge.net:/home/project-web/eidors3d/htdocs/
 
+# ONLY AFTER RUNNING DOC GENERATE SCRIPT build_doc
+# no trailing slash
+upload-doc: all
+	rsync --exclude=.svn -rltzuv -O --no-perms ./doc $(EIDORSUSER)@web.sourceforge.net:/home/project-web/eidors3d/htdocs/
+
 #OLD CONTENT:
 #EIDORSUSER= aadler
 #
