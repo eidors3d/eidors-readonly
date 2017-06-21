@@ -1,4 +1,6 @@
 # Build EIDORS web site and move to sourceforge
+# Build options
+#   all: build 
 
 BUILD_DOCS = ../build-htdocs/
 
@@ -16,6 +18,7 @@ RAW   = $(patsubst %, $(BUILD_DOCS)/%, \
           ) \
           tutorial/data_structures/tutorial020_f_solve.m \
           tutorial/workshop/code_2june2015.m \
+          tutorial/workshop/code_21june2017.m \
         )
 
 INDEX = $(BUILD_DOCS)/index.html
