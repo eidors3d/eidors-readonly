@@ -47,7 +47,7 @@ svn co svn://svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
 </pre>
 OR
 <pre>
-svn checkout http://svn.code.sf.net/p/eidors3d/code/trunk eidors3d-code
+svn checkout http://svn.code.sf.net/p/eidors3d/code/trunk eidors-svn
 </pre>
 
 

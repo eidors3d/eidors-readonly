@@ -62,7 +62,7 @@
       >&minus; <i>Workshop</i></a><br>
 [% END %]
 <a href="[% root %]download.shtml"
-   >Install</a><br>
+   >Download</a><br>
 <a href="[% root %]data_contrib.shtml"
    >Contrib Data</a><br>
 <a href="[% root %]GREIT/index.shtml"
