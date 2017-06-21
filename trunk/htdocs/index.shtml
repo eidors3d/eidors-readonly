@@ -6,7 +6,14 @@ for Electrical Impedance Tomography (EIT) and Diffusion based
 Optical Tomography, in medical and industrial settings, 
 and to share data and promote collaboration between groups
 working these fields.
+<center>
+<img width="200" src="./tutorial/GREIT/adult_ex01b.png">
+<img width="200" src="./tutorial/GREIT/adult_ex03a.png">
+<img width="200" src="./tutorial/GREIT/adult_ex03b.png">
+<br>
+FEM model (left) and reconstructed image sequence from human shallow breathing
 
+</center>
 <H3>Requirements</H3>
 <ul>
 <li> <a href="http://www.matlab.com">Matlab</a> (&ge;2015a or 8.5) or
@@ -26,7 +33,7 @@ To try the EIDORS software, follow these steps:
          <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.zip"
              >EIDORS 3.9</a>, or
          <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9-ng.zip"
-             >with Netgen 5.3</a> (for windows 64 bit).
+             >EIDORS 3.9 with Netgen 5.3</a> (for windows 64 bit).
        Or <a href="./download.shtml"><i>Developer Version</i></a>
     <br>&minus; <i>Optional ready-made FEM models:</i>
          <a href="http://prdownloads.sf.net/eidors3d/model_library.zip"
