@@ -7,7 +7,55 @@ EIDORS package.
 <ul>
 
 <p><li> <b>
-  20 June 2017
+  21 June 2017
+   </b><br>
+<b>EIDORS Version 3.9 release</b>
+<p>Blobby the walrus is proud to announce the
+release of EIDORS version 3.9,
+available at <a href="http://www.eidors.org">www.eidors.org</a>,
+and DOI:<a href="http://dx.doi.org/10.5281/zenodo.583266">10.5281/zenodo.583266</a>
+Some of the many new features are:
+<ul>
+<LI> Faster forward solve times for real conductivity distributions
+
+<LI> Improved support for GREIT reconstructions in 3D
+
+<LI> New hyperparameter selection approaches
+
+<LI> Interface to Hansen's "Regularization Toolbox"
+
+<LI> Gmsh-based human 3D model interface
+
+<LI> Correction of artefacts caused by low frame rates
+
+<LI> Improved support for mixed point and CEM electrode models
+<LI> Support for 2&frac12;D solvers (including a rank-1 2&frac12;D movement Jacobian)
+
+<LI> Forward solve supporting model reduction (i.e. efficient
+       precalculation of out-of-field regions)
+
+<LI> Improved testing framework esp. for core solver algs
+
+
+<LI> Improved support for geophysical FEM models
+
+<LI> Improved support for Octave
+
+<LI> Updated ability to load recent device file formats including
+       auxiliary data (Dr&auml;ger and Swisstom formats)
+
+<LI> Expanded shape library
+</ul>
+While proud of the great things EIDORS can now do, Blobby is sad
+to note that the Mathworks is making Matlab worse faster than
+he can make EIDORS better. While in the past it was possible
+to support a decade of Matlab versions, we can now only support
+2015&minus;2017. In the limit, the quality of Matlab tends to
+zero, and it does not appear easy to make an infinite-quality
+EIDORS to compensate.
+
+<p><li> <b>
+  21 June 2017
    </b><br>
 <b>EIDORS Workshop at <a href="http://www.eit2017.org">EIT 2017</a></b>
 <p>Time 13h00&minus;17h00
