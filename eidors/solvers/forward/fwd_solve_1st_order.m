@@ -96,7 +96,8 @@ data.meas= meas_from_v_els(v_els, fwd_model.stimulation);
 data.time= NaN; % unknown
 data.name= 'solved by fwd_solve_1st_order';
 try; if img.fwd_solve.get_all_meas == 1
-   data.volt(pp.mr_mapper,:) = v(1:pp.n_node,:); % but not on CEM nodes
+   outmap = pp.mr_mapper(1:pp.n_node);
+   data.volt(outmap,:) = v(1:pp.n_node,:); % but not on CEM nodes
 end; end
 try; if img.fwd_solve.get_all_nodes== 1
    data.volt(pp.mr_mapper,:) = v;                % all, including CEM nodes
