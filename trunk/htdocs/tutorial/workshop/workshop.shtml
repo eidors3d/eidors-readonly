@@ -1,4 +1,4 @@
-[% root = "../" %]
+[% root = "../../" %]
 [% show_tut = "1" %]
 [% PROCESS "../../nav-sidebar.shtml" %]
 <h2>Samples for the EIDORS Workshop</h2>
@@ -6,6 +6,103 @@ To run tutorials, you need to <a href="../download.shtml">download and install</
 <pre width="40">
 &gt;&gt;run /path/to/eidors3d/startup.m
 </pre>
+
+<H3>
+EIDORS Workshop @ EIT 2017 Conf
+</H3>
+<table border=1><tr><td>
+
+<OL>
+<LI> Create a directory <tt>tutorial</tt>
+<LI> Download <a href="http://prdownloads.sourceforge.net/eidors3d/eidors-v3.9.zip"
+   >eidors-v3.9-ng.zip</a> and unzip into the directory
+<LI> Start Matlab
+<LI> In matlab, do
+<ul>
+<LI> <tt>
+cd H:/path/to/tutorial/eidors-v3.9
+</tt>
+<LI> <tt>
+startup
+</tt>
+<LI> <tt>
+compare_2d_algs(1)
+</tt> %(this tests if eidors is working)
+<LI> <tt>
+show_fem(ng_mk_cyl_models(3,[0],[]))
+</tt> %(this tests if netgen is working)
+
+</ul>
+
+</OL>
+
+
+Challenge problem:
+<ol>
+<li>Create a 3D elliptical cylinder with 16 circular electrodes
+    (see <a href="./tutorial/netgen/netgen_ellip_models.shtml">here</a>)
+<br><tt>fmdl= <font color=#E0F0FE
+>ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]);
+</font> show_fem(fmdl); </tt>
+
+<li>Put a ball into the elliptical cylinder
+<br><tt><font color=#E0F0FE
+>   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1);'};
+<br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+</font> show_fem(fmdl); </tt>
+
+<li>Put two balls into the elliptical cylinder
+<br><tt><font color=#E0F0FE
+>   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
+<br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
+</font> show_fem(fmdl); </tt>
+
+<li>Set the model to use adjacent current patterns
+<br><tt><font color=#E0F0FE
+>   stim = mk_stim_patterns(16,1,[0,1],[0,1],{});
+</font> fmdl.stimulation = stim;</tt>
+
+<li>Simulate homogeneous voltages  (background conductivity = 0.5);
+<br><tt><font color=#E0F0FE
+>   img = mk_image(fmdl, 0.5); vh = fwd_solve(img);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Simulate inhomogeneous voltages  (ball conductivity = 1.0). Add noise.
+<br><tt><font color=#E0F0FE
+>   img.elem_data(fmdl.mat_idx{2})= 1.0;
+    vi = fwd_solve(img);
+    vi = add_noise(0.5, vi, vh);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Reconstruct the image using a GN solver
+<br><tt><font color=#E0F0FE
+>  imdl= mk_common_model('b2c2',16); imdl.stimulation = stim;
+   imdl= select_imdl(imdl,{'Basic GN dif'});
+   img= inv_solve(imdl,vh,vi);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Reconstruct with a different hyperparameter (lower resolution)
+<br><tt><font color=#E0F0FE
+>  imdl.hyperparameter.value = .3;
+   img= inv_solve(imdl,vh,vi);
+<br>
+</font> show_fem(img); </tt>
+
+<li>Reconstruct the image using GREIT
+    (see <a href="./tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
+<br><tt><font color=#E0F0FE
+> opt.noise_figure = 0.5;
+<br>fmdl.normalize_measurements = 0;
+<br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
+<br>img= inv_solve(imdl,vh,vi);
+</font> show_fem(img); </tt>
+<li>Compare images for different stimulation patterns
+    (see <a href="./tutorial/GREIT/GREIT_test_params.shtml">here</a>)
+</ol>
+</table>
 
 [% PROCESS "./workshop.html" %]
 
