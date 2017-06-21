@@ -22,10 +22,10 @@ working these fields.
 To try the EIDORS software, follow these steps:
 <ol>
 <li> Download EIDORS :
-    <br>&minus; <i>Release (12 May 2015):</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.8.zip"
-             >EIDORS 3.8</a>, or
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.8-ng.zip"
+    <br>&minus; <i>Release (21 June 2017):</i>
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.zip"
+             >EIDORS 3.9</a>, or
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9-ng.zip"
              >with Netgen 5.3</a> (for windows 64 bit).
        Or <a href="./download.shtml"><i>Developer Version</i></a>
     <br>&minus; <i>Optional ready-made FEM models:</i>
@@ -38,7 +38,7 @@ To try the EIDORS software, follow these steps:
 <br> (installation instructions for model_library are included in a README file)
 
 <li> Download and install 
-<a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.0/"
+<a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.3/"
      >Netgen</a> (Unless version with netgen installed.
       EIDORS will ask for the path to netgen when required)
 
