@@ -23,11 +23,10 @@ switch fmdl(1).type
   case 'inv_model';  fmdl = fmdl.fwd_model;
   case 'fwd_model';  fmdl = fmdl;
   otherwise;
-      error('can''t process model of type %s', fmdl.type );
+      error('cant process model of type %s', fmdl.type );
 end
 
 if ~isfield(fmdl,'coarse2fine');
-disp nhere
    FC = system_mat_fields(fmdl);
    mr.main_region = logical(ones(1,size(FC,2))'); 
    mr.regions     = struct([]);
@@ -40,9 +39,9 @@ copt.cache_obj.nodes = fmdl.nodes;
 copt.cache_obj.coarse2fine = fmdl.coarse2fine;
 copt.fstr = 'calc_model_reducton';
 copt.log_level = 4;
-mr= eidors_cache(@calc_model_reduction_fn,{fwd_model},copt );
+mr= eidors_cache(@calc_model_reduction_fn,{fmdl},copt );
 
-function mr = calc_model_reduction(fwd_model);
+function mr = calc_model_reduction_fn(fwd_model);
    ne = num_elems(fwd_model);
    el = fwd_model.elems; ei=(1:ne)';
    e2n = sparse(el,ei*ones(1,elem_dim(fwd_model)+1),1);
@@ -52,9 +51,8 @@ function mr = calc_model_reduction(fwd_model);
 % get the number of the c2n mapping. But only work on those with one
    ac2n = c2n>0;
    ac2n(sum(ac2n,2)>1,:) = 0;
-   region = ac2n*(1:nc)';
+   region = ac2n*(1:size(ac2n,2))';
    region0 = region==0;
-disp here
    FC = system_mat_fields(fwd_model); S= FC'*FC;
    region0(end+1:size(FC,2)) = logical(1);
    k=0;
@@ -72,13 +70,13 @@ disp here
    mr.regions = regions;
 
 function do_unit_test
-   for i=1:1; switch i;
-      case 1; fmdl = mk_common_model('a2c0',16); fmdl = fmdl.fwd_model;
-      case 2; fmdl = mk_common_model('a2C0',16); fmdl = fmdl.fwd_model;
-      case 3; fmdl = mk_common_model('b3cr',16); fmdl = fmdl.fwd_model;
-      case 4; fmdl = ng_mk_cyl_models(1,[16,0.5],0.1);
+   for i=4:4; switch i;
+      case 1; str = 'a2c0';  tmdl = mk_common_model(str,16);
+      case 2; str = 'b2C2';  tmdl = mk_common_model(str,16);
+      case 3; str = 'a3cr';  tmdl = mk_common_model(str,16);
+      case 4; str = 'ngcyl'; tmdl = ng_mk_cyl_models([1,1,.1],[16,0.5],0.1);
    end
-   img = mk_image(fmdl,1);
+   img = mk_image(tmdl,1);
    img.fwd_model.electrode = img.fwd_model.electrode([15,16,1:3]);
    stim = mk_stim_patterns(5,1,[0,1],[0,1],{},1);
    img.fwd_model.stimulation = stim;
@@ -100,17 +98,26 @@ function do_unit_test
    img.elem_data = c2f*linspace(.7,1.3,length(idx2))';
 
    vs1 = fwd_solve( img);
+   
 
    imgmr = img; imgmr.fwd_model.model_reduction = @calc_model_reduction;
+   tic;
    vs2 = fwd_solve( imgmr);
-   unit_test_cmp('1-2',vs1.meas,vs2.meas,1e-10);
+   fprintf('t= %5.3fs:',toc);
+   unit_test_cmp([str,': 1-2'],vs1.meas,vs2.meas,1e-10);
 
    img.fwd_model.coarse2fine = c2f;
-   imgm3 = img; img.fwd_model.model_reduction = calc_model_reduction( fmdl);
+   imgm3 = img;
+   imgm3.fwd_model.model_reduction = calc_model_reduction( imgm3.fwd_model);
+   tic;
    vs3 = fwd_solve( imgm3);
-   unit_test_cmp('1-3',vs1.meas,vs3.meas,1e-10);
+   fprintf('t= %5.3fs:',toc);
+   unit_test_cmp([str,': 1-3'],vs1.meas,vs3.meas,1e-10);
 
-   imgm4 = img; img.fwd_model.model_reduction = @calc_model_reduction;
+   imgm4 = img;
+   imgm4.fwd_model.model_reduction = @calc_model_reduction;
+   tic;
    vs4 = fwd_solve( imgm4);
-   unit_test_cmp('1-4',vs1.meas,vs3.meas,1e-10);
+   fprintf('t= %5.3fs:',toc);
+   unit_test_cmp([str,': 1-4'],vs1.meas,vs3.meas,1e-10);
    end
