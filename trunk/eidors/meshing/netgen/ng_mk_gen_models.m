@@ -52,7 +52,7 @@ args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
 
 fmdl = eidors_cache(@mk_gen_model,args, copt);
 
-mat_idx = fmdl.mat_idx_reordered;
+mat_idx = fmdl.mat_idx;
 
 function fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, ...
                          elec_obj, extra_ng_code);

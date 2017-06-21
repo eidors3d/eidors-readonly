@@ -92,7 +92,7 @@ args = {cyl_shape, elec_pos, elec_shape, extra_ng_code};
 
 fmdl = eidors_cache(@mk_cyl_model, args, copt);
 
-mat_idx = fmdl.mat_idx_reordered;
+mat_idx = fmdl.mat_idx;
 
 function fmdl = mk_cyl_model( cyl_shape, elec_pos, elec_shape, extra_ng_code );
 

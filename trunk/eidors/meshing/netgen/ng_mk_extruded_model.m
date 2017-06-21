@@ -75,7 +75,7 @@ args = { shape, elec_pos, elec_shape, extra_ng_code};
 
 fmdl = eidors_cache(@mk_extruded_model, args, copt);
 
-mat_idx = fmdl.mat_idx_reordered;
+mat_idx = fmdl.mat_idx;
 
 function fmdl = mk_extruded_model(shape, elec_pos, elec_shape, ...
     extra_ng_code)
