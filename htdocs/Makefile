@@ -1,6 +1,6 @@
 # Build EIDORS web site and move to sourceforge
 
-BUILD_DOCS = ../build-htdocs
+BUILD_DOCS = ../build-htdocs/
 
 THTML = $(filter-out nav-sidebar.shtml, \
             $(patsubst %.shtml, $(BUILD_DOCS)/%.shtml, \
@@ -40,6 +40,10 @@ $(RAW): $(BUILD_DOCS)/%: %
 	mkdir -p `dirname $@`
 	cp $< $@ 
 
+
+EIDORSUSER= aadler
+upload: all
+	rsync --exclude=.svn -rltzuv -O --no-perms $(BUILD_DOCS) $(EIDORSUSER)@web.sourceforge.net:/home/project-web/eidors3d/htdocs/
 
 #OLD CONTENT:
 #EIDORSUSER= aadler
