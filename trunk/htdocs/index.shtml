@@ -11,8 +11,9 @@ working these fields.
 <img height="150" src="./tutorial/GREIT/adult_ex03a.png">
 <img height="150" src="./tutorial/GREIT/adult_ex03b.png">
 <br>
-FEM model (left) and reconstructed image sequence from human shallow breathing
-
+FEM model (left) and reconstructed image (centre) and sequence (right)
+ from <a href="./tutorial/GREIT/adult_ex.shtml"
+>human shallow breathing</a>
 </center>
 <H3>Requirements</H3>
 <ul>
