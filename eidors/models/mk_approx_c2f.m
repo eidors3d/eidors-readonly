@@ -1,5 +1,5 @@
-function [mapping, outside] = mk_coarse_fine_mapping( f_mdl, c_mdl );
-% MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM
+function [mapping, outside] = mk_approx_c2f( f_mdl, c_mdl );
+% MK_APPROX_C2F: create a mapping matrix from coarse to fine FEM
 % [c2f,out]= mk_coarse_fine_mapping( f_mdl, c_mdl );
 %  
 % Parameters:
@@ -234,30 +234,38 @@ function do_unit_test
     fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
     cmdl = mk_circ_tank(2,[],2); cmdl.nodes = cmdl.nodes*2;
     c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-    unit_test_cmp('t1',c2f,eye(16))
+    unit_test_cmp('t1',c2f,eye(16),1e-15)
 
     fmdl = mk_circ_tank(3,[],2);
     fmdl.nodes = fmdl.nodes*3;
     c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-    unit_test_cmp('t2',c2f,[eye(16);zeros(20,16)])
+    unit_test_cmp('t2 analytic',c2f,[eye(16);zeros(20,16)],1e-15)
+    c2f = mk_approx_c2f( fmdl, cmdl);
+    unit_test_cmp('t2 approx',c2f,[eye(16);zeros(20,16)],1e-15)
 
     fmdl = mk_circ_tank(2,[],2); fmdl.nodes = fmdl.nodes*2;
     cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*1;
     c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-    unit_test_cmp('t3',c2f,[eye(4);zeros(12,4)])
+    unit_test_cmp('t3 analytic',c2f,[eye(4);zeros(12,4)],1e-15)
+    c2f = mk_approx_c2f( fmdl, cmdl);
+    unit_test_cmp('t3 approx',c2f,[eye(4);zeros(12,4)],1e-15)
 
-    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*0.8;
+    fac = 0.8;
+    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*fac;
     c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-    unit_test_cmp('t3',c2f,[eye(4)*2/3;zeros(12,4)])
+    unit_test_cmp('t4 analytic',c2f,[eye(4)*fac^2;zeros(12,4)],1e-15)
+    c2f = mk_approx_c2f( fmdl, cmdl);
+    unit_test_cmp('t4 approx',c2f,[eye(4)*2/3;zeros(12,4)],1e-15)
 
-    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*1.2;
-    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-    unit_test_cmp('t3',c2f,[eye(4);eye(4)/3;kron(eye(4),[1;1])/15]);
+    fac=1.2;
+    cmdl = mk_circ_tank(1,[],2); cmdl.nodes = cmdl.nodes*fac;
+    c2f = mk_approx_c2f( fmdl, cmdl);
+    unit_test_cmp('t5',c2f,[eye(4);eye(4)/3;kron(eye(4),[1;1])/15],1e-15);
 
     fmdl = mk_circ_tank(10,[],2);
     cmdl = mk_circ_tank(8,[],2);
-    c2f = mk_coarse_fine_mapping( fmdl, cmdl);
-    unit_test_cmp('t4',sum(c2f'),ones(1,size(c2f,1)),1e-14);
+    c2f = mk_approx_c2f( fmdl, cmdl);
+    unit_test_cmp('t6',sum(c2f'),ones(1,size(c2f,1)),1e-14);
    
     cmdl.nodes = cmdl.nodes*0.95;
 % show_fem(fmdl); hold on ; show_fem(cmdl); hold off
