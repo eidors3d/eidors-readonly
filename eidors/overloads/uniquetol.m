@@ -40,9 +40,6 @@ if (~DEBUG && exist('_mergesimpts','builtin')) || (DEBUG == 2)
    return;
 end
 
-if DEBUG;   disp('using uniquetol_repl'); end
-% out = uniquetol_repl(in,tol,'rows','first');
-%   UNIQUETOL(...,'ROWS')
 out = eidors_uniquetol(in, tol);
 
 
@@ -176,13 +173,14 @@ function do_unit_test
    for i=1:length(testvec)
      eidors_msg('TEST%d============',i,1);
      x = testvec{i};
-      for tol = logspace(-4,1,5);
+      for tol = logspace(-4,1,6);
          uu = uniquetol(x,tol,'ByRows',true,'DataScale',1);
          um = builtin('_mergesimpts',x,tol,'first');
          ur = uniquetol_repl(x,tol,'rows','first');
          ue = eidors_uniquetol(x,tol);
-         unit_test_cmp(sprintf('um=uu %f',tol),uu,um);
-         unit_test_cmp(sprintf('um=ur %f',tol),uu,ur);
-         unit_test_cmp(sprintf('um=ue %f',tol),uu,ue);
+         fprintf('Testing for tol=%f\n',tol);
+         unit_test_cmp('um=uu           ',uu,um);
+         unit_test_cmp('um=ur (not used)',uu,ur);
+         unit_test_cmp('um=ue           ',uu,ue);
       end
    end
