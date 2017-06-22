@@ -190,6 +190,13 @@ step10:
 step11:
 	cp $(REL)/eidors-$(VERSION).zip $(HOME)/public_html
 
+ngversion: # Just a sketch. Needs a fix
+	mv ~/release/eidors-v3.9 ~/release/eidors-v3.9-ng
+	cp README+NG ~/release/eidors-v3.9-ng/README
+	cp -r ~/Downloads/eidors-v3.8-ng/Netgen-5.3_x64/ ~/release/eidors-v3.9-ng
+	(cd ~/release/ && zip -r eidors-v3.9-ng.zip eidors-v3.9-ng)
+
+
 # update as required
 tag-release:
 	svn copy svn+ssh://aadler@svn.code.sf.net/p/eidors3d/code/trunk svn+ssh://aadler@svn.code.sf.net/p/eidors3d/code/tags/$(VERSION) -m"Tagging release $(VERSION)"
