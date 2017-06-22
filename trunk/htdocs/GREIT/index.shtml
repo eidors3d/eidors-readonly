@@ -1,3 +1,4 @@
+[% root = "../" %]
 [% PROCESS "../nav-sidebar.shtml" %]
 
 <H3>Project Goal</H3>

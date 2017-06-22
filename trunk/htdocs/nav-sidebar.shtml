@@ -26,7 +26,8 @@
       vlink="#400000" >
 <table border="0" cellspacing="0" cellpadding="0">
 <tr height="80"><td valign="middle">
-<img alt="Eidors-logo" src="[% root %]eidors-logo.jpg">&nbsp;&nbsp; &nbsp;
+<a href="http://www.eidors.org">
+<img alt="Eidors-logo" src="[% root %]eidors-logo.jpg"></a>&nbsp;&nbsp;&nbsp;&nbsp;
 </td><td>
 <h2>
     EIDORS:
