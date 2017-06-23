@@ -77,11 +77,14 @@ if ischar(solver)
 end
 
 copt.fstr = 'fwd_solve';
-copt.cache_obj = img;
-copt.boost_priority = -2; % fmdl evaluations are low priority
-data = eidors_cache(solver, {img}, copt);
-data= eidors_obj('data',data);  % create data object
-
+n_frames = size(img.elem_data,2);
+for frame = 1:n_frames;
+   imgn = img; imgn.elem_data = imgn.elem_data(:,frame);
+   copt.cache_obj = img;
+   copt.boost_priority = -2; % fmdl evaluations are low priority
+   tmp = eidors_cache(solver, {imgn}, copt);
+   data(frame) = eidors_obj('data',tmp);  % create data object
+end
 
 if isa(fwd_model.solve,'function_handle')
     solver = func2str(fwd_model.solve);
