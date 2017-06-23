@@ -263,7 +263,12 @@ img.inv_model = inv_model; % stash the inverse model
 img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 
 % insert the prior data
-img = init_elem_data(img, opt);
+if nargin == 3 % difference reconstruction
+   n_frames = max(count_data_frames(data0),count_data_frames(data1));
+else % absolute reconstruction
+   n_frames = count_data_frames(data0);
+end
+img = init_elem_data(img, n_frames, opt);
 
 % map data and measurements to working types
 %  convert elem_data
@@ -280,14 +285,17 @@ if nargin == 3
    % dv = (meas1 - meas0) + meas@backgnd
    nil = struct;
    if isstruct(data0)
-      nil.meas = data0.meas*0;
+      nil.meas = data0(1).meas(:,1)*0;
    else
-      nil.meas = data0*0;
+      nil.meas = data0(:,1)*0;
    end
    nil.type = 'data';
    nil.current_params = opt.meas_input;
    [dv, opt, err] = update_dv_core(img, nil, 1, opt);
-   data0 = calc_difference_data( data0, data1, inv_model.fwd_model) + dv;
+   % This: data0 = calc_difference_data( data0, data1, inv_model.fwd_model) + dv*ones(1,n_frames);
+   % but efficient and don't depend on n_frames:
+   data0 = bsxfun(@plus,calc_difference_data( data0, data1, inv_model.fwd_model ), dv);
+   % back to our regularly scheduled progam
    assert(strcmp(inv_model.reconst_type, 'difference'), ...
           ['expected inv_model.reconst_type = ''difference'' not ' inv_model.reconst_type]);
 else
@@ -426,12 +434,20 @@ function show_meas_err(dvall, data0, k, N, W, opt)
    end
    drawnow;
 
-function img = init_elem_data(img, opt)
+% count_data_frames() needs to agree with calc_difference_data behaviour!
+function n_frames = count_data_frames(data1)
+   if isnumeric(data1)
+      n_frames = size(data1,2);
+   else
+      n_frames = size(horzcat(data1(:).meas),2);
+   end
+
+function img = init_elem_data(img, n_frames, opt)
   if opt.verbose > 1
     fprintf('  setting prior elem_data\n');
   end
   ne2 = 0; % init
-  img.elem_data = zeros(sum([opt.elem_len{:}]),1); % preallocate
+  img.elem_data = zeros(sum([opt.elem_len{:}]),n_frames); % preallocate
   for i=1:length(opt.elem_prior)
     ne1 = ne2+1; % next start idx ne1
     ne2 = ne1+opt.elem_len{i}-1; % this set ends at idx ne2
@@ -447,7 +463,7 @@ function img = init_elem_data(img, opt)
       end
     end
     img.params_sel(i) = {ne1:ne2};
-    img.elem_data(img.params_sel{i}) = opt.prior_data{i};
+    img.elem_data(img.params_sel{i},:) = opt.prior_data{i};
   end
   img.current_params = opt.elem_prior;
 
@@ -600,7 +616,7 @@ function beta = update_beta(dx_k, dx_km1, sx_km1, opt);
       if opt.verbose > 1
          try beta_str = func2str(opt.beta_func);
          catch
-            try 
+            try
                 beta_str = opt.beta_func;
             catch
                 beta_str = 'unknown';
@@ -631,7 +647,7 @@ function sx = update_sx(dx, beta, sx_km1, opt);
          fprintf( '      acceleration     d||dx||=%0.3g\n', nsx-nsxk);
          % ||ddx|| = chord_len = 2 sin(theta/2)
          ddx = norm(sx/nsx-sx_km1/nsxk);
-         fprintf( '      direction change ||ddx||=%0.3g (%0.3g°)\n', ddx, 2*asind(ddx/2)); 
+         fprintf( '      direction change ||ddx||=%0.3g (%0.3g°)\n', ddx, 2*asind(ddx/2));
       end
    end
 
@@ -675,7 +691,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
 
          try RtR_str = func2str(opt.RtR_prior{i,j});
          catch
-            try 
+            try
                 RtR_str = opt.RtR_prior{i,j};
             catch
                 RtR_str = 'unknown';
@@ -840,6 +856,7 @@ function RtR = calc_RtR_prior_wrapper(inv_model, img, opt)
 
 % opt is only updated for the fwd_solve count
 function [J, opt] = update_jacobian(img, dN, k, opt)
+   img.elem_data = img.elem_data(:,1);
    base_types = map_img_base_types(img);
    imgb = map_img(img, base_types);
    imgb = feval(opt.update_img_func, imgb, opt);
@@ -1005,7 +1022,7 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
   end
 
   if(opt.verbose > 1)
-     try 
+     try
          ls_str = func2str(opt.line_search_func);
      catch
          ls_str = opt.line_search_func;
@@ -1110,7 +1127,7 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
 %   img.error = err;
 
 function data = map_meas_struct(data, N, out)
-   try   
+   try
        current_meas_params = data.current_params;
    catch
        current_meas_params = 'voltage';
@@ -1128,7 +1145,7 @@ function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    % if the electrodes/geometry moved, we need to recalculate N if it's being used
    if any(any(N ~= 1)) && any(strcmp(map_img_base_types(img), 'movement'))
       % note: data0 is mapped back to 'voltage' before N is modified
-      imgh=img; imgh.elem_data = imgh.elem_data*0 +1; % conductivity = 1
+      imgh=img; imgh.elem_data = imgh.elem_data(:,1)*0 +1; % conductivity = 1
       vh = fwd_solve(imgh); vh = vh.meas;
       N = spdiag(1./vh);
       opt.fwd_solutions = opt.fwd_solutions +1;
@@ -1192,9 +1209,13 @@ function show_fem_iter(k, img, inv_model, stop, opt)
 function [ residual meas elem ] = GN_residual(dv, de, W, hp2RtR)
 %   [size(dv); size(W); size(de); size(hp2RtR)]
    % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
-   meas = 0.5*( dv'*W*dv);
-   elem = 0.5*(de'*hp2RtR*de);
-   residual = meas + elem;
+   n_frames = size(dv,2); % iterations
+   meas = 0; elem = 0; residual = 0; % init
+   for n = 1:n_frames
+      meas = meas + 0.5*( dv(:,n)'*W*dv(:,n) );
+      elem = elem + 0.5*( de(:,n)'*hp2RtR*de(:,n) );
+      residual = residual + meas + elem;
+   end
 
 function residual = meas_residual(dv, de, W, hp2RtR)
    residual = norm(dv);
@@ -1553,7 +1574,7 @@ function opt = parse_options(imdl)
    % show what the hyperparameters are configured to when logging
    if opt.verbose > 1
       fprintf('  hyperparameters\n');
-      try 
+      try
           hp_global = imdl.hyperparameter.value;
           hp_global_str = sprintf(' x %0.4g',hp_global);
       catch
@@ -1708,11 +1729,8 @@ function check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
    % check that all the matrix sizes are correct
    ne = size(de,1);
    nv = size(dv,1);
-   if size(de,2) ~= 1
-      error('de cols (%d) not equal 1', size(de,2));
-   end
-   if size(dv,2) ~= 1
-      error('dv cols (%d) not equal 1', size(dv,2));
+   if size(de,2) ~= size(dv,2)
+      error('de cols (%d) not equal to dv cols (%d)', size(de,2), size(dv,2));
    end
    if opt.calc_meas_icov && ...
       any(size(W) ~= [nv nv])
@@ -1990,7 +2008,7 @@ function type = to_base_types(type)
 
 function img = map_img(img, out);
    err_if_inf_or_nan(img.elem_data, 'img-pre');
-   try 
+   try
        in = img.current_params;
    catch
        in = {'conductivity'};
@@ -2179,6 +2197,8 @@ function pass=do_unit_test(solver)
          do_unit_test_rec1(solver);
          do_unit_test_rec2(solver);
          do_unit_test_rec_mv(solver);
+         do_unit_test_diffseq(solver);
+         do_unit_test_absseq(solver);
       case 'sub'
          do_unit_test_sub;
       case 'diff'
@@ -2189,6 +2209,10 @@ function pass=do_unit_test(solver)
          do_unit_test_rec2(solver);
       case 'rec_mv'
          do_unit_test_rec_mv(solver);
+      case 'diffseq'
+         do_unit_test_diffseq(solver);
+      case 'absseq'
+         do_unit_test_absseq(solver);
       otherwise
          error(['unrecognized solver or tests: ' test]);
    end
@@ -2530,3 +2554,123 @@ img.elem_data= 1./(10.^imgr.elem_data);
 %clf; show_pseudosection( fmdl, I*vi); title('measurement data');
 %clf; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
 %clf; show_pseudosection( fmdl, (vCG-vi)/vi*100); title('data misfit');
+
+% sequence of time series difference data
+function do_unit_test_diffseq(solver)
+   lvl = eidors_msg('log_level',1);
+   imdl = mk_common_model('f2C',16);
+   imdl.solve = solver;
+   imdl.hyperparameter.value = 1e-2; % was 0.1
+
+   imgh = mk_image(imdl,1);
+   xyr = [];
+   for deg = [0:5:360]
+      R = [sind(deg) cosd(deg); cosd(deg) -sind(deg)]; % rotation matrix
+      xyr(:,end+1) = [R*[0.5 0.5]'; 0.2];
+   end
+   [vh, vi, ~, imgm] = simulate_movement(imgh, xyr);
+   disp('*** alert: inverse crime underway ***');
+   disp(' - no noise has been added to this data');
+   disp(' - reconstructing to the same FEM discretization as simulated data');
+   disp('***');
+   vv.meas = [];
+   vv.time = nan;
+   vv.name = 'asfd';
+   vv.type = 'data';
+   n_frames = size(vi,2);
+   for ii = 1:4
+      clear vhi vii;
+      switch ii
+         case 1
+            fprintf('\n\nvh:numeric, vi:numeric data\n');
+            vhi = vh;
+            vii = vi;
+         case 2
+            fprintf('\n\nvh:struct, vi:numeric data\n');
+            vhi = vv; vhi.meas = vh;
+            vii = vi;
+         case 3
+            fprintf('\n\nvh:numeric, vi:struct data\n');
+            vhi = vh;
+            for jj=1:n_frames;
+               vii(jj) = vv; vii(jj).meas = vi(:,jj);
+            end
+         case 4
+            fprintf('\n\nvh:struct, vi:struct data\n');
+            vhi = vv; vhi.meas = vh;
+            for jj=1:n_frames;
+               vii(jj) = vv; vii(jj).meas = vi(:,jj);
+            end
+      end
+      img= inv_solve(imdl, vhi, vii);
+      for i=1:size(imgm,2)
+         clf;
+         subplot(211); imgi=imgh; imgi.elem_data = imgm(:,i); show_fem(imgi); title(sprintf('fwd#%d',i));
+         subplot(212); imgi=imgh; imgi.elem_data = img.elem_data(:,i); show_fem(imgi); title('reconst');
+         drawnow;
+         err(i) = norm(imgm(:,i)/max(imgm(:,i)) - img.elem_data(:,i)/max(img.elem_data(:,i)));
+         fprintf('image#%d: reconstruction error = %g\n',i,err(i));
+      end
+      for i=1:size(imgm,2)
+         unit_test_cmp( sprintf('diff seq image#%d',i), ...
+            imgm(:,i)/max(imgm(:,i)), ...
+            img.elem_data(:,i)/max(img.elem_data(:,i)), ...
+            0.6 );
+      end
+   end
+   eidors_msg('log_level',lvl);
+
+% sequence of time series data
+function do_unit_test_absseq(solver)
+   lvl = eidors_msg('log_level',1);
+   imdl = mk_common_model('f2C',16);
+   imdl.reconst_type = 'absolute';
+   imdl.solve = solver;
+   imdl.hyperparameter.value = 1e-2; % was 0.1
+
+   imgh = mk_image(imdl,1);
+   xyr = [];
+   for deg = [0:5:360]
+      R = [sind(deg) cosd(deg); cosd(deg) -sind(deg)]; % rotation matrix
+      xyr(:,end+1) = [R*[0.5 0.5]'; 0.2];
+   end
+   [~, vi, ~, imgm] = simulate_movement(imgh, xyr);
+   imgm = imgm + 1; % simulate_movement returns difference images but we're doing absolute solver work
+   disp('*** alert: inverse crime underway ***');
+   disp(' - no noise has been added to this data');
+   disp(' - reconstructing to the same FEM discretization as simulated data');
+   disp('***');
+   vv.meas = [];
+   vv.time = nan;
+   vv.name = 'asfd';
+   vv.type = 'data';
+   n_frames = size(vi,2);
+   for ii = 1:2
+      clear vhi vii;
+      switch ii
+         case 1
+            fprintf('\n\nvi:numeric data\n');
+            vii = vi;
+         case 2
+            fprintf('\n\nvi:struct data\n');
+            for jj=1:n_frames;
+               vii(jj) = vv; vii(jj).meas = vi(:,jj);
+            end
+      end
+      img= inv_solve(imdl, vii);
+      for i=1:size(imgm,2)
+         clf;
+         subplot(211); imgi=imgh; imgi.elem_data = imgm(:,i); show_fem(imgi); title(sprintf('fwd#%d',i));
+         subplot(212); imgi=imgh; imgi.elem_data = img.elem_data(:,i); show_fem(imgi); title('reconst');
+         drawnow;
+         err(i) = norm(imgm(:,i)/max(imgm(:,i)) - img.elem_data(:,i)/max(img.elem_data(:,i)));
+         fprintf('image#%d: reconstruction error = %g\n',i,err(i));
+      end
+      for i=1:size(imgm,2)
+         unit_test_cmp( sprintf('diff seq image#%d',i), ...
+            imgm(:,i)/max(imgm(:,i)), ...
+            img.elem_data(:,i)/max(img.elem_data(:,i)), ...
+            0.45 );
+      end
+   end
+   eidors_msg('log_level',lvl);
