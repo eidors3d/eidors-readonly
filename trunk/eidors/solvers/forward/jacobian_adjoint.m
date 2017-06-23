@@ -47,12 +47,27 @@ n= pp.n_node;
 idx= 1:size(s_mat.E,1);
 idx( fwd_model.gnd_node ) = [];
 
-sv= zeros(n, pp.n_stim );
-sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
-
-zi2E= zeros(pp.n_elec, n);
-% the minus below used to be missing
-zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+% changed behaviour to only factorise system matrix once. only if system
+% matrix is symmetric.
+if isequal((s_mat.E(idx,idx)).',s_mat.E(idx,idx))
+    Einvtemp=left_divide(s_mat.E(idx,idx) , [pp.QQ( idx,: ),(-pp.N2E(:,idx)).']);
+    
+    sv= zeros(n, pp.n_stim );
+    % sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
+    sv( idx,:) = Einvtemp(:,1:pp.n_stim);
+    
+    zi2E= zeros(pp.n_elec, n);
+    % the minus below used to be missing
+    % zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+    zi2E(:, idx)= (Einvtemp(:,pp.n_stim+1:end)).';
+else
+    sv= zeros(n, pp.n_stim );
+    sv( idx,:) = left_divide(s_mat.E(idx,idx) , pp.QQ( idx,: ));
+    
+    zi2E= zeros(pp.n_elec, n);
+    % the minus below used to be missing
+    zi2E(:, idx)= -pp.N2E(:,idx)/ s_mat.E(idx,idx) ;
+end
 
 FC= system_mat_fields( fwd_model );
 
