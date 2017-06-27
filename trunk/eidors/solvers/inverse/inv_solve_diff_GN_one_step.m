@@ -59,8 +59,12 @@ function RM = get_RM( inv_model )
    RtR = calc_RtR_prior( inv_model );
    W   = calc_meas_icov( inv_model );
    hp  = calc_hyperparameter( inv_model );
-
-   RM= (J'*W*J +  hp^2*RtR)\J'*W;
+    
+   % left_divide now has handling to force symmetric methods when matrices
+   % are symmetric up to floating point error.
+   RM  = left_divide((J'*W*J +  hp^2*RtR),J'*W);
+   
+   
 
    
    
