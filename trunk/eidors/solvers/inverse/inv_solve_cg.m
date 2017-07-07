@@ -27,14 +27,14 @@ function img= inv_solve_cg( inv_model, data1, data2);
 
 %--------------------------
 % UNIT_TEST?
-if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); img = do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 % fixed working data... otherwise we wouldn't be calling this function!
 if ~isfield(inv_model, 'inv_solve_cg')
    inv_model.inv_solve_cg = struct;
 end
 if ~isfield(inv_model.inv_solve_cg, 'update_func')
-   inv_model.inv_solve_cg.update_func = @CG_update;
+   inv_model.inv_solve_cg.update_func = 'GN_update';
 end
 if ~isfield(inv_model.inv_solve_cg, 'beta_func')
    inv_model.inv_solve_cg.beta_func = @beta_reset_polak_ribiere;
@@ -57,10 +57,11 @@ if isfield(img, 'inv_solve_core')
   img=rmfield(img, 'inv_solve_core');
 end
 
+% Note: we prefer to still be able to apply regularization, so use the
+% GN_update by default, but you can try this if you are determined. It
+% generally doesn't give good reconstructions for most EIT inverse problems.
 function dx = CG_update(J, W, hp2RtR, dv, de, opt)
-%  % the actual update
-  dx = -(J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
-%   dx = J'*dv;
+   dx = J'*dv;
 
 % Fletcher-Reeves
 % cite: http://en.wikipedia.org/wiki/Nonlinear_conjugate_gradient_method
@@ -114,8 +115,7 @@ function beta = beta_reset_polak_ribiere(dx_k, dx_km1, sx_km1)
 function beta = beta_dai_yuan(dx_k, dx_km1, sx_km1)
    beta = -dx_k'*dx_k/(sx_km1'*(dx_k-dx_km1));
 
-function pass = do_unit_test()
-   pass=1;
+function do_unit_test()
    imdl=mk_common_model('a2c');
    imdl.reconst_type='absolute'; % ***
    imdl.solve=@inv_solve_cg; % ***
@@ -125,6 +125,5 @@ function pass = do_unit_test()
    img=inv_solve(imdl,vi); % ***
    clf; subplot(121); show_fem(fimg,1); title('forward model');
         subplot(122); show_fem(img,1);  title('reconstruction');
-   try unit_test_cmp('fwd vs. reconst', fimg.elem_data, img.elem_data, 0.08);
-   catch me; disp(me.message); pass=0; end
-%   pass = inv_solve_core('UNIT_TEST', 'inv_solve_cg');
+   unit_test_cmp('fwd vs. reconst', fimg.elem_data, img.elem_data, 0.08);
+%  inv_solve_core('UNIT_TEST', 'inv_solve_cg');
