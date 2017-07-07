@@ -238,8 +238,8 @@ function img= inv_solve_core( inv_model, data0, data1);
 
 %--------------------------
 % UNIT_TEST?
-if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); img=do_unit_test; return; end
-if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img=do_unit_test(data0); return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); do_unit_test(data0); return; end
 
 %--------------------------
 if nargin == 3 % difference reconstruction
@@ -2392,7 +2392,6 @@ function x=range(y)
 x=max(y)-min(y);
 
 function pass=do_unit_test(solver)
-   pass=1;
    if nargin == 0
       solver = 'inv_solve_core';
       test = 'all'
@@ -2428,11 +2427,9 @@ function pass=do_unit_test(solver)
       otherwise
          error(['unrecognized solver or tests: ' test]);
    end
-%pass = pass & do_unit_test_rec2(solver);
-% TODO the ..._rec2 unit test is very, very slow... what can we do to speed it up... looks like the perturbations get kinda borked when using the line_search_onm2
 
 function [imdl, vh, imgi, vi] = unit_test_imdl()
-   imdl = mk_geophysics_model('h22c',32);
+   imdl = mk_geophysics_model('h22e',32);
    imdl.solve = 'inv_solve_core';
    imdl.inv_solve_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
    imdl.inv_solve_core.verbose = 0;
@@ -2470,7 +2467,7 @@ function do_unit_test_diff()
         subplot(221); h=show_fem(imgi,1);  title('fwd model'); set(h,'EdgeColor','none');
         subplot(222); show_fem(img_itr,1); title('GN 10-iter');
         subplot(222); show_fem(img_abs,1); title('GN abs 10-iter');
-   unit_test_cmp('core (1-step) vs. diff_GN_one_step', img_it1.elem_data, img_gn1.elem_data, eps*1e3);
+   unit_test_cmp('core (1-step) vs. diff_GN_one_step', img_it1.elem_data, img_gn1.elem_data, eps*15);
    unit_test_cmp('core (1-step) vs. core (N-step)   ', img_it1.elem_data, img_itr.elem_data, eps);
    unit_test_cmp('core (N-step) vs. abs  (N-step)   ', img_it1.elem_data, img_abs.elem_data-1, eps);
 
