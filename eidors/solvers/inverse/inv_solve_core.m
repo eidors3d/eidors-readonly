@@ -69,9 +69,12 @@ function img= inv_solve_core( inv_model, data0, data1);
 %   update_func                         (default TODO)  ** TODO
 %     [img,opt]=f(org,next,dx,fmin,res,opt)
 %     Deprecated, use <TODO> instead.
-%   update_method                         (default lu)
-%     Method to use for solving dx: 'pcg' or 'lu'
-%     If 'lu', will fall back to 'pcg' if out-of-memory.
+%   update_method                   (default cholesky)
+%     Method to use for solving dx: 'pcg' or 'cholesky'
+%     If 'cholesky', will fall back to 'pcg' if
+%     out-of-memory. Matlab has trouble detecting the
+%     out-of-memory condition on many machines, and is
+%     likely to just grind to a halt swapping. Beware.
 %   do_starting_estimate                   (default 1)  ** TODO
 %     Deprecated, use <TODO> instead.
 %   line_search_func       (default @line_search_onm2)
@@ -1272,7 +1275,6 @@ function show_fem_iter(k, img, inv_model, stop, opt)
      saveas(gcf,sprintf('%s-x%d.fig',opt.fig_prefix,k));
   end
 
-% TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
 function [ residual meas elem ] = GN_residual(dv, de, W, hps2RtR, hpt2LLt)
    % We operate on whatever the iterations operate on
    % (log data, resistance, etc) + perturb(i)*dx.
@@ -1399,7 +1401,7 @@ function opt = parse_options(imdl,n_frames)
       opt.update_func = @GN_update; % dx = f(J, W, hps2RtR, hpt2LLt, dv, de, opt)
    end
    if ~isfield(opt, 'update_method')
-      opt.update_method = 'lu';
+      opt.update_method = 'cholesky';
    end
 
    % figure out if things need to be calculated
@@ -1973,10 +1975,10 @@ function dx = update_dx(J, W, hps2RtR, hpt2LLt, dv, de, opt)
    end
 
 function dx = GN_update(J, W, hps2RtR, hpt2LLt, dv, de, opt)
-   if ~any(strcmp(opt.update_method, {'lu','pcg'}))
+   if ~any(strcmp(opt.update_method, {'cholesky','pcg'}))
       error(['unsupported update_method: ',opt.update_method]);
    end
-   if strcmp(opt.update_method, 'lu')
+   if strcmp(opt.update_method, 'cholesky')
       try
          % expansion for multiple frames
          if any(any(hpt2LLt ~= eye(size(hpt2LLt))))
@@ -1986,14 +1988,16 @@ function dx = GN_update(J, W, hps2RtR, hpt2LLt, dv, de, opt)
             RtR = kron(hpt2LLt,hps2RtR);
             JtW = kron(eye(nf),J'*W);
             % the actual update
-            dx = -(JtWJ + RtR)\(JtW*dv(:) + RtR*de(:)); % LU/Cholesky
+            %dx = -(JtWJ + RtR)\(JtW*dv(:) + RtR*de(:)); % LU/Cholesky
+            dx = -left_divide( (JtWJ + RtR), (JtW*dv(:) + RtR*de(:)) ); % LU/Cholesky
             % put back: one column per frame
             dx = reshape(dx,length(dx)/nf,nf);
          else
-            dx = -(J'*W*J + hps2RtR)\(J'*W*dv + hps2RtR*de); % LU/Cholesky
+            %dx = -(J'*W*J + hps2RtR)\(J'*W*dv + hps2RtR*de); % LU/Cholesky
+            dx = -left_divide( (J'*W*J + hps2RtR), (J'*W*dv + hps2RtR*de) ); % LU/Cholesky
          end
       catch ME % boom
-         fprintf('      LU decomp failed: ');
+         fprintf('      Cholesky failed: ');
          disp(ME.message)
          fprintf('      try opt.update_method = ''pcg'' on future runs\n');
          opt.update_method = 'pcg';
@@ -2812,8 +2816,8 @@ function do_unit_test_diffseq(solver)
                vii(jj) = vv; vii(jj).meas = vi(:,jj);
             end
          case 5
-            fprintf('method = LU\n');
-            imdl.inv_solve_core.update_method = 'lu';
+            fprintf('method = Cholesky\n');
+            imdl.inv_solve_core.update_method = 'cholesky';
          case 6
             fprintf('method = PCG\n');
             imdl.inv_solve_core.update_method = 'pcg';
@@ -2876,8 +2880,8 @@ function do_unit_test_absseq(solver)
                vii(jj) = vv; vii(jj).meas = vi(:,jj);
             end
          case 3
-            fprintf('method = LU\n');
-            imdl.inv_solve_core.update_method = 'lu';
+            fprintf('method = Cholesky\n');
+            imdl.inv_solve_core.update_method = 'cholesky';
          case 4
             fprintf('method = PCG\n');
             imdl.inv_solve_core.update_method = 'pcg';
