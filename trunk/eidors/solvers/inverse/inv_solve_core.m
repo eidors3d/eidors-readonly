@@ -158,7 +158,7 @@ function img= inv_solve_core( inv_model, data0, data1);
 %    current parameters.
 %
 %   Signature for residual_func
-%    [r,m,e] = f(dv, de, W, hp2RtR)
+%    [r,m,e] = f(dv, de, W, hps2RtR, hpt2LLt)
 %   where
 %    r   - the residual = m + e
 %    m   - measurement error
@@ -166,11 +166,13 @@ function img= inv_solve_core( inv_model, data0, data1);
 %    dv  - change in voltage
 %    de  - change in image elements
 %    W   - measurement inverse covariance matrix
-%    hp2 - hyperparameter squared, see CALC_HYPERPARAMETER
-%    RtR - regularization matrix squared --> hp2RtR = hp2*RtR
+%    hps2  - spatial hyperparameter squared, see CALC_HYPERPARAMETER
+%    RtR   - regularization matrix squared --> hps2RtR = hps2*RtR
+%    hpt2  - temporal hyperparameter squared
+%    LLt   - temporal regularization matrix squared --> hpt2LLt = hpt2*LLt
 %
 %   Signature for line_optimize_func
-%    [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2RtR, dv, opt)
+%    [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hps2RtR, hpt2LLt, dv, opt)
 %   where:
 %    alpha - line search result
 %    img   - the current image
@@ -180,8 +182,10 @@ function img= inv_solve_core( inv_model, data0, data1);
 %    img0  - the image background (de = img - img0)
 %    N     - a measurement normalization factor, N*dv
 %    W     - measurement inverse covariance matrix
-%    hp2   - hyperparameter squared, see CALC_HYPERPARAMETER
-%    RtR   - regularization matrix squared --> hp2RtR = hp2*RtR
+%    hps2  - spatial hyperparameter squared, see CALC_HYPERPARAMETER
+%    RtR   - regularization matrix squared --> hps2RtR = hps2*RtR
+%    hpt2  - temporal hyperparameter squared
+%    LLt   - temporal regularization matrix squared --> hpt2LLt = hpt2*LLt
 %    dv    - change in voltage
 %            (optional, recalculated if not available)
 %    opt   - additional arguments, updated at each call
@@ -238,10 +242,12 @@ if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 1); img=do_u
 if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST') && (nargin == 2); img=do_unit_test(data0); return; end
 
 %--------------------------
-opt = parse_options(inv_model);
-if opt.verbose > 1
-   fprintf('  verbose = %d\n', opt.verbose);
+if nargin == 3 % difference reconstruction
+   n_frames = max(count_data_frames(data0),count_data_frames(data1));
+else % absolute reconstruction
+   n_frames = count_data_frames(data0);
 end
+opt = parse_options(inv_model, n_frames);
 %if opt.do_starting_estimate
 %    img = initial_estimate( inv_model, data0 ); % TODO
 %%%    AB->NL this is Nolwenn's homogeneous estimate...
@@ -263,12 +269,7 @@ img.inv_model = inv_model; % stash the inverse model
 img = data_mapper(img); % move data from whatever 'params' to img.elem_data
 
 % insert the prior data
-if nargin == 3 % difference reconstruction
-   n_frames = max(count_data_frames(data0),count_data_frames(data1));
-else % absolute reconstruction
-   n_frames = count_data_frames(data0);
-end
-img = init_elem_data(img, n_frames, opt);
+img = init_elem_data(img, opt);
 
 % map data and measurements to working types
 %  convert elem_data
@@ -318,7 +319,8 @@ W  = init_meas_icov(inv_model, opt);
 
 % now get on with
 img0 = img;
-hp2RtR = 0; alpha = 0; k = 0; sx = 0; r = 0; stop = 0; % general init
+hps2RtR = 0; alpha = 0; k = 0; sx = 0; r = 0; stop = 0; % general init
+hpt2LLt = update_hpt2LLt(inv_model, data0, k, opt);
 residuals = zeros(opt.max_iterations,3); % for residuals plots
 dxp = 0; % previous step's slope was... nothing
 [dv, opt] = update_dv([], img, data0, N, opt);
@@ -340,11 +342,11 @@ while 1
   [J, opt] = update_jacobian(img, dN, k, opt);
 
   % update RtR, if required (depends on prior)
-  hp2RtR = update_hp2RtR(inv_model, J, k, img, opt);
+  hps2RtR = update_hps2RtR(inv_model, J, k, img, opt);
 
   % determine the next search direction sx
   %  dx is specific to the algorithm, generally "downhill"
-  dx = update_dx(J, W, hp2RtR, dv, de, opt);
+  dx = update_dx(J, W, hps2RtR, hpt2LLt, dv, de, opt);
   % choose beta, beta=0 unless doing Conjugate Gradient
   beta = update_beta(dx, dxp, sx, opt);
   beta_all(k+1)=beta; % save for debug
@@ -355,13 +357,13 @@ while 1
   end
 
   % plot dx and SVD of Jacobian (before and after regularization)
-  plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt);
+  plot_dx_and_svd_elem(J, W, hps2RtR, k, sx, dx, img, opt);
 
   % line search for alpha, leaving the final selection as img
   % x_n = img.elem_data
   % x_{n+1} = x_n + \alpha sx
   % img.elem_data = x_{n+1}
-  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, k, dv, opt);
+  [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hps2RtR, hpt2LLt, k, dv, opt);
   alpha_all(k+1) = alpha;
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
@@ -378,7 +380,7 @@ while 1
   show_fem_iter(k, img, inv_model, stop, opt);
 
   % now find the residual, quit if we're done
-  [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt);
+  [stop, k, r, img] = update_residual(dv, img, de, W, hps2RtR, hpt2LLt, k, r, alpha, sx, opt);
   if stop
      if stop == -1
         alpha_all(k) = 0;
@@ -413,7 +415,7 @@ if opt.return_working_variables
   img.inv_solve_core.r = r(1:(k+1),:); % trim r to n-iterations' rows
   img.inv_solve_core.N = N;
   img.inv_solve_core.W = W;
-  img.inv_solve_core.hp2RtR = hp2RtR;
+  img.inv_solve_core.hps2RtR = hps2RtR;
   img.inv_solve_core.dv = dv;
   img.inv_solve_core.de = de;
   if opt.verbose >= 5
@@ -424,8 +426,9 @@ end
 
 function show_meas_err(dvall, data0, k, N, W, opt)
    clf;
-   subplot(211); bar(dvall(:,k+1)); ylabel(sprintf('dv_k [%s]',opt.meas_working)); xlabel('meas #'); title(sprintf('measurement error @ iter=%d',k));
-   subplot(212); bar(map_meas(dvall(:,k+1),N,opt.meas_working, 'voltage')); ylabel('dv_k [V]'); xlabel('meas #'); title('');
+   assert(length(opt.meas_working) == 1,'TODO meas_working len > 1');
+   subplot(211); bar(dvall(:,k+1)); ylabel(sprintf('dv_k [%s]',opt.meas_working{1})); xlabel('meas #'); title(sprintf('measurement error @ iter=%d',k));
+   subplot(212); bar(map_meas(dvall(:,k+1),N,opt.meas_working{1}, 'voltage')); ylabel('dv_k [V]'); xlabel('meas #'); title('');
    drawnow;
    if isfield(opt,'fig_prefix')
       print('-dpdf',sprintf('%s-meas_err%d',opt.fig_prefix,k));
@@ -442,12 +445,12 @@ function n_frames = count_data_frames(data1)
       n_frames = size(horzcat(data1(:).meas),2);
    end
 
-function img = init_elem_data(img, n_frames, opt)
+function img = init_elem_data(img, opt)
   if opt.verbose > 1
     fprintf('  setting prior elem_data\n');
   end
   ne2 = 0; % init
-  img.elem_data = zeros(sum([opt.elem_len{:}]),n_frames); % preallocate
+  img.elem_data = zeros(sum([opt.elem_len{:}]),sum([opt.n_frames{:}])); % preallocate
   for i=1:length(opt.elem_prior)
     ne1 = ne2+1; % next start idx ne1
     ne2 = ne1+opt.elem_len{i}-1; % this set ends at idx ne2
@@ -482,15 +485,18 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
    N = 1;
    dN = 1;
    vh1.meas = 1;
-   if ~ischar(opt.meas_input) || ~ischar(opt.meas_working)
-      error('expected strings for meas_input and meas_working');
+   if ~iscell(opt.meas_input) || ~iscell(opt.meas_working)
+      error('expected cell array for meas_input and meas_working');
    end
-   go =       any(strcmp({opt.meas_input, opt.meas_working},'apparent_resistivity'));
-   go = go || any(strcmp({opt.meas_input, opt.meas_working},'log_apparent_resistivity'));
-   go = go || any(strcmp({opt.meas_input, opt.meas_working},'log10_apparent_resistivity'));
+   % TODO support for multiple measurement types
+   assert(length(opt.meas_input) == length(opt.meas_working), 'meas_input and meas_working lengths must match');
+   assert(length(opt.meas_working) == 1, 'TODO only supports a single type of measurements');
+   go =       any(strcmp({opt.meas_input{1}, opt.meas_working{1}},'apparent_resistivity'));
+   go = go || any(strcmp({opt.meas_input{1}, opt.meas_working{1}},'log_apparent_resistivity'));
+   go = go || any(strcmp({opt.meas_input{1}, opt.meas_working{1}},'log10_apparent_resistivity'));
    if go
       if opt.verbose > 1
-         disp(['  calc measurement normalization matrix N (voltage -> ' opt.meas_working ')']);
+         disp(['  calc measurement normalization matrix N (voltage -> ' opt.meas_working{1} ')']);
       end
       % calculate geometric factor for apparent_resitivity conversions
       img1 = mk_image(fmdl,1);
@@ -499,11 +505,12 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
       err_if_inf_or_nan(N,  'init_normalization: N');
    end
    if go && (opt.verbose > 1)
-      disp(['  calc Jacobian normalization matrix   dN (voltage -> ' opt.meas_working ')']);
+      disp(['  calc Jacobian normalization matrix   dN (voltage -> ' opt.meas_working{1} ')']);
    end
    % calculate the normalization factor for the Jacobian
+   assert(length(opt.meas_working)==1, 'only supports single measurement type at a time');
    data0 = map_meas_struct(data0, N, 'voltage'); % to voltage
-   switch opt.meas_working
+   switch opt.meas_working{1}
       case 'apparent_resistivity'
          dN = da_dv(data0.meas, vh1.meas);
       case 'log_apparent_resistivity'
@@ -523,7 +530,7 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
 
 % r_km1: previous residual, if its the first iteration r_km1 = inf
 % r_k: new residual
-function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha, sx, opt)
+function [stop, k, r, img] = update_residual(dv, img, de, W, hps2RtR, hpt2LLt, k, r, alpha, sx, opt)
   stop = 0;
 
   % update residual estimate
@@ -535,7 +542,7 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hp2RtR, k, r, alpha
      r_km1 = r(k, 1);
      r_1   = r(1, 1);
   end
-  [r_k m_k e_k] = feval(opt.residual_func, dv, de, W, hp2RtR);
+  [r_k m_k e_k] = feval(opt.residual_func, dv, de, W, hps2RtR, hpt2LLt);
   % save residual for next iteration
   r(k+1,1:3) = [r_k m_k e_k];
 
@@ -651,8 +658,8 @@ function sx = update_sx(dx, beta, sx_km1, opt);
       end
    end
 
-% this function constructs the blockwise RtR matrix
-function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
+% this function constructs the blockwise RtR spatial regularization matrix
+function hps2RtR = update_hps2RtR(inv_model, J, k, img, opt)
    if k==0 % first the start up iteration use the initial hyperparameter
       k=1;
    end
@@ -682,7 +689,7 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
 
          % select a hyperparameter, potentially, per iteration
          % if we're at the end of the list, select the last entry
-         hp=opt.hyperparameter{i,j};
+         hp=opt.hyperparameter_spatial{i,j};
          if length(hp) > k
             hp=hp(k);
          else
@@ -716,9 +723,69 @@ function hp2RtR = update_hp2RtR(inv_model, J, k, img, opt)
          end
       end
    end
-   hp2RtR = hp2*RtR;
+   hps2RtR = hp2*RtR;
 
-function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
+% this function constructs the LLt temporal regularization matrix
+function hpt2LLt = update_hpt2LLt(inv_model, data0, k, opt)
+   if k==0 % first the start up iteration use the initial hyperparameter
+      k=1;
+   end
+   if ~opt.calc_LLt_prior
+      error('no LLt calculation mechanism, set imdl.inv_solve_core.LLt_prior or imdl.LLt_prior');
+   end
+   if opt.verbose > 1
+      disp('    calc hp^2 L L^t');
+   end
+   hp2 = 1;
+   nmt = sum([opt.n_frames{:}]); % Number of Measurements, Total
+   LLt = sparse(nmt,nmt); % init = 0
+   msi = 0; mei = 0; % measurement start, measurement end
+   for i = 1:size(opt.LLt_prior,1) % row i
+      msi = mei + 1;
+      mei = mei + opt.n_frames{i};
+      msj = 0; mej = 0; % element start, element end
+      for j = 1:size(opt.LLt_prior,2) % column j
+         msj = mej + 1;
+         mej = mej + opt.n_frames{j};
+         if isempty(opt.LLt_prior{i,j}) % null entries
+            continue; % no need to explicitly create zero block matrices
+         end
+
+         % select a hyperparameter, potentially, per iteration
+         % if we're at the end of the list, select the last entry
+         hp=opt.hyperparameter_temporal{i,j};
+         if length(hp) > k
+            hp=hp(k);
+         else
+            hp=hp(end);
+         end
+
+         try LLt_str = func2str(opt.LLt_prior{i,j});
+         catch
+            try
+                LLt_str = opt.LLt_prior{i,j};
+                if isnumeric(LLt_str)
+                   if LLt_str == eye(size(LLt_str))
+                      LLt_str = 'eye';
+                   else
+                      LLt_str = sprintf('array, norm=%0.1g',norm(LLt_str));
+                   end
+                end
+            catch
+                LLt_str = 'unknown';
+            end
+         end
+         if opt.verbose > 1
+            fprintf('      {%d,%d} regularization LLt (%s), frames=%dx%d, hp=%0.4g\n', i,j,LLt_str,mei-msi+1,mej-msj+1,hp*sqrt(hp2));
+         end
+         inv_modelt = inv_model;
+         inv_modelt.LLt_prior = opt.LLt_prior{i,j};
+         LLt(msi:mei, msj:mej) = hp.^2 * calc_LLt_prior( data0, inv_modelt );
+      end
+   end
+   hpt2LLt = hp2*LLt;
+
+function plot_dx_and_svd_elem(J, W, hps2RtR, k, sx, dx, img, opt)
    if(opt.verbose >= 5)
       % and try a show_fem with the pixel search direction
       clf;
@@ -761,7 +828,7 @@ function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
    clf; % individual SVD plots
    for i=1:cols
       if 1 % if Tikhonov
-         hp=opt.hyperparameter{i};
+         hp=opt.hyperparameter_spatial{i};
          if k ~= 0 && k < length(hp)
             hp = hp(k);
          else
@@ -772,7 +839,7 @@ function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
       end
       sel=img.params_sel{i};
       str=strrep(img.current_params{i},'_',' ');
-      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k, hp); xlabel(str);
+      plot_svd(J(:,sel), W, hps2RtR(sel,sel), k, hp); xlabel(str);
       drawnow;
       if isfield(opt,'fig_prefix')
          print('-dpdf',sprintf('%s-svd%d-%s',opt.fig_prefix,k,img.current_params{i}));
@@ -783,7 +850,7 @@ function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
    clf; % combo plot
    for i=1:cols
       if 1 % if Tikhonov
-         hp=opt.hyperparameter{i};
+         hp=opt.hyperparameter_spatial{i};
          if k ~= 0 && k < length(hp)
             hp = hp(k);
          else
@@ -795,7 +862,7 @@ function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
       subplot(rows,cols,i);
       sel=img.params_sel{i};
       str=strrep(img.current_params{i},'_',' ');
-      plot_svd(J(:,sel), W, hp2RtR(sel,sel), k, hp); xlabel(str);
+      plot_svd(J(:,sel), W, hps2RtR(sel,sel), k, hp); xlabel(str);
       subplot(rows,cols,cols+i);
       bar(dx(sel)); ylabel(['dx: ' str]);
       if rows > 2
@@ -810,13 +877,13 @@ function plot_dx_and_svd_elem(J, W, hp2RtR, k, sx, dx, img, opt)
       saveas(gcf,sprintf('%s-svd%d.fig',opt.fig_prefix,k));
    end
 
-function plot_svd(J, W, hp2RtR, k, hp)
+function plot_svd(J, W, hps2RtR, k, hp)
    if nargin < 5
       hp = [];
    end
    % calculate the singular values before and after regularization
    [~,s1,~]=svd(J'*W*J); s1=sqrt(diag(s1));
-   [~,s2,~]=svd(J'*W*J + hp2RtR); s2=sqrt(diag(s2));
+   [~,s2,~]=svd(J'*W*J + hps2RtR); s2=sqrt(diag(s2));
    h=semilogy(s1,'bx'); axis tight; set(h,'LineWidth',2);
    hold on; h=semilogy(s2,'go'); axis tight; set(h,'LineWidth',2); hold off;
    xlabel('k'); ylabel('value \sigma');
@@ -1015,7 +1082,7 @@ function dN = dlog10v_dv(v,vh) % same as dlog10a_dv
 % -------------------------------------------------
 
 
-function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR, k, dv, opt)
+function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hps2RtR, hpt2LLt, k, dv, opt)
   if k == 0 % first iteration, just setting up, no line search happens
      alpha = 0;
      return;
@@ -1042,7 +1109,7 @@ function [alpha, img, dv, opt] = update_alpha(img, sx, data0, img0, N, W, hp2RtR
   if isfield(optt,'fig_prefix') % set fig_prefix for the iteration#
     optt.fig_prefix = [opt.fig_prefix '-k' num2str(k)];
   end
-  [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hp2RtR, dv, optt);
+  [alpha, imgo, dv, opto] = feval(opt.line_search_func, img, sx, data0, img0, N, W, hps2RtR, hpt2LLt, dv, optt);
   if isfield(opt,'fig_prefix') % set fig_prefix back to it's old value
     opto.fig_prefix = opt.fig_prefix;
   end
@@ -1206,18 +1273,18 @@ function show_fem_iter(k, img, inv_model, stop, opt)
   end
 
 % TODO confirm that GN line_search_onm2 is using this residual calculation (preferably, directly)
-function [ residual meas elem ] = GN_residual(dv, de, W, hp2RtR)
-%   [size(dv); size(W); size(de); size(hp2RtR)]
-   % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
-   n_frames = size(dv,2); % iterations
-   meas = 0; elem = 0; residual = 0; % init
-   for n = 1:n_frames
-      meas = meas + 0.5*( dv(:,n)'*W*dv(:,n) );
-      elem = elem + 0.5*( de(:,n)'*hp2RtR*de(:,n) );
-      residual = residual + meas + elem;
-   end
+function [ residual meas elem ] = GN_residual(dv, de, W, hps2RtR, hpt2LLt)
+   % We operate on whatever the iterations operate on
+   % (log data, resistance, etc) + perturb(i)*dx.
+   % We use the kronecker vector identity (Bt x A) vec(X) = vec(A X B) to
+   % efficiently compute a residual over many frames.
+   Wdv = W*dv;
+   meas = 0.5 * dv(:)' * Wdv(:);
+   Rde = hps2RtR * de * hpt2LLt';
+   elem = 0.5 * de(:)' * Rde(:);
+   residual = meas + elem;
 
-function residual = meas_residual(dv, de, W, hp2RtR)
+function residual = meas_residual(dv, de, W, hps2RtR)
    residual = norm(dv);
 
 %function img = initial_estimate( imdl, data )
@@ -1288,7 +1355,7 @@ function residual = meas_residual(dv, de, W, hp2RtR)
 %     fprintf('estimated background resistivity: %0.1f Ohm.m\n', BACKGROUND_R);
 %   end
 
-function opt = parse_options(imdl)
+function opt = parse_options(imdl,n_frames)
    % merge legacy options locations
 %   imdl = deprecate_imdl_opt(imdl, 'parameters');
 %   imdl = deprecate_imdl_opt(imdl, 'inv_solve');
@@ -1309,6 +1376,7 @@ function opt = parse_options(imdl)
       fprintf('  selecting inv_model.inv_solve_core.verbosity=1\n');
    end
    if opt.verbose > 1
+      fprintf('  verbose = %d\n', opt.verbose);
       fprintf('  setting default parameters\n');
    end
    % we track how many fwd_solves we do since they are the most expensive part of the iterations
@@ -1319,30 +1387,34 @@ function opt = parse_options(imdl)
    end
 
    if ~isfield(opt, 'residual_func') % the objective function
-      opt.residual_func = @GN_residual; % r = f(dv, de, W, hp2RtR)
+      opt.residual_func = @GN_residual; % r = f(dv, de, W, hps2RtR, hpt2LLt)
       % NOTE: the meas_residual function exists to maintain
       % compatibility with Nolwenn's code, the GN_residual
       % is a better choice
-      %opt.residual_func = @meas_residual; % [r,m,e] = f(dv, de, W, hp2RtR)
+      %opt.residual_func = @meas_residual; % [r,m,e] = f(dv, de, W, hps2RtR, hpt2LLt)
    end
 
    % calculation of update components
    if ~isfield(opt, 'update_func')
-      opt.update_func = @GN_update; % dx = f(J, W, hp2RtR, dv, de, opt)
+      opt.update_func = @GN_update; % dx = f(J, W, hps2RtR, hpt2LLt, dv, de, opt)
    end
    if ~isfield(opt, 'update_method')
       opt.update_method = 'lu';
    end
 
    % figure out if things need to be calculated
-   if ~isfield(opt, 'calc_meas_icov') % derivative of the objective function
+   if ~isfield(opt, 'calc_meas_icov')
       opt.calc_meas_icov = 0; % W
    end
-   if ~isfield(opt, 'calc_RtR_prior') % derivative of the objective function
+   if ~isfield(opt, 'calc_RtR_prior')
       opt.calc_RtR_prior = 0; % RtR
    end
+   if ~isfield(opt, 'calc_LLt_prior')
+      opt.calc_LLt_prior = 0; % LLt
+   end
+% TODO calc_spatial_hyperparameter, calc_temporal_hyperparameter
    if ~isfield(opt, 'calc_hyperparameter')
-      opt.calc_hyperparameter = 0; % hp2
+      opt.calc_hyperparameter = 0; % hps2
    end
 
 %   try
@@ -1350,9 +1422,9 @@ function opt = parse_options(imdl)
          fprintf('    examining function %s(...) for required arguments\n', func2str(opt.update_func));
       end
       % ensure that necessary components are calculated
-      % opt.update_func: dx = f(J, W, hp2RtR, dv, de, opt)
+      % opt.update_func: dx = f(J, W, hps2RtR, dv, de, opt)
 %TODO BROKEN      args = function_depends_upon(opt.update_func, 6);
-      args = ones(4,1); % TODO BROKEN
+      args = ones(5,1); % TODO BROKEN
       if args(2) == 1
          opt.calc_meas_icov = 1;
       end
@@ -1361,6 +1433,9 @@ function opt = parse_options(imdl)
       end
       if args(4) == 1
          opt.calc_RtR_prior = 1;
+      end
+      if args(5) == 1
+         opt.calc_LLt_prior = 1;
       end
 %   catch
 %      error('exploration of function %s via function_depends_upon() failed', func2str(opt.update_func));
@@ -1411,7 +1486,7 @@ function opt = parse_options(imdl)
 
    % line search
    if ~isfield(opt,'line_search_func')
-      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hp2RtR, dv, opt);
+      % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hps2RtR, dv, opt);
       opt.line_search_func = @line_search_onm2;
    end
    if ~isfield(opt,'line_search_dv_func')
@@ -1492,13 +1567,19 @@ function opt = parse_options(imdl)
    % if the user didn't put these into cell arrays, do
    % so here so there is less error checking later in
    % the code
-   for i = {'elem_working', 'elem_prior', 'elem_output'}; %, 'meas_input', 'meas_working'}
+   for i = {'elem_working', 'elem_prior', 'elem_output', 'meas_input', 'meas_working'}
      % MATLAB voodoo: deincapsulate a cell containing a
-     % string, then use that to access a struct eleemnt
+     % string, then use that to access a struct element
      x = opt.(i{1});
      if ~iscell(x)
         opt.(i{1}) = {x};
      end
+   end
+   if length(opt.meas_input) > 1
+      error('imdl.inv_solve_core.meas_input: multiple measurement types not yet supported');
+   end
+   if length(opt.meas_working) > 1
+      error('imdl.inv_solve_core.meas_working: multiple measurement types not yet supported');
    end
 
    if ~isfield(opt, 'prior_data')
@@ -1522,6 +1603,10 @@ function opt = parse_options(imdl)
       else
         error('requires inv_model.inv_solve_core.elem_len');
       end
+   end
+
+   if ~isfield(opt, 'n_frames')
+      opt.n_frames = {n_frames};
    end
 
    % meas_select already handles selecting from the valid measurements
@@ -1553,17 +1638,28 @@ function opt = parse_options(imdl)
       imdl
       error('inv_model.fwd_model.jacobian and inv_model.inv_solve_core.jacobian should not both exist: it''s ambiguous');
    end
-   % defaul hyperparameter is 1
-   if ~isfield(opt, 'hyperparameter')
-      opt.hyperparameter = {[]};
+
+   if isfield(opt, 'hyperparameter')
+      opt.hyperparameter_spatial = opt.hyperparameter; % backwards compatible
+      opt = rmfield(opt, 'hyperparameter');
+   end
+   % default hyperparameter is 1
+   if ~isfield(opt, 'hyperparameter_spatial')
+      opt.hyperparameter_spatial = {[]};
       for i=1:length(opt.elem_working)
-         opt.hyperparameter{i} = 1;
+         opt.hyperparameter_spatial{i} = 1;
+      end
+   end
+   if ~isfield(opt, 'hyperparameter_temporal')
+      opt.hyperparameter_temporal = {[]};
+      for i=1:length(opt.meas_working)
+         opt.hyperparameter_temporal{i} = 1;
       end
    end
    % if the user didn't put these into cell arrays, do
    % so here so there is less error checking later in
    % the code
-   for i = {'elem_len', 'prior_data', 'jacobian', 'hyperparameter'}
+   for i = {'elem_len', 'prior_data', 'jacobian', 'hyperparameter_spatial', 'hyperparameter_temporal'}
      % MATLAB voodoo: deincapsulate a cell containing a
      % string, then use that to access a struct eleemnt
      x = opt.(i{1});
@@ -1582,14 +1678,25 @@ function opt = parse_options(imdl)
           hp_global_str = '';
       end
       for i=1:length(opt.elem_working)
-         if isnumeric(opt.hyperparameter{i}) && length(opt.hyperparameter{i}) == 1
-            fprintf('    %s: %0.4g\n',opt.elem_working{i}, opt.hyperparameter{i}*hp_global);
-         elseif isa(opt.hyperparameter{i}, 'function_handle')
-            fprintf('    %s: @%s%s\n',opt.elem_working{i}, func2str(opt.hyperparameter{i}), hp_global_str);
-         elseif ischar(opt.hyperparameter{i})
-            fprintf('    %s: @%s%s\n',opt.elem_working{i}, opt.hyperparameter{i}, hp_global_str);
+         if isnumeric(opt.hyperparameter_spatial{i}) && length(opt.hyperparameter_spatial{i}) == 1
+            fprintf('    %s: %0.4g\n',opt.elem_working{i}, opt.hyperparameter_spatial{i}*hp_global);
+         elseif isa(opt.hyperparameter_spatial{i}, 'function_handle')
+            fprintf('    %s: @%s%s\n',opt.elem_working{i}, func2str(opt.hyperparameter_spatial{i}), hp_global_str);
+         elseif ischar(opt.hyperparameter_spatial{i})
+            fprintf('    %s: @%s%s\n',opt.elem_working{i}, opt.hyperparameter_spatial{i}, hp_global_str);
          else
             fprintf('    %s: ...\n',opt.elem_working{i});
+         end
+      end
+      for i=1:length(opt.meas_working)
+         if isnumeric(opt.hyperparameter_temporal{i}) && length(opt.hyperparameter_temporal{i}) == 1
+            fprintf('    %s: %0.4g\n',opt.meas_working{i}, opt.hyperparameter_temporal{i}*hp_global);
+         elseif isa(opt.hyperparameter_temporal{i}, 'function_handle')
+            fprintf('    %s: @%s%s\n',opt.meas_working{i}, func2str(opt.hyperparameter_temporal{i}), hp_global_str);
+         elseif ischar(opt.hyperparameter_temporal{i})
+            fprintf('    %s: @%s%s\n',opt.meas_working{i}, opt.hyperparameter_temporal{i}, hp_global_str);
+         else
+            fprintf('    %s: ...\n',opt.meas_working{i});
          end
       end
    end
@@ -1603,7 +1710,7 @@ function opt = parse_options(imdl)
          opt.RtR_prior = {imdl.RtR_prior};
       else
          opt.RtR_prior = {[]}; % null matrix (all zeros)
-         warning('missing imdl.inv_solve_core.RtR_prior or imdl.RtR_prior: assuming NO regularization RtR=0');
+         warning('missing imdl.inv_solve_core.RtR_prior or imdl.RtR_prior: assuming NO spatial regularization RtR=0');
       end
    end
    % bit of a make work project but if its actually a full numeric matrix we
@@ -1649,30 +1756,111 @@ function opt = parse_options(imdl)
          opt.RtR_prior(i,i) = RtR_diag(i);
       end
    end
-
    % now sort out the hyperparameter for the "R^T R" (RtR) matrix
-   hp=opt.hyperparameter;
+   hp=opt.hyperparameter_spatial;
    if size(hp,1) == 1 % one row
       hp = hp'; % ... now one col
    end
    if iscell(hp)
       % if it's a cell array that matches size of the RtR, then we're done
       if all(size(hp) == size(opt.RtR_prior))
-         opt.hyperparameter = hp;
+         opt.hyperparameter_spatial = hp;
       % if the columns match, then we can expand on the diagonal, everything else gets '1'
       elseif length(hp) == length(opt.RtR_prior)
-         opt.hyperparameter = opt.RtR_prior;
-         [opt.hyperparameter{:}] = deal(1); % hp = 1 everywhere
-         opt.hyperparameter(logical(eye(size(opt.RtR_prior)))) = hp; % assign to diagonal
+         opt.hyperparameter_spatial = opt.RtR_prior;
+         [opt.hyperparameter_spatial{:}] = deal(1); % hp = 1 everywhere
+         opt.hyperparameter_spatial(logical(eye(size(opt.RtR_prior)))) = hp; % assign to diagonal
       else
-         error('hmm, don''t understand this opt.hyperparameter cellarray');
+         error('hmm, don''t understand this opt.hyperparameter_spatial cellarray');
       end
    % if it's a single hyperparameter, that's the value everywhere
    elseif isnumeric(hp)
-      opt.hyperparameter = opt.RtR_prior;
-      [opt.hyperparameter{:}] = deal({hp});
+      opt.hyperparameter_spatial = opt.RtR_prior;
+      [opt.hyperparameter_spatial{:}] = deal({hp});
    else
-      error('don''t understand this opt.hyperparameter');
+      error('don''t understand this opt.hyperparameter_spatial');
+   end
+   
+   % REGULARIZATION LLt
+   % for constructing the blockwise LLt matrix
+   % can be: explicit matrix, blockwise matrix diagonal, or full blockwise matrix
+   % blockwise matrices can be function ptrs or explicit
+   if ~isfield(opt, 'LLt_prior')
+      if isfield(imdl, 'LLt_prior')
+         opt.LLt_prior = {imdl.LLt_prior};
+      else
+         opt.LLt_prior = {eye(n_frames)};
+         if n_frames ~= 1
+            fprintf('warning: missing imdl.inv_solve_core.LLt_prior or imdl.LLt_prior: assuming NO temporal regularization LLt=I\n');
+         end
+      end
+   end
+   % bit of a make work project but if its actually a full numeric matrix we
+   % canoncialize it by breaking it up into the blockwise components
+   if isnumeric(opt.LLt_prior)
+      if size(opt.LLt_prior, 1) ~= size(opt.LLt_prior, 2)
+         error('expecting square matrix for imdl.LLt_prior or imdl.inv_solve_core.LLt_prior');
+      end
+      if length(opt.LLt_prior) == 1
+         opt.LLt_prior = {opt.LLt_prior}; % encapsulate directly into a cell array
+      else
+         LLt = opt.LLt_prior;
+         opt.LLt_prior = {[]};
+         msi = 0; mei = 0;
+         for i=1:length(opt.n_frames)
+            msi = mei +1;
+            mei = mei +opt.n_frames{i};
+            msj = 0; mej = 0;
+            for j=1:length(opt.n_frames)
+               msj = mej +1;
+               mej = mej +opt.n_frames{j};
+               opt.LLt_prior(i,j) = LLt(msi:mei, msj:mej);
+            end
+         end
+      end
+   elseif ~iscell(opt.LLt_prior) % not a cell array? encapsulate it
+      opt.LLt_prior = {opt.LLt_prior};
+   end
+   % if not square then expand the block matrix
+   % single row/column: this is our diagonal --> expand to full blockwise matrix
+   if any(size(opt.LLt_prior) ~= ([1 1]*length(opt.n_frames)))
+      if (size(opt.LLt_prior, 1) ~= 1) && ...
+         (size(opt.LLt_prior, 2) ~= 1)
+         error('odd imdl.LLt_prior or imdl.inv_solve_core.LLt_prior, cannot figure out how to expand it blockwise');
+      end
+      if (size(opt.LLt_prior, 1) ~= length(opt.n_frames)) && ...
+         (size(opt.LLt_prior, 2) ~= length(opt.n_frames))
+         error('odd imdl.LLt_prior or imdl.inv_solve_core.LLt_prior, not enough blockwise components vs. meas_working types');
+      end
+      LLt_diag = opt.LLt_prior;
+      opt.LLt_prior = {[]}; % delete and start again
+      for i=1:length(opt.n_frames)
+         opt.LLt_prior(i,i) = LLt_diag(i);
+      end
+   end
+   % now sort out the hyperparameter for the "L L^t" (LLt) matrix
+   hp=opt.hyperparameter_temporal;
+   if size(hp,1) == 1 % one row
+      hp = hp'; % ... now one col
+   end
+   if iscell(hp)
+      % if it's a cell array that matches size of the LLt, then we're done
+      if all(size(hp) == size(opt.LLt_prior))
+         opt.hyperparameter_temporal = hp;
+      % if the columns match, then we can expand on the diagonal, everything else gets '1'
+      elseif length(hp) == length(opt.LLt_prior)
+         opt.hyperparameter_temporal = opt.LLt_prior;
+         [opt.hyperparameter_temporal{:}] = deal(1); % hp = 1 everywhere
+         opt.hyperparameter_temporal(logical(eye(size(opt.LLt_prior)))) = hp; % assign to diagonal
+      else
+         error('hmm, don''t understand this opt.hyperparameter_temporal cellarray');
+      end
+   % if it's a single hyperparameter, that's the value everywhere
+   elseif isnumeric(hp)
+      opt.hyperparameter_temporal = opt.LLt_prior;
+      [opt.hyperparameter_temporal{:}] = deal({hp});
+   else
+      error('don''t understand this opt.hyperparameter_temporal');
    end
 
    % JACOBIAN CHAIN RULE conductivity -> whatever
@@ -1723,12 +1911,13 @@ function opt = parse_options(imdl)
       opt.return_working_variables = 0;
    end
 
-function check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
+function check_matrix_sizes(J, W, hps2RtR, hpt2LLt, dv, de, opt)
    % assuming our equation looks something like
-   % dx = (J'*W*J + hp2RtR)\(J'*dv + hp2RtR*de);
+   % dx = (J'*W*J + hps2RtR)\(J'*dv + hps2RtR*de);
    % check that all the matrix sizes are correct
    ne = size(de,1);
    nv = size(dv,1);
+   nf = size(dv,2);
    if size(de,2) ~= size(dv,2)
       error('de cols (%d) not equal to dv cols (%d)', size(de,2), size(dv,2));
    end
@@ -1740,11 +1929,15 @@ function check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
       error('J size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(J), nv, ne);
    end
    if opt.calc_RtR_prior && ...
-      any(size(hp2RtR) ~= [ne ne])
-      error('hp2RtR size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(hp2RtR), ne, ne);
+      any(size(hps2RtR) ~= [ne ne])
+      error('hps2RtR size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(hps2RtR), ne, ne);
+   end
+   if opt.calc_LLt_prior && ...
+      any(size(hpt2LLt) ~= [nf nf])
+      error('hpt2LLt size (%d rows, %d cols) is incorrect (%d rows, %d cols)', size(hpt2LLt), nf, nf);
    end
 
-function dx = update_dx(J, W, hp2RtR, dv, de, opt)
+function dx = update_dx(J, W, hps2RtR, hpt2LLt, dv, de, opt)
    if(opt.verbose > 1)
       fprintf( '    calc step size dx\n');
    end
@@ -1752,17 +1945,17 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
    de(opt.elem_fixed) = 0;
 
    % TODO move this outside the inner loop of the iterations, it only needs to be done once
-   check_matrix_sizes(J, W, hp2RtR, dv, de, opt)
+   check_matrix_sizes(J, W, hps2RtR, hpt2LLt, dv, de, opt)
 
    % zero out the appropriate things so that we can get a dx=0 for the elem_fixed
    J(:,opt.elem_fixed) = 0;
    de(opt.elem_fixed,:) = 0;
-   hp2RtR(opt.elem_fixed,:) = 0;
+   hps2RtR(opt.elem_fixed,:) = 0;
    V=opt.elem_fixed;
-   N=size(hp2RtR,1)+1;
-   hp2RtR(N*(V-1)+1) = 1; % set diagonals to 1 to avoid divide by zero
+   N=size(hps2RtR,1)+1;
+   hps2RtR(N*(V-1)+1) = 1; % set diagonals to 1 to avoid divide by zero
    % do the update step direction calculation
-   dx = feval(opt.update_func, J, W, hp2RtR, dv, de, opt);
+   dx = feval(opt.update_func, J, W, hps2RtR, hpt2LLt, dv, de, opt);
 
    % check that our elem_fixed stayed fixed
    if any(dx(opt.elem_fixed) ~= 0)
@@ -1779,14 +1972,26 @@ function dx = update_dx(J, W, hp2RtR, dv, de, opt)
       end
    end
 
-function dx = GN_update(J, W, hp2RtR, dv, de, opt)
+function dx = GN_update(J, W, hps2RtR, hpt2LLt, dv, de, opt)
    if ~any(strcmp(opt.update_method, {'lu','pcg'}))
       error(['unsupported update_method: ',opt.update_method]);
    end
    if strcmp(opt.update_method, 'lu')
       try
-         % the actual update
-         dx = -(J'*W*J + hp2RtR)\(J'*W*dv + hp2RtR*de); % LU decomp
+         % expansion for multiple frames
+         if any(any(hpt2LLt ~= eye(size(hpt2LLt))))
+            % this will explode for > some small number of frames... massive memory hog
+            nf = size(dv,2); % number of frames
+            JtWJ = kron(eye(nf),J'*W*J);
+            RtR = kron(hpt2LLt,hps2RtR);
+            JtW = kron(eye(nf),J'*W);
+            % the actual update
+            dx = -(JtWJ + RtR)\(JtW*dv(:) + RtR*de(:)); % LU/Cholesky
+            % put back: one column per frame
+            dx = reshape(dx,length(dx)/nf,nf);
+         else
+            dx = -(J'*W*J + hps2RtR)\(J'*W*dv + hps2RtR*de); % LU/Cholesky
+         end
       catch ME % boom
          fprintf('      LU decomp failed: ');
          disp(ME.message)
@@ -1802,13 +2007,20 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
 
       % try Preconditioned Conjugate Gradient: A x = b, solve for x
       % avoids J'*J for n x m matrix with large number of m cols --> J'*J becomes an m x m dense matrix
-      LHS = @(x) (J'*(W*(J*x)) + hp2RtR*x);
-      RHS = -(J'*W*dv + hp2RtR*de);
+      nm = size(de,1); nf = size(de,2);
+      X = @(x) reshape(x,nm,nf); % undo vec() operation
+
+      LHS = @(X) (J'*(W*(J*X)) + hps2RtR*(X*hpt2LLt));
+      RHS = -(J'*(W*dv) + hps2RtR*(de*hpt2LLt));
+
+      LHSv = @(x) reshape(LHS(X(x)),nm*nf,1); % vec() operation
+      RHSv = reshape(RHS,nm*nf,1);
 
       tol=100*eps*size(J,2)^2; % rough estimate based on multiply-accumulates
 %      maxit = 10;
 
-      [dx, flag, relres, iter, resvec] = pcg(LHS, RHS, tol, maxit, M', M', x0);
+      [dx, flag, relres, iter, resvec] = pcg(LHSv, RHSv, tol, maxit, M', M', x0);
+      dx = X(dx);
       % TODO if verbose...
       switch flag
          case 0
@@ -1842,10 +2054,10 @@ function dx = GN_update(J, W, hp2RtR, dv, de, opt)
 %hold on
 %% sparsity strategies: www.cerfacs.fr/algor/reports/Dissertations/TH_PA_02_48.pdf
 %sJ = J; sJ(J/max(J(:)) > 0.005) = 0; sJ=sparse(sJ); % sparsify J
-%M = ichol(sJ'*W*sJ + hp2RtR + speye(length(J)));
+%M = ichol(sJ'*W*sJ + hps2RtR + speye(length(J)));
 %      [dx, flag, relres, iter, resvec] = pcg(LHS, RHS, tol, maxit, M);
 %         semilogy(xx,resvec/norm(RHS),'r.');
-%         legend('no P', 'IC(sp(J'')*W*sp(J) + hp2RtR)');
+%         legend('no P', 'IC(sp(J'')*W*sp(J) + hps2RtR)');
 %
 %
 %clf; Jj=J(:,1:800); imagesc(Jj'*Jj);
@@ -2578,8 +2790,7 @@ function do_unit_test_diffseq(solver)
    vv.name = 'asfd';
    vv.type = 'data';
    n_frames = size(vi,2);
-   for ii = 1:4
-      clear vhi vii;
+   for ii = 1:7
       switch ii
          case 1
             fprintf('\n\nvh:numeric, vi:numeric data\n');
@@ -2592,15 +2803,26 @@ function do_unit_test_diffseq(solver)
          case 3
             fprintf('\n\nvh:numeric, vi:struct data\n');
             vhi = vh;
+            clear vii;
             for jj=1:n_frames;
                vii(jj) = vv; vii(jj).meas = vi(:,jj);
             end
          case 4
             fprintf('\n\nvh:struct, vi:struct data\n');
             vhi = vv; vhi.meas = vh;
+            clear vii;
             for jj=1:n_frames;
                vii(jj) = vv; vii(jj).meas = vi(:,jj);
             end
+         case 5
+            fprintf('method = LU\n');
+            imdl.inv_solve_core.update_method = 'lu';
+         case 6
+            fprintf('method = PCG\n');
+            imdl.inv_solve_core.update_method = 'pcg';
+         otherwise
+            fprintf('method = default\n');
+            imdl.inv_solve_core = rmfield(imdl.inv_solve_core,'update_method');
       end
       img= inv_solve(imdl, vhi, vii);
       for i=1:size(imgm,2)
@@ -2615,7 +2837,7 @@ function do_unit_test_diffseq(solver)
          unit_test_cmp( sprintf('diff seq image#%d',i), ...
             imgm(:,i)/max(imgm(:,i)), ...
             img.elem_data(:,i)/max(img.elem_data(:,i)), ...
-            0.6 );
+            0.70 );
       end
    end
    eidors_msg('log_level',lvl);
@@ -2645,17 +2867,26 @@ function do_unit_test_absseq(solver)
    vv.name = 'asfd';
    vv.type = 'data';
    n_frames = size(vi,2);
-   for ii = 1:2
-      clear vhi vii;
+   for ii = 1:5
       switch ii
          case 1
             fprintf('\n\nvi:numeric data\n');
             vii = vi;
          case 2
             fprintf('\n\nvi:struct data\n');
+            clear vii;
             for jj=1:n_frames;
                vii(jj) = vv; vii(jj).meas = vi(:,jj);
             end
+         case 3
+            fprintf('method = LU\n');
+            imdl.inv_solve_core.update_method = 'lu';
+         case 4
+            fprintf('method = PCG\n');
+            imdl.inv_solve_core.update_method = 'pcg';
+         otherwise
+            fprintf('method = default\n');
+            imdl.inv_solve_core = rmfield(imdl.inv_solve_core,'update_method');
       end
       img= inv_solve(imdl, vii);
       for i=1:size(imgm,2)
@@ -2667,10 +2898,10 @@ function do_unit_test_absseq(solver)
          fprintf('image#%d: reconstruction error = %g\n',i,err(i));
       end
       for i=1:size(imgm,2)
-         unit_test_cmp( sprintf('diff seq image#%d',i), ...
+         unit_test_cmp( sprintf('abs seq image#%d',i), ...
             imgm(:,i)/max(imgm(:,i)), ...
             img.elem_data(:,i)/max(img.elem_data(:,i)), ...
-            0.45 );
+            0.46 );
       end
    end
    eidors_msg('log_level',lvl);

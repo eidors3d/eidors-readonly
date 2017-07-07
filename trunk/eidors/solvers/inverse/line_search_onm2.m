@@ -1,5 +1,5 @@
-function  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hp2RtR, dv0, opt, retry, pf_max)
-% function  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hp2RtR, dv0, opt)
+function  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hps2RtR, hpt2LLt, dv0, opt, retry, pf_max)
+% function  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hps2RtR, hpt2LLt, dv0, opt)
 % line search function with a fitted polynomial of O(n-2) where n is the number of perturbations
 % (C) 2013 Alistair Boyle
 % License: GPL version 2 or version 3
@@ -64,7 +64,7 @@ for i = 1:length(perturb)
       mlist(i) = +Inf;
    else
       % calculate the residual
-      mlist(i) = feval(opt.residual_func, dv, de, W, hp2RtR);
+      mlist(i) = feval(opt.residual_func, dv, de, W, hps2RtR, hpt2LLt);
       if any(isnan(mlist(i)) | isinf(mlist(i)))
          mlist(i) = +Inf; % NaN or Inf are converted to Inf, since we use NaN to indicate initialized but not calculated
       end
@@ -119,7 +119,7 @@ if length(goodi) > 2
   img.elem_data = x + alpha*dx;
   [dv, opt] = feval(opt.line_search_dv_func, img, data1, N, opt);
   de = feval(opt.line_search_de_func, img, img1, opt);
-  meas_err = feval(opt.residual_func, dv, de, W, hp2RtR);
+  meas_err = feval(opt.residual_func, dv, de, W, hps2RtR, hpt2LLt);
   if opt.verbose > 1
      fprintf('      step size = %0.3g, misfit = %0.3g, expected = %0.3g\n', alpha, meas_err, FF(pf, alpha));
   end
@@ -243,7 +243,7 @@ if alpha == 0 && retry < 5
   if opt.verbose > 1
      fprintf('    retry#%d (attempt with new perturbations)\n', retry+1);
   end
-  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hp2RtR, dv0, opt, retry+1, pf_max);
+  [alpha, img, dv, opt] = line_search_onm2(imgk, dx, data1, img1, N, W, hps2RtR, hpt2LLt, dv0, opt, retry+1, pf_max);
 end
 
 %%%
