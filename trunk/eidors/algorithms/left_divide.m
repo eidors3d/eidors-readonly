@@ -3,7 +3,7 @@ function [V] = left_divide(E,I,tol,~,V)
 % 
 % Implements left division for symmetric positive definite system solves
 % such as the sparse forward solve and dense solve for a GN descent
-% dirrection. LEFT_DIVIDE is optimised for symmetric matrices and overcomes
+% direction. LEFT_DIVIDE is optimised for symmetric matrices and overcomes
 % small inefficiencies of matlab's mldivide. For non-symmetric solves 
 % please use mldivide.
 %
@@ -13,7 +13,7 @@ function [V] = left_divide(E,I,tol,~,V)
 % I   = The currents matrix (RHS)
 % tol = The tolerance in the forward solution, e.g. 1e-5
 %
-% pp,V are old options from previous solver. tilde used in argumens list
+% pp,V are old options from previous solver. tilde used in arguments list
 % to ignore pp and keep matlab's code analyzer happy
 
 % (c) N. Polydorides 2003 % Copying permitted under terms of GNU GPL
@@ -170,8 +170,3 @@ hp  = calc_hyperparameter(imdl);
 LHS = (J'*W*J +  hp^2*RtR);
 RHS = J'*W;
 unit_test_cmp('dense chol',LHS\RHS,left_divide(LHS,RHS))
-
-
-
-
-
