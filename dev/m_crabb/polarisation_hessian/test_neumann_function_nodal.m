@@ -3,7 +3,7 @@ imdl = mk_common_model('b2C',16);
 fmdl = imdl.fwd_model; %Extract model
 fmdl = fix_model(fmdl);
 
-fmdl.gnd_node=50;
+fmdl.gnd_node=1;
 
 %Stimulation - 16 elecs adjacent current/adjacent voltage
 stim = mk_stim_patterns(16,1,'{ad}','{ad}');
@@ -18,10 +18,6 @@ img=mk_image(fmdl,1);
 n_elems = size(fmdl.elems,1);
 n_nodes = size(fmdl.nodes,1);
 
-%N(x,z) - point source at node loc z i.e. each column is vector of
-%DN(x,2,z) = gradient w.r.t z of of N(x,z) maps (:,nodes) to (:,2,elems)
-N0 = calc_neumann_func_nodal(img.fwd_model,img);
-DN0 =calc_grad_potential_nodal(img,N0);
 
 %Space for the analagous analytic freespace/disc N1/2 and DN1/2
 N1=zeros(n_nodes,n_nodes); 
@@ -42,7 +38,10 @@ for ii=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
         N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
-        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);          
+        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);                 
+%        N3(ii,jj) = (1+yjj(1))*(1+yjj(2));                         
+        N3(ii,jj) = yjj(1)^2*yjj(2)^2;                         
+%        N3(ii,jj) = yjj(2)^2;                                 
     end      
     
     for jj=1:n_elems
@@ -54,26 +53,30 @@ for ii=1:n_nodes
     end    
 end
 
-%N0 = calc_neumann_func_nodal(img.fwd_model,img);
-%DN2 =calc_grad_potential_nodal(img,N2);
+%N(x,z) - point source at node loc z i.e. each column is vector of
+%DN(x,2,z) = gradient w.r.t z of of N(x,z) maps (:,nodes) to (:,2,elems)
+N0 = calc_neumann_func_nodal(img.fwd_model,img);
+DN0 =calc_grad_potential_nodal(img,N0);
+
+%DN0 =calc_grad_potential_nodal(img,N3);
 
 
 %Put same ground node on analytic solution
 %N0=N0'
 
-for iii=1:n_nodes
-   N2(:,iii) = N2(:,iii) - N2(fmdl.gnd_node,iii);
-end
+%for iii=1:n_nodes
+%   N2(:,iii) = N2(:,iii) - N2(fmdl.gnd_node,iii);
+%end
 
 %sum(N0(bound_nodes,80))
 
 %for node_indices=[5,10,20,50,100]
 %for node_indices=[10,15,20,35,50]
-for node_indices=[138]
+for node_indices=[114]
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
-hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
-hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'b*')
+%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
+%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'b*')
 
 figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'r*')
 %figure;
@@ -87,6 +90,10 @@ figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indice
 img0x = img;img0y = img;
 img0x.elem_data = squeeze(DN0(node_indices,1,:));
 img0y.elem_data = squeeze(DN0(node_indices,2,:));
+
+img0x.elem_data(225)=0; img0y.elem_data(225)=0;
+img0x.elem_data(249)=0; img0y.elem_data(249)=0;
+
 
 img1x = img;img1y = img;
 img1x.elem_data = squeeze(DN1(node_indices,1,:));
