@@ -79,7 +79,7 @@ for ii=1:nelems
     % Loop over drive patterns
     for jj=1:n_potentials
        DU0(jj,:,ii) = (dphi_ii*u0(jj,eleminodelist)')';
-     %  DU0(jj,:,ii) = sum(dphi_ii.*(repmat(u0(jj,eleminodelist),dim,1))',1);
+    % DU0(jj,:,ii) = sum(dphi_ii.*(repmat(u0(jj,eleminodelist),dim,1))',1);
     end        
            
 %     %Initialise and find elemental stiffness matrices 
