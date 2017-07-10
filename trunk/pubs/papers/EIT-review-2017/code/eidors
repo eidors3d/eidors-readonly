@@ -1,0 +1,59 @@
+#! /bin/bash
+
+function help() {
+   echo "$(basename $0) [options] [cmd]"
+   echo "  -u, --unsupervised  unsupervised mode, exit when done,"
+   echo "                      failout if an error is thrown"
+   echo "  -h, --help          this help"
+   echo "  cmd                 a MATLAB command" 
+   echo "Starts up MATLAB in console mode and loads EIDORS, then (optionally)"
+   echo "  runs <cmd>, leaving one at the MATLAB console"
+}
+
+opt=$(getopt -o uhl: --long unsupervised,help,log: -- "$@")
+[ $? -eq 0 ] || {
+   echo "Invalid options: $@"
+   exit 1
+}
+eval set -- "$opt"
+while true; do
+   case "$1" in
+      -h|--help)      help; exit 0;;
+      -u|--unsupervised) UNSUPERVISED="true";;
+      -l|--log) LOG="$2"; shift;;
+      --) shift; break;;
+   esac
+   shift
+done
+
+# dump all stdout/stderr to $LOG if requested
+if [ -n "$LOG" ]; then
+   exec &> >(tee "$LOG")
+fi
+
+# set a limit on consumed memory so we don't kill the server
+MEM_TOTAL=$(grep MemTotal /proc/meminfo | sed -e 's/^.*: *//' -e 's/ kB.*//')
+MEM_AVAIL=$(grep MemAvail /proc/meminfo | sed -e 's/^.*: *//' -e 's/ kB.*//')
+ULIMIT_MEM=$(echo "$MEM_AVAIL - 1000000" | bc) # in kB (1024 B)
+echo "memory total:       $MEM_TOTAL kB"
+echo "memory available:   $MEM_AVAIL kB"
+echo "setting mem ulimit: $ULIMIT_MEM kB"
+echo "$ ulimit -Sv $ULIMIT_MEM -Sm $ULIMIT_MEM"
+#ulimit -Sv $ULIMIT_MEM -Sm $ULIMIT_MEM
+#ulimit -a
+
+# add any directories to the path
+D=${PWD}
+EIDORS_PROJ=${EIDORS_PROJ:-${HOME}/proj/eidors3d.git}
+if [ -d ${D}/src ]; then
+  P="addpath([pwd,'/src']); "
+fi
+if [ -n "${UNSUPERVISED}" ]; then
+   F="${ARGS}try $@; catch, me=lasterror; dbstack; disp(['error: ' me.message]); quit(1); end; quit(0)"
+else
+   F=$@
+fi
+CMD="cd ${D}; ${P}${F}"
+cd ${EIDORS_PROJ}/eidors
+echo "$ matlab -nosplash -nodesktop -r $CMD"
+exec matlab -nosplash -nodesktop -r "$CMD"

@@ -1,0 +1,15 @@
+The following dependencies are required to compile this document:
+
+ - make
+ - texlive
+ - latexmk
+ - EIDORS 3.9+
+ - LibreOffice
+ - imagemagick
+ - pdfcrop
+
+1. update the "code/eidors" script to point to your local version of EIDORS
+
+2. type "make" from this directory
+
+The result should be a PDF (EIT-review.pdf) in the current directory.
