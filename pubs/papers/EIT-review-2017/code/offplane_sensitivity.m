@@ -9,13 +9,13 @@ function  m2_3D_sensitivity;
       [stim,msel] = mk_stim_patterns(N_ELECS,1,[0,s],[0,s],{'no_meas_current'},1);
 
       imgm= do_simulation(stim,msel,1.0,1);
-      print_it(sprintf('../figs/fig09-offplane-sens-1plane_%c',64+s),opt)
+      print_it(sprintf('fig07-offplane-sens-1plane_%c',64+s),opt)
 
       imgm= do_simulation(stim,msel,1.0,2);
-      print_it(sprintf('../figs/fig09-offplane-sens-2plane_%c',64+s),opt)
+      print_it(sprintf('fig07-offplane-sens-2plane_%c',64+s),opt)
 
       imgm= do_simulation(stim,msel,1.0,2.1);
-      print_it(sprintf('../figs/fig09-offplane-sens-2pl_sq%c',64+s),opt)
+      print_it(sprintf('fig07-offplane-sens-2pl_sq%c',64+s),opt)
 
       if DO_LUNGS_MODEL
       imgm= do_simulation(stim,msel,0.3,1);
