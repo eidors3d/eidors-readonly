@@ -15,6 +15,7 @@
 \usepackage{siunitx}
 % Shouldn't be required, but subcaption seems to override IEEEtran captions
 \captionsetup{font=small,labelfont={bf}}
+\graphicspath{{../figs/}}
 
 % Maximum three authors for IEEE
 %\newcommand{\ifmaxthree}[2]{#1}
@@ -646,12 +647,12 @@ pattern has very poor sensitivity to internal changes \cite{Adler2011Adjacent}
 with a ``skip'' distance between the driven and measurement electrodes.
 
 \begin{figure} \centering
-   \subcaptionbox{\centering Adjacent [1,2],[3,4]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip11.png}}\hfil%
-   \subcaptionbox{\centering Adjacent [1,2],[4,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip12.png}}\hfil%
-   \subcaptionbox{\centering Adjacent [2,3],[4,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip13.png}}\\
-   \subcaptionbox{\centering Skip\,2 [1,4],[2,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip21.png}}\hfil
-   \subcaptionbox{\centering Skip\,2 [1,4],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip22.png}}\hfil
-   \subcaptionbox{\centering Skip\,2 [2,5],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{../figs/skip23.png}}\\
+   \subcaptionbox{\centering Adjacent [1,2],[3,4]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{skip11.png}}\hfil%
+   \subcaptionbox{\centering Adjacent [1,2],[4,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{skip12.png}}\hfil%
+   \subcaptionbox{\centering Adjacent [2,3],[4,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{skip13.png}}\\
+   \subcaptionbox{\centering Skip\,2 [1,4],[2,5]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{skip21.png}}\hfil
+   \subcaptionbox{\centering Skip\,2 [1,4],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{skip22.png}}\hfil
+   \subcaptionbox{\centering Skip\,2 [2,5],[3,6]}[0.25\columnwidth]{\includegraphics[width=0.25\columnwidth]{skip23.png}}\\
 \caption{%
 Illustration of pair-drive stimulation and measurement patterns for an 8
    electrode system using (top row) an adjacent pattern, and (bottom row) a
@@ -809,8 +810,8 @@ in the region of a drive and measurement electrode.
 
 \begin{figure}
 \centering
-   \subcaptionbox{\centering Drive electrode}[0.45\columnwidth]{\includegraphics[width=0.45\columnwidth]{../figs/stream1.pdf}}\hfil
-   \subcaptionbox{\centering Measurement electrode}[0.45\columnwidth]{\includegraphics[width=0.45\columnwidth]{../figs/stream2.pdf}}\\
+   \subcaptionbox{\centering Drive electrode}[0.45\columnwidth]{\includegraphics[width=0.45\columnwidth]{stream1.pdf}}\hfil
+   \subcaptionbox{\centering Measurement electrode}[0.45\columnwidth]{\includegraphics[width=0.45\columnwidth]{stream2.pdf}}\\
 %http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/contact_impedance.shtml
 \caption{%
 Current streamlines near drive and measurement electrodes, with
@@ -870,7 +871,7 @@ where, for difference EIT, $\vB_r$ is calculated at an assumed
 ``background conductivity'', $\sG_r$.
 
 \begin{figure} \centering
-   \subcaptionbox{\centering Dual FEM mesh}[0.45\columnwidth]{\includegraphics[width=0.45\columnwidth]{../figs/fem.pdf}}\hfil
+   \subcaptionbox{\centering Dual FEM mesh}[0.45\columnwidth]{\includegraphics[width=0.45\columnwidth]{fem.pdf}}\hfil
    \subcaptionbox{\centering First-order FEM as a resistor mesh}[0.45\columnwidth]{
       \ctikzset{bipoles/length=0.05\columnwidth}
       \begin{tikzpicture}[scale=0.45\columnwidth/4.0cm,every node/.style={scale=0.45\columnwidth/4.0cm}]
@@ -934,10 +935,10 @@ conductivity changes in each element $i$ is
 $ S_i = (V_i)^{-1} (\sum_j J_{i,j}^2 )^{\frac{1}{2}}$.
 
 \begin{figure} \centering
-   \subcaptionbox{\centering Single measurement}[0.30\columnwidth]{\includegraphics[width=0.30\columnwidth]{../figs/sens1.png}}\hfil%
-   \subcaptionbox{\centering Adjacent}[0.30\columnwidth]{\includegraphics[width=0.30\columnwidth]{../figs/sens2.png}}\hfil%
-   \subcaptionbox{\centering Skip-4}[0.30\columnwidth]{\includegraphics[width=0.30\columnwidth]{../figs/sens3.png}}\\
-   \centering \includegraphics[width=0.75\columnwidth]{../figs/sens-cb.png}\\
+   \subcaptionbox{\centering Single measurement}[0.30\columnwidth]{\includegraphics[width=0.30\columnwidth]{sens1.png}}\hfil%
+   \subcaptionbox{\centering Adjacent}[0.30\columnwidth]{\includegraphics[width=0.30\columnwidth]{sens2.png}}\hfil%
+   \subcaptionbox{\centering Skip-4}[0.30\columnwidth]{\includegraphics[width=0.30\columnwidth]{sens3.png}}\\
+   \centering \includegraphics[width=0.75\columnwidth]{sens-cb.png}\\
 \caption{%
 Spatial distributions of EIT sensitivity for various
 stimulation and measurement patterns:
@@ -959,8 +960,8 @@ although the reconstructions are unreliable in regions far from electrodes
 as the sensitivity is very small.
 
 \begin{figure} \centering
-   \includegraphics[width=0.47\columnwidth]{../figs/fig07-offplane-sens-1plane_F.pdf}
-   \includegraphics[width=0.47\columnwidth]{../figs/fig07-offplane-sens-2pl_sqF.pdf}
+   \includegraphics[width=0.47\columnwidth]{fig07-offplane-sens-1plane_F.pdf}
+   \includegraphics[width=0.47\columnwidth]{fig07-offplane-sens-2pl_sqF.pdf}
 \caption{%
 Off-plane sensititivity for a cross section through an elliptical
 model of a uniform thorax, for 
@@ -992,7 +993,7 @@ three times the sensitivity of non-conductive
 ones \cite{Adler2015Perturbations}.
 
 \begin{figure} \centering
-   \includegraphics[width=0.95\columnwidth]{../figs/fig08_conductivity_contrast.pdf}
+   \includegraphics[width=0.95\columnwidth]{fig08_conductivity_contrast.pdf}
 \caption{%
 The relative EIT sensitivity as a function of the shape and
 conductivity of a ROI. The stimulation configuration (subfigure at right)
@@ -1141,24 +1142,24 @@ the reconstruction norm.
 %http://eidors3d.sourceforge.net/tutorial/EIDORS_basics/tutorial120.shtml
 % 
 % Maybe chose an image that makes Tikhonov look worse
-   \subcaptionbox{\centering Model}[0.50\columnwidth]{\includegraphics[width=0.50\columnwidth]{../figs/hp1.png}}\\
+   \subcaptionbox{\centering Model}[0.50\columnwidth]{\includegraphics[width=0.50\columnwidth]{hp1.png}}\\
    \subcaptionbox{\centering   Tikhonov}[0.90\columnwidth]{%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp41.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp31.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp21.png}}\hfil%
+      \includegraphics[width=0.30\columnwidth]{hp41.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp31.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp21.png}}\hfil%
    \subcaptionbox{\centering   Laplace}[0.90\columnwidth]{%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp42.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp32.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp22.png}}\hfil%
+      \includegraphics[width=0.30\columnwidth]{hp42.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp32.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp22.png}}\hfil%
    \subcaptionbox{\centering   Noser}[0.90\columnwidth]{%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp43.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp33.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp23.png}}\hfil%
+      \includegraphics[width=0.30\columnwidth]{hp43.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp33.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp23.png}}\hfil%
    \subcaptionbox{\centering   Total Variation}[0.90\columnwidth]{%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp45.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp35.png}~~%
-      \includegraphics[width=0.30\columnwidth]{../figs/hp25.png}}\hfil%
-   \centering \includegraphics[width=0.70\columnwidth]{../figs/hp-cb.png}\\
+      \includegraphics[width=0.30\columnwidth]{hp45.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp35.png}~~%
+      \includegraphics[width=0.30\columnwidth]{hp25.png}}\hfil%
+   \centering \includegraphics[width=0.70\columnwidth]{hp-cb.png}\\
 \caption{%
 EIT reconstructions as a function of hyperparameter
 and regularization matrix. The top row shows the simulation model
@@ -1297,7 +1298,7 @@ low or no ventilation. This EIT measure is recorded as a function of time, and
 serves to assess the subject's state of ventilation.
 
 \begin{figure} \centering
-   \includegraphics[width=0.95\columnwidth]{../figs/fig10-hypoventilation-fraction.pdf}
+   \includegraphics[width=0.95\columnwidth]{fig10-hypoventilation-fraction.pdf}
 \caption{%
 Block diagram of the calculation of the
 fraction of hypoventilated lung \cite{Waldmann2015Silent}.

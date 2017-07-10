@@ -6,8 +6,7 @@ latexmk:=latexmk -pdf -pdflatex="$(pdflatex)" -dependents
 %.pdf: %.tex
 	$(latexmk) $<
 
-EIT-review.pdf :\
-    ../figs/fem.pdf\
+DEP= ../figs/fem.pdf\
     ../figs/fig07-offplane-sens-1plane_F.pdf\
     ../figs/fig07-offplane-sens-2pl_sqF.pdf\
     ../figs/fig08_conductivity_contrast.pdf\
@@ -39,6 +38,18 @@ EIT-review.pdf :\
     ../figs/stream1.pdf\
     ../figs/stream2.pdf\
 
+EIT-review.pdf : $(DEP)
+
+EIT-review.zip : EIT-review.tex $(DEP)
+	-rm -rf $(basename $@) $@
+	mkdir $(basename $@)
+	cp $^ $(basename $@)/
+	zip -r $@ $(basename $@)/
+	rm -rf $(basename $@)/
+	unzip $@
+	cd $(basename $@)/ && $(latexmk) $(basename $@).tex
+	rm -rf $(basename $@)/
+
 clean:
 	$(latexmk) -C EIT-review.tex
 	-rm -f *-diff*.tex
@@ -47,6 +58,7 @@ clean:
 	-rm -f ../code/*.pdf
 	-rm -f ../code/*.eps
 	-rm -f ../code/ng.opt
+	-rm -f EIT-review.zip
 
 ifndef SKIPFIGS
 # hpXX.png
