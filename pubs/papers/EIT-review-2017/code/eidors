@@ -49,7 +49,7 @@ if [ -d ${D}/src ]; then
   P="addpath([pwd,'/src']); "
 fi
 if [ -n "${UNSUPERVISED}" ]; then
-   F="${ARGS}try $@; catch, me=lasterror; dbstack; disp(['error: ' me.message]); quit(1); end; quit(0)"
+   F="${ARGS}try $@; catch me=lasterror; dbstack; disp(['error: ' me.message]); quit(1); end; quit(0)"
 else
    F=$@
 fi
