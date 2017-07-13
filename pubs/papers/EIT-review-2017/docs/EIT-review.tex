@@ -1029,7 +1029,7 @@ parameter space of $\xB$ is larger than the acquired measurements, $\yB$.
 The most common approach is based
 on minimization of a norm
 \begin{equation}
-\| \yB - F(\xH) \|^2_\WB + \lambda^2\| \xH - \xB_0 \|^2_\QB,
+\| \yB - F(\xH) \|^2_\WB + \lambda^2\| \xH - \xB^* \|^2_\QB,
 \label{eqn:minimize_norm}
 \end{equation}
 where the first term $\yB - F(\xH)$ is the ``data mismatch''
@@ -1040,9 +1040,9 @@ however, given a knowledge of the reliability of each measurement channel,
 $\WB$ can be used to represent this reliability during
 reconstruction \cite{Mamatjan2013Quality}.
 The second term is the mismatch between the reconstruction
-estimate, $\xH$, and an {\em a priori} estimate of its value, $\xB_0$.
+estimate, $\xH$, and an {\em a priori} estimate of its value, $\xB^*$.
 For aEIT, accurate estimation of this value is important for convergence.
-For difference EIT, $\xB_0=0$, since increases and decreases are
+For difference EIT, $\xB^*=0$, since increases and decreases are
 equally likely.
 $\QB$ is the ``regularization matrix'' discussed later.
 The relative weighting between the data and prior mismatch terms 
@@ -1053,10 +1053,10 @@ but are noisier and less well conditioned.
 
 The reconstructed solution, $\xH$, minimizes (\ref{eqn:minimize_norm})
 and is most commonly calculated via
-an iterative update, $\xH^{(k+1)} = \xH^{(k)} + \Delta\xH^{k}$ 
-starting at $\xH = \xB_0$, using
+an iterative update, $\xH^{(k+1)} = \xH^{(k)} + \delta\xH$ 
+starting at $\xH^{(0)} = \xB^*$, using the update
 \begin{equation}
-\Delta\xH^{(k)}= 
+\delta\xH= 
  \left( \JB_k^t \WB \JB_k + \lambda^2 \QB \right)^{-1}
        \left( \JB_k^t \WB \Delta \yB - 
       \lambda^2 \QB     \Delta \xB \right),
@@ -1065,7 +1065,7 @@ starting at $\xH = \xB_0$, using
 where $\JB_k$ is the Jacobian, updated at each iteration based on 
 $\xB^{(k)}$,
 and $\Delta\yB = \yB - F(\xB^{(k)})$ 
-and $\Delta\xB = \xH^{(k)} - \xH^{(0)}$.
+and $\Delta\xB = \xH^{(k)} - \xB^*$.
 Often, especially for tdEIT, only one iteration is required,
 and a precalculated reconstruction matrix, $\RB$, can be
 calculated
