@@ -65,7 +65,6 @@
 \maketitle
 
 \begin{abstract}
-\emph{Significance:}
 Electrical Impedance Tomography (EIT) uses electrical
 stimulation and measurement at the body surface to
 image the electrical properties of internal tissues.
@@ -78,13 +77,13 @@ tissues, fluids or gasses, such as imaging of cancerous
 or ischemic tissue or functional monitoring
 of breathing, blood flow, gastric motility
 and neural activity.
-\emph{Objective:}
 The past decade has seen clinical application and commercial
 activity using EIT for ventilation monitoring.
+%\emph{Objective \& Methods:}
 Interpretation of EIT-based measures is complex, and
 this review paper focuses on 
 describing the image interpretation ``pathway.''
-\emph{Methods:}
+%\emph{Methods:}
 We review this pathway, from
 {\em Tissue Electrical Properties},
 {\em EIT Electrodes \& Hardware},
@@ -93,11 +92,11 @@ We review this pathway, from
 {\em Image Processing}
 to 
 {\em EIT Measures}.
-\emph{Results:}
+%\emph{Results:}
 The relationship is discussed between the 
 clinically-relevant parameters and the 
 reconstructed properties.
-\emph{Conclusion:}
+%\emph{Conclusion:}
 An overview is given of areas of EIT application
 and of our perspectives for
 research and development.
@@ -259,12 +258,12 @@ are used to calculate an image of the difference
 in electrical properties between the frequencies.
 
 As a {\em functional monitoring} technology, EIT is sensitive
-to changes in tissue properties over time, using
-time-difference (tdEIT) image reconstruction, which 
-is more stable,
-as it can compensate for sources
-of interference 
-that remain stable over time \cite{Brown2003EIT}.
+to changes in tissue properties over time.
+Time-difference (tdEIT) image reconstruction, 
+is more stable
+since it is less sensitive to 
+interferences
+which remain stable \cite{Brown2003EIT}.
 The main application of tdEIT 
 has been for breathing (moving non-conductive
 air) and heart activity (moving conductive blood).
@@ -329,9 +328,9 @@ cardiac \newline function &
     \hline
 Neural \& \newline
 brain activity &
- - $^\dagger$Stroke (Hemorrhagic vs.\ Ischemic) \cite{Romsauerova2006mfEIT}
+ - Stroke (Hemorrhagic vs.\ Ischemic)$^\dagger$ \cite{Romsauerova2006mfEIT}
       \newline
- - $^\dagger$Epileptic regions and foci 
+ - Epileptic regions and foci$^\dagger$ 
       \newline
  - Cerebral perfusion \cite{Adler2017Cerebral}
           \newline
@@ -343,13 +342,13 @@ brain activity &
 \\
     \hline
 Cancerous tissue &
- - $^\dagger$Breast cancer screening \cite{Assenheimer2001TScan,Cherepenin2001Breast} 
+ - Breast cancer screening$^\dagger$ \cite{Assenheimer2001TScan,Cherepenin2001Breast} 
       \newline
- - $^\dagger$Prostate cancer screening \cite{Borsic2009Prostate, Halter2007Postate}
+ - Prostate cancer screening$^\dagger$ \cite{Borsic2009Prostate, Halter2007Postate}
       \newline
- - $^\dagger$EIT + mammography \cite{Choi2007Mammography}
+ - EIT + mammography$^\dagger$ \cite{Choi2007Mammography}
       \newline
- - $^\dagger$EIT + ultrasound \cite{Soleimani2006Ultrasound}
+ - EIT + ultrasound$^\dagger$ \cite{Soleimani2006Ultrasound}
 \\
     \hline
 Other &
@@ -359,14 +358,14 @@ Other &
        \newline
  - Bladder volume and emptying \cite{Leonhardt2011Bladder}
        \newline
- - $^\dagger$Edema \cite{Abboud1995Peripheral, Newell1996}
+ - Edema$^\dagger$ \cite{Abboud1995Peripheral, Newell1996}
        \newline
- - $^\dagger$Hemorrhage and blood accumulation \cite{Sadleir2009blood}
-% \\
-% \multicolumn{2}{l}{%
-%     $^\dagger$ indicates use of aEIT or fdEIT imaging;
-%     others use tdEIT
-%}
+ - Hemorrhage and blood accumulation$^\dagger$ \cite{Sadleir2009blood}
+  \\
+  \multicolumn{2}{l}{\em%
+      $^\dagger$indicates use of aEIT or fdEIT imaging;
+      others use tdEIT
+ }
 \end{tabular}
 \end{table}
 
@@ -548,7 +547,7 @@ For ease of application, electrodes are sometimes incorporated into a belt or
 harness \cite{Waldmann2017Interface}, but are also applied individually. 
 Both non-polarizable (ECG-type Ag/AgCl electrodes) and 
          polarizable (stainless steel, conductive fabrics and rubbers)
-have been used. When operating at stimulation frequencies above
+have been used. When operating at stimulation frequencies in
 the kHz range (as do most systems), the polarization of electrodes is
 a less significant effect.
 
@@ -1229,7 +1228,7 @@ the reconstruction formulation.
 
 \subsection{Image Processing and EIT Measures}
 
-Raw EIT images do not directly give relevant clinical information.
+Raw EIT images do not typically give directly relevant clinical information.
 Instead images must be analysed to calculate application-relevant images
 and measures. 
 EIT image analysis is most developed for thoracic EIT, in which a
@@ -1253,7 +1252,7 @@ the difference between the end-inspiratory and
 end-expiratory voxel values \cite{Hahn1995Distribution}
 (the first step of \fref{fig:fEIT_eg_silent_spaces})
 \item
-{\em Ventilation- and Cardiac-frequency}$^\dagger$, which
+{\em Ventilation- or Cardiac-frequency}$^\dagger$, which
  characterize the breathing- and heart-related components
 of the image sequence, using a corresponding frequency
 filter \cite{Ferrario2012morphological}, or ensemble average 
