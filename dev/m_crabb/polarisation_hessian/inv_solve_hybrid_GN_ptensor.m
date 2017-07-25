@@ -112,8 +112,18 @@ for i=1:maxiter
     %Hessian of objective function
     hess_obj = J'*J + hp^2*RtR + diag(CC);
     
-    %Compute search direction - negate gradient and do search    
-    grad_obj=-grad_obj; p_search = hess_obj \ grad_obj;
+    
+    if ~exist('mod_chol','file')
+        %Compute search direction - negate gradient and do search
+        grad_obj=-grad_obj; p_search = hess_obj \ grad_obj;
+        
+    else
+        % Modified Cholesky factorisation
+        [L,D] = mod_chol(hess_obj);
+        
+        %Compute search direction - negate gradient and do search
+        grad_obj=-grad_obj; p_search = L\D\(L.') \ grad_obj;
+    end
     
     %% Backtracking line search??
     if(bls==2) %No linesearch

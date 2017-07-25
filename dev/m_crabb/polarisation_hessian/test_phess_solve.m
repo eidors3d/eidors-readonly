@@ -39,11 +39,12 @@ sim_img.elem_data(pixel_group) = cond_obj;
 data = fwd_solve(sim_img)
 
 
+
 %% Eidors in-built inverse diff solver
 imdl.hyperparameter.value = 0.003;
 img_eid_diff = inv_solve(imdl, data_hom,data);
 
-figure; 
+figure(1); 
 subplot(121); show_fem(sim_img,1)
 subplot(122); show_fem(img_eid_diff,1)
 
@@ -54,59 +55,150 @@ imdl.solve =  @inv_solve_core;
 imdl.reconst_type = 'absolute';
 img_eid_abs = inv_solve(imdl, data);
 
-figure; 
+figure(2); 
 subplot(121); show_fem(sim_img,1)
 subplot(122); show_fem(img_eid_abs,1)
 
 data_rec=fwd_solve(img_eid_abs)
-figure; plot(data.meas,'r'); hold on; plot(data_hom.meas,'b');  hold on; plot(data_rec.meas,'b')
+figure(3); plot(data.meas,'r'); hold on; plot(data_hom.meas,'b');  hold on; plot(data_rec.meas,'b')
 
 %%
 % Default options
 opts = [];
-opts.ptensor = 1;
+opts.H0_type = 'ptensor';
 opts.use_hyper = 1;
 opts.neumann = 'freespace';
-opts.ptensor_its = 50;
-% opts.update_delta = 0;
-% [x_f0, r_f0] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+opts.ptensor_its = 100;
+opts.max_its = 100;
 opts.update_delta = 1;
-[x_f, r_f] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
-opts.ptensor_its = 20;
-[x_f20, r_f20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+
+figure(4)
+
+% 3 update settings in freespace
+opts.neumann = 'freespace';
+opts.update_U0 = 0;
+opts.flexible = false;
+tic
+[x_f00, r_f00, cts_f00, er_f00] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tf00 = toc
+semilogy(0:100, r_f00/ r_f00(1))
+
+%
+
+opts.neumann = 'freespace';
+opts.update_U0 = 0;
+opts.flexible = true;
+tic
+[x_f10, r_f10, cts_f10, er_f10] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tf10 = toc
+hold all
+semilogy(0:100, r_f10/ r_f00(1))
+
+%
+opts.neumann = 'freespace';
+opts.flexible = true;
+opts.update_U0 = 1;
+tic
+[x_f11, r_f11, cts_f11, er_f11] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tf11 = toc
+hold all
+semilogy(0:100, r_f11/ r_f00(1))
+
+% %
+% opts.ptensor_its = 20;
+% [x_f20, r_f20, cts_f20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+% semilogy(0:50, r_f20/ r_f0(1))
+
+% 3 update settings on a disc
+opts.neumann = 'disc';
+opts.update_U0 = 0;
+opts.flexible = false;
+tic
+[x_d00, r_d00, cts_d00, er_d00] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+td00 = toc
+semilogy(0:100, r_d00/ r_f00(1))
+
 %
 opts.neumann = 'disc';
-opts.use_hyper = 1;
-opts.ptensor_its = 50;
-[x_d, r_d] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
-opts.ptensor_its = 20;
-[x_d20, r_d20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+opts.update_U0 = 0;
+opts.flexible = true;
+tic
+[x_d10, r_d10, cts_d10, er_d10] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+td10 = toc
+semilogy(0:100, r_d10/ r_f00(1))
+
+%
+opts.neumann = 'disc';
+opts.update_U0 = 1;
+opts.flexible = true;
+tic
+[x_d11, r_d11, cts_d11, er_d11] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+td11 = toc
+semilogy(0:100, r_d11/ r_f00(1))
 
 
-% 
-% % Re-calc U0
-% opts.update_U0 = 1;
-% [x_Pup, r_Pup] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
-% 
+% %
+% opts.ptensor_its = 20;
+% [x_d20, r_d20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+% semilogy(0:100, r_d20/ r_f0(1))
+
+
+%
+% compare to DGN0
+
+
+
 % % Include reg
 % opts.update_U0 = 0;
 % opts.use_hyper = 1;
-% [x_Phy, r_Phy] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+% [x_Phy, r_Phy, cts_Phy] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+% 
+% 
 % 
 % % Include reg and recalc U0
 % opts.update_U0 = 1;
 % opts.use_hyper = 1;
-% [x_Phyup, r_Phyup] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
+% [x_Phyup, r_Phyup, cts_Phyup] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
 % 
 % % Re-scaling
 % opts.use_hyper = 0;
 % opts.rescale = 1;
-% [x_Pre, r_Pre] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
-% 
-% % no ptensor
-% opts.ptensor = 0;
-% [x_I, r_I] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
-% 
+% [x_Pre, r_Pre, cts_Pre] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
 
 
+%%
+% no ptensor
+opts.H0_type = '';
+tic
+[x_I, r_I, cts_I, er_I] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tI = toc
+semilogy(0:100, r_I/ r_f00(1))
 
+%% 
+opts.H0_type = 'DGN0';
+opts.flexible = false;
+tic
+[x_GN0, r_GN0, cts_GN0, er_GN0] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tGN0 = toc
+% semilogy(0:100, r_GN0/ r_f00(1))
+
+%
+opts.H0_type = 'DGN0';
+opts.flexible = true;
+tic
+[x_GN1, r_GN1, cts_GN1, er_GN1] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tGN1 = toc
+% semilogy(0:100, r_GN1/ r_f00(1))
+
+
+%%
+figure(5)
+semilogy(0:100, er_f00/ er_f00(1))
+hold all
+semilogy(0:100, er_f10/ er_f00(1))
+semilogy(0:100, er_f11/ er_f00(1))
+semilogy(0:100, er_d00/ er_f00(1))
+semilogy(0:100, er_d10/ er_f00(1))
+semilogy(0:100, er_d11/ er_f00(1))
+semilogy(0:100, er_GN0/ er_f00(1))
+semilogy(0:100, er_GN1/ er_f00(1))
