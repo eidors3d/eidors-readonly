@@ -13,6 +13,7 @@ if ~isempty(H)
         return
 end
 
+
 [H]= mc_calc_hessian(fwd_model,img,elem_list);
 
 eidors_obj('set-cache', cache_obj, 'hessian',H);
@@ -28,6 +29,7 @@ function H = mc_calc_hessian(fwd_model,img,elem_list)
 if(nargin==1)
     img=fwd_model; fwd_model=img.fwd_model;
 end
+
 
 %Modify the forward model to be of my type
 %%fwd_model = mc_fem_modify(fwd_model); img.fwd_model=fwd_model;
@@ -112,6 +114,7 @@ D2E= zeros(nelecs,nstims,length(elem_list),length(elem_list));
 %First step, we only want to pick off the ith electrode
 zi2E(:,idx) = Node2Elec(:,idx)/At(idx,idx);
 
+   
 %Calculate the partial derivative matrix for kth change
 for idxkk=1:length(elem_list)
         %Select kth element
@@ -126,7 +129,7 @@ for idxkk=1:length(elem_list)
         
     for idxll=1:length(elem_list)
         %Select kth element
-        l=elem_list(idxll);
+        l=elem_list(idxll);      
         
         %Get the lth element global nodes and stiffness
         stiffl=elemstiff(l).elemstiff; nodesl=elemstruc(l,:); idxl=1:size(nodesl,2);
@@ -143,7 +146,6 @@ for idxkk=1:length(elem_list)
     fprintf(1,'Hessian completed for element %i of %i\n',idxkk,length(elem_list));
 end
 
-
 %Calculate Hessian tensor (measurement patterns specified here)
 cnthes=0; H=zeros(nmeass,length(elem_list),length(elem_list));
 for j=1:nstims   
@@ -157,6 +159,5 @@ for j=1:nstims
    end
    cnthes = cnthes + n_meas;
 end 
-
 
 end
