@@ -39,11 +39,13 @@ sim_img.elem_data(pixel_group) = cond_obj;
 data = fwd_solve(sim_img);
 
 %% Eidors in-built inverse abs solver
-imdl.hyperparameter.value = 0.00001;
+eidors_cache('clear_all')
+
+imdl.hyperparameter.value = 1e-6;
 imdl.fwd_model=fmdl;
 imdl.solve =  @inv_solve_core;
 imdl.reconst_type = 'absolute';
-imdl.inve_solve_core = [];
+imdl.inv_solve_core = [];
 img_eid_abs = inv_solve(imdl, data);
 
 figure; 
@@ -54,6 +56,9 @@ data_rec=fwd_solve(img_eid_abs)
 figure; plot(data.meas,'r'); hold on; plot(data_hom.meas,'b');  hold on; plot(data_rec.meas,'b')
 
 %% Hybrid update
+eidors_cache('clear_all')
+
+% imdl.inv_solve_core.line_search_args.perturb =[0,10.^[ 1, 2, 3,4,5,7]];
 u0 = data_hom.volt;
 DU0 = calc_grad_potential(homog_img,u0);
 imdl.inv_solve_core.update_func = @(J,W,dv,de,hp,opt)hybrid_GN_ptensor_update(sim_img.fwd_model,sim_img, DU0, J,W,dv,de,hp,opt);

@@ -108,7 +108,7 @@ for ii=1:5:22
     
     
     subplot(2,3,2)
-    img.elem_data = Cpd(:,ii);
+    img.elem_data = Cpf(:,ii);
     show_fem(img,1);
     
     subplot(2,3,3)

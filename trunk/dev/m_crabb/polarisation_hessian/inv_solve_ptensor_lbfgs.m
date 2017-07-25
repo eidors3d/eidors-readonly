@@ -1,17 +1,17 @@
-function [ x_k, resvec ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts )
+function [ x_k, resvec, fwd_cts, abs_er ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
 %INV_SOLVE_PTENSOR_LBFGS
 %
 % L-BFGS inverse solver with a polarization tensor approximation to diag(H)
 % for the initial Hessian at each iteration.
+%
+% NB default is no precon
 
 if nargin==3
     hess_opts = [];
 end
 
-if isfield(hess_opts,'ptensor')
-    ptensor = hess_opts.ptensor;
-else
-    ptensor = 1;
+if isfield(hess_opts,'H0_type')
+    H0_type = hess_opts.H0_type;
 end
 if isfield(hess_opts,'rescale')
     rescale = hess_opts.rescale;
@@ -39,15 +39,35 @@ else
     update_delta = 1;
 end
 
+if isfield(hess_opts, 'flexible')
+    flexi = hess_opts.flexible;
+else
+    flexi = true;
+end
+
 if isfield(hess_opts,'ptensor_its')
     ptensor_its = hess_opts.ptensor_its;
 else
     ptensor_its = inf;
 end
 
-% Hard coded number of eigenvectors to store...
-mem = 20;
-max_its = 50;
+if isfield(hess_opts, 'max_its')
+    max_its = hess_opts.max_its;
+else
+    max_its = 50;
+end
+    
+if isfield(hess_opts, 'mem')
+    mem = hess_opts.mem;
+else
+    mem = 20;
+end
+    
+
+global fwd_cts
+fwd_cts = 0;
+
+
 
 fmdl = img.fwd_model;
 
@@ -86,6 +106,14 @@ alpha_i = zeros(1,mem);
 
 % Initialise res vector
 resvec = zeros(max_its + 1,1);
+abs_er = resvec;
+
+%
+if nargin==5
+    x_true = true_im.elem_data;
+    abs_er(1) = norm(x_true - x_k);
+end
+
 
 % Initialise norm of gradient
 g = resvec;
@@ -95,6 +123,8 @@ g = resvec;
 
 % Gradient
 g_k = calc_grad(x_k, img_0, imdl, data); % this comes out completely wrong!
+
+
 % J = calc_jacobian(img);
 % g_k = J.'*delta_d;
 
@@ -132,93 +162,107 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     end
     
     % Initial Hessian -----------------------
-    
-    % Update phess
-    if ptensor==1 && k<= ptensor_its
-        
-        if update_U0
-            d_k = fwd_solve(img);
-            u0= d_k.volt;
-            DU0 = calc_grad_potential(img, u0);
-        end
-        
-        [H0, D0, C0] = calc_phessian_obj(fmdl, img_0, DU0, delta_d, neumann );
-        
-        H0 = spdiags(H0, 0, length(H0), length(H0));% + hp^2 * RtR; 
-        % +ve def checks should include RtR
-        
-        % include regularisation
-        if use_hyper
-            RtR = calc_RtR_prior(imdl);
-            hp = calc_hyperparameter(imdl);
-            H0 = H0 + hp^2*RtR;
-            
-            % Ensure suff +ve def
-            if any(spdiags(H0,0) < h_min)
-                % Add only amount of 2nd derivatives retaining +ve def if possible
-                if all(D0 + hp^2*spdiags(RtR,0)>h_min)
-                    max_C0 = (hp^2*spdiags(RtR) + D0 - h_min)./C0;
-                    max_C0(isinf(max_C0) | isnan(max_C0)) = inf;
-                    max_C0(max_C0<0) = 0;
-                    max_C0 = min([max_C0;1]);
-                    H0 = spdiags(D0+ max_C0 * C0, 0, length(H0), length(H0)) + hp^2*RtR;
+    switch H0_type
+        case 'ptensor'
+            if  k<= ptensor_its  && (flexi || k==1)
+                
+                if update_U0
+                    d_k = fwd_solve(img); % doesn't contribute to cts as cached value here
+                    u0= d_k.volt;
+                    DU0 = calc_grad_potential(img, u0);
+                end
+                
+                [H0, D0, C0] = calc_phessian_obj(fmdl, img_0, DU0, delta_d, neumann );
+                
+                H0 = spdiags(H0, 0, length(H0), length(H0));% + hp^2 * RtR;
+                % +ve def checks should include RtR
+                
+                % include regularisation
+                if use_hyper
+                    RtR = calc_RtR_prior(imdl);
+                    hp = calc_hyperparameter(imdl);
+                    H0 = H0 + hp^2*RtR;
+                    
+                    % Ensure suff +ve def
+                    if any(spdiags(H0,0) < h_min)
+                        % Add only amount of 2nd derivatives retaining +ve def if possible
+                        if all(D0 + hp^2*spdiags(RtR,0)>h_min)
+                            max_C0 = (hp^2*spdiags(RtR) + D0 - h_min)./C0;
+                            max_C0(isinf(max_C0) | isnan(max_C0)) = inf;
+                            max_C0(max_C0<0) = 0;
+                            max_C0 = min([max_C0;1]);
+                            H0 = spdiags(D0+ max_C0 * C0, 0, length(H0), length(H0)) + hp^2*RtR;
+                            
+                        else
+                            % Gauss Newton part too small
+                            indx = D0 + hp^2 * spdiags(RtR,0) < h_min;
+                            H0 = spdiags(D0, 0, length(H0), length(H0)) + hp^2*RtR;
+                            H0(indx,indx) = h_min;
+                            
+                        end
+                    end
                     
                 else
-                    % Gauss Newton part too small
-                    indx = D0 + hp^2 * spdiags(RtR,0) < h_min;
-                    H0 = spdiags(D0, 0, length(H0), length(H0)) + hp^2*RtR;
-                    H0(indx,indx) = h_min;
                     
+                    % Ensure suff +ve def
+                    if any(H0 < h_min)
+                        % Add only amount of 2nd derivatives retaining +ve def if possible
+                        if all(D0>h_min)
+                            max_C0 = (D0 - h_min)./C0;
+                            max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
+                            max_C0 = min(max_C0);
+                            H0 = D0 + max_C0 * C0;
+                            
+                        else
+                            % Gauss Newton part too small
+                            H0 = D0;
+                            H0(H0< h_min) = h_min;
+                            
+                        end
+                    end
+                end
+                % Re-scale
+                if k==1
+                    gamma_k = 1;
+                else
+                    gamma_k = ((H0*S(:,mod(k-2,mem)+1)).' * Y(:,mod(k-2,mem)+1) )/ ...
+                        ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
+                end
+                
+                % Rescale to fit diff in gradients
+                if rescale
+                    H0 = H0 * gamma_k;
+                end
+                
+            end % Check within update range
+            
+        case 'DGN0'
+            % diag Gauss Newton
+            if flexi || k==1
+                J = calc_jacobian(img);
+                fwd_cts = fwd_cts + size(J,2);
+                
+                H0_DGN = sum(J.*conj(J),1);
+                H0_DGN = spdiags(H0_DGN.', 0, length(H0_DGN), length(H0_DGN));
+                H0 = H0_DGN;
+                
+                if use_hyper
+                    RtR = calc_RtR_prior(imdl);
+                    hp = calc_hyperparameter(imdl);
+                    H0 = H0 + hp^2 * RtR;
                 end
             end
             
-        else
-            
-            % Ensure suff +ve def
-            if any(H0 < h_min)
-                % Add only amount of 2nd derivatives retaining +ve def if possible
-                if all(D0>h_min)
-                    max_C0 = (D0 - h_min)./C0;
-                    max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
-                    max_C0 = min(max_C0);
-                    H0 = D0 + max_C0 * C0;
-                    
-                else
-                    % Gauss Newton part too small
-                    H0 = D0;
-                    H0(H0< h_min) = h_min;
-                    
-                end
+        otherwise
+            if k==1
+                gamma_k = 1.;
+            else
+                gamma_k = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
+                    ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
             end
-            
-        end
-        
-        % Re-scale
-        if k==1
-            gamma_k = 1;
-        else
-            gamma_k = ((H0*S(:,mod(k-2,mem)+1)).' * Y(:,mod(k-2,mem)+1) )/ ...
-                ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
-        end
-        
-        
-        
-        % Rescale to fit diff in gradients
-        if rescale
-            H0 = H0 * gamma_k;
-        end
-        
-        
-        
-    else
-        if k==1
-            gamma_k = 1.;
-        else
-            gamma_k = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
-                ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
-        end
-        H0 = max(gamma_k, h_min);
-    end
+            H0 = max(gamma_k, h_min);
+    end % Hess type switch
+
     
     
     p_k = H0\q; 
@@ -246,7 +290,9 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     % Find steplength satisfying strong Wolfe conditions (for +ve definite
     % update)
 %     stepl = 1;
-    stepl = wolfe_search(x_k, -p_k, 1, 10, @(x)objective(x, img, imdl, data), @(x)calc_grad(x, img, imdl, data)) ;
+    
+%     [img, stepl] = line_optimize(img, -p_k, data); % Eidors default
+    stepl = wolfe_search(x_k, -p_k, 1, 10, @(x)objective(x, img, imdl, data), @(x)calc_grad(x, img, imdl, data));
     
     % Save difference in gradient and img
     S(:, mod(k-1,mem)+1) = -stepl * p_k;
@@ -263,24 +309,43 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     else
         resvec(k+1) = objective(x_k, img, imdl, data);
     end
+    
+    if nargin==5
+        abs_er(k+1) = norm(x_true - x_k);
+    end
+    
     if resvec(k+1) > resvec(k)
         x_k = x_k + stepl * p_k;
         break
     end
     
-    % New grad
-    g_k2 = calc_grad(x_k, img, imdl, data);
-    Y(:, mod(k-1,mem)+1) = g_k2 - g_k;
-    g_k = g_k2;
-    g(k+1) = norm(g_k);
-    
     % Save
     img.elem_data = x_k;
+    
+    % New grad
+    g_k2 = calc_grad(x_k, img, imdl, data);
+    
+    
+    % check satisfied (some) Wolfe condition
+    d_phi_0 = dot(g_k, -p_k);
+    d_phi_new = dot(g_k2, -p_k);
+    if abs(d_phi_new) < - d_phi_0
+    
+        Y(:, mod(k-1,mem)+1) = g_k2 - g_k;
+        
+    else
+        fvdsgdf=1; %nonsense for breakpoint
+        
+    end
+    
+    g_k = g_k2;
+    
+    g(k+1) = norm(g_k);
     
     %
     k=k+1;
     
-    if norm(p_k*stepl) < updt_tol || k>= max_its
+    if norm(p_k*stepl) < updt_tol || k> max_its % k is iter+1
         break
     end
     
@@ -292,6 +357,9 @@ end
 
 % Cost
 function [C, delta_d] = objective(x_k, images, invmdl, d)
+    global fwd_cts
+    fwd_cts = fwd_cts + 1;
+
     im = images;
     im.elem_data = x_k;
     d_im = fwd_solve(im);
@@ -306,6 +374,9 @@ end
 
 % Grad
 function G = calc_grad(x_k, image, invmdl, d)
+    global fwd_cts
+    fwd_cts = fwd_cts + 1;
+
     im = image;
     im.elem_data = x_k;
     d_im = fwd_solve(im);

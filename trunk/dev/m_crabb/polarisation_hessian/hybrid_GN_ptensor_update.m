@@ -21,16 +21,30 @@ end
 if strcmp(opt.update_method, 'lu')
     try
         % the actual update
-        warning('needs a modified Cholesky +ve def decomp')
-        h_min = 1e-9;
-        GN = J'*W*J;
-        max_C = diag(GN) - h_min;
-        max_C(max_C <= 0) = 0;
-        max_C =max_C./CC;
-        max_C(isinf(max_C) | max_C < 0 | isnan(max_C)) = inf;
-        max_C = min([max_C;1]);
+        if ~exist('mod_chol','file')
+            warning('needs a modified Cholesky +ve def decomp')
+            h_min = 1e-9;
+            GN = J'*W*J;
+            max_C = diag(GN) - h_min;
+            max_C(max_C <= 0) = 0;
+            max_C =max_C./CC;
+            max_C(isinf(max_C) | max_C < 0 | isnan(max_C)) = inf;
+            max_C = min([max_C;1]);
+            
+            dx = -(GN + hp2RtR + max_C*diag(CC))\(J'*W*dv + hp2RtR*de); % LU decomp
         
-        dx = -(GN + hp2RtR + max_C*diag(CC))\(J'*W*dv + hp2RtR*de); % LU decomp
+        else
+            HH = J'*W*J + diag(CC) + hp2RtR;
+            g = J'*W*dv + hp2RtR*de;
+%             dx = -HH\g;
+%             
+%             % Check descent direction, if not modify for +ve def
+%             if dot(g,dx)>=0                
+                [L,D] = mod_chol(HH);                
+                dx = -L\D\(L.')\g;
+%             end
+            
+        end
     catch ME % boom
         fprintf('      LU decomp failed: ');
         disp(ME.message)

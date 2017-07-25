@@ -56,10 +56,10 @@ v0 = fwd_solve(sim_img);
 
 % Where in image to vary conductivity
 cond_try = 0.5:0.1:4;
-pixel_group = 45;
+pixel_group = [100,120,144,138,115,95];
 
 % Initialise
-Ha = zeros(length(pixel_group),length(cond_try));
+Ha = zeros(size(DU0,1),length(cond_try));
 Hpf = Ha;
 Hpd = Ha;
 
@@ -74,6 +74,12 @@ Dpd = Ha;
 % Clear cache so calc_hess_obj doesnt get confused
 eidors_cache('clear_all')
 
+% plot frequency
+pl_frq = 5;
+img_out = img;
+
+%%
+
 for ii=1:length(cond_try)
 
     % New delta_v
@@ -82,37 +88,67 @@ for ii=1:length(cond_try)
     delta_v = vi.meas - v0.meas;
 
     % Calculate with adjoint-state
-    [HO, DO, CO] = calc_hessian_obj(imdl.fwd_model, img, pixel_group, delta_v);
-
-    Ha(:,ii) = diag(HO);
-    Ca(:,ii) = diag(CO);
-    Da(:,ii) = diag(DO);
+    [H,D,C] = calc_hessian_obj(imdl.fwd_model, img, 1:size(Ha,1), delta_v);
+    Ha(:,ii)=diag(H);
+    Da(:,ii)=diag(D);
+    Ca(:,ii)=diag(C);
     
     % Calculate with PT and freespace Neumann func
-    [HO, DO, CO] = calc_phessian_obj(imdl.fwd_model, img, DU0, delta_v, 'freespace');
+    [Hpf(:,ii), Dpf(:,ii), Cpf(:,ii)] = calc_phessian_obj(imdl.fwd_model, img, DU0, delta_v, 'freespace');
     
-    Hpf(:,ii) = HO(pixel_group);
-    Dpf(:,ii) = DO(pixel_group);
-    Cpf(:,ii) = CO(pixel_group);
 
     % Calculate with PT and analytic disc Neumann func
-    [HO, DO, CO] = calc_phessian_obj(imdl.fwd_model, img, DU0, delta_v, 'disc');
+    [Hpd(:,ii), Dpd(:,ii), Cpd(:,ii)] = calc_phessian_obj(imdl.fwd_model, img, DU0, delta_v, 'disc');
 
-    Hpd(:,ii) = HO(pixel_group);
-    Dpd(:,ii) = DO(pixel_group);
-    Cpd(:,ii) = CO(pixel_group);
 
 end
 
-figure;
-plot(cond_try, Ca);
-hold all
-plot(cond_try, Cpf);
-plot(cond_try, Cpd);
+%% Plots within the pixel groups for all cond vals
+for ii=1:length(pixel_group)
+    
+    figure;
+    plot(cond_try, Ca(pixel_group(ii),:));
+    hold all
+    plot(cond_try, Cpf(pixel_group(ii),:));
+    plot(cond_try, Cpd(pixel_group(ii),:));
+    
+    figure;
+    plot(cond_try, Da(pixel_group(ii),:));
+    hold all
+    plot(cond_try, Dpf(pixel_group(ii),:));
+    plot(cond_try, Dpd(pixel_group(ii),:));
 
-figure;
-plot(cond_try, Da);
-hold all
-plot(cond_try, Dpf);
-plot(cond_try, Dpd);
+end
+
+
+%% Plots of whole domain
+% find caxis range
+cmin = min([Ca(:); Cpf(:); Cpd(:)]);
+cmax = max([Ca(:); Cpf(:); Cpd(:)]);
+img.calc_colours.clim = [];
+
+for ii=[4, 9, 19]
+    figure;
+    subplot(2,3,1)
+    img.elem_data = Ca(:,ii);
+    show_fem(img,1);
+    
+    
+    subplot(2,3,2)
+    img.elem_data = Cpf(:,ii);
+    show_fem(img,1);
+    
+    subplot(2,3,3)
+    img.elem_data = Cpd(:,ii);
+    show_fem(img,1);
+
+    subplot(2,3,4:6)
+    plot(Ca(:,ii));
+    hold all
+    plot(Cpf(:,ii));
+    plot(Cpd(:,ii));
+    hold off
+%     ylim([cmin, cmax])
+    
+end
 
