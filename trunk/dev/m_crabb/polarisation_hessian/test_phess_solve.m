@@ -74,25 +74,25 @@ opts.update_delta = 1;
 
 figure(4)
 
-% 3 update settings in freespace
-opts.neumann = 'freespace';
-opts.update_U0 = 0;
-opts.flexible = false;
-tic
-[x_f00, r_f00, cts_f00, er_f00] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-tf00 = toc
-semilogy(0:100, r_f00/ r_f00(1))
-
-%
-
-opts.neumann = 'freespace';
-opts.update_U0 = 0;
-opts.flexible = true;
-tic
-[x_f10, r_f10, cts_f10, er_f10] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-tf10 = toc
-hold all
-semilogy(0:100, r_f10/ r_f00(1))
+% % 3 update settings in freespace
+% opts.neumann = 'freespace';
+% opts.update_U0 = 0;
+% opts.flexible = false;
+% tic
+% [x_f00, r_f00, cts_f00, er_f00] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+% tf00 = toc
+% semilogy(0:100, r_f00/ r_f00(1))
+% 
+% %
+% 
+% opts.neumann = 'freespace';
+% opts.update_U0 = 0;
+% opts.flexible = true;
+% tic
+% [x_f10, r_f10, cts_f10, er_f10] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+% tf10 = toc
+% hold all
+% semilogy(0:100, r_f10/ r_f00(1))
 
 %
 opts.neumann = 'freespace';
@@ -102,39 +102,39 @@ tic
 [x_f11, r_f11, cts_f11, er_f11] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
 tf11 = toc
 hold all
-semilogy(0:100, r_f11/ r_f00(1))
+semilogy(0:100, r_f11/ r_f11(1))
 
 % %
 % opts.ptensor_its = 20;
 % [x_f20, r_f20, cts_f20] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts);
 % semilogy(0:50, r_f20/ r_f0(1))
 
-% 3 update settings on a disc
-opts.neumann = 'disc';
-opts.update_U0 = 0;
-opts.flexible = false;
-tic
-[x_d00, r_d00, cts_d00, er_d00] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-td00 = toc
-semilogy(0:100, r_d00/ r_f00(1))
-
-%
-opts.neumann = 'disc';
-opts.update_U0 = 0;
-opts.flexible = true;
-tic
-[x_d10, r_d10, cts_d10, er_d10] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-td10 = toc
-semilogy(0:100, r_d10/ r_f00(1))
-
-%
-opts.neumann = 'disc';
-opts.update_U0 = 1;
-opts.flexible = true;
-tic
-[x_d11, r_d11, cts_d11, er_d11] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-td11 = toc
-semilogy(0:100, r_d11/ r_f00(1))
+% % 3 update settings on a disc
+% opts.neumann = 'disc';
+% opts.update_U0 = 0;
+% opts.flexible = false;
+% tic
+% [x_d00, r_d00, cts_d00, er_d00] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+% td00 = toc
+% semilogy(0:100, r_d00/ r_f00(1))
+% 
+% %
+% opts.neumann = 'disc';
+% opts.update_U0 = 0;
+% opts.flexible = true;
+% tic
+% [x_d10, r_d10, cts_d10, er_d10] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+% td10 = toc
+% semilogy(0:100, r_d10/ r_f00(1))
+% 
+% %
+% opts.neumann = 'disc';
+% opts.update_U0 = 1;
+% opts.flexible = true;
+% tic
+% [x_d11, r_d11, cts_d11, er_d11] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+% td11 = toc
+% semilogy(0:100, r_d11/ r_f00(1))
 
 
 % %
@@ -167,12 +167,12 @@ semilogy(0:100, r_d11/ r_f00(1))
 
 
 %%
-% no ptensor
-opts.H0_type = '';
-tic
-[x_I, r_I, cts_I, er_I] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-tI = toc
-semilogy(0:100, r_I/ r_f00(1))
+% % no ptensor
+% opts.H0_type = '';
+% tic
+% [x_I, r_I, cts_I, er_I] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+% tI = toc
+% semilogy(0:100, r_I/ r_f00(1))
 
 %% 
 opts.H0_type = 'DGN0';
@@ -180,25 +180,42 @@ opts.flexible = false;
 tic
 [x_GN0, r_GN0, cts_GN0, er_GN0] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
 tGN0 = toc
-% semilogy(0:100, r_GN0/ r_f00(1))
+semilogy(0:100, r_GN0/ r_GN0(1))
 
-%
+%%
 opts.H0_type = 'DGN0';
 opts.flexible = true;
 tic
 [x_GN1, r_GN1, cts_GN1, er_GN1] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
 tGN1 = toc
-% semilogy(0:100, r_GN1/ r_f00(1))
+semilogy(0:100, r_GN1/ r_GN1(1))
 
+%%
+opts.H0_type = 'true';
+opts.flexible = false;
+tic
+[x_t0, r_t0, cts_t0, er_t0] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tt0 = toc
+semilogy(0:100, r_t0/ r_t0(1))
+
+%
+opts.H0_type = 'true';
+opts.flexible = true;
+tic
+[x_t1, r_t1, cts_t1, er_t1] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+tt1 = toc
+semilogy(0:100, r_t1/ r_t1(1))
 
 %%
 figure(5)
-semilogy(0:100, er_f00/ er_f00(1))
+% semilogy(0:100, er_f00/ er_f00(1))
 hold all
-semilogy(0:100, er_f10/ er_f00(1))
-semilogy(0:100, er_f11/ er_f00(1))
-semilogy(0:100, er_d00/ er_f00(1))
-semilogy(0:100, er_d10/ er_f00(1))
-semilogy(0:100, er_d11/ er_f00(1))
-semilogy(0:100, er_GN0/ er_f00(1))
-semilogy(0:100, er_GN1/ er_f00(1))
+semilogy(0:100, er_f10/ er_f10(1))
+semilogy(0:100, er_f11/ er_f11(1))
+% semilogy(0:100, er_d00/ er_d00(1))
+% semilogy(0:100, er_d10/ er_d10(1))
+% semilogy(0:100, er_d11/ er_d11(1))
+semilogy(0:100, er_GN0/ er_GN0(1))
+semilogy(0:100, er_GN1/ er_GN1(1))
+semilogy(0:100, er_t0/ er_t0(1))
+semilogy(0:100, er_t1/ er_t1(1))

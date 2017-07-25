@@ -240,7 +240,7 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
             % diag Gauss Newton
             if flexi || k==1
                 J = calc_jacobian(img);
-                fwd_cts = fwd_cts + size(J,2);
+                fwd_cts = fwd_cts + numel(delta_d);
                 
                 H0_DGN = sum(J.*conj(J),1);
                 H0_DGN = spdiags(H0_DGN.', 0, length(H0_DGN), length(H0_DGN));
@@ -251,6 +251,22 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                     hp = calc_hyperparameter(imdl);
                     H0 = H0 + hp^2 * RtR;
                 end
+            end
+            
+        case 'true'
+            % diagonal of true Hessian
+            if flexi || k==1
+                H0 = calc_hessian_obj(imdl.fwd_model, img, 1:length(x_k), delta_d);
+                fwd_cts = fwd_cts + length(x_k) + numel(delta_d);
+                
+                H0 = spdiags(diag(H0), 0, length(x_k), length(x_k));
+                
+                if use_hyper
+                    RtR = calc_RtR_prior(imdl);
+                    hp = calc_hyperparameter(imdl);
+                    H0 = H0 + hp^2 * RtR;
+                end
+                
             end
             
         otherwise
