@@ -1,5 +1,5 @@
 % Make an ivnerse model - standard foward model inside
-imdl = mk_common_model('b2C',16);
+imdl = mk_common_model('c2C',16);
 fmdl = imdl.fwd_model; %Extract model
 fmdl = fix_model(fmdl);
 imdl.fwd_model = fmdl;
@@ -17,7 +17,6 @@ cond_bkg = 1;
 cond_obj = 2;
 
 
-%Make an image and show image
 sim_img = mk_image(fmdl,cond_bkg);
 
 %figure; show_fem(img,[0,1,3])
@@ -33,10 +32,13 @@ homog_img=sim_img;
 
 data_hom = fwd_solve(homog_img);
 %pixel_group = [1,2,3,4];
-pixel_group = [115,138,95,137];
+%pixel_group = [115,138,95,137]; %b2C
+pixel_group = [327,364,328,292,259,291]; %c2C
+
 sim_img.elem_data(pixel_group) = cond_obj;
 
 data = fwd_solve(sim_img)
+data = add_noise(80, data)
 
 
 
@@ -207,10 +209,11 @@ tt1 = toc
 semilogy(0:100, r_t1/ r_t1(1))
 
 %%
+hold off
 figure(5)
 % semilogy(0:100, er_f00/ er_f00(1))
 hold all
-semilogy(0:100, er_f10/ er_f10(1))
+% semilogy(0:100, er_f10/ er_f10(1))
 semilogy(0:100, er_f11/ er_f11(1))
 % semilogy(0:100, er_d00/ er_d00(1))
 % semilogy(0:100, er_d10/ er_d10(1))
