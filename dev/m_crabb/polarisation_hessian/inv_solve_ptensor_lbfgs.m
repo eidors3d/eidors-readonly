@@ -161,6 +161,13 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
         q = q - alpha_i(ii) * Y(:,mod(ii-1,mem)+1);
     end
     
+    if k==1
+        gamma_k = 1;
+    else
+        gamma_k = ((H0*S(:,mod(k-2,mem)+1)).' * Y(:,mod(k-2,mem)+1) )/ ...
+            ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
+    end
+    
     % Initial Hessian -----------------------
     switch H0_type
         case 'ptensor'
@@ -222,12 +229,7 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                     end
                 end
                 % Re-scale
-                if k==1
-                    gamma_k = 1;
-                else
-                    gamma_k = ((H0*S(:,mod(k-2,mem)+1)).' * Y(:,mod(k-2,mem)+1) )/ ...
-                        ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
-                end
+                
                 
                 % Rescale to fit diff in gradients
                 if rescale
