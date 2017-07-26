@@ -1,4 +1,4 @@
-function [ Hii, du2, d2u ] = calc_phessian_obj( fmdl, img, DU0, delta_d, type )
+function [ Hii, du2, d2u, J ] = calc_phessian_obj( fmdl, img, DU0, delta_d, type )
 
 %INPUT
 % F(s+ds) = F(s) + DU0 *M *DN
@@ -64,6 +64,7 @@ meas_start = 1;
 % Initialise
 du2 = zeros(size(zs,1),1);
 d2u = du2;
+if nargout==4; J = zeros(length(delta_d),size(zs,1)); end
 
 % Loop over source terms
 n_drive = length(fmdl.stimulation);
@@ -119,6 +120,11 @@ for ii=1:n_drive
     % First derivatives
     drive_contn_D1 = repmat(vs, 1, size(M,1)).*(M*(DU0_M_DN.')).'+ repmat(vs.*(ks-1), 1, size(M,1)).*(M*(DU0_M1_DN.')).';
     du2 = du2 + sum(drive_contn_D1.^2,2);
+    
+    if nargout==4
+        J((ii-1)*size(M,1)+1:ii*size(M,1),:) = drive_contn_D1.';
+        
+    end
     
     
     % Second derivatives
