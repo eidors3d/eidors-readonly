@@ -187,7 +187,7 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                     if any(spdiags(H0,0) < h_min)
                         % Add only amount of 2nd derivatives retaining +ve def if possible
                         if all(D0 + hp^2*spdiags(RtR,0)>h_min)
-                            max_C0 = (hp^2*spdiags(RtR) + D0 - h_min)./C0;
+                            max_C0 = (hp^2*spdiags(RtR,0) + D0 - h_min)./C0;
                             max_C0(isinf(max_C0) | isnan(max_C0)) = inf;
                             max_C0(max_C0<0) = 0;
                             max_C0 = min([max_C0;1]);
@@ -256,7 +256,7 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
         case 'true'
             % diagonal of true Hessian
             if flexi || k==1
-                H0 = calc_hessian_obj(imdl.fwd_model, img, 1:length(x_k), delta_d);
+                H0 = calc_hessian_diag_obj(imdl.fwd_model, img, 1:length(x_k), delta_d);
                 fwd_cts = fwd_cts + length(x_k) + numel(delta_d);
                 
                 H0 = spdiags(diag(H0), 0, length(x_k), length(x_k));

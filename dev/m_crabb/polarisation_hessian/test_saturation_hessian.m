@@ -12,8 +12,8 @@ cond_bkg = 1; cond_lower = 0.2; cond_upper = 5;
 cond_vals = linspace(cond_lower,cond_upper,100);
 
 %Pixk group of pixels to perturb
-pixel_group = [327,364,328,292,259,291];
-pixel_group = 1:length(fmdl.elems(:,1));
+pixel_group = [102,123,103,83,66,82];
+%pixel_group = 1:length(fmdl.elems(:,1));
 
 %Make an image on unit conductivity and solve
 img = mk_image(fmdl,cond_bkg); img_b=img; 
@@ -79,7 +79,7 @@ for jj=1:length(cond_vals)
     
     img.elem_data([pixel_group]) = cond_vals(jj);
     vi = fwd_solve(img); %Image with pixel perturbation        
-    [H_obj,GN_only_obj,H_only_obj] = calc_hessian_obj(img_b.fwd_model,img_b,pixel_group,vi.meas-vh.meas);            
+    [H_obj,GN_only_obj,H_only_obj] = calc_hessian_obj(img_b.fwd_model,img_b,1:size(fmdl.elems,1),vi.meas-vh.meas);            
     H_only_obj_norm(jj) = norm(H_only_obj);
     GN_only_obj_norm(jj) = norm(GN_only_obj);
 end
