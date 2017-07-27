@@ -1,49 +1,114 @@
-% Make an ivnerse model - standard foward model inside
-imdl = mk_common_model('c2C',16);
-fmdl = imdl.fwd_model; %Extract model
-fmdl = fix_model(fmdl);
-imdl.fwd_model = fmdl;
+inv_crime=1
+
+if(inv_crime==1)    
+    % Make an ivnerse model - standard foward model inside
+    imdl = mk_common_model('c2C',16);
+    fmdl = imdl.fwd_model; %Extract model
+    fmdl = fix_model(fmdl);
+    imdl.fwd_model = fmdl;
+
+    %Stimulation - 16 elecs adjacent current/adjacent voltage
+    stim = mk_stim_patterns(16,1,'{ad}','{ad}');
+    fmdl.stimulation = stim; %Add to model
+    fmdl.approx_type='tri3';
+
+    cond_bkg = 1;
+    cond_obj = 2;
 
 
+    sim_img = mk_image(fmdl,cond_bkg);
 
-%Stimulation - 16 elecs adjacent current/adjacent voltage
-stim = mk_stim_patterns(16,1,'{ad}','{ad}');
-fmdl.stimulation = stim; %Add to model
-fmdl.approx_type='tri3';
+    %figure; show_fem(img,[0,1,3])
+    sim_img.fwd_solve.get_all_meas=1;
+    sim_img.fwd_model.stimulation=stim;
+
+    sim_img.fwd_model.M_tensor.a = ones(size(sim_img.elem_data,1),1);
+    sim_img.fwd_model.M_tensor.b = ones(size(sim_img.elem_data,1),1);
+    sim_img.fwd_model.M_tensor.rot = zeros(size(sim_img.elem_data,1),1);
+
+    homog_img=sim_img;
+
+    data_hom = fwd_solve(homog_img);
+    %pixel_group = [1,2,3,4];
+    %pixel_group = [115,138,95,137]; %b2C
+    pixel_group = [327,364,328,292,259,291]; %c2C
+
+    sim_img.elem_data(pixel_group) = cond_obj;
+
+    data = fwd_solve(sim_img)
+    data = add_noise(100, data, data_hom)
+else
+    cond_bkg = 1;
+    cond_obj = 2;
 
 
-
-cond_bkg = 1;
-cond_obj = 2;
-
-
-sim_img = mk_image(fmdl,cond_bkg);
-
-%figure; show_fem(img,[0,1,3])
-sim_img.fwd_solve.get_all_meas=1;
-sim_img.fwd_model.stimulation=stim;
+    %Stimulation - 16 elecs adjacent current/adjacent voltage
+    stim = mk_stim_patterns(16,1,'{ad}','{ad}');
 
 
-sim_img.fwd_model.M_tensor.a = ones(size(sim_img.elem_data,1),1);
-sim_img.fwd_model.M_tensor.b = ones(size(sim_img.elem_data,1),1);
-sim_img.fwd_model.M_tensor.rot = zeros(size(sim_img.elem_data,1),1);
+    %for sep=[0.3,0.4]
+    %for rad=[0.1,0.2]
+    for sep=[0.3]
+    for rad=[0.2]
+        sb1 = sprintf('solid ball1 = cylinder(%0.1f,%0.1f,0;%0.1f,%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
+        sb2 = sprintf('solid ball2 = cylinder(-%0.1f,-%0.1f,0;-%0.1f,-%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);    
+        extra={'ball1','ball2',[sb1,sb2]};
 
-homog_img=sim_img;
+        fmdl_t= ng_mk_cyl_models(0,[16],[0.2,0,0.05],extra); 
+        fmdl_t=fix_model(fmdl_t);
+        fmdl_t.stimulation = stim; %Add to model
+        fmdl_t.approx_type='tri3';        
+        sim_img= mk_image(fmdl_t, cond_bkg );
+        sim_img.elem_data(fmdl_t.mat_idx{2})=cond_obj;
+     %   img.elem_data(fmdl.mat_idx{3})=3;    
+     %   figure; show_fem(img);
+        pixel_group=[fmdl_t.mat_idx{2}];
+        %pixel_group = [102,123,103,83,66,82]; %b2C
+        %pixel_group = [327,364,328,292,259,291]; %c2C
+        %pixel_group = 1:length(fmdl.elems(:,1));            
+       
+        data = fwd_solve(sim_img)
+  
+    end
+    end
 
-data_hom = fwd_solve(homog_img);
-%pixel_group = [1,2,3,4];
-%pixel_group = [115,138,95,137]; %b2C
-pixel_group = [327,364,328,292,259,291]; %c2C
 
-sim_img.elem_data(pixel_group) = cond_obj;
+    %Make a uniform image with unit background
 
-data = fwd_solve(sim_img)
+    fmdl= ng_mk_cyl_models(0,[16],[0.2,0,0.1]); 
+    fmdl=fix_model(fmdl);
+    fmdl.stimulation = stim; %Add to model
+    fmdl.approx_type='tri3';
+    
+    %Inverse model
+    imdl.solve='eidors_default';
+ %   imdl.hyperparameter=0.03;
+    imdl.RtR_prior='eidors_default';
+    imdl.jacobian_bkgnd.value=1;
+    imdl.reconst_type='difference';
+    imdl.fwd_model = fmdl;
+    imdl.name='built model';
+    imdl.type='inv_model';   
+    
+    %Notation of homog_img before
+    homog_img = mk_image(fmdl,cond_bkg);
+    homog_img.fwd_solve.get_all_meas=1;
+    homog_img.fwd_model.stimulation=stim;
+    homog_img.fwd_model.M_tensor.a = ones(size(homog_img.elem_data,1),1);
+    homog_img.fwd_model.M_tensor.b = ones(size(homog_img.elem_data,1),1);
+    homog_img.fwd_model.M_tensor.rot = zeros(size(homog_img.elem_data,1),1);
+
+    data_hom = fwd_solve(homog_img);
+   
+    
+end
+
+%Add some noise to data
 data = add_noise(100, data, data_hom)
 
 
-
 %% Eidors in-built inverse diff solver
-imdl.hyperparameter.value = 1e-4;
+imdl.hyperparameter.value = 0.0003;
 img_eid_diff = inv_solve(imdl, data_hom,data);
 
 figure(1); 
