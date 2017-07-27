@@ -108,11 +108,20 @@ alpha_i = zeros(1,mem);
 resvec = zeros(max_its + 1,1);
 abs_er = resvec;
 
-%
-if nargin==5
-    x_true = true_im.elem_data;
-    abs_er(1) = norm(x_true - x_k);
+if(hess_opts.inv_crime==1)
+    if nargin==5
+        x_true = true_im.elem_data;
+        abs_er(1) = norm(x_true - x_k);
+    end
+else
+    c2f = mk_coarse_fine_mapping(true_im.fwd_model,img.fwd_model)
+    %
+    if nargin==5
+        x_true = true_im.elem_data;
+        abs_er(1) = norm(x_true - c2f*x_k);
+    end
 end
+
 
 
 % Initialise norm of gradient
@@ -388,7 +397,11 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     end
     
     if nargin==5
-        abs_er(k+1) = norm(x_true - x_k);
+        if(hess_opts.inv_crime==1)        
+            abs_er(k+1) = norm(x_true - x_k);
+        else
+            abs_er(k+1) = norm(x_true - c2f*x_k);            
+        end
     end
     
     if resvec(k+1) > resvec(k)
