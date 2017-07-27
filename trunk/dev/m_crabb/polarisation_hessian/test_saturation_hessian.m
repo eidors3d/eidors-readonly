@@ -44,7 +44,7 @@ img.fwd_solve.get_all_meas=1;
 d_k = fwd_solve(img); % doesn't contribute to cts as cached value here
 u0= d_k.volt;
 DU0 = calc_grad_potential(img, u0);
-[~,~,~,J_phess] = calc_phessian_obj(fmdl,img,DU0,d_k.meas,'disc')
+[~,~,~,J_phess] = calc_phessian_obj(fmdl,img,DU0,d_k.meas,'disc');
 J_phess_pixel_group = J_phess(:,pixel_group);
 J_phess_pixel_group_sum = sum(J_phess(:,pixel_group),2);
 
@@ -67,7 +67,6 @@ H_pixel_group_diag = H_diag(:,1:length(pixel_group),1:length(pixel_group));
 %end
 H_pixel_group_sum = sum(sum( H_pixel_group ,2 ),3);
 
-
 %Non-linear voltage difference
 for jj=1:length(cond_vals)
     fprintf(1,'Conductivity value %i of %i\n',jj,length(cond_vals));
@@ -82,7 +81,13 @@ for jj=1:length(cond_vals)
         0.5*H_pixel_group_sum*(cond_vals(jj)-cond_bkg)*(cond_vals(jj)-cond_bkg);
     norm_vh_quad(jj)= norm(dvq{jj},2);           
     
-    %% TODO ADD POLARISATION TENSOR GRADIENT/HESSIAN HERE
+%     %% TODO ADD POLARISATION TENSOR GRADIENT/HESSIAN HERE
+%     
+%     [~, ~, C0] = calc_phessian_obj(img.fwd_model, img, DU0, delta_d, 'disc' );
+%     H_phess = spdiags(C0,0,length(C0), length(C0)) + J_phess.'*J_phess;
+%     H_phess_pixel_group_sum = sum(H_phess(:,pixel_group),2);    
+%     dvqp{jj} = vh.meas + J_pixel_group_sum*(cond_vals(jj)-cond_bkg) + ...
+%         0.5*H_phess_pixel_group_sum*(cond_vals(jj)-cond_bkg)*(cond_vals(jj)-cond_bkg);
     
 end
 
@@ -92,7 +97,7 @@ hold on; plot(cond_vals,norm_vh_lin,'r*');
 hold on; plot(cond_vals,norm_vh_linp,'k*');
 hold on; plot(cond_vals,norm_vh_quad,'b*');
 legend('Non-linear','Linear approximation','Linear Phess','Quadratic approximation')
-ylabel('|| Vi - V1||/||Vi||'); 
+ylabel('|| V0 + DVh +D2Vh2 ||'); 
 xlabel('Pertubation in ith pixel');
 
 %Plot norm of voltage differences of linear and quadratic away from non-linear as function of contrast 

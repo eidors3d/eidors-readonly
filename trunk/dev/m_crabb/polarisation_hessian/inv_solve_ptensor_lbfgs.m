@@ -228,7 +228,6 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                         end
                     end
                 end
-                % Re-scale
                 
                 
                 % Rescale to fit diff in gradients
@@ -238,6 +237,66 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
                 
             end % Check within update range
             
+            
+        case 'ptensor_full'
+            if  k<= ptensor_its  && (flexi || k==1)
+                
+                if update_U0
+                    d_k = fwd_solve(img); % doesn't contribute to cts as cached value here
+                    u0= d_k.volt;
+                    DU0 = calc_grad_potential(img, u0);
+                end
+                
+                [~, ~, C0, J0] = calc_phessian_obj(fmdl, img_0, DU0, delta_d, neumann );
+                
+                H0 = spdiags(C0, 0, length(C0), length(C0)) + J0.'*J0;                
+                % +ve def checks should include RtR
+                
+                % include regularisation
+                if use_hyper
+                    RtR = calc_RtR_prior(imdl);
+                    hp = calc_hyperparameter(imdl);
+                    H0 = H0 + hp^2*RtR;
+                    
+                    % Ensure suff +ve def
+                    if any(spdiags(H0,0) < h_min)
+                        % Add only amount of 2nd derivatives retaining +ve def if possible
+                        if all(D0 + hp^2*spdiags(RtR,0)>h_min)
+                            max_C0 = (hp^2*spdiags(RtR,0) + D0 - h_min)./C0;
+                            max_C0(isinf(max_C0) | isnan(max_C0)) = inf;
+                            max_C0(max_C0<0) = 0;
+                            max_C0 = min([max_C0;1]);
+                            H0 = spdiags(D0+ max_C0 * C0, 0, length(H0), length(H0)) + hp^2*RtR;
+                            
+                        else
+                            % Gauss Newton part too small
+                            indx = D0 + hp^2 * spdiags(RtR,0) < h_min;
+                            H0 = spdiags(D0, 0, length(H0), length(H0)) + hp^2*RtR;
+                            H0(indx,indx) = h_min;
+                            
+                        end
+                    end
+                    
+                else
+                    
+                    % Ensure suff +ve def
+                    if any(H0 < h_min)
+                        % Add only amount of 2nd derivatives retaining +ve def if possible
+                        if all(D0>h_min)
+                            max_C0 = (D0 - h_min)./C0;
+                            max_C0(isinf(max_C0) | max_C0 < 0 | isnan(max_C0)) = inf;
+                            max_C0 = min(max_C0);
+                            H0 = D0 + max_C0 * C0;
+                            
+                        else
+                            % Gauss Newton part too small
+                            H0 = D0;
+                            H0(H0< h_min) = h_min;
+                            
+                        end
+                    end
+                end
+            end
         case 'DGN0'
             % diag Gauss Newton
             if flexi || k==1
