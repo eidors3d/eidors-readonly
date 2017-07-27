@@ -1,4 +1,4 @@
-inv_crime=1
+inv_crime=2
 
 if(inv_crime==1)    
     % Make an ivnerse model - standard foward model inside
@@ -137,6 +137,7 @@ opts.neumann = 'freespace';
 opts.ptensor_its = 100;
 opts.max_its = 100;
 opts.update_delta = 1;
+opts.inv_crime=inv_crime;
 
 figure(4)
 
