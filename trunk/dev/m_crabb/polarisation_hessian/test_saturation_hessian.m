@@ -2,7 +2,7 @@
 %imdl = mk_common_model('c2C',16);
 %fmdl = imdl.fwd_model; %Extract model
 
-for r=[0.5]
+for r=[0.3]
     sb = sprintf('solid ball = cylinder(0.2,0.2,0;0.2,0.2,1;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',r);
     extra={'ball',sb};
 
