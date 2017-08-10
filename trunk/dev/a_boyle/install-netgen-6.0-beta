@@ -3,7 +3,6 @@
 echo "last tested: 2017-04-18 with Ubuntu xenial 16.04.2 LTS, also Gentoo Linux"
 echo "run $(date)"
 
-
 SFDL=https://sourceforge.net/projects
 
 # versions to install
@@ -38,6 +37,11 @@ function err() {
 
 set -e
 set -x
+
+# install dependencies
+[ "x$(grep DISTRIB_ID /etc/lsb-release | sed 's/.*=//')" != "xUbuntu" ] || \
+   sudo apt install libxmu-dev mesa-common-dev libglu1-mesa-dev libx11-dev python-dev python3.5-dev
+
 # make working directories if they don't exist
 mkdir -p ${SRCDIR}
 mkdir -p ${INSTDIR}
