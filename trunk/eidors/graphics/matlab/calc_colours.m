@@ -76,6 +76,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           'draeger-tidal':     Draegerwerk colourmap (tidal images)
 %           'swisstom'           Swisstom colourmap
 %           'timpel'             Timpel colourmap
+%           'flame'              White/Red/Yellow colours
 %           matrix [Nx3]         Use values ([0-1]) as REB colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
@@ -238,6 +239,8 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= jet_colours(pp,scd);
      case 'blue_yellow'
          [red,grn,blu] = blue_yellow_colours(pp,scale_data);
+     case 'flame'
+         [red,grn,blu] = flame_colours(pp,scale_data);
      case 'greyscale'          % Lungs are white
          [red,grn,blu] = greyscale_colours(pp,scale_data);
      case 'greyscale-inverse'  % Lungs are black
@@ -492,6 +495,26 @@ function [red,grn,blu] = black_red_colours(pp,scale_data);
    blu = 0*scale_data;
    grn = blu;
 
+function [red,grn,blu] = flame_colours(pp,scale_data);
+   sd = 0.5 + scale_data/2; % 0..1
+   red = sd*0+1;
+   blu = (1 - 3*sd);
+   grn = (1 - 3*sd);% + (sd>t).*(sd-t)/t;
+   grn(grn<0) = -2*grn(grn<0);
+   t=0.8;
+   grn(sd>t) = 1-(sd(sd>t)-t)/(1-t);
+   red(sd>t) = 1-(sd(sd>t)-t)/(1-t);
+   blu(sd>t) = (sd(sd>t)-t)/(1-t);
+   [red,grn,blu] = saturate(red,grn,blu);
+
+function [red,grn,blu] = saturate(red,grn,blu);
+   red(red>1)=1;
+   grn(grn>1)=1;
+   blu(blu>1)=1;
+   red(red<0)=0;
+   grn(grn<0)=0;
+   blu(blu<0)=0;
+
 % TODO: only works with mapped_colours, fix to use scale_data
 function [red,grn,blu] = blue_black_red_colours(pp,scale_data);
    red =-min(0,scale_data);
@@ -648,7 +671,8 @@ function do_unit_test
    cc= calc_colours('colourmap');
 %  unit_test_cmp('bg01',cc(1,:), [50,50,15]/100, 1e-10); %EIDORS 3.6
 %  unit_test_cmp('bg02',cc(1,:), [20,40,40]/100, 1e-10); %EIDORS 3.7
-   unit_test_cmp('bg02',cc(1,:), [35,45,45]/100, 1e-10); %EIDORS 3.8
+%  unit_test_cmp('bg02',cc(1,:), [35,45,45]/100, 1e-10); %EIDORS 3.8
+   unit_test_cmp('bg02',cc(1,:), [35,50,50]/100, 1e-10); %EIDORS 3.9
 
    unit_test_cmp('mc01',size(cc), [127*2,3]);
    calc_colours('mapped_colour',4);
@@ -671,6 +695,7 @@ function do_unit_test
    test.black_red = [0,0,0;5000,0,0;10000,0,0]/1e4;
    test.blue_black_red = [10000,0,0;0,0,0;0,0,10000]/1e4;
    test.polar_colours = [0,0,10000;10000,10000,10000;10000,0,0]/1e4;
+   test.flame = [10000,10000,10000;10000,0,0;10000,10000,0]/1e4;
 
    calc_colours('defaults');
    calc_colours('mapped_colour',4);
