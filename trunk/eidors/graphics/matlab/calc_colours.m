@@ -76,7 +76,8 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           'draeger-tidal':     Draegerwerk colourmap (tidal images)
 %           'swisstom'           Swisstom colourmap
 %           'timpel'             Timpel colourmap
-%           'flame'              White/Red/Yellow colours
+%           'flame'              White/Red/Yellow/Blue colours
+%           'ice'                White/Purple/Black/Orange/Yellow colours
 %           matrix [Nx3]         Use values ([0-1]) as REB colourmap
 %   'cb_shrink_move' shrink or move the colorbar. See eidors_colourbar
 %           help for details.
@@ -239,8 +240,6 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
       [red,grn,blu]= jet_colours(pp,scd);
      case 'blue_yellow'
          [red,grn,blu] = blue_yellow_colours(pp,scale_data);
-     case 'flame'
-         [red,grn,blu] = flame_colours(pp,scale_data);
      case 'greyscale'          % Lungs are white
          [red,grn,blu] = greyscale_colours(pp,scale_data);
      case 'greyscale-inverse'  % Lungs are black
@@ -255,6 +254,10 @@ function [red,grn,blu] = blu_red_axis( pp, scale_data, backgnd )
          [red,grn,blu] = blue_black_red_colours(pp,scale_data);
      case 'polar_colours'
          [red,grn,blu] = polar_blue_white_red_colours(pp,scale_data);
+     case 'flame'
+         [red,grn,blu] = flame_colours(pp,scale_data);
+     case 'ice'
+         [red,grn,blu] = ice_colours(pp,scale_data);
 
      otherwise
       error(['specified cmap_type not understood:',pp.cmap_type]);
@@ -507,6 +510,18 @@ function [red,grn,blu] = flame_colours(pp,scale_data);
    blu(sd>t) = (sd(sd>t)-t)/(1-t);
    [red,grn,blu] = saturate(red,grn,blu);
 
+function [red,grn,blu] = ice_colours(pp,scale_data);
+   sd = 0.5 + scale_data/2; % 0..1
+   blu = (1 - 2*sd);
+   grn = (1 - 3*sd);
+   red = (1 - 2*sd);
+   red(red<0) = -2*red(red<0);
+   t=0.5;
+%   red(sd>t) = 1-(sd(sd>t)-t)/(1-t);
+%   blu(sd>t) = 1-(sd(sd>t)-t)/(1-t);
+   grn(sd>t) = (2*sd(sd>t)-1);
+   [red,grn,blu] = saturate(red,grn,blu);
+
 function [red,grn,blu] = saturate(red,grn,blu);
    red(red>1)=1;
    grn(grn>1)=1;
@@ -695,7 +710,8 @@ function do_unit_test
    test.black_red = [0,0,0;5000,0,0;10000,0,0]/1e4;
    test.blue_black_red = [10000,0,0;0,0,0;0,0,10000]/1e4;
    test.polar_colours = [0,0,10000;10000,10000,10000;10000,0,0]/1e4;
-   test.flame = [10000,10000,10000;10000,0,0;10000,10000,0]/1e4;
+   test.flame = [10000,10000,10000;10000,10000,0;0,0,10000]/1e4;
+   test.ice = [10000,10000,10000;0,0,0;10000,10000,0]/1e4;
 
    calc_colours('defaults');
    calc_colours('mapped_colour',4);
