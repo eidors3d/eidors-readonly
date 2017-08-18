@@ -565,7 +565,7 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hps2RtR, hpt2LLt, k
   end
   if opt.plot_residuals
      %         optimization_criteria, data misfit, roughness
-     r(k+1,2:3) = [(dv'*dv)/2 (de'*de)/2];
+     r(k+1,2:3) = [sum(sum(dv.^2,1))/2 sum(sum(de.^2,1))/2];
      if k > 0
         clf;
         x = 1:(k+1);
