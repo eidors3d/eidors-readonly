@@ -1,6 +1,6 @@
 function [ f_frac, c_frac ] = check_c2f_quality( f_mdl, c_mdl, c2f )
 %CHECK_C2F_QUALITY Check the coarse2fine mapping between two models
-%   CHECK_C2F_QUALITY(F_MDL, C_MDL, C2F) creates a plot for assesing the
+%   CHECK_C2F_QUALITY(F_MDL, C_MDL, C2F) creates a plot for assessing the
 %   quality of a coars2fine mapping.
 %   A coarse2fine mapping matrix C2F between a fine model F_MDL and a 
 %   coarse model C_MDL contains in each element C2F(i,j) the fraction of 

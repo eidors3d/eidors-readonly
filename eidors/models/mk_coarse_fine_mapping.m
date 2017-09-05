@@ -20,7 +20,7 @@ function [mapping, outside] = mk_coarse_fine_mapping(varargin)
 % NOTE that MK_ANALYTIC_C2F accepts an optional third argument whereas
 % MK_APPROXIMATE_C2F does not.
 %
-% See also: EIDORS_DEFUALT, MK_ANALYTIC_C2F, MK_APPROX_C2F
+% See also: EIDORS_DEFAULT, MK_ANALYTIC_C2F, MK_APPROX_C2F, CHECK_C2F_QUALITY
 
 % (C) 2015 Bartlomiej Grychtol
 % License: GPL version 2 or version 3
