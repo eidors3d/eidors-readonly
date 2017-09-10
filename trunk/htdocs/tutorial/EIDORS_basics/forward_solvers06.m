@@ -19,4 +19,4 @@ imgs.fwd_model.stimulation = stim;
 
 vh = fwd_solve( imgs ); imgo.node_data = vh.volt(:,1);
 
-subplot(221); show_fem(imgo,[0,1]);
+subplot(221); show_fem(imgo,[0,1]); axis off;

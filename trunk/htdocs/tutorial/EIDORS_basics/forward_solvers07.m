@@ -12,4 +12,6 @@ stim.stim_pattern([1,2,14,15]) =  NaN*ones(1,4);
 imgs.fwd_model.stimulation = stim;
 vh = fwd_solve( imgs ); imgo.node_data = vh.volt(:,1);
 
-subplot(222); show_fem(imgo,[0,1]);
+subplot(222); show_fem(imgo,[0,1]); axis off
+
+print_convert forward_solvers07a.png

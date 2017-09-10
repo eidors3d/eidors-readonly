@@ -61,6 +61,30 @@ The voltage pattern from a change in conductivity
 The current pattern for various stimulation patterns
 </center>
 
+<H2>Voltage and Current stimulation</H2>
+It is possible to do both voltage (Dirichlet) and
+  current (Neumann) boundary conditions. The
+voltage is specified with <tt>volt_pattern</tt> as
+shown below
+
+<H3>Current (Dirichlet) boundary conditions</H3>
+
+<pre>
+[% PROCESS "forward_solvers06.m" %]
+</pre>
+
+<H3>Voltage (Neumann) and Current (Dirichlet) boundary conditions</H3>
+
+<pre>
+[% PROCESS "forward_solvers07.m" %]
+</pre>
+
+<center>
+<img src="forward_solvers07a.png">
+<br><i> Figure:</i>
+Left: Current specified on electrodes 6 and 10.
+Right: Voltage specified on electrodes 1,2,14,15 and current specified on electrodes 6 and 10.
+</center>
 </td></tr></table>
 <p>
 <small>
