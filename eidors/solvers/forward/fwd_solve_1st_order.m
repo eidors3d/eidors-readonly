@@ -68,13 +68,14 @@ v= full(horzcat(dirichlet_values{:})); % Pre fill in matrix
 for i=1:length(dirichlet_nodes)
    idx= 1:size(s_mat.E,1);
    idx( dirichlet_nodes{i} ) = [];
+   % If all dirichlet patterns are the same, then calc in one go
    if length(dirichlet_nodes) == 1; rhs = 1:size(pp.QQ,2);
    else                           ; rhs = i; end
    v(idx,rhs)= left_divide( s_mat.E(idx,idx), ...
              neumann_nodes{i}(idx,:) - s_mat.E(idx,:)*dirichlet_values{i});
 end
 
-% If model has a ground node (rather than voltage stim electrodes)
+% If model has a ground node, check if current flowing in this node
 if has_gnd_node
    Ignd = s_mat.E(dirichlet_nodes{1},:)*v;
    Irel = Ignd./sum(abs(pp.QQ)); % relative 
@@ -130,11 +131,20 @@ function [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
       else % one at a time
          for i=1:size(fnanQQ,2)
             fnanQQi= fnanQQ(:,i);
-            dirichlet_nodes{i} = find(fnanQQi);
-            dirichlet_values{i} = sparse(size(pp.N2E,2), 1);
-            dirichlet_values{i}(fnanQQi) = pp.VV(fnanQQi,i);
-            neumann_nodes{i} = pp.QQ(:,i);
-            neumann_nodes{i}(fnanQQi) = 0;
+            if any(fnanQQi)
+               dirichlet_nodes{i} = find(fnanQQi);
+               dirichlet_values{i} = sparse(size(pp.N2E,2), 1);
+               dirichlet_values{i}(fnanQQi) = pp.VV(fnanQQi,i);
+               neumann_nodes{i} = pp.QQ(:,i);
+               neumann_nodes{i}(fnanQQi) = 0;
+            elseif isfield(pp,'gnd_node')
+               dirichlet_nodes{i} = pp.gnd_node;
+               dirichlet_values{i} = sparse(size(pp.N2E,2), 1);
+               neumann_nodes{1}   = pp.QQ(:,i);
+               has_gnd_node= 1;
+            else
+               error('no required ground node on model');
+            end
          end
       end
    elseif isfield(pp,'gnd_node')
