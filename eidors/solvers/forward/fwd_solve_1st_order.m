@@ -114,11 +114,13 @@ function [dirichlet_nodes, dirichlet_values, neumann_nodes, has_gnd_node]= ...
             find_dirichlet_nodes( fwd_model, pp );
    fnanQQ = isnan(pp.QQ);
    lstims = size(pp.QQ,2);
-   if any(fnanQQ)
+   % Can't use any(...) because if does implicit all
+   if any(any(fnanQQ))
       has_gnd_node = 0; % no ground node is specified
       % Are all dirichlet_nodes the same
 
       % Don't use all on sparse, it will make them full
+      % Check if all rows are the same
       if ~any(any(fnanQQ(:,1)*ones(1,lstims) - fnanQQ,2))
          dirichlet_nodes{1} = find(fnanQQ(:,1));
          dirichlet_values{1} = sparse(size(pp.N2E,2), size(fnanQQ,2));
@@ -239,12 +241,17 @@ function unit_test_voltage_stims;
    img.fwd_model.stimulation = stimulv;
    img.fwd_solve.get_all_nodes = 1;
    vh = fwd_solve_1st_order(img);
-   unit_test_cmp('a2c2 Vstim #1', vh.meas, diff(volt(1:2)), 1e-14);
-   unit_test_cmp('a2c2 Vstim #2', vh.volt(27+[1,4]), volt([1,4]), 1e-14);
+   unit_test_cmp('a2c2 Vstim #1', vh.meas, diff(volt(1:2,1)), 1e-14);
+   unit_test_cmp('a2c2 Vstim #2', vh.volt(27+[1,4],1), volt([1,4]), 1e-14);
    tst = [ ...
    1.503131926779798; 1.412534629974291; 1.529078332819747;
    1.354399248512161; 1.546241676995996];
-   unit_test_cmp('a2c2 Vstim #3', vh.volt(1:5:25), tst, 1e-14);
+   unit_test_cmp('a2c2 Vstim #3', vh.volt(1:5:25,1), tst, 1e-14);
+
+   img.fwd_model.stimulation(2) = stimulv;
+   img.fwd_model.stimulation(1).stim_pattern([1,4]) = 0;
+   vh = fwd_solve_1st_order(img);
+   unit_test_cmp('a2c2 Vstim #4', vh.volt(1:5:25,2), tst, 1e-14);
 
    imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt;
    imgn.calc_colours.clim = 1; subplot(221); show_fem(imgn,1);
