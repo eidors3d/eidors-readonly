@@ -37,9 +37,9 @@ function [SNRmean, SE, debug] = calc_image_SNR(imdl, hyperparameter, doPlot)
 % TITLE: A Versatile Noise Performance Metric for Electrical Impedance Tomography Algorithms
 % JOURNAL: IEEE Transactions on Biomedical Engineering
 % YEAR: 2017
-% VOL: PP
-% NUM: 99
-% PAGE: 1
+% VOL: 64
+% NUM: 10
+% PAGE: 2321-2330
 % DOI: 10.1109/TBME.2017.2659540
 %
 
@@ -103,8 +103,11 @@ if isempty(xyzr_targets)
     %
 
     % first determine electrode level
-    if isfield(RecMdl, 'mdl_slice_mapper')
+    if isfield(RecMdl, 'mdl_slice_mapper') && isfield(RecMdl.mdl_slice_mapper, 'level')
         ElectrodeLevel = RecMdl.mdl_slice_mapper.level;    
+    elseif isfield(RecMdl, 'mdl_slice_mapper') && isfield(RecMdl.mdl_slice_mapper, 'z_pts')
+        ElectrodeLevel = RecMdl.mdl_slice_mapper.z_pts;    
+        error('3D not supported yet, please seed targets manually via xyzr_targets');
     else
         if isfield(RecMdl.electrode(1), 'pos')
             elec_loc = cell2mat(cellfun(@(x) mean(x)', {RecMdl.electrode.pos}, 'uniformoutput', false))';
