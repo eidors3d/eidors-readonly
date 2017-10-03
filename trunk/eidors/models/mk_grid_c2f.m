@@ -305,13 +305,18 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
 
         for t = 1:numel(tet_todo)
 %             if v== 137 && tet_todo(t) == 543, keyboard, end
-            pts = [ intpts1(common_intpts1(:,t),:);
-                    intpts2(common_intpts2(:,t),:);
-                    intpts3(common_intpts3(:,t),:);
-                    fmdl.nodes(tet_nodes(:,t),:);
-                    rmdl.nodes(vox_nodes(:,t),:)];
+            pts = [ intpts1(common_intpts1(:,t),:); % tet edge v. vox face
+                    intpts2(common_intpts2(:,t),:); % vox edge v. tet face
+                    intpts3(common_intpts3(:,t),:); % vox edge v. tet edge
+                    fmdl.nodes(tet_nodes(:,t),:);   % tet node in vox
+                    rmdl.nodes(vox_nodes(:,t),:)];  % vox node in tet
             last_v = last_v + 1;
             ok = false;
+            if size(pts,1) < 4 
+              % we should have enough confidence by now
+              % unless the tolerances were specified weird
+              continue 
+            end
             if size(pts,1) < 4 % test if edge lies on the plane of the vox
                 % check for edges along the x y or z axis
                 % this includes coplanar faces
@@ -322,7 +327,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 % it should also check if both pts come from the same edge and
                 % that edge fullfils the condition
                 D = P1-P2;
-                ok = any(D(:) == 0); 
+                ok = any(abs(D(:)) <= eps); 
             end 
             
             if ok, continue, end % otherwise convhulln will throw an error
@@ -362,7 +367,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                         ok = ok | size(u,1) < 4;
                 end
                 if ~ok
-                    if DEBUG || eidors_debug('query','mk_grid_c2f:convhulln');
+                    if DEBUG || eidors_debug('query','mk_grid_c2f:convhulln')
                         tet.nodes = fmdl.nodes;
                         vox.nodes = rmdl.nodes;
                         tet.type = 'fwd_model';
@@ -383,7 +388,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                     else
                         fprintf('\n');
                         eidors_msg(['convhulln has thrown an error. ' ...
-                            'Enable eidors_debug on mk_grid_c2f and re-run to see a debug plot'],0);
+                            'Enable eidors_debug on mk_grid_c2f:convhulln and re-run to see a debug plot'],0);
                         rethrow(err);
                     end
                 end
