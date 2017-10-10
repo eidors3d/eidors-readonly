@@ -16,3 +16,11 @@
 %1. TaylorPhessian of obejctive comparison
 %2. Inverse solve with BFGS ..
 %3. Compare BFGS Hessian to Taylor Hessina
+
+%NEWTODO
+%1 convex vs non-convex problem
+%2 long triangle - deviatoric part of M tensor ->> 0 more rapidly?
+%3 fix sensitivity of p-tensor and compare, incl. rotated/shaped els
+%4 reconstruction model which doesn't include els at bdry
+%
+% take home - less accurate but works for large scale?
