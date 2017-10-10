@@ -22,9 +22,11 @@ if(inv_crime==1)
     sim_img.fwd_solve.get_all_meas=1;
     sim_img.fwd_model.stimulation=stim;
 
-    sim_img.fwd_model.M_tensor.a = ones(size(sim_img.elem_data,1),1);
-    sim_img.fwd_model.M_tensor.b = ones(size(sim_img.elem_data,1),1);
-    sim_img.fwd_model.M_tensor.rot = zeros(size(sim_img.elem_data,1),1);
+%     sim_img.fwd_model.M_tensor.a = ones(size(sim_img.elem_data,1),1);
+%     sim_img.fwd_model.M_tensor.b = ones(size(sim_img.elem_data,1),1);
+%     sim_img.fwd_model.M_tensor.rot = zeros(size(sim_img.elem_data,1),1);
+
+%     fmdl = calc_closest_ellipse(fmdl);
 
     homog_img=sim_img;
 
@@ -285,13 +287,14 @@ semilogy(0:100, r_t1/ r_t1(1))
 %%
 hold off
 figure(5)
-semilogy(0:100, er_f00/ er_f00(1))
+% semilogy(0:100, er_f00/ er_f00(1))
 hold all
 semilogy(0:100, er_f10/ er_f10(1))
 semilogy(0:100, er_f11/ er_f11(1))
-semilogy(0:100, er_d00/ er_d00(1))
-semilogy(0:100, er_d10/ er_d10(1))
-semilogy(0:100, er_d11/ er_d11(1))
+% semilogy(0:100, er_d00/ er_d00(1))
+% semilogy(0:100, er_d10/ er_d10(1))
+% semilogy(0:100, er_d11/ er_d11(1))
+semilogy(0:100, er_pf/er_pf(1))
 semilogy(0:100, er_GN0/ er_GN0(1))
 semilogy(0:100, er_GN1/ er_GN1(1))
 semilogy(0:100, er_t0/ er_t0(1))
