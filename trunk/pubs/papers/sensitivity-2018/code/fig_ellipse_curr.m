@@ -1,3 +1,4 @@
+clf
 % contrasts01.m
 sz = 5;
 ellipse_x = 2;
@@ -44,7 +45,7 @@ show_fem(imgv);
 %contrasts03.m
 sz = 5; img_idx = 'b';
 for ellipse_x = [0.5,1,2];
-   img = contrasts_04_modeller( sz, ellipse_x); 
+   img = ellipse_in_plane( sz, ellipse_x); 
    targ = img.fwd_model.mat_idx{1};
    for contrast = linspace( -3,3,7);
       img.elem_data( targ ) = exp(contrast);
