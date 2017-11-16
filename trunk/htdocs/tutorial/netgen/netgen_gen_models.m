@@ -254,6 +254,29 @@ axis([-2.5,2.5,-2.5,2.5,-2,0]);
  % Throw away the first electrode (background). We don't need it
  fmdl.electrode = fmdl.electrode(2:end);
 
+   case 18;
+shape_str= [ ...
+ 'solid top    = plane(0,0,0;0,1,0);\n' ...
+ 'solid cut2d  = plane(0,0,0;0,0,1) -maxh=0.15;\n' ...
+ 'solid mainobj= top and cut2d and orthobrick(-2,-2,-1;2,2,1);\n'];
+x_elec_pos = linspace(-1.5,1.5,5);
+elec_pos = x_elec_pos(:)*[1,0,0,0,0,0];
+elec_pos(:,5) = 1;
+elec_shape=[0.05];
+elec_obj = 'top';
+fmdl3= ng_mk_gen_models(shape_str, ...
+         elec_pos, elec_shape, elec_obj);
+fmdl2 = mdl2d_from3d( fmdl3);
+   subplot(122); show_fem_enhanced( fmdl2);
+gridx= linspace(-2.0,2.0,15);
+gridy= linspace(-2.0,0,7);
+[cmdl,c2f]= mk_grid_model(fmdl2,gridx,gridy);
+fmdl2.coarse2fine = c2f;
+hold on; hh=show_fem(cmdl);
+set(hh,'LineWidth',2,'EdgeColor',[.5,.7,1],'FaceAlpha',0);
+   subplot(121);
+fmdl= fmdl3;
+
 end
 
 if ~exist('fmdl'); return; end
