@@ -292,4 +292,4 @@ if rem(number,1) ==0
 else
   prname = sprintf('netgen_gen_models%02da.png',floor(number));
 end
-print_convert( prname, '-density 75');
+print_convert( prname );
