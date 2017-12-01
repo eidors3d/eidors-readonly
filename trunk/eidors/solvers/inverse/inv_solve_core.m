@@ -30,9 +30,9 @@ function img= inv_solve_core( inv_model, data0, data1);
 % 'inv_model.parameters.*'.
 %
 % Parameters (inv_model.inv_solve_core.*):
-%   verbose (show progress)                (default 2)
+%   verbose (show progress)                (default 1)
 %      0: quiet
-%    >=1: print iteration count
+%    >=1: print iteration count and residual
 %    >=2: print details as the algorithm progresses
 %    >=3: plot residuals versus iteration count
 %    >=4: plot result at each iteration, see show_fem
@@ -1375,7 +1375,7 @@ function opt = parse_options(imdl,n_frames)
    % 2: print details as the algorithm progresses
    if ~isfield(opt,'verbose')
       opt.verbose = 1;
-      fprintf('  selecting inv_model.inv_solve_core.verbosity=1\n');
+      fprintf('  selecting inv_model.inv_solve_core.verbose=1\n');
    end
    if opt.verbose > 1
       fprintf('  verbose = %d\n', opt.verbose);
