@@ -62,6 +62,11 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                    conform to the requested electrode positions,
 %                    correcting for Netgen inaccuracies and lack of
 %                    vertical profile (Inf = disable node mashing)
+%       'build_stim' - use stim_pattern_geophys to build a standard geophysics
+%                      stim/meas sequence and add it to the model, based on the
+%                      number of electrodes, and assuming a co-linear array;
+%                      set to 'none' to skip this step
+%                      [default: 'Wenner']
 %
 % The linear electrode array runs in the +X direction at Z=0. For
 % the 3D model, the Y-axis is perpendicular to the electrode array.
@@ -80,7 +85,6 @@ if nargin < 3
 end
 SALT='z$Id$'; % stick a key in the model 'save' file, so we can expire them when the model definitions age
 imdl = eidors_cache(@mk_model,{str, ne, opt, SALT}, copt);
-imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), 'Wenner');
 
 function imdl=mk_model(str,ne,opt,SALT);
 if str(1) ~= 'h' && str(1) ~= 'H'
@@ -122,13 +126,14 @@ extend_z = 1;
 extend_inner_x = 3/5;
 extend_inner_y = 3/5;
 extend_inner_z = 2/5;
+build_stim = 'Wenner';
 if length(opt) > 0 % allow overriding the default values
    assert(round(length(opt)/2)*2 == length(opt),'option missing value?');
    expect = {'hmax_rec','hmax_fwd', 'hmax_fwd_inner', ...
              'elec_width','z_contact','elec_spacing',...
              'extend_x', 'extend_y', 'extend_z', ...
              'extend_inner_x', 'extend_inner_y', 'extend_inner_z', ...
-             'skip_c2f', 'threshold'};
+             'skip_c2f', 'threshold', 'build_stim'};
    opts = struct(opt{:})
    for i = fieldnames(opts)'
       assert(any(strcmp(i,expect)), ['unexpected option: ',i{:}]);
@@ -385,6 +390,10 @@ if MDL_2p5D_CONFIG
    imdl.fwd_model.system_mat = @system_mat_2p5d_1st_order;
    imdl.fwd_model.jacobian_adjoint_2p5d_1st_order.k = [0 3];
    imdl.fwd_model.fwd_solve_2p5d_1st_order.k = [0 3];
+end
+
+if ~strcmp(build_stim,'none')
+   imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), opt.build_stim);
 end
 
 if save_model_to_disk
