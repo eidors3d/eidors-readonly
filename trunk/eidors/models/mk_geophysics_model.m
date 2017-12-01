@@ -33,9 +33,9 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                 'c' : hmax_fwd=xw/4;     'C' : hmax_fwd=es*4;
 %                 ...                       ...
 %                 'z' : hmax_fwd=xw/2^25]  'Z' : hmax_fwd=es*2^-21]
-%       'hmax_fwd_inner_multiple'
+%       'hmax_fwd_inner'
 %                  - reconstruction model mesh density for the inner region
-%                    as multiple of the outer region density hmax_fwd [1/2]
+%                    [default: 1/2 of the outer region density hmax_fwd]
 %       'hmax_rec' - reconstruction model mesh density [hmax_fwd*2]
 %       'elec_width' - electrode width [0.1 m]
 %                    width = 0 requests a PEM, rather than CEM
@@ -48,13 +48,12 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                    (3D models only) [1]
 %       'extend_z' - extra depth of model, multiple of array width [1]
 %       'extend_inner_x'
-%                  - inner (denser) mesh, as fraction of outer mesh [3/5]
+%                  - inner (denser) mesh, multiple of array width [3/5]
 %       'extend_inner_y'
-%                  - inner (denser) mesh, as fraction of outer mesh [3/5]
+%                  - inner (denser) mesh, multiple of array width [3/5]
 %                    (3D models only)
 %       'extend_inner_z'
-%                  - inner (denser) mesh, depth as a fraction of the outer
-%                    mesh, in the z-direction [2/5]
+%                  - inner (denser) mesh, multiple of array width [2/5]
 %       'skip_c2f' - skip building the rec_model to fwd_model mapping [0]
 %       'threshold' - threshold for electrode placement errors [1e-12]
 %                    if error exceeds threshold, mash nodes by cubic interp
@@ -123,10 +122,10 @@ extend_z = 1;
 extend_inner_x = 3/5;
 extend_inner_y = 3/5;
 extend_inner_z = 2/5;
-hmax_fwd_inner_multiple = 1/2;
 if length(opt) > 0 % allow overriding the default values
    assert(round(length(opt)/2)*2 == length(opt),'option missing value?');
-   expect = {'hmax_rec','hmax_fwd', 'hmax_fwd_inner_multiple', 'elec_width','z_contact','elec_spacing',...
+   expect = {'hmax_rec','hmax_fwd', 'hmax_fwd_inner', ...
+             'elec_width','z_contact','elec_spacing',...
              'extend_x', 'extend_y', 'extend_z', ...
              'extend_inner_x', 'extend_inner_y', 'extend_inner_z', ...
              'skip_c2f', 'threshold'};
@@ -167,7 +166,10 @@ if ~exist('hmax_fwd','var')
    end
 end
 if ~exist('hmax_rec','var') % allow hmax_rec to depend on configured hmax_fwd
-   hmax_rec=hmax_fwd*2.0; % avoid parametrization aliasing
+   hmax_rec=hmax_fwd*2.01; % avoid parametrization aliasing
+end
+if ~exist('hmax_fwd_inner','var') % allow hmax_rec to depend on configured hmax_fwd
+   hmax_fwd_inner=hmax_fwd/2.0;
 end
 
 if save_model_to_disk
@@ -200,10 +202,95 @@ assert(extend_x>0,'extend_x must be > 0');
 assert(extend_y>0,'extend_y must be > 0');
 assert(extend_z>-1,'extend_z must be > -1');
 
+% Calculate cmdl, fmdl and inner fmdl (fmdlin) min/max coordinates.
+% After rescaling (normalizing), electrode major axis is along the x-axis, and
+% the electrode array will be 2 units long (-1,+1).
+fmdlbox =   [-(1+2*extend_x)        +(1+2*extend_x);
+             -(1+2*extend_y)        +(1+2*extend_y);
+             -(2+2*extend_z)        +3];
+fmdlinbox = [-(1+2*extend_inner_x)  +(1+2*extend_inner_x);
+             -(1+2*extend_inner_y)  +(1+2*extend_inner_y);
+             -(2+2*extend_inner_z)  +2];
+cmdlbox = fmdlbox;
+
+assert(all(fmdlbox(:,1) <= fmdlinbox(:,1)), 'oops, inner mesh must be smaller than outer mesh');
+assert(all(fmdlbox(:,2) >= fmdlinbox(:,2)), 'oops, inner mesh must be smaller than outer mesh');
+assert(all(fmdlbox(:,1) <= cmdlbox(:,1)), 'oops, reconstruction mesh must be smaller than forward mesh');
+assert(all(fmdlbox(:,2) >= cmdlbox(:,2)), 'oops, reconstruction mesh must be smaller than forward mesh');
+
+% build shape string for NetGen
+if elec_width ~= 0
+   elec_shape = [elec_width*norm(R)/2, 0, elec_width*norm(R)/2/(nodes_per_elec-1)]; % CEM, circular, maxh
+   elec_pos   = [ xyzc(:,1:FMDL_DIM), repmat([zeros(1,3-FMDL_DIM+2) 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
+   cem2pem = 0;
+else
+   if FMDL_DIM == 3
+      elec_width = elec_spacing/2;
+      elec_shape = [elec_width, elec_width, hmax_fwd_inner]; % PEM, sz, maxh
+      elec_pos   = [ xyzc, repmat([0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
+      elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
+      elec_pos(:,2) = elec_pos(:,2) + elec_width/2;
+      cem2pem = 1;
+   else % FMDL_DIM == 2
+      elec_width = elec_spacing/2;
+      elec_shape = [elec_width, elec_width, hmax_fwd_inner]; % rectangular CEM->PEM, maxh
+      elec_pos   = [ xyzc(:,1:2), repmat([0 0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
+      elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
+      cem2pem = 1;
+   end
+end
+elec_pos(:,FMDL_DIM) = 0; % flatten electrode positions onto the "ps" plane
+if FMDL_DIM == 3
+   shape_str = [...
+                sprintf('solid ps = plane(%s);\n', a2s([0 0 0; 0 0 1])), ...
+                sprintf('solid bi = orthobrick(%s);\n', a2s(fmdlinbox')), ...
+                sprintf('solid bo = orthobrick(%s);\n', a2s(fmdlbox')), ...
+                sprintf('solid ri = bi and ps -maxh=%f;\n', hmax_fwd_inner), ...
+                sprintf('solid ro = bo and ps and (not bi) -maxh=%f;\n', hmax_fwd), ...
+                sprintf('solid mainobj = ri;\n')];
+   % Note that ri must be the 'mainobj' so that it can intersect with the electrodes
+   % additional top level objects for netgen
+else % netgen 2d model
+   % to create the 2D slice we need to give NetGen something to work with
+   %Need some width to let netgen work, but not too much so
+   % that it meshes the entire region
+   sw = range(fmdlinbox(1,:)) / 5; % initial estimate
+   sw = min(sw,2*hmax_fwd); % coarse model slice width
+   ri2d = fmdlinbox'; ri2d(:,2) = [-sw 0 ];
+   ro2d = fmdlbox'; ro2d(:,2) = [-sw 0 ];
+   shape_str = [...
+                sprintf('solid ps = plane(%s);\n', a2s([0 0 0; 0 0 1])), ...
+                sprintf('solid bi = orthobrick(%s);\n', a2s(ri2d)), ...
+                sprintf('solid bo = orthobrick(%s);\n', a2s(ro2d)), ...
+                sprintf('solid ri = bi and ps -maxh=%f;\n', hmax_fwd_inner), ...
+                sprintf('solid ro = bo and ps and (not bi) -maxh=%f;\n', hmax_fwd), ...
+                sprintf('solid mainobj = ri;\n')];
+end
+% fprintf('SHAPE_STR: %s', shape_str); elec_pos
+elec_obj = 'ps';
+[fmdl, mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj, 'tlo ro');
+if FMDL_DIM == 2 % 2D
+   % now convert the roughly 2D slice into a true 2D plane
+   [fmdl, mat_idx] = copy_mdl2d_from3d(fmdl, mat_idx, 'y');
+else % 3D
+   if CMDL_DIM ~= 0
+      % c2f
+      cmdl.mk_coarse_fine_mapping.f2c_offset  = [0 0 0];
+      cmdl.mk_coarse_fine_mapping.f2c_project = [1 0 0; 0 0 1; 0 1 0];
+      % duplicate parameters since mk_analytic/approx_c2f have different names...
+      cmdl.mk_analytic_c2f.f2c_offset  = cmdl.mk_coarse_fine_mapping.f2c_offset;
+      cmdl.mk_analytic_c2f.f2c_project = cmdl.mk_coarse_fine_mapping.f2c_project;
+   end
+end
+
+if cem2pem
+   fmdl = convert_cem2pem(fmdl, xyzc);
+end
+
 % 2d cmdl
-xllim=xs-extend_x*2; % extends each side by the length of the electrode array
-xrlim=xs+xw+extend_x*2;
-zdepth=-(xw+extend_z*2);
+xllim = fmdlbox(1,1);
+xrlim = fmdlbox(1,2);
+zdepth = fmdlbox(3,1);
 xr=max(floor((xrlim-xllim)/hmax_rec/2),1)*2+1; % odd number
 yr=max(floor(-zdepth/hmax_rec/2),1)*2+1; % odd number
 [x,y] = meshgrid( linspace(xllim,xrlim,xr), linspace(zdepth,0,yr));
@@ -212,217 +299,67 @@ if CMDL_DIM ~= 0
    cmdl= mk_fmdl_from_nodes( vtx,{vtx(1,:)}, z_contact, 'sq_m2');
 end
 
-% fmdl refinement
-xllim1=xllim+extend_x*2*extend_inner_x;
-xrlim1=xrlim-extend_x*2*extend_inner_x;
-zdepth1=-(xw+extend_z*2*extend_inner_z);
-assert(zdepth1 > zdepth, 'zdepth: oops, inner mesh must be smaller than outer mesh');
-if 0 && FMDL_DIM == 2  % 2D fmdl
-   % old code using mk_fmdl_from_nodes
-   % ... shit mesh around the electrodes, bad elements scattered throughout
-   xr=floor((xrlim-xllim)/hmax_fwd/2)*2+1; % odd number
-   yr=floor(-zdepth/hmax_fwd/2)*2+1; % odd number
-   [x,y] = meshgrid( linspace(xllim,xrlim,xr), linspace(zdepth,0,yr));
-   vtx= [x(:),y(:)];
+% stick electrode nodes into cmdl so that show_fem will plot them
+for i=1:ne
+   n=fmdl.electrode(i).nodes;
+   nn=length(n);
+   nx=fmdl.nodes(n,:);
 
-   % Refine points close to electrodes - don't worry if points overlap
-   xr=floor((xrlim1-xllim1)/hmax_fwd)*2+1; % odd number
-   yr=floor(-zdepth1/hmax_fwd)*2+1; % odd number
-   [x,y] = meshgrid( linspace(xllim1,xrlim1,xr), linspace(zdepth1,0,yr));
-   vtx= [vtx; x(:),y(:)];
-
-   % refine around the electrodes
-   xgrid =  linspace(0, +3*elec_width, 3*nodes_per_elec-2)' - elec_width*3/2;
-   ygrid =  linspace(0, -2*elec_width, 2*nodes_per_elec-1)';
-   y0g= repelem(ygrid,length(xgrid));
-   for i=1:ne
-   % Electrode centre
-     x0 = x0l(i); % constructed earlier
-     x0g= repmat(x0 + xgrid, length(ygrid),1);
-     vtx= [ vtx; [x0g, y0g]];
-     ve=find((vtx(:,2)==0) & (vtx(:,1) >= x0-elec_width/2) & (vtx(:,1) <= x0+elec_width/2));
-     elec_nodes{i}= vtx(ve,:);
-   end
-
-   fmdl= mk_fmdl_from_nodes( vtx, elec_nodes, z_contact, 'sq_m1');
-   [~, gn] = min(fmdl.nodes(:,end));
-   fmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
-
-else % 3D fmdl
-% NOTE Herve's interface won't let me build a box inside a box with different hmax_rec.. @#$%
-%   body_geometry(1).ortho_brick = struct;
-%   body_geometry(1).intersection.ortho_brick(1).opposite_corner_a = [ xllim  -10*elec_spacing      0 ];
-%   body_geometry(1).intersection.ortho_brick(1).opposite_corner_b = [ xrlim  +10*elec_spacing zdepth ];
-%%   body_geometry(1).intersection.ortho_brick(2).opposite_corner_a = [ xllim1+1 -5*elec_spacing     +1 ];
-%%   body_geometry(1).intersection.ortho_brick(2).opposite_corner_b = [ xrlim1-1 +5*elec_spacing zdepth1];
-%%   body_geometry(1).intersection.ortho_brick(2).complement_flag = 1;
-%   body_geometry(1).max_edge_length = hmax_fwd;
-%   body_geometry(2).ortho_brick.opposite_corner_a = [ xllim1 -1*elec_spacing      0 ];
-%   body_geometry(2).ortho_brick.opposite_corner_b = [ xrlim1 +1*elec_spacing zdepth1];
-%   body_geometry(2).max_edge_length = hmax_fwd/2.0;
-%   for i=1:ne
-%      x0 = xs+(ne-i)*elec_spacing;
-%      electrode_geometry{i}.cylinder.radius        = elec_width/2;
-%      electrode_geometry{i}.cylinder.top_center    = [x0, 0, +0.1];
-%      electrode_geometry{i}.cylinder.bottom_center = [x0, 0, -0.1];
-%      electrode_geometry{i}.max_edge_length = elec_width/(nodes_per_elec-1);
-%   end
-%   fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
-
-
-   % find the electrode locations
-   % find the min/max and set limits for the domain that are
-   %   20% bigger in every dimension
-   xyz_box = [ min(xyzc); max(xyzc) ]; % a bounding box around the electrodes
-%   elec_mean_dist = norm(mean(diff(xyzc))); % average distance between electrodes
-%   fprintf('  mean dist btw electrodes = %0.2f m\n', elec_mean_dist/norm(R));
-
-%   if 0
-%      rmi = elec_mean_dist*ne/4; % elec_mean_dist*4 - inner margin
-%      rmo = rmi.*[2 2 4]; % outer margin
-%      ri = xyz_box(1,:) - rmi; ri(2,:) = xyz_box(2,:) + rmi; ri(1,3)=-max(range(xyzc))/2;
-%      ro = xyz_box(1,:) - rmo; ro(2,:) = xyz_box(2,:) + rmo;
-%   else
-      ro = ([ xllim   -extend_y*2 zdepth;
-              xrlim   +extend_y*2      3 ]);
-      ri = ([ xllim1  -extend_y*2*extend_inner_y zdepth1;
-              xrlim1  +extend_y*2*extend_inner_y      2 ]);
-%   end
-   ps = [0 0 0; 0 0 1]; % surface plane
-   ro_maxh   = hmax_fwd;
-   ri_maxh   = hmax_fwd*hmax_fwd_inner_multiple;
-
-   % build shape string for NetGen
-   cem2pem = 0; % convert CEM to PEM?
-   if elec_width ~= 0
-      elec_shape = [elec_width*norm(R)/2, 0, elec_width*norm(R)/2/(nodes_per_elec-1)]; % CEM, circular, maxh
-      elec_pos   = [ xyzc(:,1:FMDL_DIM), repmat([zeros(1,3-FMDL_DIM+2) 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
-   else
-      if FMDL_DIM == 3
-         elec_width = elec_spacing/2;
-         elec_shape = [elec_width, elec_width, ri_maxh]; % PEM, sz, maxh
-         elec_pos   = [ xyzc, repmat([0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
-         elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
-         elec_pos(:,2) = elec_pos(:,2) + elec_width/2;
-         cem2pem = 1;
-      else % FMDL_DIM == 2
-         elec_width = elec_spacing/2;
-         elec_shape = [elec_width, elec_width, ri_maxh]; % rectangular CEM->PEM, maxh
-         elec_pos   = [ xyzc(:,1:2), repmat([0 0 0 1],ne,1) ]; % p(x,y,z=0), n(0,0,1)
-         elec_pos(:,1) = elec_pos(:,1) + elec_width/2;
-         cem2pem = 1;
-      end
-   end
-   elec_pos(:,FMDL_DIM) = 0; % kill y-variations, so that the electrodes are placed onto the "ps" plane
-   elec_obj     = 'ps';
-   tlo = 'tlo ro'; % skip trailing ';\n'
-   if FMDL_DIM == 3
-      shape_str = [...
-                   sprintf('solid ps = plane(%s);\n', a2s(ps)), ...
-                   sprintf('solid bi = orthobrick(%s);\n', a2s(ri)), ...
-                   sprintf('solid bo = orthobrick(%s);\n', a2s(ro)), ...
-                   sprintf('solid ri = bi and ps -maxh=%f;\n', ri_maxh), ...
-                   sprintf('solid ro = bo and ps and (not bi) -maxh=%f;\n', ro_maxh), ...
-                   sprintf('solid mainobj = ri;\n')];
-      % Note that ri must be the 'mainobj' so that it can intersect with the electrodes
-      % additional top level objects for netgen
-   else % netgen 2d model
-      % to create the 2D slice we need to give NetGen something to work with
-      %Need some width to let netgen work, but not too much so
-      % that it meshes the entire region
-      sw = range(ri(:,1)) / 5; % initial extimate
-      sw = min(sw,2*ro_maxh); % coarse model slice width
-      ri2d = ri; ri2d(:,2) = [-sw 0 ]; % [-sw/2; +sw/2 ];
-      ro2d = ro; ro2d(:,2) = [-sw 0 ]; % [-sw/2; +sw/2 ];
-      shape_str = [...
-                   sprintf('solid ps = plane(%s);\n', a2s(ps)), ...
-                   sprintf('solid bi = orthobrick(%s);\n', a2s(ri2d)), ...
-                   sprintf('solid bo = orthobrick(%s);\n', a2s(ro2d)), ...
-                   sprintf('solid ri = bi and ps -maxh=%f;\n', ri_maxh), ...
-                   sprintf('solid ro = bo and ps and (not bi) -maxh=%f;\n', ro_maxh), ...
-                   sprintf('solid mainobj = ri;\n')];
-   end
-   % fprintf('SHAPE_STR: %s', shape_str); elec_pos
-   [fmdl, mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj, tlo);
-   if FMDL_DIM == 2 % 2D
-      % now convert the roughly 2D slice into a true 2D plane
-      [fmdl, mat_idx] = copy_mdl2d_from3d(fmdl, mat_idx, 'y');
-   else % 3D
-      if CMDL_DIM ~= 0
-         % c2f
-         cmdl.mk_coarse_fine_mapping.f2c_offset  = [0 0 0];
-         cmdl.mk_coarse_fine_mapping.f2c_project = [1 0 0; 0 0 1; 0 1 0];
-         % duplicate parameters since mk_analytic/approx_c2f have different names...
-         cmdl.mk_analytic_c2f.f2c_offset  = cmdl.mk_coarse_fine_mapping.f2c_offset;
-         cmdl.mk_analytic_c2f.f2c_project = cmdl.mk_coarse_fine_mapping.f2c_project;
-      end
-   end
-
-   if cem2pem
-      fmdl = convert_cem2pem(fmdl, xyzc);
-   end
-
-   % stick electrode nodes into cmdl so that show_fem will plot them
-   for i=1:ne
-      n=fmdl.electrode(i).nodes;
-      nn=length(n);
-      nx=fmdl.nodes(n,:);
-   
-      fmdl.electrode(i).z_contact = z_contact;
-      if CMDL_DIM ~= 0
-         nnc = length(cmdl.nodes);
-         cmdl.nodes = [cmdl.nodes; nx(:,[1 FMDL_DIM])];
-         cmdl.electrode(i).nodes = (nnc+1):(nnc+nn);
-         cmdl.electrode(i).z_contact = z_contact;
-      end
-   end
-
-   % fix electrode locations if necessary
-   elec_err = sqrt(sum(mdl_elec_err(fmdl, xyzc).^2,2));
-   if max(elec_err) > threshold % put electrodes in the right place
-      [fmdl, cf] = correct_electrode_positions(fmdl, xyzc);
-      
-      if CMDL_DIM ~= 0
-         [cmdl, cc] = correct_electrode_positions(cmdl, xyzc);
-      end
-   end
-   % save functions for later use
-   fmdl.mv_elec = @shift_electrode_positions;
-
-   % reverse the centre and scaling
-   nn = size(fmdl.nodes,1);
-   Xn = repmat(X(1,:), nn, 1);
-   fmdl.nodes = ([fmdl.nodes zeros(nn,3-FMDL_DIM)]/ R) + Xn;
-   fmdl.nodes = fmdl.nodes(:,1:FMDL_DIM);
-
+   fmdl.electrode(i).z_contact = z_contact;
    if CMDL_DIM ~= 0
-      nn = size(cmdl.nodes,1);
-      Xn = repmat(X(1,:), nn, 1);
-      if CMDL_DIM ~= FMDL_DIM % 2D
-         cmdl.nodes = ([cmdl.nodes(:,1) zeros(nn,1) cmdl.nodes(:,2:end)]/ R) + Xn;
-         cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]);
-      else % CMDL_DIM == FMDL_DIM
-         cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
-         cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
-      end
-   end
-
-   % check that all electrodes were found
-   for i = 1:length(fmdl.electrode)
-      nn = fmdl.electrode(i).nodes;
-      assert(length(nn(:)) > 0, sprintf('electrode#%d: failed to find nodes',i));
-   end
-
-%   show_fem(fmdl); xlabel('x'); ylabel('y'); zlabel('z');
-
-   % TODO ... Actually we want a node in the middle: the boundary is bad too...
-   [~, gn] = min(fmdl.nodes(:,end));
-   fmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
-   if CMDL_DIM ~= 0
-      [~, gn] = min(cmdl.nodes(:,end));
-      cmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
+      nnc = length(cmdl.nodes);
+      cmdl.nodes = [cmdl.nodes; nx(:,[1 FMDL_DIM])];
+      cmdl.electrode(i).nodes = (nnc+1):(nnc+nn);
+      cmdl.electrode(i).z_contact = z_contact;
    end
 end
+
+% fix electrode locations if necessary
+elec_err = sqrt(sum(mdl_elec_err(fmdl, xyzc).^2,2));
+if max(elec_err) > threshold % put electrodes in the right place
+   [fmdl, cf] = correct_electrode_positions(fmdl, xyzc);
+
+   if CMDL_DIM ~= 0
+      [cmdl, cc] = correct_electrode_positions(cmdl, xyzc);
+   end
+end
+% save functions for later use
+fmdl.mv_elec = @shift_electrode_positions;
+
+% reverse the centre and scaling
+nn = size(fmdl.nodes,1);
+Xn = repmat(X(1,:), nn, 1);
+fmdl.nodes = ([fmdl.nodes zeros(nn,3-FMDL_DIM)]/ R) + Xn;
+fmdl.nodes = fmdl.nodes(:,1:FMDL_DIM);
+
+if CMDL_DIM ~= 0
+   nn = size(cmdl.nodes,1);
+   Xn = repmat(X(1,:), nn, 1);
+   if CMDL_DIM ~= FMDL_DIM % 2D
+      cmdl.nodes = ([cmdl.nodes(:,1) zeros(nn,1) cmdl.nodes(:,2:end)]/ R) + Xn;
+      cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]);
+   else % CMDL_DIM == FMDL_DIM
+      cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
+      cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
+   end
+end
+
+% check that all electrodes were found
+for i = 1:length(fmdl.electrode)
+   nn = fmdl.electrode(i).nodes;
+   assert(length(nn(:)) > 0, sprintf('electrode#%d: failed to find nodes',i));
+end
+
+% show_fem(fmdl); xlabel('x'); ylabel('y'); zlabel('z');
+
+% TODO ... Actually we want a node in the middle: the boundary is bad too...
+[~, gn] = min(fmdl.nodes(:,end));
+fmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
+if CMDL_DIM ~= 0
+   [~, gn] = min(cmdl.nodes(:,end));
+   cmdl.gnd_node = gn; % make sure the ground node is away from surface electrodes
+end
+
 
 imdl= mk_common_model('a2d0c',ne); % 2d model
 imdl.fwd_model = fmdl;
