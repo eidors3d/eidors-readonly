@@ -361,7 +361,7 @@ if CMDL_DIM ~= 0
 end
 
 
-imdl= mk_common_model('a2d0c',ne); % 2d model
+imdl= mk_common_model('a2d0c',4); % 2d model
 imdl.fwd_model = fmdl;
 imdl.name = ['EIDORS mk_geophysics_model ' str];
 imdl.fwd_model.name = ['EIDORS mk_geophysics_model fwd model ' str];
