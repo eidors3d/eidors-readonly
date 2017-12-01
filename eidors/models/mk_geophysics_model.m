@@ -393,7 +393,7 @@ if MDL_2p5D_CONFIG
 end
 
 if ~strcmp(build_stim,'none')
-   imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), opt.build_stim);
+   imdl.fwd_model.stimulation = stim_pattern_geophys(length(imdl.fwd_model.electrode), build_stim);
 end
 
 if save_model_to_disk
