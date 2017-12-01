@@ -8,9 +8,9 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %       3-dimensional array, one electrode per row, missing columns
 %       will be set to zero
 %       ne = 16
-%       ne = [4 6 10 20] % 1d
-%       ne = [0 1; 2 1.5; 3 1.2; 7 2.5] % 2d
-%       ne = [0 0.1 1; 2 -0.1 1.5; 3 -0.15 1.2; 7 0 2.5] % 3d
+%       ne = [4 6 10 20] % 1d: (x)
+%       ne = [0 1; 2 1.5; 3 1.2; 7 2.5] % 2d: (x,y)
+%       ne = [0 0.1 1; 2 -0.1 1.5; 3 -0.15 1.2; 7 0 2.5] % 3d: (x,y,z)
 % str - model, x = see hmax_rec
 %       h2x -   2D half-space, linear CEM array (2d fwd)
 %       h2p5x - 2.5D half-space, linear CEM array (2d fwd + Fourier y-dimension)
@@ -33,6 +33,9 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                 'c' : hmax_fwd=xw/4;     'C' : hmax_fwd=es*4;
 %                 ...                       ...
 %                 'z' : hmax_fwd=xw/2^25]  'Z' : hmax_fwd=es*2^-21]
+%       'hmax_fwd_inner_multiple'
+%                  - reconstruction model mesh density for the inner region
+%                    as multiple of the outer region density hmax_fwd [1/2]
 %       'hmax_rec' - reconstruction model mesh density [hmax_fwd*2]
 %       'elec_width' - electrode width [0.1 m]
 %                    width = 0 requests a PEM, rather than CEM
@@ -44,6 +47,14 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                    electrode array, multiple of array width
 %                    (3D models only) [1]
 %       'extend_z' - extra depth of model, multiple of array width [1]
+%       'extend_inner_x'
+%                  - inner (denser) mesh, as fraction of outer mesh [3/5]
+%       'extend_inner_y'
+%                  - inner (denser) mesh, as fraction of outer mesh [3/5]
+%                    (3D models only)
+%       'extend_inner_z'
+%                  - inner (denser) mesh, depth as a fraction of the outer
+%                    mesh, in the z-direction [2/5]
 %       'skip_c2f' - skip building the rec_model to fwd_model mapping [0]
 %       'threshold' - threshold for electrode placement errors [1e-12]
 %                    if error exceeds threshold, mash nodes by cubic interp
@@ -56,7 +67,7 @@ function imdl = mk_geophysics_model(str, ne, opt);
 % The linear electrode array runs in the +X direction at Z=0. For
 % the 3D model, the Y-axis is perpendicular to the electrode array.
 %
-% (C) 2015, 2016 A. Boyle
+% (C) 2015--2017 A. Boyle
 % License: GPL version 2 or version 3
 
 % model: 64 electrode, 2d half-space
@@ -109,10 +120,16 @@ save_model_to_disk = (length(ne) == 1) && (length(opt) == 0);
 extend_x = 1;
 extend_y = 1;
 extend_z = 1;
+extend_inner_x = 3/5;
+extend_inner_y = 3/5;
+extend_inner_z = 2/5;
+hmax_fwd_inner_multiple = 1/2;
 if length(opt) > 0 % allow overriding the default values
    assert(round(length(opt)/2)*2 == length(opt),'option missing value?');
-   expect = {'hmax_rec','hmax_fwd', 'elec_width','z_contact','elec_spacing',...
-             'extend_x', 'extend_y', 'extend_z', 'skip_c2f', 'threshold'};
+   expect = {'hmax_rec','hmax_fwd', 'hmax_fwd_inner_multiple', 'elec_width','z_contact','elec_spacing',...
+             'extend_x', 'extend_y', 'extend_z', ...
+             'extend_inner_x', 'extend_inner_y', 'extend_inner_z', ...
+             'skip_c2f', 'threshold'};
    opts = struct(opt{:})
    for i = fieldnames(opts)'
       assert(any(strcmp(i,expect)), ['unexpected option: ',i{:}]);
@@ -184,7 +201,7 @@ assert(extend_y>0,'extend_y must be > 0');
 assert(extend_z>-1,'extend_z must be > -1');
 
 % 2d cmdl
-xllim=xs-extend_x*2;
+xllim=xs-extend_x*2; % extends each side by the length of the electrode array
 xrlim=xs+xw+extend_x*2;
 zdepth=-(xw+extend_z*2);
 xr=max(floor((xrlim-xllim)/hmax_rec/2),1)*2+1; % odd number
@@ -196,9 +213,9 @@ if CMDL_DIM ~= 0
 end
 
 % fmdl refinement
-xllim1=xllim+extend_x*3/5*2;
-xrlim1=xrlim-extend_x*3/5*2;
-zdepth1=-(xw+extend_z*3/5*2);
+xllim1=xllim+extend_x*2*extend_inner_x;
+xrlim1=xrlim-extend_x*2*extend_inner_x;
+zdepth1=-(xw+extend_z*2*extend_inner_z);
 assert(zdepth1 > zdepth, 'zdepth: oops, inner mesh must be smaller than outer mesh');
 if 0 && FMDL_DIM == 2  % 2D fmdl
    % old code using mk_fmdl_from_nodes
@@ -268,12 +285,12 @@ else % 3D fmdl
 %   else
       ro = ([ xllim   -extend_y*2 zdepth;
               xrlim   +extend_y*2      3 ]);
-      ri = ([ xllim1  -extend_y*2/5*2 zdepth1;
-              xrlim1  +extend_y*2/5*2      2 ]);
+      ri = ([ xllim1  -extend_y*2*extend_inner_y zdepth1;
+              xrlim1  +extend_y*2*extend_inner_y      2 ]);
 %   end
    ps = [0 0 0; 0 0 1]; % surface plane
    ro_maxh   = hmax_fwd;
-   ri_maxh   = hmax_fwd/2.0;
+   ri_maxh   = hmax_fwd*hmax_fwd_inner_multiple;
 
    % build shape string for NetGen
    cem2pem = 0; % convert CEM to PEM?
