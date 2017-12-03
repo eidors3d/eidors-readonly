@@ -47,13 +47,18 @@ function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 
    D = feval(f, xyc, radius, opt);
    
+   % PJt is expensive and doesn't change when optimising NF
+   copt.cache_obj = {vi,vh,xyc,radius,opt};
+   copt.fstr = 'calc_GREIT_RM_PJt';
+   PJt = eidors_cache(@calc_PJt,{Y,D},copt);
+   
    if size(weight)==[1,1] % Can't use isscalar for compatibility with M6.5
-       [RM, PJt, M] = calc_RM(Y,D,weight, opt);
+       [RM, M] = calc_RM(PJt, Y, weight, opt);
    else
        error('not coded yet');
    end
 
-function [RM, PJt, M] = calc_RM(Y, D, noiselev, opt)
+function [RM, M] = calc_RM(PJt, Y, noiselev, opt)
 
    noiselev = noiselev * mean(abs(Y(:)));
    % Desired soln for noise is 0
@@ -61,7 +66,7 @@ function [RM, PJt, M] = calc_RM(Y, D, noiselev, opt)
 
    % This implements RM = D*Y'/(J*Sx*J + Sn);
    Sn = speye(N_meas) .* opt.noise_covar; % Noise covariance
-   PJt= D*Y';
+%    PJt= D*Y';
    M  = (Y*Y' + noiselev^2*Sn);
    RM =  left_divide(M',PJt')';    %PJt/M;
    % This implements RM = D*Y'/(Y*Y');
@@ -73,9 +78,11 @@ function [RM, PJt, M] = calc_RM(Y, D, noiselev, opt)
       if norm(RM-RMold,'fro')/norm(RM,'fro') > 1e-10; warning('not OK'); end
    end
 
+function PJt = calc_PJt(Y,D)
+      PJt = D*Y';
+      
 
-
-   function opt = parse_options(opt)
+function opt = parse_options(opt)
        if ~isfield(opt, 'normalize'), opt.normalize = 1; end
        if ~isfield(opt, 'meshsz'),    opt.meshsz = [-1 1 -1 1]; end
        if ~isfield(opt, 'imgsz'),     opt.imgsz = [32 32]; end
