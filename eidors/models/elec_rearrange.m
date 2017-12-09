@@ -3,7 +3,7 @@ function [elec_idx, new_fmdl] = elec_rearrange( pattern, newarrange, fwd_model )
 %
 % Usage: 
 %     elec_idx = elec_rearrange( pattern, newarrange );
-%     fmdl.electrode = fmdl.electrode( elec_idx );
+%     fmdl.electrode( elec_idx ) = fmdl.electrode;
 %   OR;
 %     [~,new_fmdl] = elec_rearrange( pattern, newarrange, fwd_model );
 %
