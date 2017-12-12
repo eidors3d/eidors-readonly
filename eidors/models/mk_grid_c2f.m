@@ -298,13 +298,13 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
         common_intpts3 = bsxfun(@and,vox2intpt3(:,v), tet2intpt3(:,tet_todo));
         tet_nodes     = bsxfun(@and,fnode2vox(:,v), fmdl.node2elem(:,tet_todo));
         vox_nodes     = bsxfun(@and,vnode2tet(:,tet_todo), m.node2vox(:,v));
+
         C = [C; v*ones(numel(tet_todo),1)];
         F = [F; tet_todo'];
         last_v = numel(V);
         V = [V; zeros(numel(tet_todo),1)]; % pre-allocate
 
         for t = 1:numel(tet_todo)
-%             if v== 137 && tet_todo(t) == 543, keyboard, end
             pts = [ intpts1(common_intpts1(:,t),:); % tet edge v. vox face
                     intpts2(common_intpts2(:,t),:); % vox edge v. tet face
                     intpts3(common_intpts3(:,t),:); % vox edge v. tet edge
@@ -329,8 +329,9 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 D = P1-P2;
                 ok = any(abs(D(:)) <= eps); 
             end 
-            
-            if ok, continue, end % otherwise convhulln will throw an error
+%             [ v t]
+            if ok; continue, end % otherwise convhulln will throw an error
+%             if ok && v== 6 && t==3; keyboard; end
             try
                 % move points to origin (helps for small elements at
                 % large coordinates
@@ -344,12 +345,14 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 pts = pts ./ scale;
                 % force thorough search for initinal simplex and 
                 % supress precision warnings
+%                 if v== 6 && t==3; keyboard; end
                 [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
                 V(last_v) = V(last_v) * scale^3; % undo scaling
             catch err
                 ok = false;
                 switch err.identifier
-                    case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
+                    case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError', ...
+                            'MATLAB:cgprechecks:NotEnoughPts'}
                         % check for edges along the x y or z axis
                         % this includes coplanar faces
                         E = fmdl.edges(fmdl.elem2edge(tet_todo(t),:),:);
@@ -375,6 +378,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                         vox.elems = m.faces(logical(m.vox2face(v,:)),:);
                         vox.boundary = vox.elems;
                         tet.elems = fmdl.elems(tet_todo(t),:);
+                        
                         clf
                         show_fem(vox)
                         hold on
@@ -382,6 +386,8 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                         set(h,'EdgeColor','b')
                         pts = bsxfun(@plus,pts*scale,ctr);
                         plot3(pts(:,1),pts(:,2),pts(:,3),'o');
+%                         plot3(nt(:,1),nt(:,2),nt(:,3),'xr');
+%                         plot3(nv(:,1),nv(:,2),nv(:,3),'xb');
                         hold off
                         axis auto
                         keyboard

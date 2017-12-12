@@ -84,16 +84,17 @@ end
 %-------------------------------------------------------------------------%
 % The main function
 function [rmdl, c2f] = do_voxel_volume(fmdl,opt)
-    
+
     rmdl = mk_grid_model([],opt.xvec,opt.yvec,opt.zvec);
     
+       
     c2f = [];
     if ~opt.prune_model, return, end
     
     %     fmdl.elems = fmdl.elems( 210714,:);
     [c2f, m]  = mk_grid_c2f(fmdl, rmdl, opt);
+    
     inside = any(c2f,1);
-
     c2f(:,~inside) = [];
     rm = ~logical(rmdl.coarse2fine*inside');
     rmdl.elems(rm,:) = [];

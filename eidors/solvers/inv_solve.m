@@ -78,7 +78,6 @@ else
 
    fdata1 = filt_data( inv_model, data1, data_width );
    fdata2 = filt_data( inv_model, data2, data_width );
-
    % TODO: Check if solver can handle being called with multiple data
    imgc= eidors_cache( inv_model.solve, {inv_model, fdata1, fdata2},'inv_solve');
    

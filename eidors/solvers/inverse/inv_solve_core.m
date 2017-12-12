@@ -278,6 +278,18 @@ img = init_elem_data(img, opt);
 %  convert elem_data
 img = map_img(img, opt.elem_working);
 
+%  convert measurement data
+if ~isstruct(data0)
+   d = data0;
+   data0 = struct;
+   data0.meas = d;
+   data0.type = 'data';
+end
+data0.current_params = opt.meas_input;
+
+% precalculate some of our matrices if required
+W  = init_meas_icov(inv_model, opt);
+[N, dN] = init_normalization(inv_model.fwd_model, data0, opt);
 % solve for difference data?
 if nargin == 3
    assert(all(~strcmp(opt.meas_working, {'apparent_resistivity','log_apparent_resistivity', 'log10_apparent_resitivity'})), ...
@@ -307,26 +319,14 @@ else
           ['expected inv_model.reconst_type = ''absolute'' not ' inv_model.reconst_type]);
 end
 
-%  convert measurement data
-if ~isstruct(data0)
-   d = data0;
-   data0 = struct;
-   data0.meas = d;
-   data0.type = 'data';
-end
-data0.current_params = opt.meas_input;
-
-% precalculate some of our matrices if required
-W  = init_meas_icov(inv_model, opt);
-[N, dN] = init_normalization(inv_model.fwd_model, data0, opt);
-
 % now get on with
 img0 = img;
 hps2RtR = 0; alpha = 0; k = 0; sx = 0; r = 0; stop = 0; % general init
 hpt2LLt = update_hpt2LLt(inv_model, data0, k, opt);
 residuals = zeros(opt.max_iterations,3); % for residuals plots
 dxp = 0; % previous step's slope was... nothing
-[dv, opt] = update_dv([], img, data0, N, opt);
+data= data0;  data.meas= []; 
+[dv, data, opt] = update_dv([], img, data0, data,  N, opt);
 de = update_de([], img, img0, opt);
 if opt.verbose >= 5 % we only save the measurements at each iteration if we are being verbose
   dvall = ones(size(data0.meas,1),opt.max_iterations+1)*NaN;
@@ -370,12 +370,52 @@ while 1
   alpha_all(k+1) = alpha;
   % fix max/min values for x, clears dx if limits are hit, where
   % a cleared dv will trigger a recalculation of dv at the next update_dv()
-  [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt);
+  [img, data, dv] = update_img_using_limits(img, img0, data0, data,  N, dv, opt);
 
   % update change in element data from the prior de and
   % the measurement error dv
-  [dv, opt] = update_dv(dv, img, data0, N, opt);
+  [dv, data, opt] = update_dv(dv, img, data0, data, N, opt);
   de = update_de(de, img, img0, opt);
+  
+  if strcmp(inv_model.reconst_type, 'difference')
+      residuals= sqrt(sum(img.inv_model.calc_meas_icov*dv.^2)./length(dv))
+  else
+      if strcmp(opt.meas_working(1:3),'log')
+          dataEst= data;
+          if strcmp(opt.meas_working(1:5),'log10')
+              dataEst = map_meas_struct(dataEst, N, opt.meas_working(7:end));
+              if isfield(data0,'initMeas')
+                  data0ForRes= data0;
+                  data0ForRes.meas= data0.initMeas;
+                  data0ForRes = map_meas_struct(data0ForRes, N, opt.meas_working(7:end));
+              else
+                  data0ForRes = map_meas_struct(data0, N, opt.meas_working(7:end));
+              end
+          elseif  strcmp(opt.meas_working(1:3),'log')
+              if isfield(data0,'initMeas')
+                  data0ForRes= data0;
+                  data0ForRes.meas= data0.initMeas;
+                  data0ForRes = map_meas_struct(data0ForRes, N, opt.meas_working(5:end));
+              else
+                  data0ForRes = map_meas_struct(data0, N, opt.meas_working(5:end));
+              end
+              dataEst = map_meas_struct(dataEst, N, opt.meas_working(5:end));
+          end
+          dataDiff= calc_difference_data(data0ForRes,dataEst,img.fwd_model);
+      else
+          if isfield(data0,'initMeas')
+              error('TODO: rewrite computation...')
+              dataEst= data0ForRes.meas+dv;
+              dataDiff= dataEst-data0.initMeas;
+          else
+              dataDiff= dv;
+          end
+      end
+      residuals= sqrt(sum(img.inv_model.calc_meas_icov*dataDiff.^2)./length(dataDiff))
+  end
+
+   
+  residuals_all(k+1) = residuals;
   if opt.verbose >= 5
     dvall(:,k+1) = dv;
     show_meas_err(dvall, data0, k, N, W, opt);
@@ -384,6 +424,9 @@ while 1
 
   % now find the residual, quit if we're done
   [stop, k, r, img] = update_residual(dv, img, de, W, hps2RtR, hpt2LLt, k, r, alpha, sx, opt);
+%   if residuals<=1;
+%       stop= 1; k= k-1;
+%   end
   if stop
      if stop == -1
         alpha_all(k) = 0;
@@ -408,6 +451,7 @@ if strcmp(inv_model.reconst_type, 'difference')
    img.elem_data = img.elem_data - img0.elem_data;
 end
 img.meas_err = dv;
+img.residuals_all = residuals_all;
 if opt.return_working_variables
   img.inv_solve_core.J = J;
   img.inv_solve_core.dx = dx;
@@ -484,8 +528,9 @@ function W = init_meas_icov(inv_model, opt)
    err_if_inf_or_nan(W, 'init_meas_icov');
 
 function [N, dN] = init_normalization(fmdl, data0, opt)
-   % precalculate the normalization of the data if required (apparent resistivity)
-   N = 1;
+   % precalculate the normalization of the data if required (apparent resistivity or resistance)
+%    
+   N.app_res= 1; N.res= 1;
    dN = 1;
    vh1.meas = 1;
    if ~iscell(opt.meas_input) || ~iscell(opt.meas_working)
@@ -497,6 +542,7 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
    go =       any(strcmp({opt.meas_input{1}, opt.meas_working{1}},'apparent_resistivity'));
    go = go || any(strcmp({opt.meas_input{1}, opt.meas_working{1}},'log_apparent_resistivity'));
    go = go || any(strcmp({opt.meas_input{1}, opt.meas_working{1}},'log10_apparent_resistivity'));
+   
    if go
       if opt.verbose > 1
          disp(['  calc measurement normalization matrix N (voltage -> ' opt.meas_working{1} ')']);
@@ -504,12 +550,36 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
       % calculate geometric factor for apparent_resitivity conversions
       img1 = mk_image(fmdl,1);
       vh1  = fwd_solve(img1);
-      N    = spdiag(1./vh1.meas);
-      err_if_inf_or_nan(N,  'init_normalization: N');
+      N.app_res    = spdiag(1./vh1.meas);
+      err_if_inf_or_nan(N.app_res,  'init_normalization: N');
    end
-   if go && (opt.verbose > 1)
+   
+   if gor
+      if opt.verbose > 1
+         disp(['  calc measurement normalization matrix N (voltage -> ' opt.meas_working ')']);
+      end
+      % calculate geometric factor for resistance conversions
+      stimulation = horzcat( fmdl.stimulation(:).stim_pattern );
+      injection= stimulation(stimulation>0);
+      measurements= vertcat( fmdl.stimulation(:).meas_pattern );
+      nMeas= size(measurements,1);
+      if size(unique(injection),1)==1
+          injected_current= zeros(nMeas,1)+unique(injection);
+          N.res    = spdiag(1./injected_current);
+      else
+          idx= 1;
+          for i= 1:length(injection);
+              nMeasInStim= size(fmdl.stimulation(i).meas_pattern,1)/2;
+              injected_current(idx:nMeasInStim+idx)= injection(i);
+          end
+          N.res= spdiag(1./injected_current);
+      end
+      err_if_inf_or_nan(N.res,  'init_normalization: N');
+   end
+   if (go || gor) && (opt.verbose > 1)
       disp(['  calc Jacobian normalization matrix   dN (voltage -> ' opt.meas_working{1} ')']);
    end
+   
    % calculate the normalization factor for the Jacobian
    assert(length(opt.meas_working)==1, 'only supports single measurement type at a time');
    data0 = map_meas_struct(data0, N, 'voltage'); % to voltage
@@ -520,6 +590,12 @@ function [N, dN] = init_normalization(fmdl, data0, opt)
          dN = dloga_dv(data0.meas, vh1.meas);
       case 'log10_apparent_resistivity'
          dN = dlog10a_dv(data0.meas, vh1.meas);
+      case 'resistance'
+         dN = dr_dv(data0.meas, injected_current);
+      case 'log_resistance'
+         dN = dlogr_dv(data0.meas, vh1.meas);
+      case 'log10_resistance'
+         dN = dlog10r_dv(data0.meas, vh1.meas);   
       case 'voltage'
          dN = dv_dv(data0.meas, vh1.meas);
       case 'log_voltage'
@@ -548,7 +624,7 @@ function [stop, k, r, img] = update_residual(dv, img, de, W, hps2RtR, hpt2LLt, k
   [r_k m_k e_k] = feval(opt.residual_func, dv, de, W, hps2RtR, hpt2LLt);
   % save residual for next iteration
   r(k+1,1:3) = [r_k m_k e_k];
-
+  
   % now do something with that information
   if opt.verbose > 1
      fprintf('    calc residual\n');
@@ -727,6 +803,7 @@ function hps2RtR = update_hps2RtR(inv_model, J, k, img, opt)
       end
    end
    hps2RtR = hp2*RtR;
+   
 
 % this function constructs the LLt temporal regularization matrix
 function hpt2LLt = update_hpt2LLt(inv_model, data0, k, opt)
@@ -932,11 +1009,16 @@ function [J, opt] = update_jacobian(img, dN, k, opt)
    imgb = feval(opt.update_img_func, imgb, opt);
    % if the electrodes/geometry moved, we need to recalculate dN if it depends on vh
    % note that only apparent_resisitivity needs vh; all others depend on data0 measurements
-   if any(strcmp(map_img_base_types(img), 'movement')) && any(strcmp(opt.meas_working, 'apparent_resistivity'))
+   if any(strcmp(map_img_base_types(img), 'movement')) && ...
+           (any(strcmp(opt.meas_working, 'apparent_resistivity')) || any(strcmp(opt.meas_working, 'resistance')))
       imgh = map_img(imgb, 'conductivity'); % drop everything but conductivity
       imgh.elem_data = imgh.elem_data*0 +1; % conductivity = 1
       vh = fwd_solve(imgh); vh = vh.meas;
-      dN = da_dv(1,vh); % = diag(1/vh)
+      if any(strcmp(opt.meas_working, 'apparent_resistivity'))
+          dN = da_dv(1,vh); % = diag(1/vh)
+      elseif any(strcmp(opt.meas_working, 'resistance'))
+          dN = dr_dv(1,vh);
+      end
       opt.fwd_solutions = opt.fwd_solutions +1;
    end
    ee = 0; % element select, init
@@ -1076,6 +1158,12 @@ function dN = dloga_dv(v,vh)
    dN = spdiag(1./v);
 function dN = dlog10a_dv(v,vh)
    dN = spdiag( 1./(v * log(10)) );
+function dN = dr_dv(v,vh)
+   dN = spdiag(1./vh); % N == dN for resistance
+function dN = dlogr_dv(v,vh) % same as dloga_dv
+   dN = dloga_dv(v,vh);
+function dN = dlog10r_dv(v,vh) % same as dlog10a_dv
+   dN = dlog10a_dv(v, vh);  
 function dN = dv_dv(v,vh)
    dN = 1;
 function dN = dlogv_dv(v,vh) % same as dloga_dv
@@ -1143,7 +1231,7 @@ function err_if_inf_or_nan(x, str);
   end
 
 
-function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
+function [img, data, dv] = update_img_using_limits(img, img0, data0, data, N, dv, opt)
   % fix max/min values for x
   if opt.max_value ~= +inf
      lih = find(img.elem_data > opt.max_value);
@@ -1162,7 +1250,7 @@ function [img, dv] = update_img_using_limits(img, img0, data0, N, dv, opt)
      dv = []; % dv is now invalid since we changed the conductivity
   end
   % update voltage change estimate if the limit operation changed the img data
-  [dv, opt] = update_dv(dv, img, data0, N, opt, '(dv out-of-date)');
+  [dv, data, opt] = update_dv(dv, img, data0, data, N, opt, '(dv out-of-date)');
 
 function  de = update_de(de, img, img0, opt)
    img0 = map_img(img0, opt.elem_working);
@@ -1181,7 +1269,7 @@ function  de = update_de(de, img, img0, opt)
    de(opt.elem_fixed) = 0; % TODO is this redundant... delete me?
    err_if_inf_or_nan(de, 'de out');
 
-function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
+function [dv, data, opt] = update_dv(dv, img, data0, data, N, opt, reason)
    % estimate current error as a residual
    if ~isempty(dv) % need to calculate dv...
       return;
@@ -1192,7 +1280,7 @@ function [dv, opt] = update_dv(dv, img, data0, N, opt, reason)
    if opt.verbose > 1
       disp(['    fwd_solve b=Ax ', reason]);
    end
-   [dv, opt, err] = update_dv_core(img, data0, N, opt);
+   [dv, data, opt, err] = update_dv_core(img, data0, data, N, opt);
 % TODO AB inject the img.error here, so it doesn't need to be recalculated when calc_solution_error=1
 %   img.error = err;
 
@@ -1207,13 +1295,13 @@ function data = map_meas_struct(data, N, out)
    err_if_inf_or_nan(data.meas, 'dv meas');
 
 % also used by the line search as opt.line_search_dv_func
-function [dv, opt, err] = update_dv_core(img, data0, N, opt)
-   data0 = map_meas_struct(data0, N, 'voltage');
+function [dv, data, opt, err] = update_dv_core(img, data0, data, N, opt)
+%    data0 = map_meas_struct(data0, N, 'voltage');
    img = map_img(img, map_img_base_types(img));
    img = feval(opt.update_img_func, img, opt);
    img = map_img(img, 'conductivity'); % drop everything but conductivity
    % if the electrodes/geometry moved, we need to recalculate N if it's being used
-   if any(any(N ~= 1)) && any(strcmp(map_img_base_types(img), 'movement'))
+   if (any(any(N.app_res ~= 1)) || any(any(N.res ~= 1))) && any(strcmp(map_img_base_types(img), 'movement'))
       % note: data0 is mapped back to 'voltage' before N is modified
       imgh=img; imgh.elem_data = imgh.elem_data(:,1)*0 +1; % conductivity = 1
       vh = fwd_solve(imgh); vh = vh.meas;
@@ -1221,6 +1309,9 @@ function [dv, opt, err] = update_dv_core(img, data0, N, opt)
       opt.fwd_solutions = opt.fwd_solutions +1;
    end
    data = fwd_solve(img);
+   data.current_params= 'voltage';
+   data = map_meas_struct(data, N, opt.meas_working);
+   data0 = map_meas_struct(data0, N, opt.meas_working);
    opt.fwd_solutions = opt.fwd_solutions +1;
    dv = calc_difference_data(data0, data, img.fwd_model);
 %   clf;subplot(211); h=show_fem(img,1); set(h,'EdgeColor','none'); subplot(212); xx=1:length(dv); plot(xx,[data0.meas,data.meas,dv]); legend('d0','d1','dv'); drawnow; pause(1);
@@ -1229,7 +1320,7 @@ function [dv, opt, err] = update_dv_core(img, data0, N, opt)
    else
       err = NaN;
    end
-   dv = map_meas(dv, N, 'voltage', opt.meas_working);
+%    dv = map_meas(dv, N, 'voltage', opt.meas_working);
    err_if_inf_or_nan(dv, 'dv out');
 
 function show_fem_iter(k, img, inv_model, stop, opt)
@@ -1254,8 +1345,8 @@ function show_fem_iter(k, img, inv_model, stop, opt)
    %  img.calc_colours.ref_level = bg;
    %  img.calc_colours.clim = bg;
      img.calc_colours.cb_shrink_move = [0.3,0.6,0.02]; % move color bars
-     if size(img.elem_data,1) ~= size(img.fwd_model.elems,1)
-        warning(sprintf('img.elem_data has %d elements, img.fwd_model.elems has %d elems\n', ...
+     if size(img.elem_data,1) ~= size(img.fwd_model.elems,1) && size(img.elem_data,1) ~= size(img.fwd_model.coarse2fine,2)
+         warning(sprintf('img.elem_data has %d elements, img.fwd_model.elems has %d elems\n', ...
                         size(img.elem_data,1), ...
                         size(img.fwd_model.elems,1)));
      end
@@ -1268,7 +1359,7 @@ function show_fem_iter(k, img, inv_model, stop, opt)
   end
   clf; feval(opt.show_fem, img, 1);
   title(sprintf('x @ iter=%d',k));
-  drawnow;
+  drawnow; 
   if isfield(opt,'fig_prefix')
      print('-dpdf',sprintf('%s-x%d',opt.fig_prefix,k));
      print('-dpng',sprintf('%s-x%d',opt.fig_prefix,k));
@@ -1284,6 +1375,13 @@ function [ residual meas elem ] = GN_residual(dv, de, W, hps2RtR, hpt2LLt)
    meas = 0.5 * dv(:)' * Wdv(:);
    Rde = hps2RtR * de * hpt2LLt';
    elem = 0.5 * de(:)' * Rde(:);
+   residual = meas + elem;
+   
+function [ residual meas elem ] = rms_residual(dv, de, W, hp2RtR)
+%   [size(dv); size(W); size(de); size(hp2RtR)]
+   % we operate on whatever the iterations operate on (log data, resistance, etc) + perturb(i)*dx
+   meas = sqrt(sum(W*dv.^2)./length(dv));
+   elem = 0;
    residual = meas + elem;
 
 function residual = meas_residual(dv, de, W, hps2RtR)
@@ -1394,6 +1492,8 @@ function opt = parse_options(imdl,n_frames)
       % compatibility with Nolwenn's code, the GN_residual
       % is a better choice
       %opt.residual_func = @meas_residual; % [r,m,e] = f(dv, de, W, hps2RtR, hpt2LLt)
+       elseif strcmp(func2str(opt.residual_func),'rms_residual')
+           opt.residual_func = @rms_residual;
    end
 
    % calculation of update components
@@ -1489,7 +1589,7 @@ function opt = parse_options(imdl,n_frames)
    % line search
    if ~isfield(opt,'line_search_func')
       % [alpha, img, dv, opt] = f(img, sx, data0, img0, N, W, hps2RtR, dv, opt);
-      opt.line_search_func = @line_search_onm2;
+      opt.line_search_func = @line_search_onm2B;
    end
    if ~isfield(opt,'line_search_dv_func')
       opt.line_search_dv_func = @update_dv_core;
@@ -2131,6 +2231,7 @@ function [inv_model, opt] = append_c2f_background(inv_model, opt)
     %     about small area mapping errors
     % if we do have some unassigned elements,
     % expand c2f and add a background element to the 'elem_data'
+    
     if length(n) ~= 0
       if(opt.verbose > 1)
         fprintf('  c2f: adding background conductivity to %d\n    fwd_model elements not covered by rec_model\n', length(n));
@@ -2220,6 +2321,7 @@ function type = to_base_types(type)
      type(i) = {strrep(type{i}, 'log10_', '')};
      type(i) = {strrep(type{i}, 'resistivity', 'conductivity')};
      type(i) = {strrep(type{i}, 'apparent_resistivity', 'voltage')};
+     type(i) = {strrep(type{i}, 'resistance', 'voltage')};
   end
 
 function img = map_img(img, out);
@@ -2353,36 +2455,62 @@ function b = map_meas(b, N, in, out)
    if strcmp(in, out) % in == out
       return; % do nothing
    end
-
    % resistivity to conductivity conversion
    % we can't get here if in == out
    if     strcmp(in, 'voltage') && strcmp(out, 'apparent_resistivity')
-      if N == 1
+      if N.app_res == 1
          error('missing apparent resistivity conversion factor N');
       end
-      b = N * b; % voltage -> apparent resistivity
+      b = N.app_res * b; % voltage -> apparent resistivity
    elseif strcmp(in, 'apparent_resistivity') && strcmp(out, 'voltage')
-      if N == 1
+      if N.app_res == 1
          error('missing apparent resistivity conversion factor N');
       end
-      b = N \ b; % apparent resistivity -> voltage
+      b = N.app_res \ b; % apparent resistivity -> voltage
+      
+   elseif     strcmp(in, 'resistance') && strcmp(out, 'apparent_resistivity')
+      if N.app_res == 1 || N.res == 1
+         error('missing apparent_resistivity or resistance conversion factor N');
+      end
+      b = N.res \N.app_res * b; % resistance -> apparent resistivity
+   elseif strcmp(in, 'apparent_resistivity') && strcmp(out, 'resistance')
+      if N.app_res == 1 || N.res == 1
+         error('missing apparent_resistivity or resistance conversion factor N');
+      end
+      b = N.app_res \N.res * b; % apparent resistivity -> resistance   
+   
+   elseif     strcmp(in, 'voltage') && strcmp(out, 'resistance')
+      if N.res == 1
+         error('missing resistance conversion factor N');
+      end
+      b = N.res * b; % voltage -> resistance
+   elseif strcmp(in, 'resistance') && strcmp(out, 'voltage')
+      if N.res == 1
+         error('missing resistance conversion factor N');
+      end
+      b = N.res \ b; % resistance -> voltage
+      
    % log conversion
    elseif any(strcmp({in(1:3), out(1:3)}, 'log'))
       % log_10 b -> b
       if strcmp(in(1:6), 'log10_')
-         if any(b > log10(realmax)-eps) warning('loss of precision -> inf'); end
+          c= map_meas(b, N, in(7:end), out);
+         if any(c > log10(realmax)-eps) warning('loss of precision -> inf'); end
          b = map_meas(10.^b, N, in(7:end), out);
       % ln b -> b
       elseif strcmp(in(1:4), 'log_')
-         if any(b > log(realmax)-eps) warning('loss of precision -> inf'); end
+          c= map_meas(b, N, in(5:end), out);
+         if any(c > log(realmax)-eps) warning('loss of precision -> inf'); end
          b = map_meas(exp(b), N, in(5:end), out);
       % b -> log_10 b
       elseif strcmp(out(1:6), 'log10_')
-         if any(b <= 0+eps) warning('loss of precision -> -inf'); end
+         c= map_meas(b, N, in, out(7:end));
+         if any( c <= 0+eps); warning('loss of precision -> -inf');   end
          b = log10(map_meas(b, N, in, out(7:end)));
       % b -> ln b
       elseif strcmp(out(1:4), 'log_')
-         if any(b <= 0+eps) warning('loss of precision -> -inf'); end
+          c= map_meas(b, N, in, out(5:end));
+         if any(c <= 0+eps) warning('loss of precision -> -inf'); end
          b = log(map_meas(b, N, in, out(5:end)));
       else
          error(sprintf('unknown conversion (log conversion?) %s - > %s', in, out));
@@ -2483,6 +2611,7 @@ d = 1;
 while d ~= 1 & d ~= 0
   d = rand(1);
 end
+d= 2;
 disp('TEST: map_data()');
 elem_types = {'conductivity', 'log_conductivity', 'log10_conductivity', ...
               'resistivity',  'log_resistivity',  'log10_resistivity'};
@@ -2501,18 +2630,26 @@ end
 disp('TEST: map_meas()');
 N = 1/15;
 Ninv = 1/N;
+Nr = 1/0.4;
+Nrinv = 1/Nr;
 % function b = map_meas(b, N, in, out)
 elem_types = {'voltage', 'log_voltage', 'log10_voltage', ...
-              'apparent_resistivity',  'log_apparent_resistivity',  'log10_apparent_resistivity'};
-expected = [d         log(d)         log10(d)      N*d      log(N*d)      log10(N*d); ...
-            exp(d)    d              log10(exp(d)) N*exp(d) log(N*exp(d)) log10(N*exp(d)); ...
-            10.^d     log(10.^d )    d             N*10.^d  log(N*10.^d ) log10(N*10.^d ); ...
-            Ninv*d      log(Ninv*d  )    log10(Ninv*d)   d         log(d)         log10(d); ...
-            Ninv*exp(d) log(Ninv*exp(d)) log10(Ninv*exp(d)) exp(d) d              log10(exp(d)); ...
-            Ninv*10.^d  log(Ninv*10.^d)  log10(Ninv*10.^d)  10.^d  log(10.^d)     d ];
+              'apparent_resistivity',  'log_apparent_resistivity',  'log10_apparent_resistivity', ...
+              'resistance',  'log_resistance',  'log10_resistance'};
+expected = [d         log(d)         log10(d)       N*d      log(N*d)      log10(N*d)       Nr*d      log(Nr*d)      log10(Nr*d); ...
+            exp(d)    d              log10(exp(d))  N*exp(d) log(N*exp(d)) log10(N*exp(d))  Nr*exp(d) log(Nr*exp(d)) log10(Nr*exp(d)); ...
+            10.^d     log(10.^d )    d             N*10.^d   log(N*10.^d ) log10(N*10.^d )  Nr*10.^d  log(Nr*10.^d ) log10(Nr*10.^d ); ...
+            Ninv*d      log(Ninv*d  )    log10(Ninv*d)   d         log(d)       log10(d)    Nr*Ninv*d log(Nr*Ninv*d) log10(Nr*Ninv*d )  ; ...
+            Ninv*exp(d) log(Ninv*exp(d)) log10(Ninv*exp(d)) exp(d) d        log10(exp(d))   Nr*Ninv*exp(d) log(Nr*Ninv*exp(d)) log10(Nr*Ninv*exp(d)) ; ...
+            Ninv*10.^d  log(Ninv*10.^d)  log10(Ninv*10.^d)  10.^d  log(10.^d)     d         Nr*Ninv*10.^d log(Nr*Ninv*10.^(d)) log10(Nr*Ninv*10.^(d)) ; ...
+            Nrinv*d      log(Nrinv*d )    log10(Nrinv*d)    N*Nrinv*d log(N*Nrinv*d) log10(N*Nrinv*d) d         log(d)       log10(d)  ; ...
+            Nrinv*exp(d) log(Nrinv*exp(d)) log10(Nrinv*exp(d)) N*Nrinv*exp(d) log(N*Nrinv*exp(d)) log10(N*Nrinv*exp(d))   exp(d) d        log10(exp(d))    ; ...
+            Nrinv*10.^d  log(Nrinv*10.^d)  log10(Nrinv*10.^d)  N*Nrinv*10.^d log(N*Nrinv*10.^(d)) log10(N*Nrinv*10.^(d))  10.^d  log(10.^d)     d  ];
+NTest.app_res= N;
+NTest.res= Nr;
 for i = 1:length(elem_types)
   for j = 1:length(elem_types)
-    test_map_meas(d, N, elem_types{i}, elem_types{j}, expected(i,j));
+    test_map_meas(d, NTest, elem_types{i}, elem_types{j}, expected(i,j));
   end
 end
 
@@ -2553,7 +2690,7 @@ function test_map_meas(data, N, in, out, expected)
 %fprintf('TEST: map_meas(%s -> %s)\n', in, out);
    calc_val = map_meas(data, N, in, out);
    str = sprintf('map_data(%s -> %s)', in, out);
-   unit_test_cmp(str, calc_val, expected)
+   unit_test_cmp(str, calc_val, expected,1e-6)
 
 
 % a couple easy reconstructions

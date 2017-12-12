@@ -44,7 +44,6 @@ copt.fstr = 'elem_volume';
 copt.boost_priority = -4;
 
 VOL = eidors_cache(@calc_volume, {NODE, ELEM}, copt);
-
 if isfield(fwd_model,'coarse2fine') && map_node>=0
    VOL= fwd_model.coarse2fine' * VOL;
 end

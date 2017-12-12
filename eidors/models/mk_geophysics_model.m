@@ -157,8 +157,9 @@ end
 xyz = [xyz zeros(size(xyz,1),3-size(xyz,2))]; % [x 0 0] or [ x y 0 ] or [ x y z ]
 ne=size(xyz,1);
 [R, X] = rot_line_to_xaxis(xyz);
-% rescale, centre electrodes so NetGen can be happy
+% % rescale, centre electrodes so NetGen can be happy
 xyzc = (xyz - X)*R; % centre and scale electrodes: -1 to +1 y-axis
+% xyzc = xyz; % centre and scale electrodes: -1 to +1 y-axis
 xw=max(xyzc(:,1))-min(xyzc(:,1));
 xs=min(xyzc(:,1));
 elec_spacing = min(min(pdist(xyzc) + diag(inf*(1:size(xyzc,1))))); % min spacing btw elec
