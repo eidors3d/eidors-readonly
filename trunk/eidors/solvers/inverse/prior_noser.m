@@ -33,4 +33,6 @@ function Reg= prior_noser( inv_model );
     % Reg is spdiags(diag(J'*J),0, l_prior, l_prior);
     diag_col= sum(J.^2,1)';
     Reg = spdiags( diag_col.^exponent, 0, l_prior, l_prior);
+    
+    
 

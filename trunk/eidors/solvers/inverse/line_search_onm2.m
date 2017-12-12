@@ -161,7 +161,8 @@ if opt.verbose > 1
    end
    fprintf('      step size = %0.3g%s, misfit = %0.3g selected\n', alpha, max_alpha_str, meas_err);
 end
-
+% 
+% keyboard
 % must create plots before changing the perturb values
 if opt.line_search_args.plot
    clf;

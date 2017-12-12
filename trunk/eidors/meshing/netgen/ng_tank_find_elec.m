@@ -67,7 +67,7 @@ for loop1 = 1:max(fc)
 %   [fcsrf,fci] = ng_extract_face(srf,vtx,fc,loop1);
     fci  = find( fc == loop1 );
     fcsrf= srf(fci,:); % should be vertex numbers for this face
-    fcsrf= unique(fcsrf);
+    fcsrf= unique(fcsrf); fcsrf= fcsrf(fcsrf>0);
     coordsforthisface= vtx(fcsrf,:);
     face_coords{loop1}= coordsforthisface;
     ttlfcsrf(loop1) = {fcsrf};
@@ -150,7 +150,7 @@ function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc)
        iface = elecn_idx(iface);
        lgelfc(iface) = logical(1);
        if sum(lgelfc) ~= ielec
-          disp(ielec);
+%           disp(ielec);
           error('Electrode #%d not found', ielec);
        end
        sels(ielec)= iface;
