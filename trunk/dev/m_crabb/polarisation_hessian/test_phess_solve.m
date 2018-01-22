@@ -40,14 +40,15 @@ inv_crime=0;
 %     data = fwd_solve(sim_img)
 %     data = add_noise(100, data, data_hom)
 % else
-cond_bkg = 1;
-cond_obj = 2;
+
 
 
 %Stimulation - 16 elecs adjacent current/adjacent voltage
 stim = mk_stim_patterns(16,1,'{ad}','{ad}');
 
+
 %Make a uniform image with unit background
+cond_bkg = 1;
 
 fmdl= ng_mk_cyl_models(0,[16],[0.2,0,0.1]);
 fmdl=fix_model(fmdl);
@@ -95,15 +96,18 @@ opts.update_U0 = 1;
 
 
 %% test scenarios
-sepv=[0.3,0.4,0.5];
-radv=[0.1,0.2,0.25];
+sepv=logspace(log10(0.2), log10(0.3),4);
+radv=0.2;[0.1,0.2];
+
+
+cond_obj1 = 2;
+cond_obj2 = 1.5;
 
 nsep = length(sepv);
 nrad = length(radv);
 
 img_pt = cell(nsep, nrad);
 r_pt = img_pt;
-cts_pt = img_pt;
 er_f11 = img_pt;
 img_eid_diff = img_pt;
 img_eid_abs = img_pt;
@@ -111,6 +115,8 @@ img_eid_abs = img_pt;
 t_pt = zeros(nsep, nrad);
 t_diff = t_pt;
 t_eabs = t_pt;
+eres = t_pt;
+cts_pt = t_pt;
 
 
 for ii = 1:nsep
@@ -128,8 +134,8 @@ for ii = 1:nsep
         fmdl_t.stimulation = stim; %Add to model
         fmdl_t.approx_type='tri3';
         sim_img= mk_image(fmdl_t, cond_bkg );
-        sim_img.elem_data(fmdl_t.mat_idx{2})=cond_obj;
-        %   img.elem_data(fmdl.mat_idx{3})=3;
+        sim_img.elem_data(fmdl_t.mat_idx{2})=cond_obj1;
+        sim_img.elem_data(fmdl_t.mat_idx{3})=cond_obj2;
         %   figure; show_fem(img);
         pixel_group=[fmdl_t.mat_idx{2}];
         %pixel_group = [102,123,103,83,66,82]; %b2C
@@ -145,7 +151,7 @@ for ii = 1:nsep
         imdl.reconst_type = 'difference';
         tic
         img_eid_diff{ii,jj} = inv_solve(imdl, data_hom,data);
-        t_diff = toc;
+        t_diff(ii,jj) = toc;
 %         
 %         figure(1);
 %         subplot(121); show_fem(sim_img,1)
@@ -156,9 +162,12 @@ for ii = 1:nsep
         imdl.solve =  @inv_solve_core;
         imdl.reconst_type = 'absolute';
         
+        opt = [];
+%         opt.
+        
         tic
         img_eid_abs{ii,jj} = inv_solve(imdl, data);
-        t_eabs = toc;
+        t_eabs(ii,jj) = toc;
         
 %         figure(2);
 %         subplot(121); show_fem(sim_img,1)
@@ -171,10 +180,17 @@ for ii = 1:nsep
         %% P-Tensor lbfgs solvers
         
         tic
-        [img_pt{ii,jj}, r_pt{ii,jj}, cts_pt{ii,jj}, er_f11{ii,jj}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+        [img_pt{ii,jj}, r_pt{ii,jj}, cts_pt(ii,jj), er_f11{ii,jj}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
         t_pt(ii,jj) = toc;
-        hold all
+        eres(ii,jj) = r_pt{ii,jj}(end);
         
+        
+        %% Show
+        figure
+        subplot(2,2,1); show_fem(sim_img,1)
+        subplot(2,2,2); show_fem(img_eid_diff{ii,jj},1)
+        subplot(2,2,3); show_fem(img_eid_abs{ii,jj},1)
+        subplot(2,2,4); show_fem(img_pt{ii,jj},1)
         
     end
 end
