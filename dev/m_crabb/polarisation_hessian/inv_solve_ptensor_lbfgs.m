@@ -1,4 +1,4 @@
-function [ x_k, resvec, fwd_cts, abs_er ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
+function [ img, resvec, fwd_cts, abs_er ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
 %INV_SOLVE_PTENSOR_LBFGS
 %
 % L-BFGS inverse solver with a polarization tensor approximation to diag(H)
@@ -64,6 +64,12 @@ else
 end
     
 
+if isfield(hess_opts,'inv_crime')
+    inv_crime = hess_opts.inv_crime;
+else
+    inv_crime =0;
+end
+
 global fwd_cts
 fwd_cts = 0;
 
@@ -77,8 +83,8 @@ img_0 = img;
 h_min = 1e-12;
 
 g_tol = 0;%1e-9;
-r_tol = 0;%1e-12;
-updt_tol = 1e-12;
+r_tol = 1e-6;%1e-12;
+updt_tol = 1e-14;
 
 meas_data = data.meas;
 
@@ -108,13 +114,13 @@ alpha_i = zeros(1,mem);
 resvec = zeros(max_its + 1,1);
 abs_er = resvec;
 
-if(hess_opts.inv_crime==1)
+if(inv_crime==1) && nargin==5
     if nargin==5
         x_true = true_im.elem_data;
         abs_er(1) = norm(x_true - x_k);
     end
 else
-    c2f = mk_coarse_fine_mapping(true_im.fwd_model,img.fwd_model)
+    c2f = mk_coarse_fine_mapping(true_im.fwd_model,img.fwd_model);
     %
     if nargin==5
         x_true = true_im.elem_data;
@@ -441,6 +447,8 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     
 end
 
+
+img.elem_data = x_k;
 
 
 end
