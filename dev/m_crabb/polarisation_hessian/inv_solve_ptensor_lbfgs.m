@@ -83,8 +83,9 @@ img_0 = img;
 h_min = 1e-12;
 
 g_tol = 0;%1e-9;
-r_tol = 1e-6;%1e-12;
-updt_tol = 1e-14;
+d_tol = 1e-4; % Same as EIDORS default check
+
+updt_tol = 0;%1e-14;
 
 meas_data = data.meas;
 
@@ -147,6 +148,7 @@ g(1) = norm(g_k);
 resvec(1) = objective(x_k, img_0, imdl, data);
 
 k=1;
+rel_red = 0;
 
 % Background homogeneous fields
 % Switch to update this for new img/do it once?
@@ -155,7 +157,7 @@ DU0 = calc_grad_potential(img_0, u0); % imdl.img ?
 
 % Stop if either gradient or residual reach predefined tol
 % Do while (||k==1) to force always one iteration
-while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop conditions to match EIDORS standards?
+while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditions to match EIDORS standards?
     
     
     
@@ -441,6 +443,7 @@ while ( g(k) > g_tol  && resvec(k)/resvec(1) > r_tol ) || k==1 % TODO: stop cond
     %
     k=k+1;
     
+    rel_red = (resvec(k-1)-resvec(k))/resvec(1);
     if norm(p_k*stepl) < updt_tol || k> max_its % k is iter+1
         break
     end
@@ -449,9 +452,12 @@ end
 
 
 img.elem_data = x_k;
-
+img.current_params = 'conductivity';
+resvec = resvec(1:k);
 
 end
+
+
 
 % Cost
 function [C, delta_d] = objective(x_k, images, invmdl, d)
