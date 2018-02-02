@@ -4,6 +4,7 @@
 % Data simulation model
 smdl = mk_common_model('c2C',16);
 fmdl = fix_model(smdl.fwd_model);
+fmdl = calc_closest_ellipse(fmdl);
 stim = mk_stim_patterns(16,1,'{ad}','{ad}');
 fmdl.stim = stim;
 fmdl.approx_type = 'tri3';
