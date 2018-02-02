@@ -23,10 +23,32 @@ switch type
         % In Trilinear coords, Steiner inellipse has eqn:
         % (l1 x)^2 + (l2 y)2 + (l3 z)^2 - 2l1 l2 xy - 2 l2 l3 yz - 2 l1 l3 xz = 0
         
-        Z = sqrt(l1.^4 + l2.^4 + l3.^4 - l1.^2.*l2.^2 - l2.^2.*l3.^3 - l1.^2.*l3.^2);
+        Z = sqrt(l1.^4 + l2.^4 + l3.^4 - l1.^2.*l2.^2 - l2.^2.*l3.^2 - l1.^2.*l3.^2);
         
         fmdl.M_tensor.a = sqrt(l1.^2 + l2.^2 + l3.^2 + 2*Z)/6;
         fmdl.M_tensor.b = sqrt(l1.^2 + l2.^2 + l3.^2 - 2*Z)/6;
+        
+        % Foci are zeros of derivative of polynomial which has zeros at
+        % verticies (Marden's theorem)
+        % D (c1(1) + 1i c1(2) - x)(c2(1) + 1i c2(2) - x)(c3(1) + 1i c3(2) -x)=0
+        c1 = c1(:,1) + 1i*c1(:,2);
+        c2 = c2(:,1) + 1i*c2(:,2);
+        c3 = c3(:,1) + 1i*c3(:,2);
+        
+        a = -3;
+        b = 2*(c1 + c2 + c3);
+        c = -(c1.*c2 + c1.*c3 + c2.*c3);
+        
+        % Roots
+       st = sqrt(b.^2 - 4*a.*c);
+       F1 = (-b + st)./(2*a.*c);
+       F1 = [real(F1), imag(F1)];
+       
+       % Angle between FC and x direction
+       FC = F1 - fmdl.elem_centre;
+       fmdl.M_tensor.rot = atan(FC(:,2)./FC(:,1));
+       
+        
         
     case 'heuristic'
 

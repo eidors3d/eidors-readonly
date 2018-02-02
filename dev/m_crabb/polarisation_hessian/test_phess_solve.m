@@ -72,7 +72,7 @@ homog_img.fwd_model.stimulation=stim;
 % homog_img.fwd_model.M_tensor.a = ones(size(homog_img.elem_data,1),1);
 % homog_img.fwd_model.M_tensor.b = ones(size(homog_img.elem_data,1),1);
 % homog_img.fwd_model.M_tensor.rot = zeros(size(homog_img.elem_data,1),1);
-fmdl = calc_closet_elipse(fmdl);
+fmdl = calc_closest_ellipse(fmdl);
 
 data_hom = fwd_solve(homog_img);
 
