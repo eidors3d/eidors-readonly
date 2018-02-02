@@ -1,12 +1,10 @@
 function [ Hii, du2, d2u, J ] = calc_phessian_obj( fmdl, img, DU0, delta_d, type )
-
-%INPUT
-% F(s+ds) = F(s) + DU0 *M *DN
-% freespace = 1 (uses freespace)
-
 %CALC_PHESSIAN 
 %
 %
+% F(s+ds) = F(s) + DU0 *M *DN
+% freespace = 1 (uses freespace)
+
 
 
 %If freespace then do grads for each elements
@@ -23,15 +21,12 @@ vs = pi*fmdl.elem_volume;
 ks = img.elem_data;
 
 % Extract tensor components, else assumes tensors are circles
-if isfield(fmdl, 'M_tensor')
-    a = fmdl.M_tensor.a;
-    b = fmdl.M_tensor.b;
-    rots = fmdl.M_tensor.rot;
-else
-    a = ones(size(fmdl.elems,1),1);
-    b = ones(size(fmdl.elems,1),1);
-    rots = ones(size(fmdl.elems,1),1);
+if ~isfield(fmdl, 'M_tensor')
+    fmdl = calc_closest_ellipse(fmdl);
 end
+a = fmdl.M_tensor.a;
+b = fmdl.M_tensor.b;
+rots = fmdl.M_tensor.rot;
 
 % First tensor component (non-differentiated)
 A = (a+b)./(a + ks.*b);
@@ -93,7 +88,6 @@ for ii=1:n_drive
         % Tensor shape for elements, or assume circular
 %         if isfield(fmdl, 'M_tensor')
             % Only for 2D!   
-            % Temp while not being passed
             switch type
                 case 'freespace'
                     DN(:,:,ii) = -calc_neumann_grad_func_freespace(meas_loc, zs);

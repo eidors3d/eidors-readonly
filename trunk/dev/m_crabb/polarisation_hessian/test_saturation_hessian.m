@@ -11,6 +11,7 @@ for rad=[0.1]
     extra={'ball1','ball2',[sb1,sb2]};
 
     fmdl= ng_mk_cyl_models(0,[16],[0.2,0,0.05],extra); 
+    
  %   img= mk_image(fmdl, 1);
  %   img.elem_data(fmdl.mat_idx{2})=2;
  %   img.elem_data(fmdl.mat_idx{3})=3;    
@@ -27,6 +28,7 @@ for rad=[0.1]
     fmdl.stimulation = stim; %Add to model
     fmdl = fix_model(fmdl);
     fmdl.approx_type='tri3';
+    fmdl = calc_closest_ellipse(fmdl);
 
     %Background, upper, lower conductivity and range
     cond_bkg = 1; cond_lower = 0.2; cond_upper = 5;
