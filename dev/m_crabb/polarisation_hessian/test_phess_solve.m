@@ -69,9 +69,10 @@ imdl.type='inv_model';
 homog_img = mk_image(fmdl,cond_bkg);
 homog_img.fwd_solve.get_all_meas=1;
 homog_img.fwd_model.stimulation=stim;
-homog_img.fwd_model.M_tensor.a = ones(size(homog_img.elem_data,1),1);
-homog_img.fwd_model.M_tensor.b = ones(size(homog_img.elem_data,1),1);
-homog_img.fwd_model.M_tensor.rot = zeros(size(homog_img.elem_data,1),1);
+% homog_img.fwd_model.M_tensor.a = ones(size(homog_img.elem_data,1),1);
+% homog_img.fwd_model.M_tensor.b = ones(size(homog_img.elem_data,1),1);
+% homog_img.fwd_model.M_tensor.rot = zeros(size(homog_img.elem_data,1),1);
+fmdl = calc_closet_elipse(fmdl);
 
 data_hom = fwd_solve(homog_img);
 
@@ -87,7 +88,7 @@ opts.ptensor_its = 100;
 opts.max_its = 100;
 opts.update_delta = 1;
 opts.inv_crime=inv_crime;
-opts.update_U0 = 0;
+opts.update_U0 = 1;
 opts.flexible = true;
 
 opts.neumann = 'freespace';
@@ -96,7 +97,7 @@ opts.update_U0 = 1;
 
 
 %% test scenarios
-sepv=logspace(log10(0.2), log10(0.3),4);
+sepv=logspace(log10(0.22), log10(0.3),3);
 radv=0.2;[0.1,0.2];
 
 
