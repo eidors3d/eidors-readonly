@@ -98,7 +98,7 @@ opts.update_U0 = 1;
 
 %% test scenarios
 sepv=logspace(log10(0.22), log10(0.3),3);
-radv=0.2;[0.1,0.2];
+radv=logspace(log10(0.2), log10(0.35),3);
 
 
 cond_obj1 = 2;
@@ -127,7 +127,7 @@ for ii = 1:nsep
         sep = sepv(ii);
         rad = radv(jj);
         sb1 = sprintf('solid ball1 = cylinder(%0.1f,%0.1f,0;%0.1f,%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
-        sb2 = sprintf('solid ball2 = cylinder(-%0.1f,-%0.1f,0;-%0.1f,-%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
+        sb2 = sprintf('solid ball2 = cylinder(-%0.1f,-%0.1f,0;-%0.1f,-%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) and not cylinder(%0.1f,%0.1f,0;%0.1f,%0.1f,1;%0.1f) -maxh=0.1;',sep,sep,sep,sep,rad, sep,sep,sep,sep,rad);
         extra={'ball1','ball2',[sb1,sb2]};
         
         fmdl_t= ng_mk_cyl_models(0.,[16],[0.2,0,0.05],extra);
