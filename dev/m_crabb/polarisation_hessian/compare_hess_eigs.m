@@ -16,7 +16,7 @@ fmdl.approx_type='tri3';
 
 %Inverse model
 imdl.solve='eidors_default';
-%   imdl.hyperparameter=0.03;
+imdl.hyperparameter.value=1e-4;
 imdl.RtR_prior='eidors_default';
 imdl.jacobian_bkgnd.value=1;
 imdl.reconst_type='difference';
@@ -79,6 +79,8 @@ eres = t_pt;
 cts_pt = t_pt;
 
 
+
+
 for ii = 1:nsep
     for jj = 1:nrad
         
@@ -124,17 +126,25 @@ for ii = 1:nsep
         % P-Tensor approx after 20 iterations of BFGS
         opt.max_its = 20;
         opt.mem = 20;
-        [~,~,~,~,H_PBFGS, H_IBFGS] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
+        opt.use_hyper = 0;
+        [~,~,~,~,H_vers] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
         
         % Reg contn
-        RtR = calc_RtR_prior(imdl);
+        RtR = imdl.hyperparameter.value^2*calc_RtR_prior(imdl);
         
         % Compare some singular vectors
         [Uj, Sj, Vj] = svd(J);
         [Upj, Spj, Vpj] = svd(J_phess);
         
         %
+        H_PBFGS = H_vers{1};% - RtR;
+        H_IBFGS = H_vers{2};
+        H_RBFGS = H_vers{3} - RtR;
         
+        [Uhp, Shp, Vhp] = svd(H_PBFGS);
+        [Uhi, Shi, Vhi] = svd(H_IBFGS);
+        [Uhr, Shr, Vhr] = svd(H_RBFGS);
+        [Uh, Sh, Vh] = svd(H);
 
         
     end
