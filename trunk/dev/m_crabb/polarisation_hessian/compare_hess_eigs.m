@@ -1,4 +1,6 @@
 % Compare eigenvectors/singular vectors of Jacobian and Hess approx to true
+inv_crime = 0;
+
 
 %Stimulation - 16 elecs adjacent current/adjacent voltage
 stim = mk_stim_patterns(16,1,'{ad}','{ad}');
@@ -54,8 +56,8 @@ opts.update_U0 = 1;
 
 
 %% test scenarios
-sepv=logspace(log10(0.22), log10(0.3),3);
-radv=logspace(log10(0.2), log10(0.35),3);
+sepv=0.3;%logspace(log10(0.22), log10(0.3),3);
+radv=0.25;%logspace(log10(0.2), log10(0.35),3);
 
 
 cond_obj1 = 2;
@@ -95,13 +97,44 @@ for ii = 1:nsep
         sim_img.elem_data(fmdl_t.mat_idx{2})=cond_obj1;
         sim_img.elem_data(fmdl_t.mat_idx{3})=cond_obj2;
         %   figure; show_fem(img);
-        pixel_group=[fmdl_t.mat_idx{2}];
+%         pixel_group=[fmdl_t.mat_idx{2}];
         %pixel_group = [102,123,103,83,66,82]; %b2C
         %pixel_group = [327,364,328,292,259,291]; %c2C
         %pixel_group = 1:length(fmdl.elems(:,1));
         
         data = fwd_solve(sim_img);
         data = add_noise(100, data, data_hom);
+        delta_d = data.meas - data_hom.meas;
+        
+        
+        % True Jacobian & Hess fwd_model,img,elem_list,delta_d
+        pixel_group = 1:size(fmdl.elems,1);
+        J=calc_jacobian(homog_img);
+        homog_img.fwd_model.approx_type='tri3';
+        H = calc_hessian_obj(homog_img.fwd_model,homog_img,pixel_group, delta_d);
+        H_diag = calc_hessian_diag(homog_img.fwd_model,homog_img,pixel_group);
+        
+        % P-tensor approximations from free-space
+        homog_img.fwd_solve.get_all_meas=1;
+        u0= data_hom.volt;
+        DU0 = calc_grad_potential(homog_img, u0);
+        [Hii, du2, d2u, J_phess] = calc_phessian_obj(homog_img.fwd_model,homog_img,DU0,data_hom.meas,'disc');
+        
+        
+        % P-Tensor approx after 20 iterations of BFGS
+        opt.max_its = 20;
+        opt.mem = 20;
+        [~,~,~,~,H_PBFGS, H_IBFGS] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
+        
+        % Reg contn
+        RtR = calc_RtR_prior(imdl);
+        
+        % Compare some singular vectors
+        [Uj, Sj, Vj] = svd(J);
+        [Upj, Spj, Vpj] = svd(J_phess);
+        
+        %
+        
 
         
     end
