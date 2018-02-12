@@ -1,4 +1,4 @@
-function [ img, resvec, fwd_cts, abs_er, H_PBFGS, H_IBFGS ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
+function [ img, resvec, fwd_cts, abs_er, H_vers ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
 %INV_SOLVE_PTENSOR_LBFGS
 %
 % L-BFGS inverse solver with a polarization tensor approximation to diag(H)
@@ -140,8 +140,7 @@ g = resvec;
 
 
 % Gradient
-g_k = calc_grad(x_k, img_0, imdl, data); % this comes out completely wrong!
-
+g_k = calc_grad(x_k, img_0, imdl, data);
 
 % J = calc_jacobian(img);
 % g_k = J.'*delta_d;
@@ -359,7 +358,9 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
             H0 = max(gamma_k, h_min);
     end % Hess type switch
 
-    
+    if any(size(H0)==1)
+        H0 = spdiags(H0, 0, length(H0), length(H0));
+    end
     
     p_k = H0\q; 
     
@@ -465,6 +466,8 @@ if nargout>=5
     % Compare with identity
     H_IBFGS = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
                     ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) ) * eye(size(H_PBFGS));
+                
+    H_RBFGS = calc_RtR_prior(imdl) * calc_hyperparameter(imdl)^2;
 
     for ii=max(1,k-mem) : k-1
         H_PBFGS = H_PBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
@@ -478,8 +481,17 @@ if nargout>=5
             H_IBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_IBFGS.' / ...
             (S(:,mod(ii-1, mem)+1).'* H_IBFGS * S(:,mod(ii-1, mem)+1));
         
+        
+        H_RBFGS = H_RBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
+            ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
+            H_RBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_RBFGS.' / ...
+            (S(:,mod(ii-1, mem)+1).'* H_RBFGS * S(:,mod(ii-1, mem)+1));
+        
+        
+        
     end
     
+    H_vers = {H_PBFGS, H_IBFGS, H_RBFGS};
     
 end
 
