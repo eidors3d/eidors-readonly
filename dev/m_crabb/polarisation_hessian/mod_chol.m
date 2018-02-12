@@ -9,7 +9,6 @@ function [ L, D ] = mod_chol( A, delta, beta )
 % Methodby Gill, Murray and Wright
 %
 % F Watson 2016
-% Crown Copyright 2016
 
 if size(A,1)~=size(A,2)
     error('mod_chol for square matrices only');

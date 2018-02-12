@@ -1,4 +1,4 @@
-function [ img, resvec, fwd_cts, abs_er ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
+function [ img, resvec, fwd_cts, abs_er, H_PBFGS, H_IBFGS ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
 %INV_SOLVE_PTENSOR_LBFGS
 %
 % L-BFGS inverse solver with a polarization tensor approximation to diag(H)
@@ -12,6 +12,8 @@ end
 
 if isfield(hess_opts,'H0_type')
     H0_type = hess_opts.H0_type;
+else
+    H0_type = 'ptensor';
 end
 if isfield(hess_opts,'rescale')
     rescale = hess_opts.rescale;
@@ -21,7 +23,7 @@ end
 if isfield(hess_opts,'use_hyper')
     use_hyper = hess_opts.use_hyper;
 else
-    use_hyper = 0;
+    use_hyper = true;
 end
 if isfield(hess_opts, 'update_U0')
     update_U0 = hess_opts.update_U0;
@@ -241,7 +243,7 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
                             % Gauss Newton part too small
                             H0 = D0;
                             H0(H0< h_min) = h_min;
-                            
+                            spdiags(H0, 0, length(H0), length(H0))
                         end
                     end
                 end
@@ -405,7 +407,7 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
     end
     
     if nargin==5
-        if(hess_opts.inv_crime==1)        
+        if(inv_crime==1)        
             abs_er(k+1) = norm(x_true - x_k);
         else
             abs_er(k+1) = norm(x_true - c2f*x_k);            
@@ -454,6 +456,33 @@ end
 img.elem_data = x_k;
 img.current_params = 'conductivity';
 resvec = resvec(1:k);
+
+
+if nargout>=5
+    % Use whatever version Hessian used
+    H_PBFGS = full(H0);
+    
+    % Compare with identity
+    H_IBFGS = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
+                    ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) ) * eye(size(H_PBFGS));
+
+    for ii=max(1,k-mem) : k-1
+        H_PBFGS = H_PBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
+            ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
+            H_PBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_PBFGS.' / ...
+            (S(:,mod(ii-1, mem)+1).'* H_PBFGS * S(:,mod(ii-1, mem)+1));
+        
+        
+        H_IBFGS = H_IBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
+            ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
+            H_IBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_IBFGS.' / ...
+            (S(:,mod(ii-1, mem)+1).'* H_IBFGS * S(:,mod(ii-1, mem)+1));
+        
+    end
+    
+    
+end
+
 
 end
 
