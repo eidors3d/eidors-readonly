@@ -50,7 +50,9 @@ stim = mk_stim_patterns(16,1,'{ad}','{ad}');
 %Make a uniform image with unit background
 cond_bkg = 1;
 
-fmdl= ng_mk_cyl_models(0,[16],[0.2,0,0.1]);
+fmdl= ng_mk_cyl_models([0,1,0.1],[16],[0.2,0,0.1]);
+%fmdl= ng_mk_cyl_models(0,[16],[0.2,0,0.1]);
+
 fmdl=fix_model(fmdl);
 fmdl.stimulation = stim; %Add to model
 fmdl.approx_type='tri3';
@@ -83,7 +85,7 @@ fmdl = calc_closest_ellipse(fmdl);
 opts = [];
 opts.H0_type = 'ptensor';
 opts.use_hyper = 1;
-opts.neumann = 'freespace';
+opts.neumann = 'disc';
 opts.ptensor_its = 100;
 opts.max_its = 100;
 opts.update_delta = 1;
@@ -91,7 +93,9 @@ opts.inv_crime=inv_crime;
 opts.update_U0 = 1;
 opts.flexible = true;
 
+%opts.neumann = 'disc';
 opts.neumann = 'freespace';
+
 opts.flexible = true;
 opts.update_U0 = 1;
 
@@ -99,7 +103,9 @@ opts.update_U0 = 1;
 %% test scenarios
 sepv=logspace(log10(0.22), log10(0.3),3);
 radv=logspace(log10(0.2), log10(0.35),3);
-
+%%
+sepv=0.3
+radv =0.2646
 
 cond_obj1 = 2;
 cond_obj2 = 1.5;
@@ -143,12 +149,19 @@ for ii = 1:nsep
         %pixel_group = [327,364,328,292,259,291]; %c2C
         %pixel_group = 1:length(fmdl.elems(:,1));
         
-        data = fwd_solve(sim_img);
-        data = add_noise(100, data, data_hom);
+        n_level = 50;
         
+        data = fwd_solve(sim_img);
+        figure; plot(data.meas,'b'); hold on;
+        data = add_noise(n_level, data, data_hom);
+        plot(data.meas,'r');
         
         %% Eidors in-built inverse diff solver
-        imdl.hyperparameter.value = 0.0003;
+        
+        h_param_eid=0.0001;
+        
+        
+        imdl.hyperparameter.value =   h_param_eid;
         imdl.reconst_type = 'difference';
         tic
         img_eid_diff{ii,jj} = inv_solve(imdl, data_hom,data);
@@ -160,12 +173,17 @@ for ii = 1:nsep
         
         %% Eidors in-built inverse abs solver
         imdl.fwd_model=fmdl;
+        imdl.hyperparameter.value = h_param_eid ;
+
         imdl.solve =  @inv_solve_core;
         imdl.reconst_type = 'absolute';
         
         opt = [];
 %         opt.
-        
+        imdl.inv_solve_core.verbose=0;
+        imdl.inv_solve_core.tol=10^-12;
+
+
         tic
         img_eid_abs{ii,jj} = inv_solve(imdl, data);
         t_eabs(ii,jj) = toc;
@@ -178,20 +196,34 @@ for ii = 1:nsep
 %         figure(3); plot(data.meas,'r'); hold on; plot(data_hom.meas,'b');  hold on; plot(data_rec.meas,'b')
 
         
-        %% P-Tensor lbfgs solvers
-        
+        %% P-Tensor lbfgs solvers        
+        %p-tensor jacobian approx factor 2 out
+        imdl.hyperparameter.value = 2*h_param_eid;
+        opts.neumann = 'freespace';
+       
         tic
-        [img_pt{ii,jj}, r_pt{ii,jj}, cts_pt(ii,jj), er_f11{ii,jj}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
-        t_pt(ii,jj) = toc;
-        eres(ii,jj) = r_pt{ii,jj}(end);
+        [img_pt_free{ii,jj}, r_pt_free{ii,jj}, cts_pt_free(ii,jj), er_f11_free{ii,jj}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+        t_pt_free(ii,jj) = toc;
+        eres_free(ii,jj) = r_pt_free{ii,jj}(end);
+        
+        %% P-Tensor lbfgs solvers        
+        imdl.hyperparameter.value = 2*h_param_eid;
+        opts.neumann = 'disc';
+       
+        tic
+        [img_pt_disc{ii,jj}, r_pt_disc{ii,jj}, cts_pt_disc(ii,jj), er_f11_disc{ii,jj}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opts, sim_img);
+        t_pt_disc(ii,jj) = toc;
+        eres_disc(ii,jj) = r_pt_disc{ii,jj}(end);
         
         
         %% Show
         figure
-        subplot(2,2,1); show_fem(sim_img,1)
-        subplot(2,2,2); show_fem(img_eid_diff{ii,jj},1)
-        subplot(2,2,3); show_fem(img_eid_abs{ii,jj},1)
-        subplot(2,2,4); show_fem(img_pt{ii,jj},1)
+        subplot(2,3,1); show_fem(sim_img,1)
+        subplot(2,3,2); show_fem(img_eid_diff{ii,jj},1)
+        subplot(2,3,5); show_fem(img_eid_abs{ii,jj},1)
+        subplot(2,3,3); show_fem(img_pt_free{ii,jj},1)
+        subplot(2,3,6); show_fem(img_pt_disc{ii,jj},1)
+
         
     end
 end
