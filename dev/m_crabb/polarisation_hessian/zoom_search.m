@@ -6,8 +6,8 @@ function [ alpha ] = zoom_search( alpha_lo, alpha_hi, x, p, F, G  )
 % interpolations
 warning('off','MATLAB:nearlySingularMatrix');
 
-c1 = 1e-4;
-c2 = 0.9;
+c1 = 1e-2;
+c2 = 0.75;
 
 phi_0 = F(x);
 grad_F = G(x);

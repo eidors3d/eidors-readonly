@@ -1,4 +1,4 @@
-function [ img, resvec, fwd_cts, abs_er, H_vers ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
+function [ img, resvec, fwd_cts, abs_er, H_BFGS ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
 %INV_SOLVE_PTENSOR_LBFGS
 %
 % L-BFGS inverse solver with a polarization tensor approximation to diag(H)
@@ -85,7 +85,7 @@ img_0 = img;
 h_min = 1e-12;
 
 g_tol = 0;%1e-9;
-d_tol = 1e-4; % Same as EIDORS default check
+d_tol = 0;%1e-4; % Same as EIDORS default check
 
 updt_tol = 0;%1e-14;
 
@@ -348,7 +348,7 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
                 
             end
             
-        otherwise
+        case 'identity'
             if k==1
                 gamma_k = 1.;
             else
@@ -356,6 +356,19 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
                     ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
             end
             H0 = max(gamma_k, h_min);
+            
+        case 'regu'
+            if k==1
+                gamma_k = 1.;
+            else
+                gamma_k = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
+                    ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
+            end
+            
+            % RtR + some identity (RtR not pos def for Laplace)
+            H0 = calc_hyperparameter(imdl)^2*calc_RtR_prior(imdl);
+            H0 = max(gamma_k, h_min) * eye(size(H0));
+            
     end % Hess type switch
 
     if any(size(H0)==1)
@@ -461,37 +474,37 @@ resvec = resvec(1:k);
 
 if nargout>=5
     % Use whatever version Hessian used
-    H_PBFGS = full(H0);
+    H_BFGS = full(H0);
     
-    % Compare with identity
-    H_IBFGS = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
-                    ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) ) * eye(size(H_PBFGS));
-                
-    H_RBFGS = calc_RtR_prior(imdl) * calc_hyperparameter(imdl)^2;
+%     % Compare with identity
+%     H_IBFGS = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
+%                     ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) ) * eye(size(H_BFGS));
+%                 
+%     H_RBFGS = calc_RtR_prior(imdl) * calc_hyperparameter(imdl)^2;
 
     for ii=max(1,k-mem) : k-1
-        H_PBFGS = H_PBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
+        H_BFGS = H_BFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
             ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
-            H_PBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_PBFGS.' / ...
-            (S(:,mod(ii-1, mem)+1).'* H_PBFGS * S(:,mod(ii-1, mem)+1));
+            H_BFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_BFGS.' / ...
+            (S(:,mod(ii-1, mem)+1).'* H_BFGS * S(:,mod(ii-1, mem)+1));
         
         
-        H_IBFGS = H_IBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
-            ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
-            H_IBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_IBFGS.' / ...
-            (S(:,mod(ii-1, mem)+1).'* H_IBFGS * S(:,mod(ii-1, mem)+1));
-        
-        
-        H_RBFGS = H_RBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
-            ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
-            H_RBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_RBFGS.' / ...
-            (S(:,mod(ii-1, mem)+1).'* H_RBFGS * S(:,mod(ii-1, mem)+1));
+%         H_IBFGS = H_IBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
+%             ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
+%             H_IBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_IBFGS.' / ...
+%             (S(:,mod(ii-1, mem)+1).'* H_IBFGS * S(:,mod(ii-1, mem)+1));
+%         
+%         
+%         H_RBFGS = H_RBFGS +  Y(:,mod(ii-1,mem)+1)* Y(:,mod(ii-1,mem)+1).' / ...
+%             ( Y(:,mod(ii-1,mem)+1).'*S(:,mod(ii-1, mem)+1)) - ...
+%             H_RBFGS * S(:,mod(ii-1, mem)+1) * S(:,mod(ii-1, mem)+1).' * H_RBFGS.' / ...
+%             (S(:,mod(ii-1, mem)+1).'* H_RBFGS * S(:,mod(ii-1, mem)+1));
         
         
         
     end
     
-    H_vers = {H_PBFGS, H_IBFGS, H_RBFGS};
+%     H_vers = {H_BFGS, H_IBFGS, H_RBFGS};
     
 end
 
