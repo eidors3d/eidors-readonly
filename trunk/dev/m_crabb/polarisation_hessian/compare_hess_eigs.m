@@ -115,6 +115,7 @@ for ii = 1:nsep
         homog_img.fwd_model.approx_type='tri3';
         H = calc_hessian_obj(homog_img.fwd_model,homog_img,pixel_group, delta_d);
         H_diag = calc_hessian_diag(homog_img.fwd_model,homog_img,pixel_group);
+        H = H + calc_hyperparameter(imdl)^2*calc_RtR_prior(imdl);
         
         % P-tensor approximations from free-space
         homog_img.fwd_solve.get_all_meas=1;
@@ -123,28 +124,71 @@ for ii = 1:nsep
         [Hii, du2, d2u, J_phess] = calc_phessian_obj(homog_img.fwd_model,homog_img,DU0,data_hom.meas,'disc');
         
         
-        % P-Tensor approx after 20 iterations of BFGS
-        opt.max_its = 20;
-        opt.mem = 20;
-        opt.use_hyper = 0;
-        [~,~,~,~,H_vers] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
-        
-        % Reg contn
-        RtR = imdl.hyperparameter.value^2*calc_RtR_prior(imdl);
-        
-        % Compare some singular vectors
-        [Uj, Sj, Vj] = svd(J);
-        [Upj, Spj, Vpj] = svd(J_phess);
-        
-        %
-        H_PBFGS = H_vers{1};% - RtR;
-        H_IBFGS = H_vers{2};
-        H_RBFGS = H_vers{3} - RtR;
-        
-        [Uhp, Shp, Vhp] = svd(H_PBFGS);
-        [Uhi, Shi, Vhi] = svd(H_IBFGS);
-        [Uhr, Shr, Vhr] = svd(H_RBFGS);
-        [Uh, Sh, Vh] = svd(H);
+        iter_solve = [1, 2, 5, 10, 15, 20, 25, 50];
+        for kk=1:length(iter_solve)
+            
+            % P-Tensor approx after X iterations of BFGS
+            opt.max_its = iter_solve(kk);
+            opt.mem = iter_solve(kk);
+            opt.use_hyper = 1;
+            opt.H0_type = 'ptensor';
+            [~,~,~,~,H_PBFGS] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
+            opt.H0_type = 'identity';
+            [~,~,~,~,H_IBFGS] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
+            opt.H0_type = 'regu';
+            [~,~,~,~,H_RBFGS] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
+            
+            % Reg contn
+            RtR = imdl.hyperparameter.value^2*calc_RtR_prior(imdl);
+            
+            % Compare some singular vectors
+            [Uj, Sj, Vj] = svd(J);
+            [Upj, Spj, Vpj] = svd(J_phess);
+            
+            %         %
+            %         H_PBFGS = H_vers{1};% - RtR;
+            %         H_IBFGS = H_vers{2};
+            %         H_RBFGS = H_vers{3} - RtR;
+            
+            [Uhp, Shp, Vhp] = svd(H_PBFGS);
+            [Uhi, Shi, Vhi] = svd(H_IBFGS);
+            [Uhr, Shr, Vhr] = svd(H_RBFGS);
+            [Uh, Sh, Vh] = svd(H);
+            
+            % Compare principal angles between subspaces
+            % Choose threshold of ratio of singular values not in nullspace
+            thresh = 1e-2;
+            
+            % Jacobian principal angles
+            indx = diag(Sj)/Sj(1,1) > thresh;
+            J_true_basis = Vj(:, indx);
+            
+            indx = diag(Spj)/Spj(1,1) > thresh;
+            J_p_basis = Vj(:,indx);
+            
+            % Prin angles by SVD
+            cos_theta_J{kk} = svd(J_true_basis.' * J_p_basis);
+            
+            % Hess prin angles
+            indx = diag(Sh)/Sh(1,1) > thresh;
+            H_true_basis = Vh(:,indx);
+            
+            indx = diag(Shp)/Shp(1,1) > thresh;
+            H_p_basis = Vhp(:,indx);
+            
+            indx = diag(Shi)/Shi(1,1) > thresh;
+            H_i_basis = Vhi(:,indx);
+            
+            indx = diag(Shr)/Shr(1,1) > thresh;
+            H_r_basis = Vhr(:,indx);
+            
+            % Prin angles by SVD
+            cos_theta_Hp{kk} = svd(H_true_basis.'*H_p_basis);
+            cos_theta_Hr{kk} = svd(H_true_basis.'*H_r_basis);
+            cos_theta_Hi{kk} = svd(H_true_basis.'*H_i_basis);
+                       
+            
+        end
 
         
     end
