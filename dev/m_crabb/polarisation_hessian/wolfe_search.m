@@ -1,4 +1,4 @@
-function [ alpha ] = wolfe_search( x, p, alpha_1, alpha_max, F, G )
+function [ alpha ] = wolfe_search( x, p, alpha_1, alpha_max, F, G, opt )
 %WOLFE_SEARCH Summary of this function goes here
 %   Wolfe linesearch, including quadratic interpolation
 
@@ -7,8 +7,14 @@ function [ alpha ] = wolfe_search( x, p, alpha_1, alpha_max, F, G )
 c1 = 1e-2;
 c2 = 0.75;
 max_it = 100;
-alpha_step = 1.25;
+alpha_step = 1.5;
 delta_min = 1e-2;
+
+try c1 = opt.c1; end
+try c2 = opt.c2; end
+try alpha_step = opt.alpha_step; end
+try delta_min = opt.delta_min; end
+try max_it = opt.line_max_it; end
 
 % Disable singular matrix warnings -- handled by safeguarding
 % interpolations
@@ -34,7 +40,7 @@ while k<=max_it
     
     % New value does not satisfy sufficient decrease condition
     if phi_new> phi_0 + c1*alpha_new* d_phi_0 || (phi_new >= phi_old && k>1)
-        alpha = zoom_search(alpha_old, alpha_new, x, p,F,G);
+        alpha = zoom_search(alpha_old, alpha_new, x, p,F,G, opt);
         break
     end % if
     
@@ -52,7 +58,7 @@ while k<=max_it
 
     % Increasing function
     if d_phi_new >=0
-        alpha = zoom_search(alpha_new, alpha_old, x, p, F,G);
+        alpha = zoom_search(alpha_new, alpha_old, x, p, F,G, opt);
         break
     end % if
     
