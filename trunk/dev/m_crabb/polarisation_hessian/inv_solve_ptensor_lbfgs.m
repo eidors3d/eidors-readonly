@@ -1,4 +1,4 @@
-function [ img, resvec, fwd_cts, abs_er, H_BFGS ] = inv_solve_ptensor_lbfgs( imdl, img, data, hess_opts, true_im )
+function [ img, resvec, fwd_cts, abs_er, H_BFGS ] = inv_solve_ptensor_lbfgs( imdl, img, data, opt, true_im )
 %INV_SOLVE_PTENSOR_LBFGS
 %
 % L-BFGS inverse solver with a polarization tensor approximation to diag(H)
@@ -7,67 +7,67 @@ function [ img, resvec, fwd_cts, abs_er, H_BFGS ] = inv_solve_ptensor_lbfgs( imd
 % NB default is no precon
 
 if nargin==3
-    hess_opts = [];
+    opt = [];
 end
 
-if isfield(hess_opts,'H0_type')
-    H0_type = hess_opts.H0_type;
+if isfield(opt,'H0_type')
+    H0_type = opt.H0_type;
 else
     H0_type = 'ptensor';
 end
-if isfield(hess_opts,'rescale')
-    rescale = hess_opts.rescale;
+if isfield(opt,'rescale')
+    rescale = opt.rescale;
 else
     rescale = 0;
 end
-if isfield(hess_opts,'use_hyper')
-    use_hyper = hess_opts.use_hyper;
+if isfield(opt,'use_hyper')
+    use_hyper = opt.use_hyper;
 else
     use_hyper = true;
 end
-if isfield(hess_opts, 'update_U0')
-    update_U0 = hess_opts.update_U0;
+if isfield(opt, 'update_U0')
+    update_U0 = opt.update_U0;
 else
     update_U0 = 0;
 end
-if isfield(hess_opts,'neumann')
-    neumann = hess_opts.neumann;
+if isfield(opt,'neumann')
+    neumann = opt.neumann;
 else
     neumann = 'freespace';
 end
-if isfield(hess_opts,'update_delta')
-    update_delta = hess_opts.update_delta;
+if isfield(opt,'update_delta')
+    update_delta = opt.update_delta;
 else
     update_delta = 1;
 end
 
-if isfield(hess_opts, 'flexible')
-    flexi = hess_opts.flexible;
+if isfield(opt, 'flexible')
+    flexi = opt.flexible;
 else
     flexi = true;
 end
 
-if isfield(hess_opts,'ptensor_its')
-    ptensor_its = hess_opts.ptensor_its;
+if isfield(opt,'ptensor_its')
+    ptensor_its = opt.ptensor_its;
 else
     ptensor_its = inf;
 end
 
-if isfield(hess_opts, 'max_its')
-    max_its = hess_opts.max_its;
+if isfield(opt, 'max_its')
+    max_its = opt.max_its;
 else
     max_its = 50;
 end
     
-if isfield(hess_opts, 'mem')
-    mem = hess_opts.mem;
+if isfield(opt, 'mem')
+    mem = opt.mem;
 else
     mem = 20;
 end
     
 
-if isfield(hess_opts,'inv_crime')
-    inv_crime = hess_opts.inv_crime;
+if isfield(opt,'inv_crime')
+    inv_crime = opt.inv_crime;
 else
     inv_crime =0;
 end
@@ -85,7 +85,9 @@ img_0 = img;
 h_min = 1e-12;
 
 g_tol = 0;%1e-9;
-d_tol = 0;%1e-4; % Same as EIDORS default check
+d_tol = 1e-4; % Same as EIDORS default check
+try g_tol = opt.g_tol; end
+try d_tol = opt.d_tol; end
 
 updt_tol = 0;%1e-14;
 
@@ -402,7 +404,7 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
 %     stepl = 1;
     
 %     [img, stepl] = line_optimize(img, -p_k, data); % Eidors default
-    stepl = wolfe_search(x_k, -p_k, 1, 10, @(x)objective(x, img, imdl, data), @(x)calc_grad(x, img, imdl, data));
+    stepl = wolfe_search(x_k, -p_k, 1, 10, @(x)objective(x, img, imdl, data), @(x)calc_grad(x, img, imdl, data), opt);
     
     % Save difference in gradient and img
     S(:, mod(k-1,mem)+1) = -stepl * p_k;

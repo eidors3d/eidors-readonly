@@ -1,4 +1,4 @@
-function [ alpha ] = zoom_search( alpha_lo, alpha_hi, x, p, F, G  )
+function [ alpha ] = zoom_search( alpha_lo, alpha_hi, x, p, F, G, opt  )
 %ZOOM_SEARCH Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,6 +8,8 @@ warning('off','MATLAB:nearlySingularMatrix');
 
 c1 = 1e-2;
 c2 = 0.75;
+
+
 
 phi_0 = F(x);
 grad_F = G(x);
@@ -20,6 +22,12 @@ d_phi_lo = dot(G(x + alpha_lo * p),p);
 
 max_it = 20;
 delta_min = 1e-2; % <= 1e-1
+
+try c1 = opt.c1; end
+try c2 = opt.c2; end
+try alpha_step = opt.alpha_step; end
+try delta_min = opt.delta_min; end
+try max_it = opt.line_max_it; end
 
 for k =1:max_it
     % Determine range is wide enough for sufficient move /force small step
