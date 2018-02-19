@@ -20,11 +20,11 @@ n_nodes = size(fmdl.nodes,1);
 
 
 %Space for the analagous analytic freespace/disc N1/2 and DN1/2
-N1=zeros(n_nodes,n_nodes); 
-N2=zeros(n_nodes,n_nodes); 
+N_FEM=zeros(n_nodes,n_nodes); 
+%N2=zeros(n_nodes,n_nodes); 
 %N3=zeros(n_nodes,n_nodes); 
-DN1 = zeros(n_nodes,2,n_elems); 
-DN2 = zeros(n_nodes,2,n_elems); 
+DN_FEM = zeros(n_nodes,2,n_elems); 
+%DN2 = zeros(n_nodes,2,n_elems); 
 
 bound_nodes = unique(fmdl.boundary);
 
@@ -37,107 +37,58 @@ for ii=1:n_nodes
     for jj=1:n_nodes
         yjj = fmdl.nodes(jj,:);
      %   yjj_coord = sqrt(sum(yjj.^2));           
-        N1(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
-        N2(ii,jj) = calc_neumann_func_disc(xii,yjj);                 
-%        N3(ii,jj) = (1+yjj(1))*(1+yjj(2));                         
-        N3(ii,jj) = yjj(1)^2*yjj(2)^2;                         
+%        NANA(ii,jj) = calc_neumann_func_freespace(xii,yjj);      
+        NANA(ii,jj) = calc_neumann_func_disc(xii,yjj);                 
+%       N3(ii,jj) = (1+yjj(1))*(1+yjj(2));                         
+%        N3(ii,jj) = yjj(1)^2*yjj(2)^2;                         
 %        N3(ii,jj) = yjj(2)^2;                                 
     end      
     
     for jj=1:n_elems
-        %yjj = fmdl.nodes(jj,:);        
         yjj = fmdl.elem_centre(jj,:);  
-%        yjj_coord = sqrt(sum(yjj.^2));           
-        DN1(ii,:,jj) = calc_neumann_grad_func_freespace(xii,yjj);
-        DN2(ii,:,jj) = calc_neumann_grad_func_disc(xii,yjj);
+%        DNANA(ii,:,jj) = calc_neumann_grad_func_freespace(xii,yjj);
+        DNANA(ii,:,jj) = calc_neumann_grad_func_disc(xii,yjj);
     end    
 end
 
 %N(x,z) - point source at node loc z i.e. each column is vector of
 %DN(x,2,z) = gradient w.r.t z of of N(x,z) maps (:,nodes) to (:,2,elems)
-N0 = calc_neumann_func_nodal(img.fwd_model,img);
-DN0 =calc_grad_potential_nodal(img,N0);
+NFEM = calc_neumann_func_nodal(img.fwd_model,img);
+D_NFEM =calc_grad_potential_nodal(img,NFEM);
+D_NANA =calc_grad_potential_nodal(img,NANA);
 
-%DN0 =calc_grad_potential_nodal(img,N3);
+%DN3 = calc_grad_potential_nodal(img,N3);
 
 
-%Put same ground node on analytic solution
-%N0=N0'
+figure;
+subplot(221); plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NFEM(2,:),'r*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NANA(2,:),'b*')
 
-%for iii=1:n_nodes
-%   N2(:,iii) = N2(:,iii) - N2(fmdl.gnd_node,iii);
-%end
+subplot(222); plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NFEM(50,:),'r*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NANA(50,:),'b*')
 
-%sum(N0(bound_nodes,80))
+subplot(223); plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NFEM(:,2),'r*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NANA(:,2),'b*')
 
-%for node_indices=[5,10,20,50,100]
-%for node_indices=[10,15,20,35,50]
-for node_indices=[114]
+subplot(224); plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NFEM(:,50),'r*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),NANA(:,50),'b*')
 
-figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices),'r*')
-%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices),'g*')
-%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices),'b*')
-
-figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'r*')
-%figure;
-%plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N0(:,node_indices)-N2(:,node_indices),'g*')
-%figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N2(:,node_indices)-N3(:,node_indices),'b*')
-%hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),N1(:,node_indices)./N2(:,node_indices),'b*')
-
-%figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),...
-%    (N0(:,potential_indices)-N1(:,potential_indices)),'r*')    
+for source_indices=[20,50]
     
+figure; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),D_NFEM(:,1,source_indices),'r*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),D_NANA(:,1,source_indices),'b*')
+hold on; plot3(img.fwd_model.nodes(:,1),img.fwd_model.nodes(:,2),DNANA(:,1,source_indices),'g*')
+
+%{
 img0x = img;img0y = img;
-img0x.elem_data = squeeze(DN0(node_indices,1,:));
-img0y.elem_data = squeeze(DN0(node_indices,2,:));
-
-img0x.elem_data(225)=0; img0y.elem_data(225)=0;
-img0x.elem_data(249)=0; img0y.elem_data(249)=0;
-
-
-img1x = img;img1y = img;
-img1x.elem_data = squeeze(DN1(node_indices,1,:));
-img1y.elem_data = squeeze(DN1(node_indices,2,:));
-
-img2x = img;img2y = img;
-img2x.elem_data = squeeze(DN2(node_indices,1,:));
-img2y.elem_data = squeeze(DN2(node_indices,2,:));
-
-img20x = img;img20y = img;
-img20x.elem_data = squeeze(DN2(node_indices,1,:))-squeeze(DN0(node_indices,1,:));
-img20y.elem_data = squeeze(DN2(node_indices,2,:))-squeeze(DN0(node_indices,2,:));
-
-img21x = img;img21y = img;
-img21x.elem_data = squeeze(DN2(node_indices,1,:))-squeeze(DN1(node_indices,1,:));
-img21y.elem_data = squeeze(DN2(node_indices,2,:))-squeeze(DN1(node_indices,2,:));
-
-%img3x=img; img3y=img;
-%img3x.elem_data = squeeze((DN0(potential_indices,1,:)-DN1(potential_indices,1,:))...
-%    ./abs(DN0(potential_indices,1,:)));
-%img3y.elem_data = squeeze((DN0(potential_indices,2,:)-DN2(potential_indices,2,:))...
-%    ./abs(DN0(potential_indices,2,:)));
+img0x.elem_data = squeeze(DN3(source_indices,1,:));
+img0y.elem_data = squeeze(DN3(source_indices,2,:));
 
 figure; 
-subplot(5,2,1); show_fem(img0x,[1,0,0]);% colorbar; 
-subplot(5,2,2); show_fem(img0y,[1,0,0]); %colorbar;
-subplot(5,2,3); show_fem(img1x,[1,0,0]);% colorbar; 
-subplot(5,2,4); show_fem(img1y,[1,0,0]); %colorbar;
-subplot(5,2,5); show_fem(img2x,[1,0,0]); %colorbar; 
-subplot(5,2,6); show_fem(img2y,[1,0,0]); %colorbar; 
-subplot(5,2,7); show_fem(img20x,[1,0,0]); %colorbar; 
-subplot(5,2,8); show_fem(img20y,[1,0,0]); %colorbar; 
-subplot(5,2,9); show_fem(img21x,[1,0,0]); %colorbar; 
-subplot(5,2,10); show_fem(img21y,[1,0,0]); %colorbar; 
-%subplot(427); show_fem(img3x,[1,0,0]); %colorbar; 
-%subplot(428); show_fem(img3y,[1,0,0]); %colorbar; 
+subplot(1,2,1); show_fem(img0x,[1,0,0]);% colorbar; 
+subplot(1,2,2); show_fem(img0y,[1,0,0]); %colorbar;
+%}
 
-%figure; 
-%subplot(121);hist(img2x.elem_data,10000)
-%title(sprintf('Error for gradx Greens function source at (x,y) = (%1.2f,%1.2f)',...
-%    fmdl.elem_centre(potential_indices,1),fmdl.elem_centre(potential_indices,2)))
-%subplot(122);hist(img2y.elem_data,10000)
-%title(sprintf('Error for grady Greens function source at (x,y) = (%1.2f,%1.2f)',...
-%    fmdl.elem_centre(potential_indices,1),fmdl.elem_centre(potential_indices,2)))
 end
 
 

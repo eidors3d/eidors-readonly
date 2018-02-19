@@ -79,61 +79,66 @@ rhs_bound=zeros(nnodes,1);
 [bdy_idx,bdy_area] = find_electrode_bdy(boundstruc(:,1:n_dim),nodestruc,unique(boundstruc));
 bound_area = sum(bdy_area);
 
+nodedim=size(nodestruc,2);
+
+%An extra row equation for constrain that integral is 0
+Aw = zeros(1,nnodes);
+
 %Integrate RHS vector over boundary
 for i=1:nbounds
     %Jacobian of mapping
-    thisb=nodestruc(boundstruc(i,:),:);    
+    boundnodes=boundstruc(i,:);    
+    thisb=nodestruc(boundnodes,:);    
 
-    diff21=thisb(2,:)-thisb(1,:);
-    magjacbound=0.5*sqrt(diff21(1)^2+diff21(2)^2);
-    
-    %Initilaise rhs vector of boundary
-    fmat1=0;     
-
-    for k=1:size(weight,2)
-        %Find global coordinates of wiehgt point
-        
-  %      map=boundary_shape_function('tri3',xcoord(k),0);
-  %      xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
-  %      yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);                     
-  %      map=boundary_shape_function('tri3',xcoord(k),ycoord(k));
-        fmat1 = fmat1 + weight(k)*(phi(:,k))'*(-1/bound_area)*magjacbound;
-
-%{
-        map=boundary_shape_function('tri3',xcoord(k),ycoord(k));        
-        xglob=thisb(1,1)*map(1)+thisb(2,1)*map(2);
-        yglob=thisb(1,2)*map(1)+thisb(2,2)*map(2);
-        [theta,rad]=cart2pol(xglob,yglob);
-        
-        fmat1 = fmat1 + weight(k)*(boundary_shape_function('tri3',xcoord(k),ycoord(k)))'*...
-            (-1/bound_area)*magjacbound;        
-%}
-        
+    %Find the magnitude Jacobian of the mapping in 2D/3D
+    %NB:Scalings are consistent with reference element shape
+    if(nodedim==2)
+        %Jacobian = 0.5*|(x2-x1)| (x1,x2 vector of coords)
+        diff21=thisb(2,:)-thisb(1,:);
+        magjacbound=0.5*sqrt(diff21(1)^2+diff21(2)^2);
+    elseif(nodedim==3)
+        %Jacobian = |(x3-x1)x(x3-x2)| (x1,x2,x3 vector of coords)
+        diffprod=cross(thisb(3,:)-thisb(1,:),thisb(3,:)-thisb(2,:));
+        magjacbound=sqrt(diffprod(1)^2+diffprod(2)^2+diffprod(3)^2);
     end
-    
-    boundnodes=boundstruc(i,:);
+    %Initilaise rhs vector of boundary and integral 0 condition 
+    fmat1=0;       Awmat=0;
+    for k=1:size(weight,2)
+        %Find global coordinates of wiehgt point        
+        fmat1 = fmat1 + weight(k)*(phi(:,k))'*(-1/bound_area)*magjacbound;    
+        Awmat = Awmat + weight(k)*(phi(:,k))'*magjacbound;           
+    end
+
+    %Assemble the matrices
+    Aw(1,boundnodes,1) = Aw(1,boundnodes) + Awmat;                
     rhs_bound(boundnodes)=rhs_bound(boundnodes)+ fmat1';
-%    rhs_bound(boundnodes)=rhs_bound(boundnodes)+[1;-1];% 100;
     
 end
 
-rhs_total = zeros(nnodes,nnodes);
+rhs_total = zeros(nnodes+1,nnodes);
 %rhs_total(1,:)
 for i=1:nnodes %For each triangle
-   rhs_total(:,i) = rhs_bound;
+   rhs_total(1:nnodes,i) = rhs_bound;
    
    %This is 1 at the ith node
    rhs_total(i,i) = rhs_total(i,i) +1;    
 end
+rhs_total(nnodes+1,:)=0;
 
-%Create index vector and eliminate ground node equation from index
-groundnode=fwd_model.gnd_node; idx=1:size(At,1); idx(groundnode)=[];
+%Add extra equation i.e. At-> (n+1) x n dimension full column rank
+At=[At;Aw];
 
 %Solve the simulated linear system with index
-nodeunknowns(idx,:)=left_divide(At(idx,idx),rhs_total(idx,:));
-
+nodeunknowns=left_divide(At,rhs_total);
 
 data = nodeunknowns;
+
+
+
+
+
+
+
 
 %{
 %Find electrode voltages and store in matrix
