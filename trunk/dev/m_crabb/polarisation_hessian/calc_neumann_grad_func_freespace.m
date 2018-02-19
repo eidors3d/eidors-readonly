@@ -10,7 +10,8 @@ if size(z,2)==2 && size(x,2)==2
     
     % Greens function contribution
     RR = repmat(x, size(z,1),1) - z;
-    DN = RR./(2*pi*repmat(sqrt(sum(RR.^2,2)),1,2));
+   % DN = RR./(2*pi*repmat(sqrt(sum(RR.^2,2)),1,2));
+    DN = RR./(2*pi*repmat(sum(RR.^2,2),1,2));
     
     % Correction term on for boundary
     
