@@ -27,6 +27,13 @@ alpha_old = 0; alpha_new = alpha_1; alpha = alpha_1; k=1;
 phi_0 = F(x);
 grad_f = G(x);
 d_phi_0 = dot(grad_f, p);
+
+if d_phi_0 >=0
+    alpha = 0;
+    return
+end
+
+
 phi_old = phi_0;
 
 % Initialise interp pts
@@ -70,28 +77,33 @@ while k<=max_it
     
     % update alpha
     alpha_old = alpha_new;
+    alpha_new = alpha_step * alpha_new;
         
-    % Try interp pt
-    if k>=3 
-        % Quadratic interp
-        alph_interp_grads = quad_interp_vvv(Gradpts(1+k-3,1), Gradpts(2+k-3,1), Gradpts(3+k-3,1),...
-                                            Gradpts(1+k-3,2), Gradpts(2+k-3,2), Gradpts(3+k-3,2));
-    else
-        % Linear interp
-        alph_interp_grads = Gradpts(2,2)*Gradpts(2,1)/(Gradpts(1,2) - Gradpts(2,2));
-
-    end
-    
-      
-    % Take the larger step of interpolated and stepped for sufficient progress
-    if abs(alph_interp_grads - alpha_old)/alpha_old < delta_min
-        alpha_new = max(alpha_step*alpha_new, alph_interp_grads);
-    end
-    
-    % Check for (close to) max step
-    if alpha_new > alpha_max || abs(alpha_new - alpha_max)/alpha_max < delta_min
-        alpha_new = alpha_max;
-    end
+%     TODO: needs debugging
+%     % Try interp pt
+%     if k>=3 
+%         % Quadratic interp
+%         alph_interp_grads = quad_interp_vvv(Gradpts(1+k-3,1), Gradpts(2+k-3,1), Gradpts(3+k-3,1),...
+%                                             Gradpts(1+k-3,2), Gradpts(2+k-3,2), Gradpts(3+k-3,2));
+%     else
+%         % Linear interp
+%         alph_interp_grads = Gradpts(2,2)*Gradpts(2,1)/(Gradpts(1,2) - Gradpts(2,2));
+% 
+%     end
+%     
+%       
+%     
+%     
+    % TODO: needs debugging
+%     % Take the larger step of interpolated and stepped for sufficient progress
+%     if abs(alph_interp_grads - alpha_old)/alpha_old < delta_min
+%         alpha_new = max(alpha_step*alpha_new, alph_interp_grads);
+%     end
+%     
+%     % Check for (close to) max step
+%     if alpha_new > alpha_max || abs(alpha_new - alpha_max)/alpha_max < delta_min
+%         alpha_new = alpha_max;
+%     end
     
     
 

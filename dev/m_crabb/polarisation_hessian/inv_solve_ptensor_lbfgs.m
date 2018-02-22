@@ -82,7 +82,8 @@ fmdl = img.fwd_model;
 img_0 = img;
 
 % Minimum value on the diagonal (force +ve def)
-h_min = 1e-12;
+h_min = 1e-8;
+try h_min = opt.h_min; end
 
 g_tol = 0;%1e-9;
 d_tol = 1e-4; % Same as EIDORS default check
@@ -171,7 +172,7 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
     disp('  calculating descent direction...')
          
     
-    % 2-loop recursions for implicit Hessia6  n approximation
+    % 2-loop recursions for implicit Hessian approximation
     q = g_k;
     
     % ---------------
@@ -244,7 +245,7 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
                             % Gauss Newton part too small
                             H0 = D0;
                             H0(H0< h_min) = h_min;
-                            spdiags(H0, 0, length(H0), length(H0))
+                            spdiags(H0, 0, length(H0), length(H0));
                         end
                     end
                 end
@@ -351,12 +352,12 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
             end
             
         case 'identity'
-            if k==1
-                gamma_k = 1.;
-            else
-                gamma_k = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
-                    ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
-            end
+%             if k==1
+%                 gamma_k = 1.;
+%             else
+%                 gamma_k = ( S(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) )/ ...
+%                     ( Y(:,mod(k-2,mem)+1).' * Y(:,mod(k-2,mem)+1) );
+%             end
             H0 = max(gamma_k, h_min);
             
         case 'regu'
@@ -392,7 +393,8 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
     end
     
     % Safeguard
-    if any(isnan(p_k)) || any(isinf(p_k))
+    if any(isnan(p_k)) || any(isinf(p_k)) || dot(p_k, g_k) <0
+        warning('lbfgs_solve: BFGS not defined')
         p_k = g_k/gamma_k;
     end
         
@@ -450,7 +452,8 @@ while ( g(k) > g_tol  && rel_red > d_tol ) || k==1 || k==2 % TODO: stop conditio
         Y(:, mod(k-1,mem)+1) = g_k2 - g_k;
         
     else
-        fvdsgdf=1; %nonsense for breakpoint
+        warning('lbfgs_solve: stepl did not satisfy Wolfe condition')
+        break
         
     end
     

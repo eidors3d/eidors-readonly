@@ -150,11 +150,10 @@ ii=1; jj=1;
             [~,~,~,~,H_IBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
             opt.H0_type = 'regu';
             [~,~,~,~,H_RBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
+            opt.H0_type = 'DGN0';
+            [~,~,~,~,H_GNBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
             
             
-            dHP(kk) = norm(H_PBFGS{kk} - H)/norm(H);
-            dHR(kk) = norm(H_RBFGS{kk} - H)/norm(H);
-            dHI(kk) = norm(H_IBFGS{kk} - H)/norm(H);
             
             
             % Reg contn
@@ -167,10 +166,11 @@ ii=1; jj=1;
             %         H_IBFGS = H_vers{2};
             %         H_RBFGS = H_vers{3} - RtR;
             
-            [Uhp, Shp{kk}, Vhp] = svd(H_PBFGS{kk});
-            [Uhi, Shi{kk}, Vhi] = svd(H_IBFGS{kk});
-            [Uhr, Shr{kk}, Vhr] = svd(H_RBFGS{kk});
-            [Uh, Sh{kk}, Vh] = svd(H);
+            [~, Shp{kk}, Vhp] = svd(H_PBFGS{kk});
+            [~, Shi{kk}, Vhi] = svd(H_IBFGS{kk});
+            [~, Shr{kk}, Vhr] = svd(H_RBFGS{kk});
+            [~, Shg{kk}, Vhg] = svd(H_GNBFGS{kk});
+            [~, Sh{kk}, Vh] = svd(H);
             
            
             
@@ -191,11 +191,13 @@ ii=1; jj=1;
 %             indx = diag(Shr{kk})/Shr{kk}(1,1) > thresh;
             H_r_basis = Vhr(:,indx);
             
+            H_g_basis = Vhg(:,indx);
+            
             % Prin angles by SVD
             cos_theta_Hp(:,kk) = svd(H_true_basis.'*H_p_basis);
             cos_theta_Hr(:,kk) = svd(H_true_basis.'*H_r_basis);
             cos_theta_Hi(:,kk) = svd(H_true_basis.'*H_i_basis);
-                       
+            cos_theta_Hg(:,kk) = svd(H_true_basis.'*H_g_basis);
             
         end
         
@@ -236,7 +238,7 @@ figure(5)
 plot(acos(cos_theta_J))
 
 %% Convergence to true Hess
-iter_solve = [1:25, 30, 35, 40, 45, 50];
+iter_solve = [1:25];
 for kk=1:length(iter_solve)
     
     % P-Tensor approx after X iterations of BFGS
@@ -246,15 +248,13 @@ for kk=1:length(iter_solve)
     opt.use_hyper = 1;
     opt.H0_type = 'ptensor';
     [~,~,~,~,H_PBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
-    opt.H0_type = 'identity';
-    [~,~,~,~,H_IBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
-    opt.H0_type = 'regu';
-    [~,~,~,~,H_RBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
-    
+    opt.H0_type = 'DGN0';
+    [~,~,~,~,H_GNBFGS{kk}] = inv_solve_ptensor_lbfgs(imdl, homog_img, data, opt, sim_img);
     
     dHP(kk) = norm(H_PBFGS{kk} - H)/norm(H);
-    dHR(kk) = norm(H_RBFGS{kk} - H)/norm(H);
-    dHI(kk) = norm(H_IBFGS{kk} - H)/norm(H);
+    dHG(kk) = norm(H_GNBFGS{kk} - H)/norm(H);
+
+    
     
 end
 
