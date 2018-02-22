@@ -20,7 +20,7 @@ phi_hi = F(x + alpha_hi * p);
 
 d_phi_lo = dot(G(x + alpha_lo * p),p);
 
-max_it = 20;
+max_it = 100;
 delta_min = 1e-2; % <= 1e-1
 
 try c1 = opt.c1; end
