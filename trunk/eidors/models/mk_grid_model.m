@@ -17,6 +17,9 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if nargin>0 && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+
+
 if nargin == 3
    cmdl = mk_2d_grid(xvec,yvec);
 elseif nargin ==4
@@ -179,3 +182,25 @@ function in_d_pts = calc_in_d_pts( d_pts, dvec);
    for i= 1:l1dvec
       in_d_pts{i} = d_pts >= dvec(i) & d_pts < dvec(i+1);
    end
+
+function do_unit_test
+imdl = mk_common_model('b2c2',16); imdl.hyperparameter.value = 1e-3;
+img = mk_image(imdl,1);     vh= fwd_solve(img);
+img.elem_data([51,23])=1.1; vi= fwd_solve(img);
+subplot(221); show_fem(img);
+subplot(222); show_fem(inv_solve(imdl, vh, vi));
+
+grid = linspace(-1,1,33);
+[imdl.rec_model, imdl.fwd_model.coarse2fine] = ...
+     mk_grid_model( imdl.fwd_model, grid, grid );
+subplot(223); show_fem(inv_solve(imdl, vh, vi));
+hold on; hh=show_fem(img); set(hh,'FaceAlpha',0,'EdgeColor',[0,0,1]); hold off;
+
+outside = find(sum(imdl.fwd_model.coarse2fine,1) < eps);
+imdl.fwd_model.coarse2fine(:,outside) = [];
+imdl.rec_model.coarse2fine(:,outside) = [];
+rec_out = [2*outside-1,2*outside];
+imdl.rec_model.coarse2fine(rec_out,:) = [];
+imdl.rec_model.elems(rec_out,:) = [];
+subplot(224); show_fem(inv_solve(imdl, vh, vi));
+hold on; hh=show_fem(img); set(hh,'FaceAlpha',0,'EdgeColor',[0,0,1]); hold off;
