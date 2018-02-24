@@ -35,7 +35,15 @@ if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 inv_model = rec_or_fwd_model( inv_model);
 
 if isfield(inv_model,'RtR_prior')
-   RtR_prior= eidors_cache(@get_RtR_prior, inv_model, 'calc_RtR_prior' );
+   if isnumeric(inv_model.RtR_prior)
+      RtR_prior = inv_model.RtR_prior;
+   else
+      try inv_model.RtR_prior = str2func(inv_model.RtR_prior); end
+      RtR_prior= feval( inv_model.RtR_prior, inv_model );
+   end
+   % cache results of c2f call
+   RtR_prior= eidors_cache(@c2f_RtR_prior, ...
+         {inv_model,RtR_prior}, 'calc_RtR_prior' );
 elseif isfield(inv_model,'R_prior')
    RtR_prior = eidors_cache(@calc_from_R_prior, inv_model, 'calc_RtR_prior');
 else
@@ -68,17 +76,6 @@ function RtR_prior = calc_from_R_prior(inv_model)
 
    RtR_prior = c2f_RtR_prior(inv_model, R'*R );
 
-
-
-function RtR_prior = get_RtR_prior( inv_model)
-   if isnumeric(inv_model.RtR_prior)
-      RtR_prior = inv_model.RtR_prior;
-   else
-      try inv_model.RtR_prior = str2func(inv_model.RtR_prior); end
-      RtR_prior= feval( inv_model.RtR_prior, inv_model );
-   end
-
-   RtR_prior = c2f_RtR_prior( inv_model, RtR_prior);
    
    
 
@@ -122,3 +119,4 @@ function do_unit_test
    [imdl.rec_model, imdl.fwd_model.coarse2fine] = ...
         mk_grid_model( imdl.fwd_model, grid, grid);
    RtR = calc_RtR_prior(imdl);
+   disp('cache should only be called once');
