@@ -1,3 +1,5 @@
+ - Fix bug in calc_hm_set - use with 3D arrays
+
  - Fix prior_gaussian_HPF to accept 3D models
 
  - the code in cg_ards_recruitment_ zip files have many issues
