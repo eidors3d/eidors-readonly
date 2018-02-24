@@ -13,11 +13,13 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 %  zvec - z edges (optional - to create 3D model)
 %
 % if fmdl == [], then just create the grid model without c2f
+%
+% See also MK_COARSE_FINE_MAPPING, MK_PIXEL_SLICE
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if nargin>0 && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 
 if nargin == 3
