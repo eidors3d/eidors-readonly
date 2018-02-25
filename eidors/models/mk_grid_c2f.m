@@ -119,8 +119,8 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        pmopt.final_msg = '';
        progress_msg('Progress:',0,max_iter,pmopt);
        progress = 0;
-       n_elems = num_elems(fmdl0); step = 10;
-       for k = 1:step:n_elems;disp(k)
+       n_elems = num_elems(fmdl0); step = 1000;
+       for k = 1:step:n_elems;
           eidx = true(n_elems,1); eidx(k:min(k+step-1,n_elems)) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
                         fmdl.edge2elem(:,eidx)= [];
@@ -348,9 +348,7 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 D = P1-P2;
                 ok = any(abs(D(:)) <= eps); 
             end 
-%             [ v t]
             if ok; continue, end % otherwise convhulln will throw an error
-%             if ok && v== 6 && t==3; keyboard; end
             try
                 % move points to origin (helps for small elements at
                 % large coordinates
@@ -364,12 +362,15 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                 pts = pts ./ scale;
                 % force thorough search for initinal simplex and 
                 % supress precision warnings
-%                 if v== 6 && t==3; keyboard; end
-                [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
+                [~, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
                 V(last_v) = V(last_v) * scale^3; % undo scaling
             catch err
                 ok = false;
                 switch err.identifier
+                    case {'MATLAB:qhullmx:DegenerateData'}
+                        % if QHull is degenerate, then are is zero.
+                        ok = 1;
+
                     case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError', ...
                             'MATLAB:cgprechecks:NotEnoughPts'}
                         % check for edges along the x y or z axis
@@ -381,12 +382,15 @@ function [c2f, m] = separable_calculations(fmdl,rmdl,opt)
                         % it should also check if both pts come from the same edge and
                         % that edge fullfils the condition
                         D = P1-P2;
-                        ok = any(abs(D) < eps);
+                        ok = any(abs(D) < 10*eps);
                         % edge-edge intersections often appear to also
                         % cross faces, there doesn't seem to be a good
                         % specific way to catch that
-                        u = uniquetol(pts*scale,eps,'ByRows',true,'DataScale', 1);
+                        u = uniquetol(pts*scale,10*eps,'ByRows',true,'DataScale', 1);
                         ok = ok | size(u,1) < 4;
+                end
+                if ~ok & size(u,1) == 4
+                        ok = ok | det([ones(4,1),u])<eps;
                 end
                 if ~ok
                     if DEBUG || eidors_debug('query','mk_grid_c2f:convhulln')
