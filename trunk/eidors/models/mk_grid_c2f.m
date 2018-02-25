@@ -58,8 +58,6 @@ function [c2f, m] = mk_grid_c2f(fmdl, rmdl, opt)
 % License: GPL version 2 or 3
 % $Id$
 
-% >> SWISSTOM CONTRIBUTION <<
-
 persistent save_memory;
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'), do_unit_test; return; end
@@ -115,6 +113,27 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
           [tmp, m] = separable_calculations(fmdl,rmdl0,opt);
           c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx);
        end
+    elseif opt0.save_memory == 10
+       logmsg(' Saving memory mode level %d\n',opt0.save_memory);
+       max_iter = opt0.Zsz;
+       pmopt.final_msg = '';
+       progress_msg('Progress:',0,max_iter,pmopt);
+       progress = 0;
+       n_elems = num_elems(fmdl0); step = 10;
+       for k = 1:step:n_elems;disp(k)
+          eidx = true(n_elems,1); eidx(k:min(k+step-1,n_elems)) = false;
+          fmdl = fmdl0; fmdl.elems(eidx,:) = [];
+                        fmdl.edge2elem(:,eidx)= [];
+                        fmdl.node2elem(:,eidx)= [];
+                        fmdl.elem2face(eidx,:)= [];
+          opt = opt0;   opt.nTet = sum(eidx==0);
+          eidors_msg('log_level',eidors_msg('log_level')-2);
+          c2f(~eidx,:) = separable_calculations(fmdl,rmdl0,opt);
+          eidors_msg('log_level',eidors_msg('log_level')+2);
+          progress = progress + 1;
+          progress_msg(progress, max_iter);
+       end
+       progress_msg(Inf);
     else % save_memory > 0
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
        max_iter = opt0.Zsz;
@@ -662,7 +681,7 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = get_tet_intersection_points
     d = sum(fmdl.normals .* fmdl.nodes(fmdl.faces(:,1),:),2);
 
     line_axis = [3 1 2];
-    for i = 1:3, 
+    for i = 1:3
         progress_msg(i,3);
         % define edge lines
         idx = 1:3;
@@ -676,38 +695,22 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = get_tet_intersection_points
         % project on faces
         % plane equation is ax+by+cz+d = 0, where d = -(ax0 + by0 + cz0)
         z = repmat(d,1,size(pts,1));
-%       for j = 1:2
-%           z = z - bsxfun(@times,fmdl.normals(:,idx(j)),pts(:,j)');
-%       end
-%       z = z ./ repmat(fmdl.normals(:,op),1,size(pts,1));
-            lsz = size(fmdl.normals,1); llim = 1e4;
         for j = 1:2
-            for k = 1:llim:lsz
-               lidx = k:min(k+llim-1,lsz);
-               z(lidx,:) = z(lidx,:) - bsxfun(@times, ...
-                   fmdl.normals(lidx,idx(j)),pts(:,j)');
-               z(lidx,:) = z(lidx,:) ./ repmat( ...
-                        fmdl.normals(lidx,op),1,size(pts,1));
-            end
+            z = z - bsxfun(@times,fmdl.normals(:,idx(j)),pts(:,j)');
         end
-disp(1)
+        z = z ./ repmat(fmdl.normals(:,op),1,size(pts,1));
         in = point_in_triangle(pts,fmdl.faces,fmdl.nodes(:,idx),2*opt.tol_edge2tri)';
 
         
         % reject voxel nodes
         v = VEC{op}';
-disp(2)
         in = in & ~reshape(any(bsxfun(@eq,z(:),v),2),size(in));
-disp(3)
         M = bsxfun(@lt, z(:),v);
-disp(4)
         M = xor(M(:,1:end-1), M(:,2:end));
-disp(5)
-%       edge_num = reshape(uint32(sum(bsxfun(@times,uint32(M),uint32(1:SZ(op))),2)), size(z));
-        edge_num = reshape(uint32(uint32(M)*sum(1:SZ(op))), size(z));
-disp(6)
+        edge_num1= reshape(uint32(sum(bsxfun(@times,uint32(M),uint32(1:SZ(op))),2)), size(z));
+        edge_num = reshape(uint32(M*(1:SZ(op))'), size(z));
+assert(all(all(edge_num1==edge_num)))
         in = in & edge_num > 0;
-disp(7)
         if nnz(in) == 0, continue, end
         edge_num(~in) = 0;
 
