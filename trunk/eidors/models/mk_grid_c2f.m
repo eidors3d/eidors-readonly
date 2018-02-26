@@ -119,7 +119,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        pmopt.final_msg = '';
        progress_msg('Progress:',0,max_iter,pmopt);
        progress = 0;
-       n_elems = num_elems(fmdl0); step = 1000;
+       n_elems = num_elems(fmdl0); step = 1e5;
        for k = 1:step:n_elems;
           eidx = true(n_elems,1); eidx(k:min(k+step-1,n_elems)) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
@@ -713,7 +713,7 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = get_tet_intersection_points
         M = xor(M(:,1:end-1), M(:,2:end));
         edge_num1= reshape(uint32(sum(bsxfun(@times,uint32(M),uint32(1:SZ(op))),2)), size(z));
         edge_num = reshape(uint32(M*(1:SZ(op))'), size(z));
-assert(all(all(edge_num1==edge_num)))
+if ~(all(all(edge_num1==edge_num))); keyboard; end
         in = in & edge_num > 0;
         if nnz(in) == 0, continue, end
         edge_num(~in) = 0;
