@@ -115,13 +115,15 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        end
     elseif opt0.save_memory == 10
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       max_iter = opt0.Zsz;
+       n_elems = num_elems(fmdl0); step = 1e3;
+       max_iter = floor(n_elems/step);
        pmopt.final_msg = '';
        progress_msg('Progress:',0,max_iter,pmopt);
        progress = 0;
-       n_elems = num_elems(fmdl0); step = 1e5;
-       for k = 1:step:n_elems;
-          eidx = true(n_elems,1); eidx(k:min(k+step-1,n_elems)) = false;
+       clear c2fk;
+       for k = 0:max_iter; disp([ k*step+1, n_elems, min((k+1)*step,n_elems)]);
+          eidx = true(n_elems,1);
+          eidx( (k*step+1):min((k+1)*step,n_elems) ) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
                         fmdl.edge2elem(:,eidx)= [];
                         fmdl.node2elem(:,eidx)= [];
@@ -130,9 +132,9 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
           eidors_msg('log_level',eidors_msg('log_level')-2);
           c2f(~eidx,:) = separable_calculations(fmdl,rmdl0,opt);
           eidors_msg('log_level',eidors_msg('log_level')+2);
-          progress = progress + 1;
-          progress_msg(progress, max_iter);
+          progress_msg(k+1, max_iter);
        end
+%         c2f(~eidx,:) = separable_calculations(fmdl,rmdl0,opt);
        progress_msg(Inf);
     else % save_memory > 0
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
