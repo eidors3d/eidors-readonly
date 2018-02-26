@@ -118,29 +118,37 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
 % of the model. It should then be possible to run in a parfor
 % loop, ... but matlab has subtle bugs
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       n_elems = num_elems(fmdl0); step = 3e4;
+       n_elems = num_elems(fmdl0); step = 1e3;
        max_iter = floor(n_elems/step);
        pmopt.final_msg = '';
-       progress_msg('Progress:',0,max_iter,pmopt);
+       ctr = interp_mesh(fmdl0);
+       [~,xidx] = sort(ctr(:,1)); % sort by x - real solution is travelling salesman
+       [xl] = ndgrid(opt0.xvec(1:end-1),opt0.yvec(1:end-1),opt0.zvec(1:end-1)); xl=xl(:);
+       [xu] = ndgrid(opt0.xvec(2:end-0),opt0.yvec(2:end-0),opt0.zvec(2:end-0)); xu=xu(:);
+       progress_msg('Progress:',0,max_iter+1,pmopt);
        progress = 0;
-       c2fk = cell(max_iter+1,1);
        for k = 0:max_iter;
           eidx = true(n_elems,1);
-          eidx( (k*step+1):min((k+1)*step,n_elems) ) = false;
+          eidx( xidx((k*step+1):min((k+1)*step,n_elems)) ) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
                         fmdl.edge2elem(:,eidx)= [];
                         fmdl.node2elem(:,eidx)= [];
                         fmdl.elem2face(eidx,:)= [];
+          xvals = fmdl.nodes(fmdl.elems(:),1);
+          ridx = true(size(xu));
+          ridx(xl>max(xvals)) = false;
+          ridx(xu<min(xvals)) = false;
+          rmdl = rmdl0; 
+             idx = rmdl0.coarse2fine * ridx > 0;
+             rmdl.elems = rmdl0.elems(idx,:);
           opt = opt0;   opt.nTet = sum(eidx==0);
+          opt.xvec( opt.xvec > max(xvals) ) = [];
+          opt.xvec( opt.xvec < min(xvals) ) = [];
+
           eidors_msg('log_level',eidors_msg('log_level')-2);
-          c2fk{k+1} = separable_calculations(fmdl,rmdl0,opt);
+          c2f(~eidx,:) = separable_calculations(fmdl,rmdl0,opt);
           eidors_msg('log_level',eidors_msg('log_level')+2);
-          progress_msg(k+1, max_iter);
-       end
-       for k = 0:max_iter;
-          eidx = true(n_elems,1);
-          eidx( (k*step+1):min((k+1)*step,n_elems) ) = false;
-          c2f(~eidx,:) = c2fk{k+1};
+          progress_msg(k+1, max_iter+1);
        end
        progress_msg(Inf);
     else % save_memory > 0
