@@ -114,14 +114,17 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
           c2f = combine_c2f(c2f, tmp,felem_idx,relem_idx);
        end
     elseif opt0.save_memory == 10
+% The idea here is to calculate separately on each fraction
+% of the model. It should then be possible to run in a parfor
+% loop, ... but matlab has subtle bugs
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       n_elems = num_elems(fmdl0); step = 1e3;
+       n_elems = num_elems(fmdl0); step = 3e4;
        max_iter = floor(n_elems/step);
        pmopt.final_msg = '';
        progress_msg('Progress:',0,max_iter,pmopt);
        progress = 0;
        c2fk = cell(max_iter+1,1);
-       parfor k = 0:max_iter; disp(k)
+       for k = 0:max_iter;
           eidx = true(n_elems,1);
           eidx( (k*step+1):min((k+1)*step,n_elems) ) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
