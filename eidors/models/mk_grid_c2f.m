@@ -135,7 +135,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
                         fmdl.node2elem(:,eidx)= [];
                         fmdl.elem2face(eidx,:)= [];
           opt = opt0;   opt.nTet = sum(eidx==0);
-if 0
+if 1
           xvals = fmdl.nodes(fmdl.elems(:),1);
           ridx = true(size(xu));
           ridx(xl>max(xvals)) = false;
@@ -143,12 +143,23 @@ if 0
           rmdl = rmdl0; 
              idx = rmdl0.coarse2fine * ridx > 0;
              rmdl.elems = rmdl0.elems(idx,:);
-          opt.xvec( opt.xvec > max(xvals) ) = [];
-          opt.xvec( opt.xvec < min(xvals) ) = [];
+             [node_idx, ~,Nn] = unique(rmdl.elems(:));
+             rmdl.elems = reshape(Nn,size(rmdl.elems));
+             rmdl.nodes = rmdl0.nodes(node_idx,:);
+          opt.xvec = unique(rmdl.nodes( rmdl.elems(:), 1));
+          opt.Xsz = length(opt.xvec)-1;
+          opt.ystep = opt.xstep*opt.Xsz+1;
+          opt.zstep = opt.ystep*(opt.Ysz+1);
+          opt.nVox = opt.Xsz*opt.Ysz*opt.Zsz;
+
+          fmdl.boundary = find_boundary(fmdl);
+          rmdl.boundary = find_boundary(rmdl);
+%         hh=show_fem(rmdl); set(hh,'EdgeColor',[0,0,1]); hold on; show_fem(fmdl)
+%         keyboard
 end
 
           eidors_msg('log_level',eidors_msg('log_level')-2);
-          c2f(~eidx,:) = separable_calculations(fmdl,rmdl0,opt);
+          c2f(~eidx,ridx) = separable_calculations(fmdl,rmdl,opt);
           eidors_msg('log_level',eidors_msg('log_level')+2);
           progress_msg(k+1, max_iter+1);
        end
