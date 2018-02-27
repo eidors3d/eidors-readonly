@@ -127,7 +127,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        [xu] = ndgrid(opt0.xvec(2:end-0),opt0.yvec(2:end-0),opt0.zvec(2:end-0)); xu=xu(:);
        progress_msg('Progress:',0,max_iter+1,pmopt);
        progress = 0;
-       for k = 0:max_iter;
+       for k = 0:max_iter; disp(k)
           eidx = true(n_elems,1);
           eidx( xidx((k*step+1):min((k+1)*step,n_elems)) ) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
