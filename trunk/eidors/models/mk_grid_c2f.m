@@ -118,7 +118,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
 % of the model. It should then be possible to run in a parfor
 % loop, ... but matlab has subtle bugs
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       n_elems = num_elems(fmdl0); step = 1e3;
+       n_elems = num_elems(fmdl0); step = 1e4;
        max_iter = floor(n_elems/step);
        pmopt.final_msg = '';
        ctr = interp_mesh(fmdl0);
@@ -154,11 +154,14 @@ if 1
 
           fmdl.boundary = find_boundary(fmdl);
           rmdl.boundary = find_boundary(rmdl);
-%         hh=show_fem(rmdl); set(hh,'EdgeColor',[0,0,1]);
-%             hold on; show_fem(fmdl); hold off; keyboard
+   if 0
+          hh=show_fem(rmdl); set(hh,'EdgeColor',[0,0,1]);
+              hold on; show_fem(fmdl); hold off; keyboard
+   end
 else
           rmdl = rmdl0; ridx= true(opt.nVox,1);
 end
+          if isempty(rmdl.elems); continue; end % don't bother if rmdl outside
 
           eidors_msg('log_level',eidors_msg('log_level')-2);
           c2f(~eidx,ridx) = separable_calculations(fmdl,rmdl,opt);
