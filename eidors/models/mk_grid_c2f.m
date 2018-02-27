@@ -154,8 +154,10 @@ if 1
 
           fmdl.boundary = find_boundary(fmdl);
           rmdl.boundary = find_boundary(rmdl);
-%         hh=show_fem(rmdl); set(hh,'EdgeColor',[0,0,1]); hold on; show_fem(fmdl)
-%         keyboard
+%         hh=show_fem(rmdl); set(hh,'EdgeColor',[0,0,1]);
+%             hold on; show_fem(fmdl); hold off; keyboard
+else
+          rmdl = rmdl0; ridx= true(opt.nVox,1);
 end
 
           eidors_msg('log_level',eidors_msg('log_level')-2);
