@@ -4,6 +4,29 @@
 
 <h2>Contrasts in EIT</h2>
 
+In EIT the contrast (signal change for a target) is not a uniform
+function of the conductivity. The effect is subtle and it is
+explored in this tutorial. 
+
+<h3> 
+Overview of EIT contrast signal
+</h3>
+
+Here we introduce a ellipsoidal contrast of various major/minor
+axis ratios
+
+<pre>
+[% PROCESS "contrasts_06.m" %]
+</pre>
+
+<center>
+<img src="contrasts_06a.jpg">
+<img src="contrasts_06b.jpg">
+<br><i> Figure:</i>
+<i>Left:</i> 3D FEM with an ellipsoidal target region:
+<i>Right:</i> 3D FEM with an ellipsoidal target region:
+</center>
+
 <h3> 
 Creating an FEM and solving the forward problem
 </h3>
