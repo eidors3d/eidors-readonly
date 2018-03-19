@@ -5,7 +5,7 @@ space= logspace(-3,3,37);
 i=1;for rat = [.3,1,2,5];
    extra={'targ',sprintf(['solid targ = ', ...
           'cylinder(0,0,0;0,0,1;0.1) and orthobrick(-2,-2,%f;2,2,%f);'],0.1*[-1,+1]*rat+1)};
-   fmdl= ng_mk_cyl_models(2,[16,1.0],[0.05],extra); 
+   fmdl= ng_mk_cyl_models([2,1,.1],[16,1.0],[0.05],extra); 
    fmdl.stimulation = stim; fmdl.meas_select = msel;
    img= mk_image(fmdl,1);
    vh = fwd_solve(img); vh = vh.meas;
