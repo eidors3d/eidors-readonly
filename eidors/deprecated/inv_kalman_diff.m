@@ -1,4 +1,4 @@
-function img= inv_kalman_diff( inv_model, data1, data2)
+function img= inv_kalman_diff( inv_model, varargin)
 % INV_KALMAN_DIFF inverse solver for difference EIT
 % img= inv_kalman_diff( inv_model, data1, data2)
 %
@@ -27,4 +27,4 @@ warning('EIDORS:deprecated','INV_KALMAN_DIFF is deprecated as of 08-Jun-2012. Us
 if isfield(inv_model,'inv_kalman_diff');
   inv_model.inv_solve_diff_kalman = inv_model.inv_kalman_diff;
 end
-img = inv_solve_diff_kalman(varargin{:});
+img = inv_solve_diff_kalman(inv_model, varargin{:});
