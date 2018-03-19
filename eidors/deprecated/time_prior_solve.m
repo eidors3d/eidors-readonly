@@ -1,4 +1,4 @@
-function img= time_prior_solve( varargin )
+function img= time_prior_solve(inv_model, varargin )
 % TIME_PRIOR_SOLVE inverse solver to account for time differences
 % img= time_prior_solve( inv_model, data1, data2)
 % img        => output image (or vector of images)
@@ -23,5 +23,8 @@ warning('EIDORS:deprecated','TIME_PRIOR_SOLVE is deprecated as of 08-Jun-2012. U
 if isfield(inv_model,'time_prior_solve');
   inv_model.inv_solve_time_prior = inv_model.time_prior_solve;
 end
+if isfield(inv_model,'time_smooth_prior');
+  inv_model.prior_time_smooth = inv_model.time_smooth_prior;
+end
 
-img = inv_solve_time_prior(varargin{:});
+img = inv_solve_time_prior(inv_model, varargin{:});
