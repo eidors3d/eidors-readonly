@@ -1,0 +1,92 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2>Reconstruction and waveforms of lungs</h2>
+
+<h3> 
+Data
+</h3>
+
+This tutorial shows interesting lung images and waveforms
+which can be reconstructed from EIT data. This example
+uses data from a 10-day old spontaneously breathing neonate.
+In a prone position with the head to the left, most of
+the tidal volume flows to the right lung.
+<p><center>
+<b>Subject Image:</b><br>
+<a href="../../data_contrib/if-neonate-spontaneous/if-neonate-spontaneous-image.jpeg"
+   ><img src="../../data_contrib/if-neonate-spontaneous/if-neonate-spontaneous-image.jpeg"
+ width="15%"></a>
+</center>
+<p>
+Data are available
+<a href="../../data_contrib/if-neonate-spontaneous/index.shtml">Here</a>.
+Data were recorded from a 
+        10-day old spontaneously breathing neonate lying in the
+        prone position with the head turned to the left, as
+        documented in:
+S. Heinrich, H. Schiffmann, A. Frerichs, A. Klockgether-Radke, I. Frerichs,
+<a href="http://www.springerlink.com/content/h68313183p54711j/">
+ Body and head position effects on regional lung ventilation in infants: an electrical impedance tomography study.</a>
+ Intensive Care Med., 32:1392-1398, 2006.
+
+
+<h3> 
+Download data
+</h3>
+
+<pre>
+[% PROCESS "neonate_intro00.m" %]
+</pre>
+
+<h3> 
+Select reconstruction algorithm
+</h3>
+
+Here we use the GREIT algorithm on a neonate_16el geometry.
+<pre>
+[% PROCESS "neonate_intro01.m" %]
+</pre>
+
+<h3> 
+Show reconstructed image
+</h3>
+
+<pre>
+[% PROCESS "neonate_intro02.m" %]
+</pre>
+
+<h3> 
+Indicate points to show waveforms
+</h3>
+
+<pre>
+[% PROCESS "neonate_intro03.m" %]
+</pre>
+
+<h3> 
+Show waveforms in the lungs and heart
+</h3>
+
+<pre>
+[% PROCESS "neonate_intro04.m" %]
+</pre>
+
+<center>
+<img src="neonate_intro04a.jpg">
+<br><i>Figure:</i>
+<i>Left:</i> Recontructed tidal images, and
+<i>Right:</i> pixel waveforms in the (red) heart,
+right lung (yellow) and left lung (blue)
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
