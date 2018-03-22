@@ -67,6 +67,10 @@ function imdl = mk_geophysics_model(str, ne, opt);
 %                      number of electrodes, and assuming a co-linear array;
 %                      set to 'none' to skip this step
 %                      [default: 'Wenner']
+%       'extra_ng_code' - pass extra netgen code, any 'tlo' are subtracted from
+%                      the inner region, units are scaled, so left to right-most
+%                      electrodes are -1 to +1
+%                      [default: {}]
 %
 % The linear electrode array runs in the +X direction at Z=0. For
 % the 3D model, the Y-axis is perpendicular to the electrode array.
@@ -127,13 +131,14 @@ extend_inner_x = 3/5;
 extend_inner_y = 3/5;
 extend_inner_z = 2/5;
 build_stim = 'Wenner';
+extra_ng_code = '';
 if length(opt) > 0 % allow overriding the default values
    assert(round(length(opt)/2)*2 == length(opt),'option missing value?');
    expect = {'hmax_rec','hmax_fwd', 'hmax_fwd_inner', ...
              'elec_width','z_contact','elec_spacing',...
              'extend_x', 'extend_y', 'extend_z', ...
              'extend_inner_x', 'extend_inner_y', 'extend_inner_z', ...
-             'skip_c2f', 'threshold', 'build_stim'};
+             'skip_c2f', 'threshold', 'build_stim', 'extra_ng_code'};
    opts = struct(opt{:})
    for i = fieldnames(opts)'
       assert(any(strcmp(i,expect)), ['unexpected option: ',i{:}]);
@@ -245,13 +250,21 @@ else
       cem2pem = 1;
    end
 end
+skip_tlo = '';
+for idx = strfind(extra_ng_code, 'tlo ')
+   sc = strfind(extra_ng_code, ';'); % semicolons
+   sc = min(sc + (sc<idx)*1e10);
+   tlo = extra_ng_code(idx+4:sc-1);
+   skip_tlo = [skip_tlo ' and (not ' tlo ')'];
+end
 elec_pos(:,FMDL_DIM) = 0; % flatten electrode positions onto the "ps" plane
 if FMDL_DIM == 3
    shape_str = [...
                 sprintf('solid ps = plane(%s);\n', a2s([0 0 0; 0 0 1])), ...
                 sprintf('solid bi = orthobrick(%s);\n', a2s(fmdlinbox')), ...
                 sprintf('solid bo = orthobrick(%s);\n', a2s(fmdlbox')), ...
-                sprintf('solid ri = bi and ps -maxh=%f;\n', hmax_fwd_inner), ...
+                extra_ng_code, ...
+                sprintf('solid ri = bi and ps%s -maxh=%f;\n', skip_tlo, hmax_fwd_inner), ...
                 sprintf('solid ro = bo and ps and (not bi) -maxh=%f;\n', hmax_fwd), ...
                 sprintf('solid mainobj = ri;\n')];
    % Note that ri must be the 'mainobj' so that it can intersect with the electrodes
@@ -268,7 +281,8 @@ else % netgen 2d model
                 sprintf('solid ps = plane(%s);\n', a2s([0 0 0; 0 0 1])), ...
                 sprintf('solid bi = orthobrick(%s);\n', a2s(ri2d)), ...
                 sprintf('solid bo = orthobrick(%s);\n', a2s(ro2d)), ...
-                sprintf('solid ri = bi and ps -maxh=%f;\n', hmax_fwd_inner), ...
+                extra_ng_code, ...
+                sprintf('solid ri = bi and ps%s -maxh=%f;\n', skip_tlo, hmax_fwd_inner), ...
                 sprintf('solid ro = bo and ps and (not bi) -maxh=%f;\n', hmax_fwd), ...
                 sprintf('solid mainobj = ri;\n')];
 end
@@ -781,6 +795,9 @@ if 0
         subplot(224); show_fem(imdlH32.rec_model);
 end
 
+   imdl = mk_geophysics_model('h2p5a', ne, {'extra_ng_code', 'solid tt = orthobrick(-1,-1,-1;-0.5,0,-0.5);\ntlo tt;\n'});
+   clf; show_fem(imdl.fwd_model);
+   % Note: this just has to be swallowed safely...
 
 function xyz = unit_test_elec_pos(imdl, R, X)
    if nargin < 2; R = 1; end
