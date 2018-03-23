@@ -32,6 +32,7 @@
 - zip -r -9 eidors-vXX.zip eidors-vXX
 - check that timestamps and order in zipfile keep mex after cpp
 
+- Post to zenodo
 
 
 
