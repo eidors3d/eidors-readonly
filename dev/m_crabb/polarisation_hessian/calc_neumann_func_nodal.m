@@ -129,9 +129,13 @@ rhs_total(nnodes+1,:)=0;
 At=[At;Aw];
 
 %Solve the simulated linear system with index
-nodeunknowns=left_divide(At,rhs_total);
+nodeunknowns1 = (At'*At)\At'*rhs_total;
+%nodeunknowns2=left_divide(At,rhs_total);
+%foo = nodeunknowns1-nodeunknowns2
+%norm(foo)/norm(nodeunknowns1)
+%figure; plot(foo)
 
-data = nodeunknowns;
+data = nodeunknowns1;
 
 
 

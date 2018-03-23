@@ -99,8 +99,8 @@ for ii = 1:nsep
     % Sim data
     sep = sepv(ii);
     rad = radv;
-    sb1 = sprintf('solid ball1 = cylinder(%0.1f,%0.1f,0;%0.1f,%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
-    sb2 = sprintf('solid ball2 = cylinder(-%0.1f,-%0.1f,0;-%0.1f,-%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) and not cylinder(%0.1f,%0.1f,0;%0.1f,%0.1f,1;%0.1f) -maxh=0.1;',sep,sep,sep,sep,rad, sep,sep,sep,sep,rad);
+    sb1 = sprintf('solid ball1 = cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,1;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
+    sb2 = sprintf('solid ball2 = cylinder(-%0.3f,-%0.3f,0;-%0.3f,-%0.3f,1;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) and not cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,1;%0.3f) -maxh=0.1;',sep,sep,sep,sep,rad, sep,sep,sep,sep,rad);
     extra={'ball1','ball2',[sb1,sb2]};
     
     fmdl_t= ng_mk_cyl_models([0., 3, 0.05],[16],[0.2,0,0.05],extra);
@@ -154,7 +154,7 @@ for ii=1:length(conv)
     
     sep = 0.2;
     rad = radv;
-    sb1 = sprintf('solid ball1 = cylinder(%0.1f,%0.1f,0;%0.1f,%0.1f,1;%0.1f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
+    sb1 = sprintf('solid ball1 = cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,1;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
     extra={'ball1',[sb1]};
     
     fmdl_t= ng_mk_cyl_models(0.,[16],[0.2,0,0.05],extra);
