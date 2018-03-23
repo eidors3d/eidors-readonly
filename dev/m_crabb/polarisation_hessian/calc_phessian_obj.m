@@ -16,7 +16,7 @@ end
 zs = fmdl.elem_centre;
 
 % Elem volumes   
-vs = pi*fmdl.elem_volume;
+vs = 0.5*fmdl.elem_volume;
 
 ks = img.elem_data;
 

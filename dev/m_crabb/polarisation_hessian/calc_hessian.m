@@ -127,7 +127,7 @@ for idxkk=1:length(elem_list)
         dA_dSk=dA_zero; dA_dSk(nodesk(idxk),nodesk(idxk))=stiffk(idxk,idxk);
         dA_dSk2E=dA_dSk(:,idx)/At(idx,idx);
         
-    for idxll=1:length(elem_list)
+    parfor idxll=1:length(elem_list)
         %Select kth element
         l=elem_list(idxll);      
         

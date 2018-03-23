@@ -45,18 +45,7 @@
 % 
 % pixel_group = [100,120,144,138,115,95];
 % 
-% % Initialise
-% Ha = zeros(size(img.elem_data,1),length(cond_obj));
-% Hpf = Ha;
-% Hpd = Ha;
-% 
-% Ca = Ha;
-% Cpf = Ha;
-% Cpd = Ha;
-% 
-% Da = Ha;
-% Dpf = Ha;
-% Dpd = Ha;
+
 % 
 % 
 % % 
@@ -181,6 +170,18 @@ data = add_noise(100, data, data_hom);
 
 
 %%
+% Initialise
+Ha = zeros(size(homog_img.elem_data,1),length(cond_obj));
+Hpf = Ha;
+Hpd = Ha;
+
+Ca = Ha;
+Cpf = Ha;
+Cpd = Ha;
+
+Da = Ha;
+Dpf = Ha;
+Dpd = Ha;
 
 homog_img.fwd_solve.get_all_meas = 1;
 v0 = fwd_solve(homog_img); u0 = v0.volt;
@@ -238,11 +239,25 @@ for ii=1:5:22
     hold off
 %     ylim([cmin, cmax])
     
-end
+end%     subplot(2,3,1)
+%     homog_img.elem_data = Ca(:,ii);
+%     show_fem(homog_img,1);
+%     
+%     
+%     subplot(2,3,2)
+%     homog_img.elem_data = Cpf(:,ii);
+%     show_fem(homog_img,1);
+%     
+%     subplot(2,3,3)
+%     homog_img.elem_data = Cpd(:,ii);
+%     show_fem(homog_img,1);
+% 
+%     subplot(2,3,4:6)
+
     
 
 %% Plot curve elem 95
-elid = [161,114,75,44,21,11,42,110];%[144,100,64,36,16,1,27,85];
+elid = [527, 310, 679, 782, 769, 684, 564, 467]%[161,114,75,44,21,11,42,110];%[144,100,64,36,16,1,27,85];
 
 cmin = 1.1*min(min([Ca(elid,:); Cpf(elid,:); Cpd(elid,:)]));
 cmax = 1.5*max(max([Ca(elid,:); Cpf(elid,:); Cpd(elid,:)]));
@@ -269,6 +284,6 @@ n_ad = sqrt(sum((Ca - Cpd).^2,1));
 n_a = sqrt(sum((Ca).^2,1));
 
 figure
-plot(cond_obj, n_af);
+plot(cond_obj, n_af./n_a);
 hold all
-plot(cond_obj, n_ad);
+plot(cond_obj, n_ad./n_a);
