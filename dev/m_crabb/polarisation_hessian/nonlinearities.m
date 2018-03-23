@@ -62,15 +62,15 @@ popts.update_U0 = 1;
 
 
 %% test scenarios
-sepv=0.5:0.01:1;
-radv=0.5;%logspace(log10(0.16), log10(0.25),2);
+sepv=0.2:0.05:1;
+radv=0.15;%logspace(log10(0.16), log10(0.25),2);
 %%
 % sepv=0.2
 % radv =0.1646
 % conv=1.5
 
-cond_obj1 = 2;
-cond_obj2 = 2;%1.5;
+cond_obj1 = 0.01;
+cond_obj2 = 0.01;%1.5;
 
 nsep = length(sepv);
 nrad = length(radv);
