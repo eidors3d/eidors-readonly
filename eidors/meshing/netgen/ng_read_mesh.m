@@ -45,6 +45,7 @@ if strcmp(filename(end-2:end),'.gz')
 end
 
 fid = fopen(filename,'r');
+assert(fid ~= -1, ['failed to open file: ' filename ]);
 while 1
     tline = fgetl(fid);
     if ~ischar(tline); fclose(fid); break; end
