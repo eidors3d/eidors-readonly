@@ -21,9 +21,9 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     square_pixels - forces square pixels if 1 (default: 0)
 %     Nsim          - number of training points (default: 1000)
 %     distr         - distribution of training points:
-%         0 -> original (as per GREITv1, default)
+%         0 -> original (as per GREITv1)
 %         1 -> random, centre-heavy 
-%         2 -> random, uniform
+%         2 -> random, uniform (default)
 %         3 -> fixed, uniform (debug)
 %     target_size - size of simulated targets as proportion of mesh radius
 %         (default: 0.02). Can be specified as [min_size max_size] for 
@@ -277,6 +277,7 @@ function [vi,vh,xyz,opt]= stim_targets(imgs, Nsim, opt );
                % TODO: What size is good here and how to figure it out?
                xyzr(4,:) = calc_radius(mean([maxx maxy]),opt,size(xyzr,2));
                eidors_msg(['mk_GREIT_model: Using ' num2str(size(xyzr,2)) ' points']);
+           otherwise; error('GREIT: opt.distr no such case=%d',opt.distr);
        end
    end
    before = size(xyzr,2);
