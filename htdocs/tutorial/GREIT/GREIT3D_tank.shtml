@@ -39,7 +39,6 @@ Model of a tank with an object moving vertically
 <br><i>Figure:</i>
 Simulation cylindrical tank with objects in a vertical plane
 </center>
-</td></tr></table>
 
 <h3> 
 Simulate data from tank
@@ -84,7 +83,63 @@ And reconstruct the first 9 targets, from the bottom
 Reconstruction of 9 targets moving from the bottom of
 the tank using a 2D GREIT version
 </center>
-</td></tr></table>
+
+<h3> 
+GREIT 3D
+</h3>
+
+Here we build a 3D GREIT reconstruction, using training
+targets only in all planes
+
+<pre>
+[% PROCESS "GREIT3D_tank06.m" %]
+</pre>
+
+And reconstruct the first 9 targets, from the bottom
+
+<pre>
+[% PROCESS "GREIT3D_tank07.m" %]
+</pre>
+
+<center>
+<img src="GREIT3D_tank07a.jpg">
+<img height="300" src="GREIT3D_tank07b.jpg">
+<img height="300" src="GREIT3D_tank07c.jpg">
+<br><i>Figure:</i>
+<i>Left</i>
+Reconstruction of 9 targets moving from the bottom of
+the tank using a 3D GREIT version, in two planes.
+The 4th image is then shown as a 
+volume (<i>Centre</i>) or through
+cut-planes (<i>Right</i>)
+</center>
+
+<h3> 
+GREIT 3D &minus; 2D slices
+</h3>
+
+In many cases, what is wanted are reconstructions
+to a slices of the volume, but using the GREIT 3D
+approach. This is what the <tt>solve_RM_2Dslice</tt>
+functions does.
+
+<pre>
+[% PROCESS "GREIT3D_tank08.m" %]
+</pre>
+
+The single-plane reconstruction matrix is then attached to
+<tt>imdl3a.solve_use_matrix.RM</tt>.
+
+<pre>
+[% PROCESS "GREIT3D_tank09.m" %]
+</pre>
+
+<center>
+<img src="GREIT3D_tank09a.jpg">
+<br><i>Figure:</i>
+Reconstruction of 9 targets moving from the bottom of
+the tank using a slice at <i>z</i>=1.5 of the 3D GREIT version
+</center>
 
 <p>
 <small>
