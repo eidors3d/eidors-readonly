@@ -1,0 +1,46 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2>GREIT Reconstruction in 3D</h2>
+
+Code for Reconstruction using GREIT in 3D was
+recently added. If you have EIDORS v3.9, you will
+need the following two files:
+<ul>
+<li> <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/models/solve_RM_2Dslice.m?format=raw"><tt>solve_RM_2Dslice.m</tt></a>
+<li> <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/models/GREIT3D_distribution.m?format=raw"><tt>GREIT3D_distribution</tt></a>
+</ul>
+
+For 3D distributions, using GREIT 3D is much better, even if 
+you only want a single slice. See, for example
+<blockquote>
+Grychtol et al,
+<a href="http://www.sce.carleton.ca/faculty/adler/publications/2017/grychtol-eit2017-two-planes.pdF"
+>Focusing EIT reconstructions using two electrode planes</a>
+p. 17 Conf. EIT 2017, Dartmouth, NH, USA, June 21−24, 2017.
+</blockquote>
+
+
+<h3> 
+Circular GREIT model
+</h3>
+
+<pre>
+[% PROCESS "GREIT3D_tank01.m" %]
+</pre>
+
+
+<center>
+<img src="GREIT3D_tank01a.png">
+<br><i>Figure:</i>
+Simulation with target to test AUSPEX matrix
+</center>
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
