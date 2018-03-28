@@ -21,9 +21,12 @@ Grychtol et al,
 p. 17 Conf. EIT 2017, Dartmouth, NH, USA, June 21−24, 2017.
 </blockquote>
 
+This code is also very slow to calculate. The actual 
+reconstruction is fast. There are numerous improvements 
+possible, and they're being worked on.
 
 <h3> 
-Circular GREIT model
+Model of a tank with an object moving vertically
 </h3>
 
 <pre>
@@ -32,11 +35,57 @@ Circular GREIT model
 
 
 <center>
-<img src="GREIT3D_tank01a.png">
+<img src="GREIT3D_tank01a.jpg">
 <br><i>Figure:</i>
-Simulation with target to test AUSPEX matrix
+Simulation cylindrical tank with objects in a vertical plane
 </center>
 </td></tr></table>
+
+<h3> 
+Simulate data from tank
+</h3>
+
+<pre>
+[% PROCESS "GREIT3D_tank02.m" %]
+</pre>
+
+<h3> 
+Create reconstruction model
+</h3>
+
+A new model to ensure we don't commit an <i>inverse crime</i>.
+Note that we use the "square" electrode configuration
+with a "skip 4" stimulation and measurement pattern.
+
+<pre>
+[% PROCESS "GREIT3D_tank03.m" %]
+</pre>
+
+<h3> 
+GREIT 2D
+</h3>
+
+Here we build a 2D GREIT reconstruction, using training
+targets only in the centre plane.
+
+<pre>
+[% PROCESS "GREIT3D_tank04.m" %]
+</pre>
+
+And reconstruct the first 9 targets, from the bottom
+
+<pre>
+[% PROCESS "GREIT3D_tank05.m" %]
+</pre>
+
+<center>
+<img src="GREIT3D_tank05a.jpg">
+<br><i>Figure:</i>
+Reconstruction of 9 targets moving from the bottom of
+the tank using a 2D GREIT version
+</center>
+</td></tr></table>
+
 <p>
 <small>
     Last Modified: $Date$ by $Author$
