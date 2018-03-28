@@ -22,7 +22,7 @@ function Reg= prior_laplace_old( inv_model );
 % previous implementation requires searching for faces in the mesh
 
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
-% $Id: $
+% $Id$
 
 if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
