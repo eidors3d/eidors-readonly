@@ -78,6 +78,20 @@ switch nargout
       clear nimg;
 end
 
+% This is a start  of a function to extrude_3d_if_reqd, so that
+%   we can show 3d shapes. Currently not working
+% fmdl = extrude_3d_if_reqd( fmdl );
+function fmdl = extrude_3d_if_reqd( fmdl );
+   if size(fmdl.nodes,2)==3; return; end
+   nn = fmdl.nodes; N= size(nn,1);
+   ee = fmdl.elems; E= size(ee,1);
+   oN= ones(N,1);
+   oE= ones(E,1) + N;
+   fmdl.nodes = [nn,-10*oN; %10 is arbitrary == a guess
+                 nn,+10*oN]; 
+   fmdl.elems = [ee(:,[1,2,3,1]) + oE*[0,0,0,1];
+                 ee(:,[1,2,3,2]) + oE*[1,0,0,1];
+                 ee(:,[1,2,3,3]) + oE*[1,1,0,1]];
 
 function [nmdl f2c out] = do_mdl_slice_mesher(fmdl,level)
 
@@ -87,7 +101,7 @@ opt.node2elem = true;
 mdl = fix_model(mdl,opt);
 edges = mdl.edges;
 edge2elem = mdl.edge2elem;
-tmp = mdl;
+tmp = mdl; 
 tmp.nodes = level_model( tmp, level )';
 [nodeval nodedist] = nodes_above_or_below(tmp,0);
 % find which edges are on electrodes
