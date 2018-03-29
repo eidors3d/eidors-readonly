@@ -149,23 +149,32 @@ function do_unit_test
    calc_colours('transparency_thresh', 0.25);
    show_3d_slices(imgr,[1.5,2],[],[]);
 
-   subplot(231);  show_3d_slices(imgr,[1,2],0,0.5);
-   subplot(232);  show_3d_slices(img ,[1,2],0,0.5);
+   subplot(331);  show_3d_slices(imgr,[1,2],0,0.5);
+   subplot(332);  show_3d_slices(img ,[1,2],0,0.5);
    cuts = [inf, -2.5, 1.5; inf, 10, 1.5];
-   subplot(233);  show_3d_slices(img ,[],[],[],cuts );
+   subplot(333);  show_3d_slices(img ,[],[],[],cuts );
    
    imgr.calc_colours.transparency_thresh = -1;
    img.calc_colours.transparency_thresh = -1;
-   subplot(234);  show_3d_slices(imgr,[1,2],0.3,0.7);
-   subplot(235);  
+   subplot(334);  show_3d_slices(imgr,[1,2],0.3,0.7);
+   subplot(335);  
    show_fem(img.fwd_model);
    hold on
    show_3d_slices(img ,[1,2],0.3,0.7);
    axis off
 
-   subplot(236);  
+   subplot(336);  
    img.elem_data = img.elem_data*[0,1];
    img.get_img_data.frame_select = 2;
    show_3d_slices(img ,[1],[],[]);
    
    view(10,18);
+
+   subplot(337);  
+   vopt.imgsz = [10,10,10];
+   % Build a model that has a c2f. This one isn't very good,
+   % because of transpose, but that's OK for the test
+   [img.fwd_model,tmp] = mk_voxel_volume(imdl.fwd_model,vopt);
+   img.fwd_model.coarse2fine = (tmp.coarse2fine * ...
+                      img.fwd_model.coarse2fine')';
+   show_3d_slices(img,[1,2],0,0.5);
