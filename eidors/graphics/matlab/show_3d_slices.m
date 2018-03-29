@@ -61,14 +61,7 @@ catch
     np = calc_colours('npoints');
 end
 %  show_fem(img.fwd_model);
-mdl_min = min(img.fwd_model.nodes);
-mdl_max = max(img.fwd_model.nodes);
-mdl_rng = mdl_max - mdl_min;
-np = round(mdl_rng/min(mdl_rng) * np);
 [x_cuts, y_cuts, z_cuts, any_cuts] = get_cuts(img,varargin{:});
-xvec = linspace(mdl_min(1), mdl_max(1),np(1)+1);
-yvec = linspace(mdl_min(2), mdl_max(2),np(2)+1);
-zvec = linspace(mdl_min(3), mdl_max(3),np(3)+1);
 
 hz = []; hy = []; hx = []; ha = [];
 for i= 1:length(z_cuts)
