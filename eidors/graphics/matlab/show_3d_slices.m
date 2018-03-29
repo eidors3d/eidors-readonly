@@ -30,7 +30,7 @@ img = data_mapper(img);
 
 qfi = warning('query','EIDORS:FirstImageOnly');
 % check size
-if size(img.elem_data,2) > 1
+if size(get_img_data(img),2) > 1
    q = warning('query','backtrace');
    warning('backtrace','off');
    warning('EIDORS:FirstImageOnly','show_3d_slices only shows first image');
