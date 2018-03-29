@@ -29,8 +29,10 @@ end
 img = data_mapper(img);
 
 qfi = warning('query','EIDORS:FirstImageOnly');
+% Get data and to c2f mapping if required
+elem_data = get_img_data(img);
 % check size
-if size(get_img_data(img),2) > 1
+if size(elem_data,2) > 1
    q = warning('query','backtrace');
    warning('backtrace','off');
    warning('EIDORS:FirstImageOnly','show_3d_slices only shows first image');
@@ -41,20 +43,8 @@ end
 % need to make sure boundary is just the outside
 img.fwd_model.boundary = find_boundary(img.fwd_model);
 
-% Check if we need to map from coarse2fine
-if isfield(img.fwd_model,'coarse2fine');
-   c2f = img.fwd_model.coarse2fine;
-   if size(c2f,2) == size(img.elem_data,1)
-      img.elem_data = c2f*img.elem_data;
-   elseif size(c2f,1) == size(img.elem_data,1)
-      % OK, nothing required
-   else
-      error('image elem_data does not match coarse2fine size');
-   end
-end
 
-
-[jnk,ref_lev,max_scale] = scale_for_display( img.elem_data);
+[jnk,ref_lev,max_scale] = scale_for_display( elem_data);
 try 
     img.calc_colours.ref_level; 
 catch
@@ -174,6 +164,8 @@ function do_unit_test
    axis off
 
    subplot(236);  
+   img.elem_data = img.elem_data*[0,1];
+   img.get_img_data.frame_select = 2;
    show_3d_slices(img ,[1],[],[]);
    
    view(10,18);

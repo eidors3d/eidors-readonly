@@ -65,9 +65,9 @@ nimg = build_image(nmdl, f2c, img);
 
 switch nargout
    case 2
-      out = draw_patch(p_struct, nimg.fwd_model, img.elem_data, varargin{:});
+      out = draw_patch(p_struct, nimg.fwd_model, get_img_data(img), varargin{:});
    case 0
-      out = draw_patch(p_struct, nimg.fwd_model, img.elem_data, varargin{:});
+      out = draw_patch(p_struct, nimg.fwd_model, get_img_data(img), varargin{:});
       cmap_type = calc_colours('cmap_type');
       try 
          calc_colours('cmap_type',varargin{1}.calc_colours.cmap_type);
@@ -222,7 +222,7 @@ nimg = mk_image(nmdl,1);
 if isempty(nimg.elem_data) % plane doesn't cut model
     return
 end
-nimg.elem_data = (img.elem_data' * f2c)';
+nimg.elem_data = (get_img_data(img)' * f2c)';
 try
    nimg.calc_colours = img.calc_colours;
 end
