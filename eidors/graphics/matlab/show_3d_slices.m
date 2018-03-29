@@ -170,7 +170,18 @@ function do_unit_test
    
    view(10,18);
 
-   subplot(337);  
+
+   subplot(337);
+   imgs = img;        ed = img.elem_data(:,1);
+   imgs.elem_data= [1;1.2;0.8]*[1];
+   imgs.fwd_model.coarse2fine = [ed == img.elem_data(1),
+                                 ed == img.elem_data(2),
+                                 ed == img.elem_data(3)];
+   show_3d_slices(img,[1,2],0,0.7);
+  
+
+
+   subplot(338);  
    vopt.imgsz = [10,10,10];
    % Build a model that has a c2f. This one isn't very good,
    % because of transpose, but that's OK for the test
