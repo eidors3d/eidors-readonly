@@ -1,9 +1,9 @@
-vopt.imgsz = [32 32];
-vopt.square_pixels = true;
-vopt.zvec = linspace(-1,1,10)*1.2+2;
-vopt.save_memory = 1;
-opt.noise_figure = 1.0;
+fmdl= ng_mk_ellip_models([4,0.8,1.1,.5],[16,1.7,2.3],[0.05]);
+[fmdl.stimulation,fmdl.meas_select] = mk_stim_patterns(skip5{:});
 
-% GREIT 3D with 2x16 electrode belt
-[imdl,opt.distr] = GREIT3D_distribution(fmdl, vopt);
-imdl3= mk_GREIT_model(imdl, 0.20, [], opt);
+% "Square" electrode layout
+idx = reshape(1:32,2,[])';
+idx(2:2:end,:) = fliplr(idx(2:2:end,:));
+extraflip= [4:12]; % This belt was made slightly differently
+idx(extraflip,:) = fliplr(idx(extraflip,:));
+fmdl.electrode(idx) = fmdl.electrode(:);
