@@ -1,0 +1,150 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2>GREIT Reconstruction in 3D</h2>
+
+Code for Reconstruction using GREIT in 3D was
+recently added. If you have EIDORS v3.9, you will
+need the following two files:
+<ul>
+<li> <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/models/solve_RM_2Dslice.m?format=raw"><tt>solve_RM_2Dslice.m</tt></a>
+<li> <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/models/GREIT3D_distribution.m?format=raw"><tt>GREIT3D_distribution</tt></a>
+</ul>
+
+For 3D distributions, using GREIT 3D is much better, even if 
+you only want a single slice. See, for example
+<blockquote>
+Grychtol et al,
+<a href="http://www.sce.carleton.ca/faculty/adler/publications/2017/grychtol-eit2017-two-planes.pdF"
+>Focusing EIT reconstructions using two electrode planes</a>
+p. 17 Conf. EIT 2017, Dartmouth, NH, USA, June 21−24, 2017.
+</blockquote>
+
+This code is also very slow to calculate. The actual 
+reconstruction is fast. There are numerous improvements 
+possible, and they're being worked on.
+
+<h3> 
+Model of a tank with an object moving vertically
+</h3>
+
+<pre>
+[% PROCESS "GREIT3D_tank01.m" %]
+</pre>
+
+
+<center>
+<img src="GREIT3D_tank01a.jpg">
+<br><i>Figure:</i>
+Simulation cylindrical tank with objects in a vertical plane
+</center>
+
+<h3> 
+Simulate data from tank
+</h3>
+
+<pre>
+[% PROCESS "GREIT3D_tank02.m" %]
+</pre>
+
+<h3> 
+Create reconstruction model
+</h3>
+
+A new model to ensure we don't commit an <i>inverse crime</i>.
+Note that we use the "square" electrode configuration
+with a "skip 4" stimulation and measurement pattern.
+
+<pre>
+[% PROCESS "GREIT3D_tank03.m" %]
+</pre>
+
+<h3> 
+GREIT 2D
+</h3>
+
+Here we build a 2D GREIT reconstruction, using training
+targets only in the centre plane.
+
+<pre>
+[% PROCESS "GREIT3D_tank04.m" %]
+</pre>
+
+And reconstruct the first 9 targets, from the bottom
+
+<pre>
+[% PROCESS "GREIT3D_tank05.m" %]
+</pre>
+
+<center>
+<img src="GREIT3D_tank05a.jpg">
+<br><i>Figure:</i>
+Reconstruction of 9 targets moving from the bottom of
+the tank using a 2D GREIT version
+</center>
+
+<h3> 
+GREIT 3D
+</h3>
+
+Here we build a 3D GREIT reconstruction, using training
+targets only in all planes
+
+<pre>
+[% PROCESS "GREIT3D_tank06.m" %]
+</pre>
+
+And reconstruct the first 9 targets, from the bottom
+
+<pre>
+[% PROCESS "GREIT3D_tank07.m" %]
+</pre>
+
+<center>
+<img src="GREIT3D_tank07a.jpg">
+<img height="300" src="GREIT3D_tank07b.jpg">
+<img height="300" src="GREIT3D_tank07c.jpg">
+<br><i>Figure:</i>
+<i>Left</i>
+Reconstruction of 9 targets moving from the bottom of
+the tank using a 3D GREIT version, in two planes.
+The 4th image is then shown as a 
+volume (<i>Centre</i>) or through
+cut-planes (<i>Right</i>)
+</center>
+
+<h3> 
+GREIT 3D &minus; 2D slices
+</h3>
+
+In many cases, what is wanted are reconstructions
+to a slices of the volume, but using the GREIT 3D
+approach. This is what the <tt>solve_RM_2Dslice</tt>
+functions does.
+
+<pre>
+[% PROCESS "GREIT3D_tank08.m" %]
+</pre>
+
+The single-plane reconstruction matrix is then attached to
+<tt>imdl3a.solve_use_matrix.RM</tt>.
+
+<pre>
+[% PROCESS "GREIT3D_tank09.m" %]
+</pre>
+
+<center>
+<img src="GREIT3D_tank09a.jpg">
+<br><i>Figure:</i>
+Reconstruction of 9 targets moving from the bottom of
+the tank using a slice at <i>z</i>=1.5 of the 3D GREIT version
+</center>
+
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
