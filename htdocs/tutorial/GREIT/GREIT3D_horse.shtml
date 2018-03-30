@@ -15,6 +15,10 @@ Grychtol et al,
 p. 17 Conf. EIT 2017, Dartmouth, NH, USA, June 21−24, 2017.
 </blockquote>
 
+Data for this tutorial are available here:
+<a href="horse-breathing3D2D.mat"><tt
+      >horse-breathing3D2D.mat</tt></a>
+
 <center>
 <a href="horse-3D-EIT-belt.jpg"><img width=500 src="horse-3D-EIT-belt.jpg"></a>
 <br><i>Figure:</i>
@@ -59,6 +63,8 @@ possible, and they're being worked on.
 [% PROCESS "GREIT3D_horse05.m" %]
 </pre>
 <h3> Load data and reconstruct images</H3>
+Using data: <a href="horse-breathing3D2D.mat"><tt
+      >horse-breathing3D2D.mat</tt></a>
 <pre>
 [% PROCESS "GREIT3D_horse06.m" %]
 </pre>
