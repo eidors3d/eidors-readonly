@@ -72,11 +72,11 @@ Using data: <a href="horse-breathing3D2D.mat"><tt
 <center>
 <table border="1">
 <tr><td>Belt<td>3D<td>Image
-<tr><td>2&times;32<td>&#10004;<td>
+<tr><td> 2&times;16 <td> &#10004; <td>
    <img src="GREIT3D_horse06A.jpg">
-<tr><td>2&times;32<td>&#10004;<td>
+<tr><td> 1&times;32 <td> &#10004; <td>
    <img src="GREIT3D_horse06B.jpg">
-<tr><td>2&times;32<td>        <td>
+<tr><td> 1&times;32 <td>          <td>
    <img src="GREIT3D_horse06C.jpg">
 </table>
 <br><i>Figure:</i>
