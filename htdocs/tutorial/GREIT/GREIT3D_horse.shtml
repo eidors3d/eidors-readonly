@@ -58,6 +58,10 @@ possible, and they're being worked on.
 <pre>
 [% PROCESS "GREIT3D_horse05.m" %]
 </pre>
+<h3> Load data and reconstruct images</H3>
+<pre>
+[% PROCESS "GREIT3D_horse06.m" %]
+</pre>
 
 <center>
 <table border="1">
