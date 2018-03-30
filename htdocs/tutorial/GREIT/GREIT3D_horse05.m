@@ -1,6 +1,6 @@
 vopt.imgsz = [32 32];
 vopt.square_pixels = true;
-vopt.zvec = linspace(-1,1,10)*1.2+2;
+vopt.zvec = linspace(-1,1,10)*1.125+2;
 vopt.save_memory = 1;
 opt.noise_figure = 1.0;
 
