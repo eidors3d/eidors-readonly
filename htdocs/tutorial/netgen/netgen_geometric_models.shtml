@@ -687,6 +687,34 @@ fmdl = ng_mk_geometric_models(body_geometry);
 <center>
 <img src="netgen_geometric_models36.png">
 </center>
+
+<h3>
+37: Lots of electrodes
+</h3>
+
+<pre>
+body_geometry.ortho_brick.opposite_corner_a = [0 0 0];
+body_geometry.ortho_brick.opposite_corner_b = [5 5 4];
+body_geometry.max_edge_length = 3;
+electrode_geometry{1}.sphere.center = [4,4,0];
+electrode_geometry{1}.sphere.radius = [0.3];
+electrode_geometry{2}.sphere.center = [4,0,2];
+electrode_geometry{2}.sphere.radius = [0.2];
+electrode_geometry{3}.ortho_brick.opposite_corner_a = [3,4,-.1];
+electrode_geometry{3}.ortho_brick.opposite_corner_b = [2,2,.1];
+electrode_geometry{3}.max_edge_length = .1;
+electrode_geometry{4}.ortho_brick.opposite_corner_b = [3,5.1,2.5];
+electrode_geometry{4}.ortho_brick.opposite_corner_a = [2,4.9,2];
+
+fmdl = ng_mk_geometric_models(body_geometry,electrode_geometry);
+</pre>
+
+<center>
+<img src="netgen_geometric_models37.png">
+</center>
+
+
+
 </td></tr></table>
 <p>
 <small>
