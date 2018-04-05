@@ -435,7 +435,6 @@ hold on; hh=show_fem(cmdl);
 set(hh,'LineWidth',2,'EdgeColor',[.5,.7,1],'FaceAlpha',0);
 </pre>
 <center>
-<img src="netgen_gen_models18.png">
 <br>
 Grid model on onto a 2D model from a <i>z</i>=0 slice of a 3D model
 </center>
