@@ -546,3 +546,24 @@ electrode_geometry{4}.ortho_brick.opposite_corner_a = [2,4.9,2];
 fmdl = ng_mk_geometric_models(body_geometry,electrode_geometry);
 show_fem(fmdl);
 print_convert netgen_geometric_models37.png
+
+%CASE 38 %%%%
+disp('#### 38 ####');clear *;
+body_geometry{1}.cylinder.radius = 1.0; % main body 
+body_geometry{2}.sphere.radius = 0.2;   % inclusion
+body_geometry{2}.sphere.center = [0.2,0.2,0.2];
+n_elect = 16;
+theta = linspace(0, 2*pi, n_elect+1); theta(end) = [];
+for i = 1:n_elect; thi= theta(i);
+    electrode_geometry{i}.sphere.center = [cos(thi),sin(thi),0.5];
+    electrode_geometry{i}.sphere.radius = 0.1;
+end
+electrode_geometry{i+1}.sphere.radius = 0.2;
+electrode_geometry{i+1}.sphere.center = [0.4,0.2,1.0];
+electrode_geometry{i+2}.sphere.radius = 0.2;
+electrode_geometry{i+2}.sphere.center = [-0.4,-0.4,0.0];
+fmdl = ng_mk_geometric_models(body_geometry, electrode_geometry);
+img = mk_image(fmdl,1);
+img.elem_data(fmdl.mat_idx{2}) = 1.1;
+show_fem_enhanced( img );
+print_convert netgen_geometric_models38.png
