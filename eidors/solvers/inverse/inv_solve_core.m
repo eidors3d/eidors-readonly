@@ -1176,7 +1176,7 @@ function  de = update_de(de, img, img0, opt)
       % data hasn't changed yet!
       de = zeros(size(img0.elem_data));
    else
-      de = img0.elem_data - img.elem_data;
+      de = img.elem_data - img0.elem_data;
    end
    de(opt.elem_fixed) = 0; % TODO is this redundant... delete me?
    err_if_inf_or_nan(de, 'de out');
