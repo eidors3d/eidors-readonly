@@ -22,7 +22,7 @@ echo "netgen install version: ${NGVER} -> ${NGVER2}"
 SRCDIR=${SRCDIR:-${HOME}/netgen-${NGVER}-src}
 INSTDIR=${INSTDIR:-${HOME}/netgen-${NGVER}}
 
-
+MAKE="make -j$(( $(nproc --all) +1 ))"
 
 # TK version should probably match TCL version
 TKVER=${TCLVER}
@@ -39,10 +39,14 @@ set -e
 set -x
 
 # install dependencies
+# liboce is for OpenCASCADE support (IGES/STEP CAD file formats)
 [ "x$(grep DISTRIB_ID /etc/lsb-release | sed 's/.*=//')" != "xUbuntu" ] || \
-   sudo apt install libxmu-dev mesa-common-dev libglu1-mesa-dev libx11-dev python-dev python3.5-dev
+   sudo apt install libxmu-dev mesa-common-dev libglu1-mesa-dev libx11-dev python-dev python3.6-dev \
+      liboce-foundation-dev liboce-foundation11 liboce-modeling-dev liboce-modeling11 liboce-ocaf-dev \
+      liboce-ocaf-lite-dev liboce-ocaf-lite11 liboce-ocaf11 liboce-visualization-dev liboce-visualization11
 
-# make working directories if they don't exist
+
+# ${MAKE} working directories if they don't exist
 mkdir -p ${SRCDIR}
 mkdir -p ${INSTDIR}
 export PATH="${INSTDIR}/bin:${PATH}"
@@ -65,14 +69,14 @@ tar zxvf netgen-${NGVER}.tar.gz > /dev/null
 # build tcl
 cd ${SRCDIR}/tcl${TCLVER}/unix
 ./configure --prefix=${INSTDIR} --enable-threads --enable-shared --enable-64bit
-make
-make install
+${MAKE}
+${MAKE} install
 
 # build tk
 cd ${SRCDIR}/tk${TKVER}/unix
 ./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --enable-threads --enable-shared --enable-64bit
-make
-make install
+${MAKE}
+${MAKE} install
 
 # build tix
 cd ${SRCDIR}/Tix${TIXVER}
@@ -93,15 +97,15 @@ cat > tix-8.4.3-tcl8.6.patch << EOF
 EOF
 patch -p1 < tix-8.4.3-tcl8.6.patch
 ./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib --enable-threads --enable-shared --enable-64bit
-make
-make install
+${MAKE}
+${MAKE} install
 
 
 # build Togl
 cd ${SRCDIR}/Togl-${TOGLVER}
 ./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib  --enable-threads --enable-shared --enable-64bit
-make
-make install
+${MAKE}
+${MAKE} install
 
 ln -s ${INSTDIR}/lib/Togl${TOGLVER}/libTogl${TOGLVER}.so ${INSTDIR}/lib/libTogl${TOGLVER}.so
 ln -s ${INSTDIR}/lib/libTogl${TOGLVER}.so                ${INSTDIR}/lib/libTogl.so
@@ -145,9 +149,11 @@ cat > netgen-5.3-opencascade.patch << EOF
 EOF
 patch -p1 < netgen-5.3-opencascade.patch
 
-CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} ./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib --with-togl=${INSTDIR}/lib --with-tclinclude=${INSTDIR}/include
-make
-make install
+[ ! -f /usr/lib/x86_64-linux-gnu/libTKIGES.so ] || OCC="--enable-occ"
+
+CPPFLAGS=${CPPFLAGS} CFLAGS=${CFLAGS} ./configure --prefix=${INSTDIR} --with-tcl=${INSTDIR}/lib --with-tk=${INSTDIR}/lib --with-togl=${INSTDIR}/lib --with-tclinclude=${INSTDIR}/include ${OCC}
+${MAKE}
+${MAKE} install
 
 # clean up
 cd
