@@ -24,7 +24,7 @@ function [imdl, fmdl] = mk_voxel_volume(varargin)
 %                             % quicker to set to false and prune manually.
 %     opt.save_memory         % passed to mk_grid_c2f
 %
-% Output depends on the type of model suplied. If MDL is a fwd_model
+% Output depends on the type of model supplied. If MDL is a fwd_model
 % structure then OUT is a rec_model. If MDL is an inv_model, then OUT is a
 % modified version of it, with the voxel volume in inv_model.rec_model and
 % updated inv_model.fwd_model.coarse2fine
