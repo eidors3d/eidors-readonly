@@ -22,6 +22,15 @@
 
  - Consider letting show_3d_slices show 2D slices if supplied
 
+##### RELEASE 3.9.1 ITEMS
+ - CEM will not get added for electrode defined on internal nodes.
+     Corrected code to be added to system_mat_fields
+     Ensure electrode goes in both directions
+     OR: have a way to break and join models
+     (specify that nodes get joined)
+
+ - Consider letting show_3d_slices show 2D slices if supplied
+
 ##### POST RELEASE 3.9 ITEMS
  + debug calc_R_prior UNIT_TEST (ichol doesn't give a good estimate, also not posdef)
     
