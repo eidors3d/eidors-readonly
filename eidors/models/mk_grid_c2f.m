@@ -118,7 +118,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
 % of the model. It should then be possible to run in a parfor
 % loop, ... but matlab has subtle bugs
        logmsg(' Saving memory mode level %d\n',opt0.save_memory);
-       n_elems = num_elems(fmdl0); step = 1e4;
+       n_elems = num_elems(fmdl0); step = 5e4;
        max_iter = floor(n_elems/step);
        pmopt.final_msg = '';
        ctr = interp_mesh(fmdl0);
@@ -127,7 +127,7 @@ function [c2f, m]= do_mk_grid_c2f(fmdl0,rmdl0,opt0)
        [xu] = ndgrid(opt0.xvec(2:end-0),opt0.yvec(2:end-0),opt0.zvec(2:end-0)); xu=xu(:);
        progress_msg('Progress:',0,max_iter+1,pmopt);
        progress = 0;
-       for k = 0:max_iter; disp(k)
+       for k = 0:max_iter;
           eidx = true(n_elems,1);
           eidx( xidx((k*step+1):min((k+1)*step,n_elems)) ) = false;
           fmdl = fmdl0; fmdl.elems(eidx,:) = [];
@@ -152,13 +152,13 @@ if 1
           opt.zstep = opt.ystep*(opt.Ysz+1);
           opt.nVox = opt.Xsz*opt.Ysz*opt.Zsz;
 
+   if 0 % Display the cut model for debugging
           fmdl.boundary = find_boundary(fmdl);
           rmdl.boundary = find_boundary(rmdl);
-   if 0
           hh=show_fem(rmdl); set(hh,'EdgeColor',[0,0,1]);
               hold on; show_fem(fmdl); hold off; keyboard
    end
-else
+else    % Test code: don't cut the rmdl - slower but correct
           rmdl = rmdl0; ridx= true(opt.nVox,1);
 end
           if isempty(rmdl.elems); continue; end % don't bother if rmdl outside
@@ -957,7 +957,10 @@ function logmsg(varargin)
 %-------------------------------------------------------------------------%
 % Perfom unit tests
 function do_unit_test
-    do_small_test;
+    mk_grid_c2f('save_memory',0); do_small_test;
+    mk_grid_c2f('save_memory',1); do_small_test;
+    mk_grid_c2f('save_memory',10); do_small_test;
+    return
     do_realistic_test;
     figure
     do_case_tests;
