@@ -4,7 +4,7 @@ REPO=${1:-"$HOME/docs/eidors-git"}
 OUTF=datafile.m
 LASTREV=$(cd $REPO && git svn log --oneline HEAD^^^^^..HEAD | head -1 | cut -f1 -d'|' | sed 's/r//')
 echo 'loc = [ % all(/)  htdocs   dev   version  date' > $OUTF
-for ver in `seq 5300 $LASTREV`; do 
+for ver in `seq 1 $LASTREV`; do 
    echo "$REPO: VER=$ver";
    GITVER=`(cd $REPO && git svn find-rev r$ver)`;
    (cd $REPO && git checkout $GITVER);
