@@ -11,7 +11,7 @@ imgo = rmfield(imgs,'elem_data');
 imgo.calc_colours.ref_level = 0;
 
 % Regular "current" stimulation between electrodes 6 and 10
-
+clear stim;
 stim.stim_pattern = zeros(nel,1);
 stim.stim_pattern([6,10]) =  [10,-10];
 stim.meas_pattern = speye(nel);
