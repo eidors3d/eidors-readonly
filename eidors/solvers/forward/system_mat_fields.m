@@ -5,8 +5,14 @@ function FC= system_mat_fields( fwd_model )
 %   fwd_model = forward model
 % output:
 %   FC:        s_mat= C' * S * conduct * C = FC' * conduct * FC;
+%
+% system_mat_fields detects whether an electrode is a CEM by checking
+%  1) whether it has more than 1 node, and 2) if it's on the boundary
+% If you want an internal CEM that's not on the boundary, then it
+% has to be specified by using
+%    fmdl.system_mat_fields.CEM_boundary = [extra boundary ]
 
-% (C) 2008 Andy Adler. License: GPL version 2 or version 3
+% (C) 2008-2018 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
@@ -140,3 +146,23 @@ function do_unit_test
    unit_test_cmp('sys_mat_b2s_3a', size(FF), [264,83]);
    vh = fwd_solve( mk_image(fmdl,1) ); 
    unit_test_cmp('sys_mat_b2s_3b', vh.meas, 1.432226638247073, 1e-12);
+
+   imdl=  mk_common_model('a2C2',4); fmdl=imdl.fwd_model;
+   fmdl.nodes(1,:) = [];
+   fmdl.gnd_node = 2;
+   fmdl.elems(1:4,:) = [];
+   fmdl.elems = fmdl.elems - 1;
+   fmdl.boundary = find_boundary(fmdl);
+   FC = system_mat_fields( fmdl);
+   unit_test_cmp('sys_mat-bdyCEM-1', size(FC),[128,44]);
+   unit_test_cmp('sys_mat-bdyCEM-2', FC(121:end,41:end), ...
+             -13.967473716321374*kron(eye(4),[1;1]),1e-12)
+
+   fmdl.electrode(5) = struct('nodes',1:4,'z_contact',.01);
+   FC = system_mat_fields( fmdl);
+   unit_test_cmp('sys_mat-ctrCEM-1', size(FC),[136,45]);
+   unit_test_cmp('sys_mat-bdyCEM-2', FC(121:128,41:44), ...
+             -13.967473716321374*kron(eye(4),[1;1]),1e-12)
+   unit_test_cmp('sys_mat-bdyCEM-2', FC(129:end,end), ...
+             -4.204482076268572,1e-12)
+

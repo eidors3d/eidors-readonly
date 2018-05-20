@@ -59,7 +59,7 @@ tolstr='';
          end;
 
          if abs(tol)>0
-            tolstr= sprintf('(%1.2f x tol)', full(max(abs(a(:)-b(:))/tol))); 
+            tolstr= sprintf('(%1.3f x tol)', full(max(abs(a(:)-b(:))/tol))); 
          end
       end
    else
