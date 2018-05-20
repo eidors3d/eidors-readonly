@@ -1,0 +1,124 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2> 
+2D Geophysical models using square mesh elements
+</h2>
+
+This tutorial shows how a model can be built 
+directly by specifying node locations and using
+the function <tt>mk_fmdl_from_nodes</tt>.
+
+Unfortunately, this technique cannot work in 3D,
+because the matlab <tt>delaunay</tt> function has
+bugs with regular meshes (<small>which Mathworks acknowledges,
+but somehow doesn't feel it should fix &minus; interesting
+behaviour for a company that claims to want leadership
+in mathematical computing ... don't worry, I'm not
+bitter, I only lost several days of my valuable time
+this way</small>)
+
+<h3>Create fine mesh</h3>
+
+<pre>
+[% PROCESS "square_mesh01.m" %]
+</pre>
+
+<center>
+<img src="square_mesh01a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Fine mesh model with electrodes at surface
+<i>Right</i>: close up view of mesh near electrodes
+</center>
+
+<h3>Create Dual Mesh</h3>
+
+<pre>
+[% PROCESS "square_mesh02.m" %]
+</pre>
+
+<center>
+<img src="square_mesh02a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+<h3>Create Simulation Pattern</h3>
+
+<pre>
+[% PROCESS "square_mesh03.m" %]
+</pre>
+
+<center>
+<img src="square_mesh03a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+<h3>Inverse Solution</h3>
+
+<pre>
+[% PROCESS "square_mesh04.m" %]
+</pre>
+
+<center>
+<img src="square_mesh04a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+<h3>Internal Electrodes</h3>
+
+In order to place internal electrodes, we cannot use the
+complete electrode model, instead, we place point electrodes
+as follows.
+
+<pre>
+[% PROCESS "square_mesh05.m" %]
+</pre>
+
+<center>
+<img src="square_mesh05a.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+Now the code
+<tt>square_mesh02.m</tt>,
+<tt>square_mesh03.m</tt>, and
+<tt>square_mesh04.m</tt> (above) may
+be re-run.
+
+<center>
+<img src="square_mesh05b.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+<center>
+<img src="square_mesh05c.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+<center>
+<img src="square_mesh05d.png"
+<br><i>Figure:</i>
+<i>Left</i>: Uniform mesh density
+<i>Right</i>: Mesh density refined going from surface to bottom
+</center>
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
+
