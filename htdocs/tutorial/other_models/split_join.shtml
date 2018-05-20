@@ -25,86 +25,20 @@ functions.
 <i>Right</i>: cropped and flipped sections of the model
 </center>
 
-<h3>Create Dual Mesh</h3>
+<h3>Models to join (2D)</h3>
 
 <pre>
-[% PROCESS "square_mesh02.m" %]
+[% PROCESS "split_join02.m" %]
 </pre>
 
 <center>
-<img src="square_mesh02a.png"
+<img src="split_join02a.png"
 <br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
+<i>Left</i>: left model
+<i>Centre</i>: right model
+<i>Right</i>: models to join
 </center>
 
-<h3>Create Simulation Pattern</h3>
-
-<pre>
-[% PROCESS "square_mesh03.m" %]
-</pre>
-
-<center>
-<img src="square_mesh03a.png"
-<br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
-</center>
-
-<h3>Inverse Solution</h3>
-
-<pre>
-[% PROCESS "square_mesh04.m" %]
-</pre>
-
-<center>
-<img src="square_mesh04a.png"
-<br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
-</center>
-
-<h3>Internal Electrodes</h3>
-
-In order to place internal electrodes, we cannot use the
-complete electrode model, instead, we place point electrodes
-as follows.
-
-<pre>
-[% PROCESS "square_mesh05.m" %]
-</pre>
-
-<center>
-<img src="square_mesh05a.png"
-<br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
-</center>
-
-Now the code
-<tt>square_mesh02.m</tt>,
-<tt>square_mesh03.m</tt>, and
-<tt>square_mesh04.m</tt> (above) may
-be re-run.
-
-<center>
-<img src="square_mesh05b.png"
-<br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
-</center>
-<center>
-<img src="square_mesh05c.png"
-<br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
-</center>
-<center>
-<img src="square_mesh05d.png"
-<br><i>Figure:</i>
-<i>Left</i>: Uniform mesh density
-<i>Right</i>: Mesh density refined going from surface to bottom
-</center>
 
 </td></tr></table>
 <p>
