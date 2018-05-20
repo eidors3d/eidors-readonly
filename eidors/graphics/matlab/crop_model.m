@@ -120,6 +120,25 @@ end
 
 
 function do_unit_test
+   imdl = mk_common_model('a2c0',8); fmdl= imdl.fwd_model;
+   fmdl = crop_model(fmdl,inline('x<0','x','y','z'));
+   unit_test_cmp('crop_model-a2c0-01',length(fmdl.electrode),5);
+   unit_test_cmp('crop_model-a2c0-02',size(fmdl.elems),[32,3]);
+   unit_test_cmp('crop_model-a2c0-03',size(fmdl.nodes),[25,2]);
+
+   imdl = mk_common_model('n3r2',[16,2]); fmdl= imdl.fwd_model;
+   fmdl = crop_model(fmdl,inline('x<0','x','y','z'));
+   unit_test_cmp('crop_model-n3r2-01',length(fmdl.electrode),16);
+   unit_test_cmp('crop_model-n3r2-02',size(fmdl.elems),[342,4]);
+   unit_test_cmp('crop_model-n3r2-03',size(fmdl.nodes),[128,3]);
+   fmdl = crop_model(fmdl,inline('z<2','x','y','z'));
+   unit_test_cmp('crop_model-n3r2-04',length(fmdl.electrode),8);
+   unit_test_cmp('crop_model-n3r2-05',size(fmdl.elems),[114,4]);
+   unit_test_cmp('crop_model-n3r2-06',size(fmdl.nodes),[64,3]);
+
+
+
+
    subplot(331)
    imdl = mk_common_model('n3r2',[16,2]); fmdl= imdl.fwd_model;
    show_fem(fmdl);
