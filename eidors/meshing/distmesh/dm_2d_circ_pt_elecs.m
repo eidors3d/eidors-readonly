@@ -61,6 +61,11 @@ function do_unit_test
    elec_pts = {[1,0],[0,1;sin(0.2),cos(0.2)],[0.5,0.5]};
    fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.15,10,0.05] );
    subplot(221); show_fem(fmdl);
+   for i=1:length(elec_pts)
+      unit_test_cmp(sprintf('Elec%d(%d)',1,i), ...
+         mean(fmdl.nodes(fmdl.electrode(i).nodes,:),1), mean(elec_pts{i},1), .01);
+   end
+
 
 % Example:
    n_elecs= 14; elec_width= 0.1; hw= elec_width/2;
@@ -71,7 +76,11 @@ function do_unit_test
    end
    fmdl= dm_2d_circ_pt_elecs( elec_pts, [], [0.10,10,0.02] );
    subplot(222); show_fem(fmdl)
-   eidors_msg('CHECK FIGURE',0);
+   for i=1:length(elec_pts)
+      unit_test_cmp(sprintf('Elec%d(%d)',2,i), ...
+         mean(fmdl.nodes(fmdl.electrode(i).nodes,:),1), mean(elec_pts{i},1), .01);
+   end
+   eidors_msg('CHECK FIGURE - should have 3 and 16 electrodes',0);
 
 % find example models that work well with the values defined in mk_common_model
 function do_calibrate
