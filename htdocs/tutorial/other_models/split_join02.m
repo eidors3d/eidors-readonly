@@ -12,5 +12,4 @@ subplot(133); show_fem(fmdl1,[0,1,1]); xlim([-1.3,1.3]);
 hold on; hh=show_fem(fmdl2,[0,1,1]); set(hh,'EdgeColor',[0,0,1]);
 hold off; axis off
 
-
 print_convert('split_join02a.png',struct('pagesize',[12,6]));
