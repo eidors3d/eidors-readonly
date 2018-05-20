@@ -50,6 +50,7 @@ function fmdlo = do_join_models(fmdl1,fmdl2,thresh);
    if isfield(fmdl1,'electrode')
       fmdlo.electrode = fmdl1.electrode;
    else
+      % SUPID MATLAB FORCES THIS SILLY INITALIZATION
       fmdlo.electrode = struct('nodes',{},'z_contact',{});
    end
    if isfield(fmdl2,'electrode')
@@ -67,9 +68,16 @@ function do_unit_test
    subplot(221); [fmdl1,fmdl2]=do_unit_test_2D_mdls;
 
    fmdlo= join_models(fmdl1, fmdl2);
-   do_testing('join_models-2D',fmdlo,fmdl1,fmdl2)
+   do_testing('join_models-2Da',fmdlo,fmdl1,fmdl2)
    subplot(222); show_fem(fmdlo,[0,1,1]); axis off
 
+   fmdl1 = rmfield(fmdl1,'electrode');
+   fmdlo= join_models(fmdl1, fmdl2);
+   do_testing('join_models-2Db',fmdlo,fmdl1,fmdl2)
+
+   fmdl2 = rmfield(fmdl2,'electrode');
+   fmdlo= join_models(fmdl1, fmdl2);
+   do_testing('join_models-2Dc',fmdlo,fmdl1,fmdl2)
 
 
 
@@ -81,8 +89,8 @@ function do_testing(txt,fmdlo,fmdl1,fmdl2)
        size(fmdl1.nodes,1) + size(fmdl2.nodes,1) >= ...
        size(fmdlo.nodes,1), true );
 
-   if ~isfield(fmdl1,'electrode'); fmdl1.electrode = struct; end
-   if ~isfield(fmdl2,'electrode'); fmdl2.electrode = struct; end
+   if ~isfield(fmdl1,'electrode'); fmdl1.electrode = struct([]); end
+   if ~isfield(fmdl2,'electrode'); fmdl2.electrode = struct([]); end
    unit_test_cmp([txt,'-02'], ...
        length(fmdl1.electrode) + length(fmdl2.electrode), ...
        length(fmdlo.electrode));
