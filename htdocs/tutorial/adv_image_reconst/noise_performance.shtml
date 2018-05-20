@@ -60,8 +60,14 @@ Generating EIT voltage measurements and noise
 </pre>
 
 <h3> 
-Visualizing noise performance (Gauss-Newton reconstruction)
+Visualizing noise performance
 </h3>
+
+Iterate over
+<UL>
+<li>Gauss-Newton reconstruction
+<li>GREIT reconstruction
+</UL>
 
 <pre>
 [% PROCESS "noise_performance_03.m" %]
@@ -74,10 +80,6 @@ Gauss Newton reconstruction: temporal RMS amplitude (TRMSA) images of the same c
 </center>
 
 
-<h3> 
-Visualizing noise performance (GREIT reconstruction)
-</h3>
-To perform the same analysis but for GREIT reconstruction set USE_GREIT_NOT_GN to true (USE_GREIT_NOT_GN = true) and the re-run the code further above.
 
 <center>
 <img src="np_trmsa_GREIT.png">
