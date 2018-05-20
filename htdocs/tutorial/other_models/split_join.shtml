@@ -3,33 +3,26 @@
 [% PROCESS "../../nav-sidebar.shtml" %]
 
 <h2> 
-2D Geophysical models using square mesh elements
+Splitting and joining models
 </h2>
 
-This tutorial shows how a model can be built 
-directly by specifying node locations and using
-the function <tt>mk_fmdl_from_nodes</tt>.
+This tutorial shows how a model can be split
+and joined using the <tt>crop_model</tt> and <tt>join_model</tt>
+functions.
 
-Unfortunately, this technique cannot work in 3D,
-because the matlab <tt>delaunay</tt> function has
-bugs with regular meshes (<small>which Mathworks acknowledges,
-but somehow doesn't feel it should fix &minus; interesting
-behaviour for a company that claims to want leadership
-in mathematical computing ... don't worry, I'm not
-bitter, I only lost several days of my valuable time
-this way</small>)
 
-<h3>Create fine mesh</h3>
+<h3>Cropping models (2D)</h3>
 
 <pre>
-[% PROCESS "square_mesh01.m" %]
+[% PROCESS "split_join01.m" %]
 </pre>
 
 <center>
-<img src="square_mesh01a.png"
+<img src="split_join01a.png"
 <br><i>Figure:</i>
-<i>Left</i>: Fine mesh model with electrodes at surface
-<i>Right</i>: close up view of mesh near electrodes
+<i>Left</i>: original model
+<i>Centre</i>: cropped and
+<i>Right</i>: cropped and flipped sections of the model
 </center>
 
 <h3>Create Dual Mesh</h3>
