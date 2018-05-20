@@ -41,7 +41,12 @@ bdy = find_boundary(t);
 ubn = unique(bdy(:));
 
 for i=1:length(elec_pts);
-   electrode(i).nodes     = get_elec_nodes(elec_pts{i}, p, ubn);
+   nodesi = get_elec_nodes(elec_pts{i}, p, ubn);
+   if isempty(nodesi);
+      % If not on boundary, try all nodes
+      nodesi = get_elec_nodes(elec_pts{i}, p, (1:size(p,1))');
+   end
+   electrode(i).nodes     = nodesi;
    electrode(i).z_contact = 0.01; % nominal
 end
 
