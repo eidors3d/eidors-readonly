@@ -51,6 +51,31 @@ functions.
 Joined model. Note that electrodes and elements have been renumbered
 </center>
 
+<h3>Cropping models (3D)</h3>
+
+<pre>
+[% PROCESS "split_join04.m" %]
+</pre>
+
+<center>
+<img src="split_join04a.png"
+<br><i>Figure:</i>
+<i>Left</i>: cropped model
+<i>Right</i>: models to join
+</center>
+
+<h3>Join the models</h3>
+
+<pre>
+[% PROCESS "split_join05.m" %]
+</pre>
+
+<center>
+<img src="split_join05a.png"
+<br><i>Figure:</i>
+Joined model.
+</center>
+
 </td></tr></table>
 <p>
 <small>
