@@ -65,6 +65,7 @@ function fmdlo = do_join_models(fmdl1,fmdl2,thresh);
 
 
 function do_unit_test
+
    subplot(221); [fmdl1,fmdl2]=do_unit_test_2D_mdls;
 
    fmdlo= join_models(fmdl1, fmdl2);
@@ -79,6 +80,10 @@ function do_unit_test
    fmdlo= join_models(fmdl1, fmdl2);
    do_testing('join_models-2Dc',fmdlo,fmdl1,fmdl2)
 
+   subplot(223); [fmdl1,fmdl2]=do_unit_test_3D_mdls; view(0,63);
+   fmdlo= join_models(fmdl1, fmdl2);
+   do_testing('join_models-3Da',fmdlo,fmdl1,fmdl2)
+   subplot(224); show_fem(fmdlo,[0,1,0]); axis off; view(0,63);
 
 
 function do_testing(txt,fmdlo,fmdl1,fmdl2)
@@ -97,9 +102,6 @@ function do_testing(txt,fmdlo,fmdl1,fmdl2)
 
 function [fmdl1,fmdl2]=do_unit_test_2D_mdls;
    imdl = mk_common_model('a2c0',8); fmdl= imdl.fwd_model;
-   fmdl = crop_model(fmdl,inline('x<0','x','y','z'));
-
-   imdl = mk_common_model('a2c0',8); fmdl= imdl.fwd_model;
    fmdl = crop_model(fmdl,inline('x<-0.4','x','y','z'));
    idx  = fmdl.nodes(:,1)<-0.25;
    fmdl.nodes(idx,1) = -0.25;
@@ -112,4 +114,17 @@ function [fmdl1,fmdl2]=do_unit_test_2D_mdls;
    fmdl2 = crop_model(fmdl2,inline('x<-1.20','x','y','z'));
 show_fem(fmdl1,[0,1,1]);
 hold on; hh=show_fem(fmdl2,[0,1,1]); set(hh,'EdgeColor',[0,0,1]);
+hold off; xlim([-1.3,1.3]); axis off
+
+function [fmdl1,fmdl2]=do_unit_test_3D_mdls;
+   imdl = mk_common_model('n3r2',[16,2]); fmdl= imdl.fwd_model;
+   fmdl1= crop_model(fmdl,inline('x<-0.55','x','y','z'));
+   idx  = fmdl1.nodes(:,1)<-0.25;
+   fmdl1.nodes(idx,1) = -0.35;
+   fmdl1.electrode([19,9])=[];
+   fmdl1.nodes(:,1) = fmdl1.nodes(:,1) + 0.35;
+   fmdl2 = fmdl1;
+   fmdl2.nodes(:,1) = -fmdl2.nodes(:,1);
+show_fem(fmdl1,[0,1,0]);
+hold on; hh=show_fem(fmdl2,[0,1,0]); set(hh,'EdgeColor',[0,0,1]);
 hold off; xlim([-1.3,1.3]); axis off
