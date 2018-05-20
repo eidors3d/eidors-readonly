@@ -12,4 +12,4 @@ fmdl2 = crop_model(fmdl2,inline('y<-0.95','x','y','z'));
 fmdl2 = crop_model(fmdl2,inline('x<-0.95','x','y','z'));
 subplot(133); show_fem(fmdl2,[0,1,1]); xlim([-1,1]);
 
-print_convert('split_join01a.png',struct('pagesize',[10,5]));
+print_convert('split_join01a.png',struct('pagesize',[12,5]));

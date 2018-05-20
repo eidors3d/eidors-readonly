@@ -39,6 +39,17 @@ functions.
 <i>Right</i>: models to join
 </center>
 
+<h3>Join the models</h3>
+
+<pre>
+[% PROCESS "split_join03.m" %]
+</pre>
+
+<center>
+<img src="split_join03a.png"
+<br><i>Figure:</i>
+Joined model. Note that electrodes and elements have been renumbered
+</center>
 
 </td></tr></table>
 <p>
