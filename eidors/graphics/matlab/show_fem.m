@@ -229,6 +229,10 @@ for e=1:length(mdl.electrode)
         % sort nodes around the model (to avoid crossed lines)
         [jnk,idx] = order_loop( [vx,vy] );
     end
+    if isempty(elec_nodes);
+       eidors_msg('show_fem: WARNING: electrode %d has no nodes. Not showing.',e,2);
+       continue;
+    end
         
     ecolour = electr_colour( e );
     if numel(vx) == 1
