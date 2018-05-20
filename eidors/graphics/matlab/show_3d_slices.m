@@ -25,6 +25,10 @@ end; end
 if ~ok; 
    error('EIDORS: show_3d_slices requires image as first parameter');
 end
+if size(img.fwd_model.elems,2) == 3; %show_3d_slices requires volume model
+   img = fake_3d_model( img );
+end
+
 %multi-parametrization
 img = data_mapper(img);
 
@@ -95,6 +99,35 @@ function h = show_slice(img, level)
     slc = mdl_slice_mesher(img,level);
     try slc.calc_colours = img.calc_colours; end
     h = show_fem(slc);
+
+% create an extruded 3D model of height
+function img = fake_3d_model( img );
+  fmdl = img.fwd_model;
+  fnodes = fmdl.nodes;
+  felems = fmdl.elems;
+  maxd = max( max(fnodes) - min(fnodes) );
+  upd = 0.1*maxd; % up and down from zero
+  Nn = num_nodes(fmdl);
+  Ne = num_elems(fmdl);
+  fmdn = fmdl;
+  fmdn.nodes =[[fnodes,-upd+0*fnodes(:,1)];
+               [fnodes,+upd+0*fnodes(:,1)]];
+  for i=1:num_elecs(fmdl)
+     eni = fmdn.electrode(i).nodes;
+     fmdn.electrode(i).nodes = [eni(:);eni(:)+Nn]';
+  end
+  % Doesn't need to be a conformal model, don't worry about adjacency
+  fmdn.elems =[[felems(:,[1,2,3]), felems(:,[1    ])+Nn];
+               [felems(:,[  2,3]), felems(:,[1,2  ])+Nn];
+               [felems(:,[    3]), felems(:,[1,2,3])+Nn]];
+  ed= img.elem_data;
+  if isfield(fmdl,'coarse2fine');
+     c2f = fmdl.coarse2fine;
+     fmdn.coarse2fine = [c2f;c2f;c2f]; 
+     img.fwd_model = fmdn;
+  else
+     img = mk_image(fmdn,[ed;ed;ed]);
+  end
 
     
 function [x_cuts, y_cuts, z_cuts, any_cuts] =  get_cuts(img, varargin)
@@ -182,3 +215,16 @@ function do_unit_test
    img.fwd_model.coarse2fine = (tmp.coarse2fine * ...
                       img.fwd_model.coarse2fine')';
    show_3d_slices(img,[1,2],0,0.5);
+
+   subplot(339)
+% Without C2f
+   imdl = mk_common_model('a2c0',8); img= mk_image(imdl);
+   img.elem_data([10,12]) = 1.1;
+   show_3d_slices(img,[0],[0.2],[0]);
+
+
+% With C2f
+   ed = img.elem_data;
+   img.fwd_model.coarse2fine = [ed==1, ed> 1];
+   img.elem_data= [1;1.1];
+   show_3d_slices(img,[0],[0.2],[0]);
