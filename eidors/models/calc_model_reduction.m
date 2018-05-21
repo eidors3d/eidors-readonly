@@ -1,4 +1,4 @@
-function mr = calc_model_reducton(fmdl)
+function mr = calc_model_reduction(fmdl)
 % calc_model_reduction: calculate the fields for a reduced model
 %    which should speed up forward calculations
 % 
