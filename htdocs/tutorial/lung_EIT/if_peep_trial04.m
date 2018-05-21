@@ -18,7 +18,7 @@ for loop = 1:2;
    end
    plot(time, ROIs);
    axis([0, max(time), -0.1, 1]);
-   legend('1','2','3','4',2)
+   legend('1','2','3','4','Location','NorthWest')
    xlabel('time (s)')
    ylabel('normalized \Delta Z')
 end
