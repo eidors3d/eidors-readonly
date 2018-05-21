@@ -216,11 +216,7 @@ function show_electrodes_2d(mdl, number_electrodes)
 % scale away from model
 
 for e=1:length(mdl.electrode)
-    if isfield(mdl.electrode(e),'pos') && ~isfield(mdl.electrode(e),'nodes')
-        vx = mdl.electrode(e).pos(:,1) - ctr_x;
-        vy = mdl.electrode(e).pos(:,2) - ctr_y;
-        idx = 1:length(vx);
-    else
+    if isfield(mdl.electrode(e),'nodes')
         elec_nodes= mdl.electrode(e).nodes;
         
         S= 1.00;
@@ -228,8 +224,11 @@ for e=1:length(mdl.electrode)
         vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
         % sort nodes around the model (to avoid crossed lines)
         [jnk,idx] = order_loop( [vx,vy] );
-    end
-    if isempty(elec_nodes);
+    elseif isfield(mdl.electrode(e),'pos')
+        vx = mdl.electrode(e).pos(:,1) - ctr_x;
+        vy = mdl.electrode(e).pos(:,2) - ctr_y;
+        idx = 1:length(vx);
+    else
        eidors_msg('show_fem: WARNING: electrode %d has no nodes. Not showing.',e,2);
        continue;
     end
