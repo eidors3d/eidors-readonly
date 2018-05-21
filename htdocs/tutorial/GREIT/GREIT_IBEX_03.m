@@ -8,6 +8,6 @@ imgs(isnan(imgs(:)))= 0;
 img.calc_colours.ref_level=0;
 img.elem_data = img.elem_data(:,2:4:120);
 img.show_slices.img_cols = 10;
-show_slices(img);
+clf; show_slices(img);
 
 print_convert 'GREIT_IBEX_03a.jpg'
