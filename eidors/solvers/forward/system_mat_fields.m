@@ -83,12 +83,16 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    sidx= d0*pp.n_elem;
    cidx= (d0+1)*pp.n_elem;
    i_cem = 0; % Index into electrodes that are CEM (but not pt)
+   cem_boundary = pp.boundary;
+   if isfield(fwd_model,'system_mat_fields')
+      cem_boundary = [cem_boundary;fwd_model.system_mat_fields.CEM_boundary];
+   end
    for i= 1:pp.n_elec
       eleci = fwd_model.electrode(i);
       % contact impedance zc is in [Ohm.m] for 2D or [Ohm.m^2] for 3D
       zc=  eleci.z_contact;
       [bdy_idx, bdy_area] = find_electrode_bdy( ...
-          pp.boundary, fwd_model.nodes, eleci.nodes );
+          cem_boundary, fwd_model.nodes, eleci.nodes );
           % bdy_area is in [m] for 2D or [m^2] for 3D
 
       % For pt elec model, bdy_idx = [], so this doesn't run
@@ -96,7 +100,7 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
       i_cem = i_cem + 1;
 
       for j= 1:length(bdy_idx);
-         bdy_nds= pp.boundary(bdy_idx(j),:);
+         bdy_nds= cem_boundary(bdy_idx(j),:);
 
          % 3D: [m^2]/[Ohm.m^2] = [S]
          % 2D: [m]  /[Ohm.m]   = [S]
@@ -158,11 +162,24 @@ function do_unit_test
    unit_test_cmp('sys_mat-bdyCEM-2', FC(121:end,41:end), ...
              -13.967473716321374*kron(eye(4),[1;1]),1e-12)
 
+% Add a CEM via a boundary
    fmdl.electrode(5) = struct('nodes',1:4,'z_contact',.01);
    FC = system_mat_fields( fmdl);
    unit_test_cmp('sys_mat-ctrCEM-1', size(FC),[136,45]);
-   unit_test_cmp('sys_mat-bdyCEM-2', FC(121:128,41:44), ...
+   unit_test_cmp('sys_mat-ctrCEM-2', FC(121:128,41:44), ...
              -13.967473716321374*kron(eye(4),[1;1]),1e-12)
-   unit_test_cmp('sys_mat-bdyCEM-2', FC(129:end,end), ...
+   unit_test_cmp('sys_mat-ctrCEM-2', FC(129:end,end), ...
              -4.204482076268572,1e-12)
 
+% Add a CEM via a boundary
+   imdl=  mk_common_model('a2C2',4); fmdl = imdl.fwd_model;
+   fmdl.electrode(5) = struct('nodes',1:3,'z_contact',.01);
+   fmdl.system_mat_fields.CEM_boundary = [1,2;2,3;3,1];
+   FC = system_mat_fields( fmdl );
+   unit_test_cmp('sys_mat-b2cCEM-1', size(FC),[142,46]);
+   unit_test_cmp('sys_mat-b2cCEM-2', FC(129:136,42:45), ...
+             -13.967473716321374*kron(eye(4),[1;1]),1e-12)
+   unit_test_cmp('sys_mat-ctrCEM-3', FC([137:138,141:142],end), ...
+             -3.535533905932737, 1e-12);
+   unit_test_cmp('sys_mat-ctrCEM-4', FC([139:140],end), ...
+             -4.204482076268572, 1e-12);
