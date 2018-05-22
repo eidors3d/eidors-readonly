@@ -21,7 +21,7 @@ function Reg= prior_gaussian_HPF( inv_model );
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-if isstr(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
+if ischar(inv_model) && strcmp(inv_model,'UNIT_TEST'); do_unit_test; return; end
 
 fwd_model= inv_model.fwd_model;
 try 

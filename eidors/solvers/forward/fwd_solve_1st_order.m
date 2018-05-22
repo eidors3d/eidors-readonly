@@ -212,7 +212,7 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
 
 function [E, m_idx, pp] = mdl_reduction(E, mr, img, pp);
    % if mr is a string we assume it's a function name
-   if isa(mr,'function_handle') || isstr(mr)
+   if isa(mr,'function_handle') || ischar(mr)
       mr = feval(mr,img.fwd_model);
    end
    % mr is now a struct with fields: main_region, regions

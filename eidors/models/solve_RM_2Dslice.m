@@ -28,7 +28,7 @@ function imdl = solve_RM_2Dslice(imdl, sel_fcn)
 % License: GPL version 2 or version 3
 % $Id$
 
-if isstr(imdl) && strcmp(imdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(imdl) && strcmp(imdl,'UNIT_TEST'); do_unit_test; return; end
 
 % Options
 vert_tol = .001; try

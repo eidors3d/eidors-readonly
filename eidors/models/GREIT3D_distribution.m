@@ -33,7 +33,7 @@ function [imdl,distr] = GREIT3D_distribution(fmdl, vopt)
 % License: GPL version 2 or version 3
 % $Id$
 
-if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
    imdl = select_imdl(fmdl,{'Basic GN dif'});
    imdl = mk_voxel_volume(imdl,vopt);
