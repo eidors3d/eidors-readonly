@@ -160,7 +160,7 @@ function do_unit_test()
    scale=1e3; uvh=unique(round(vh.meas*scale)/scale);
    unit_test_cmp('h2a 2p5d values TEST', uvh, ...
    [ 0.0060; 0.0080; 0.0110; 0.0160; 0.0320 ], 1/scale);
-   tol = norm(vh.meas)*0.030; % 3% error tolerance
+   tol = norm(vh.meas)*0.050; % 5% error tolerance
    unit_test_cmp('2D   (h2a)                vs analytic TEST', norm(vh.meas - v2.meas),   0, -tol);
    unit_test_cmp('2.5D (h2a + 2.5D sys_mat) vs 2D       TEST', norm(v2.meas - v2p5.meas), 0, tol);
    unit_test_cmp('3D   (h3a)                vs analytic TEST', norm(vh.meas - v3.meas),   0, tol);
