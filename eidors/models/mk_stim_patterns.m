@@ -57,6 +57,10 @@ function [stim, meas_sel]= mk_stim_patterns( ...
 %         -> do / don't make mesurements on current carrying electrodes
 %         -> to not make measurements on the electrodes next to the current carrying,
 %            use 'no_meas_current_next1'
+%         -> to not make measurements on the two electrodes next to the current carrying,
+%            use 'no_meas_current_next2'
+%         -> to not make measurements on the three electrodes next to the current carrying,
+%            use 'no_meas_current_next3'
 %      'rotate_meas' / 'no_rotate_meas'
 %         -> do / don't rotate measurements with stimulation pattern
 %      'do_redundant' / 'no_redundant'
@@ -332,6 +336,9 @@ for opt = options
    elseif strcmp(opt, 'no_meas_current_next2')
       v.use_meas_current = 0;
       v.use_meas_current_next = 2;
+   elseif strcmp(opt, 'no_meas_current_next3')
+      v.use_meas_current = 0;
+      v.use_meas_current_next = 3;
    elseif strcmp(opt, 'meas_current')
       v.use_meas_current = 1;
    elseif strcmp(opt, 'rotate_meas')
