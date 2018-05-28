@@ -598,6 +598,22 @@ function do_unit_test
    [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next1','rotate_meas'},1);
    unit_test_cmp('meas_sel: next1c',msel(48+(1:16)), [0;0;1;1;0;0;0;1;1;1;0;0;0;1;1;0]);
 
+   [stim,msel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current_next2','no_rotate_meas'},1);
+   unit_test_cmp('meas_sel: next2a',msel(48+(1:16)), [0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1]);
+   [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next2','no_rotate_meas'},1);
+   unit_test_cmp('meas_sel: next2b',msel(48+(1:16)), [0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0]);
+   [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next2','rotate_meas'},1);
+   unit_test_cmp('meas_sel: next2c',msel(48+(1:16)), [0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0]);
+
+   [stim,msel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current_next3','no_rotate_meas'},1);
+   unit_test_cmp('meas_sel: next3a',msel(48+(1:16)), [0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;0]);
+   [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next3','no_rotate_meas'},1);
+   unit_test_cmp('meas_sel: next3b',msel(48+(1:16)), [0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0]);
+   [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next3','rotate_meas'},1);
+   unit_test_cmp('meas_sel: next3c',msel(48+(1:16)), [0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0]);
+
+
+
 
 % TESTS FROM OLD mk_stim_patterns_test CODE
    pat= mk_stim_patterns(16,1,'{ad}','{ad}',{}, 1);
