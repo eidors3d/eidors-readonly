@@ -16,8 +16,8 @@ function [ f_frac, c_frac ] = check_c2f_quality( f_mdl, c_mdl, c2f )
 % License: GPL version 2 or 3
 % $Id$
 
-c_vol = get_elem_volume(c_mdl);
-f_vol = get_elem_volume(f_mdl);
+c_vol = get_elem_volume(c_mdl, -2);
+f_vol = get_elem_volume(f_mdl, -2);
 
 % C2F(i,j) is the fraction of f_mdl element i contained in c_mdl element j
 
