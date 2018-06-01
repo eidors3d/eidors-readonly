@@ -1,6 +1,8 @@
 % run in the build directory
-urlwrite('http://www.artefact.tk/software/matlab/m2html/m2html.zip',...
-    'm2html.zip');
+%STUPID )(*&()*&)#@$ can't work with https
+%urlwrite('https://www.artefact.tk/software/matlab/m2html/m2html.zip',...
+%    'm2html.zip');
+!wget --no-check-certificate https://www.artefact.tk/software/matlab/m2html/m2html.zip
 unzip('m2html.zip');
 addpath([pwd '/m2html']);
 tpl = 'blue';
