@@ -18,7 +18,7 @@ FEM model (left) and reconstructed image (centre) and sequence (right)
 <H3>Requirements</H3>
 <ul>
 <li> <a href="http://www.matlab.com">Matlab</a> (&ge;2015a or 8.5) or
-     <a href="http://www.octave.org">Octave</a> (&ge;4.0),
+     <a href="http://www.octave.org">Octave</a> (&ge;4.2),
 <li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional),
 (Direct link to 
 <a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.3/">Netgen 5.3</a>)
@@ -30,11 +30,11 @@ FEM model (left) and reconstructed image (centre) and sequence (right)
 To try the EIDORS software, follow these steps:
 <ol>
 <li> Download EIDORS :
-    <br>&minus; <i>Release (21 June 2017):</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.zip"
-             >EIDORS 3.9</a>, or
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9-ng.zip"
-             >EIDORS 3.9 with Netgen 5.3</a> (for windows 64 bit).
+    <br>&minus; <i>Release (1 June 2018):</i>
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.1.zip"
+             >EIDORS 3.9.1</a>, or
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.1-ng.zip"
+             >EIDORS 3.9.1 with Netgen 5.3</a> (for windows 64 bit).
        Or <a href="./download.shtml"><i>Developer Version</i></a>
     <br>&minus; <i>Optional ready-made FEM models:</i>
          <a href="http://prdownloads.sf.net/eidors3d/model_library.zip"
