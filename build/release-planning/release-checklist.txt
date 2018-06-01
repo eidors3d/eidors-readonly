@@ -23,10 +23,11 @@
    cd ~/docs/eidors/htdocs
    mv doc ~/eidors-release/htdocs/
 - copy README to ~/eidors-release
+- Update VERSION in Makfile
 - make step10
 - make step11
 - download and test release
-- Tag release
+- Tag release => make tag-release
 - run html build script ???
 - create eidors-vXX directory with eidors and htdocs
 - update README file and put it into top level directory
