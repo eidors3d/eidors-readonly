@@ -2,6 +2,7 @@
 - touch mex files to be older than *cpp
 - Test with tutorials_test.m
 - Test old tutorials 
+- set properties using build/set_properties.sh
 - Test octave
 - update info.xml
 - Run unit-tests
