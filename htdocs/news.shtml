@@ -7,6 +7,36 @@ EIDORS package.
 <ul>
 
 <p><li> <b>
+  10 June 2018
+   </b><br>
+<b>EIDORS Workshop at <a href="http://www.eit2018.org">EIT 2018</a></b>
+<p>Time: 14h00&minus;17h00
+<p><b>Synopsis:</b>
+ The EIDORS workshop is for beginners and more advanced users of the EIDORS.org
+      software. We will begin by helping everyone to install and use the software; we
+      will then have a short presentation on the software and review its use for
+      forward modelling and inverse solutions. Next we will present some example cases
+      or solve application examples from workshop attendees.
+
+<p><li> <b>
+  1 June 2018
+   </b><br>
+<b>EIDORS Version 3.9.1 release</b>
+<p>Blobby the walrus is proud to announce the
+release of EIDORS version 3.9.1,
+available at <a href="http://www.eidors.org">www.eidors.org</a>,
+and DOI:<a href="http://dx.doi.org/10.5281/zenodo.583266">10.5281/zenodo.583266</a>.
+This is primarily a bug fixing release but it includes
+<ul>
+  <LI> Improved Support for GREIT in 3D
+  <LI> Improved Geophysical models
+  <LI> Improved absolute solvers
+  <LI> Models with internal electrodes
+  <LI> New tutorials
+  <LI> Improved solvers
+</ul>
+
+<p><li> <b>
   21 June 2017
    </b><br>
 <b>EIDORS Version 3.9 release</b>
