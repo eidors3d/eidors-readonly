@@ -16,7 +16,7 @@ models if they are not available.
 
 To use the EIDORS software, follow these steps:
 
-- Download the software eidors-v3.8.zip
+- Download the software eidors-v3.9.1.zip
 - Unzip the software in a directory such as
       /path/to/eidors or C:/path/to/eidors
 - Start Matlab / GNU Octave
