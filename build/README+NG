@@ -1,4 +1,4 @@
-This is EIDORS v3.9.1, released on 1 June 2017.  The
+This is EIDORS v3.9.1, released on 1 June 2018.  The
 eidors-v3.9.1-ng.zip file contains all code and documentation to
 run EIDORS on all platforms.  EIDORS requires Matlab (>8.5,
 R2015a) or GNU Octave (>4.2).
@@ -24,7 +24,7 @@ models if they are not available.
 
 To use the EIDORS software, follow these steps:
 
-- Download the software eidors-v3.8.zip
+- Download the software eidors-v3.9.1.zip
 - Unzip the software in a directory such as
       /path/to/eidors or C:/path/to/eidors
 - Start Matlab / GNU Octave
