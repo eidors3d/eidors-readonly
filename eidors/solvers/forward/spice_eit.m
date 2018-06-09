@@ -32,12 +32,17 @@ function [Vn, In, nn] = spice_eit(netlist, freq)
 %
 
 %  (C) 2017, 2018 A. Boyle, License: GPL version 2 or version 3
-%
+
 % based on http://matlabbyexamples.blogspot.ca/2011/11/circuit-solver-using-matlab-programming.html
 % and https://www.swarthmore.edu/NatSci/echeeve1/Ref/mna/MNA5.html
 % and https://cseweb.ucsd.edu/classes/sp08/cse245/slides/let1.ppt
 % and http://www.ecircuitcenter.com/SPICEsummary.htm
 % and http://users.ecs.soton.ac.uk/mz/CctSim/chap1_4.htm
+% and https://github.com/nik1106/MNA-MAT
+%    (MNA-MAT is a different implementation of a spice-only linear simulator for DC/transient sims in matlab)
+% and https://global.oup.com/us/companion.websites/fdscontent/uscompanion/us/static/companion.websites/9780199339136/Appendices/Appendix_B.pdf
+% and http://www2.ensc.sfu.ca/~ljilja/papers/4C823d01.pdf
+%    (non-linear components to ideal component circuits)
 
 if ischar(netlist) && strcmp(netlist,'UNIT_TEST'); unittest(); return; end
 

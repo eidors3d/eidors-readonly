@@ -19,7 +19,7 @@ function spice = eit_spice(img, name)
 
 %  (C) 2018 A. Boyle, License: GPL version 2 or version 3
 
-   if ischar(img) & strcmp(img, 'UNIT_TEST') unit_test(); end
+   if ischar(img) & strcmp(img, 'UNIT_TEST') unit_test(); return; end
 
    if nargin == 1
       name = 'eit';
@@ -31,7 +31,7 @@ function spice = eit_spice(img, name)
    spice = netlist(Dprime,name);
 
    if nargout == 0
-      filename = [ name '.cir' ];
+      filename = [ name '.s' ];
       FILE = fopen(filename, 'w');
       fprintf(FILE,'%s\n',spice{:});
       fclose(FILE);
@@ -72,7 +72,7 @@ function out = netlist(Dprime, name)
    rr = 1;
    for ii = 1:nn;
       for jj = (ii+1):nn;
-         val = sprintf('%3.12g',-1/Dprime(ii,jj));
+         val = sprintf('%0.17g',-1/Dprime(ii,jj));
          out(end+1,1) = { strrep(sprintf(str,rr,ii,jj,val),'+','') }; % we strip '+'
          rr = rr +1;
       end
@@ -81,7 +81,18 @@ function out = netlist(Dprime, name)
 end
 
 function unit_test()
-   fmdl = mk_common_model('a2s',8);
-   img = mk_image(fmdl,1);
+   imdl = mk_common_model('a2s',8);
+   stim = mk_stim_patterns(8,1,'{ad}','{ad}',{'meas_current'},1);
+   imdl.fwd_model.stimulation = stim(1);
+   imdl.fwd_model = rmfield(imdl.fwd_model, 'meas_select');
+   img = mk_image(imdl,1);
+   v = fwd_solve(img);
+   disp('stim');
+   disp(full(stim(1).stim_pattern));
+   disp(stim(1).stimulation)
+   disp('meas');
+   disp(full(stim(1).meas_pattern));
+   disp('voltages');
+   disp(v.meas)
    eit_spice(img)
 end
