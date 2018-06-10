@@ -8,16 +8,18 @@ function graph_loc
    plot(dat(:,5),1e-3*dat(:,2),            '-','Color',[0,2,0]/3,'LineWidth',2);
    plot(dat(:,5),1e-3*dat(:,3),            '-','Color',[0,0,2]/3,'LineWidth',2);
 
-   k=1;for yy=2004:2017;
+   k=1;for yy=2004:2018;
      tt(k) = (datenum(yy,1,1)-datenum(1970,1,1))*86400;
-     tl{k} = num2str(yy); if rem(yy,2)==0; tl{k}=''; end
+     tl{k} = num2str(yy); if rem(yy,2)==1; tl{k}=''; end
    k=k+1; end
    set(gca,'xtick',tt)
    set(gca,'xticklabel',tl);
    ylim([0, ylim*[0;1]]);
+% Put eidors-v3.9.1
+% Put eidors-v3.9
 release= [
-(datenum(2017,06,12)-datenum(1970,1,1))*86400; % eidors-v3.9 Currently a guess
-1431302400; %eidors-v3.8     2015-05-11
+(datenum(2018,06,1)-datenum(1970,1,1))*86400; % eidors-v3.9.1
+(datenum(2017,06,21)-datenum(1970,1,1))*86400; % eidors-v3.9
 1431302400; %eidors-v3.8     2015-05-11
 1369785600; %eidors-v3.7.1   2013-05-29
 1366675200; %eidors_v3.7     2013-04-23

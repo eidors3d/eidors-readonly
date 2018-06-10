@@ -12,15 +12,22 @@ for ver in `seq 1 $LASTREV`; do
    find $REPO -type f -name \*.m -print0 | xargs -0 perl \
        -e  'BEGIN{$lines = 0};' \
        -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
-       -e  'END{print "  $lines,";}' >> $OUTF ; # all (/)
+       -e  'END{printf("  %08d,",$lines);}' >> $OUTF ; # all (/)
+   find $REPO/eidors -type f -name \*.m -print0 | xargs -0 perl \
+       -e  'BEGIN{$lines = 0};' \
+       -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
+       -e  'END{print "  $lines,";}' >> $OUTF ; # htdocs
+       -e  'END{printf("  %08d,",$lines);}' >> $OUTF ; # eidors
    find $REPO/htdocs -type f -name \*.m -print0 | xargs -0 perl \
        -e  'BEGIN{$lines = 0};' \
        -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
        -e  'END{print "  $lines,";}' >> $OUTF ; # htdocs
+       -e  'END{printf("  %08d,",$lines);}' >> $OUTF ; # htdocs
    find $REPO/dev -type f -name \*.m -print0 | xargs -0 perl \
        -e  'BEGIN{$lines = 0};' \
        -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
        -e  'END{print "  $lines,";}' >> $OUTF ; # dev
+       -e  'END{printf("  %08d,",$lines);}' >> $OUTF ; # dev
    echo "  $ver,    $DATE; " >> $OUTF;
 done
 echo "];" >> $OUTF

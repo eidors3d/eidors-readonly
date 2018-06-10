@@ -1,8 +1,9 @@
 pdflatex:=pdflatex -file-line-error -halt-on-error -shell-escape
 latexmk:=latexmk -pdf -pdflatex="$(pdflatex)" -bibtex
 
-all: eidors3p9-eit2017.pdf
-%.pdf: %.tex
+all: eidors-eit2018-oneslide.pdf
+
+eidors-eit2018-oneslide.pdf: %.pdf: %.tex
 	$(latexmk) $<
 
 # Graph is generated as follows
