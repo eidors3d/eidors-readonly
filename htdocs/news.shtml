@@ -20,11 +20,9 @@ EIDORS package.
 
 Workshop tutorial:
 <table border=1><tr><td>
-<table><tr>
-<td valign=top>
 
+<u>Instructions for Windows users</u>
 <OL>
-Instructions for Windows users
 <LI> Create a directory <tt>C:\path\to\tutorial</tt>
 <LI> Download these files and unzip into the directory
 <UL>
@@ -43,22 +41,20 @@ startup
 </tt>
 <LI> <tt>
 compare_2d_algs(1)
-</tt> <br>(this tests if eidors is working)
+</tt> %(this tests if eidors is working)
 <LI> <tt>
 show_fem(ng_mk_cyl_models(3,[0],[]))
-</tt> (this tests if netgen is working)
+</tt> %(this tests if netgen is working)
 
 </ul>
 
 </OL>
 
-<td valign=top>
-Go to the EIDORS tutorials
- <a href="./tutorial/tutorial.shtml"
-                          >tutorial/tutorial.shtml</a>
-<p>
 
-Try a few tutorials to see how eidors works.
+<u>Try a few 
+ <a href="./tutorial/tutorial.shtml">
+EIDORS tutorials</a></u>
+to see how eidors works.
 I recommend:
 <ol>
 <li>
@@ -77,7 +73,6 @@ I recommend:
 <a href="./tutorial/GREIT/adult_ex.shtml"
      >GREIT</a>
 </ol>
-</table>
 
 Challenge problem:
 <ol>
@@ -89,13 +84,13 @@ Challenge problem:
 
 <li>Put a ball into the elliptical cylinder
 <br><tt><font color=#E0F0FE
->   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1);'};
+>   extra={'ball','solid ball = sphere(0.5,0.3,0.5;0.1);'};
 <br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
 </font> show_fem(fmdl); </tt>
 
 <li>Put two balls into the elliptical cylinder
 <br><tt><font color=#E0F0FE
->   extra={'ball','solid ball = sphere(0.5,0.5,0.5;0.1) or sphere(0.5,-0.5,0.5;0.1);'};
+>   extra={'ball','solid ball = sphere(0.5,0.3,0.5;0.1) or sphere(-0.5,0.3,0.5;0.1);'};
 <br>fmdl= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1],extra);
 </font> show_fem(fmdl); </tt>
 
@@ -116,22 +111,47 @@ Challenge problem:
 <br>
 </font> show_fem(img); </tt>
 
-<li>Reconstruct the image using GREITv1
+<li>Show slices through voltage pattern
 <br><tt><font color=#E0F0FE
->  imdl= mk_common_gridmdl('GREITc1'); 
-   img= inv_solve(imdl,vh,vi);
+> img.fwd_solve.get_all_meas = 1;  vi = fwd_solve(img);
+imgh = rmfield(img,'elem_data'); imgh.node_data = vi.volt(:,1);
 <br>
-</font> show_fem(img); </tt>
+</font> 
+show_slices(imgh,[[inf,inf,0.3];[inf,inf,0.35]]);
+ </tt>
+<LI>Show a Gauss-Newton (GN) inverse in 3D
+<br><tt><font color=#E0F0FE>
+imdl = select_imdl(fmdl, {'Basic GN dif'});
+imdl.hyperparameter.value = 1e-5;
+img= inv_solve(imdl,vh,vi);
+<br>
+</font> 
+ show_3d_slices(img); 
+
+<LI>Show a Gauss-Newton (GN) inverse in 2D using a coarse-to-fine map
+<br><tt><font color=#E0F0FE>
+fmdl2d = ng_mk_ellip_models([0,1.2,0.8,.1],[],[]);
+fmdl.coarse2fine = mk_coarse_fine_mapping(fmdl,fmdl2d);
+imdl = select_imdl(fmdl, {'Basic GN dif'});
+imdl.rec_model = fmdl2d;
+imdl.hyperparameter.value = 1e-4;
+img= inv_solve(imdl,vh,vi);
+<br>
+</font> 
+ show_slices(img); 
+ </tt>
+
+
+
 <li>Create a GREIT model for the ellipse
     (see <a href="./tutorial/GREIT/mk_GREIT_mat_ellip.shtml">here</a>)
 <br><tt><font color=#E0F0FE
-> opt.noise_figure = 0.5; opt.distr = 3; %other options are defaults
-<br>fmdl.normalize_measurements = 0;
-<br>imdl = mk_GREIT_model(mk_image(fmdl,0.5), 0.25, [], opt);
-<br>img= inv_solve(imdl,vh,vi);
+> opt.noise_figure = 0.5; 
+fmdl.normalize_measurements = 0;
+imgh = mk_image(mdl_normalize(fmdl,1),1.0);;
+imdl = mk_GREIT_model(imgh, 0.25, [], opt);
+img= inv_solve(imdl,vh,vi);
 </font> show_fem(img); </tt>
-<li>Compare images for different stimulation patterns
-    (see <a href="./tutorial/GREIT/GREIT_test_params.shtml">here</a>)
 </ol>
 </table>
 
