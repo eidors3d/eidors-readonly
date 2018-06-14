@@ -15,6 +15,10 @@ There are two ways to get around this.
 
 <h3>Electrode in a hole in the model</h3>
 
+By placing a hole in a model as below, the electrode
+s on the boundary, and thus no special treatment
+is required.
+
 </p>
 <pre>
 [% PROCESS "internal_electrodes01.m" %]
@@ -26,22 +30,27 @@ There are two ways to get around this.
 Internal electrode using a hole in the model.
 </center>
 
+<h3>Specifying the electrode boundary to EIDORS</h3>
+
 <pre>
-[% PROCESS "internal_electrodes01.m" %]
+[% PROCESS "internal_electrodes02.m" %]
 </pre>
 
 <center>
 <img src="internal_electrodes02a.jpg">
 <br><i>Figure:</i>
-Internal electrode using a hole in the model.
+Internal electrode by specifying using <tt>CEM_boundary</tt>
 </center>
+
+<pre>
+[% PROCESS "internal_electrodes03.m" %]
+</pre>
 
 <center>
 <img src="internal_electrodes03a.jpg">
 <br><i>Figure:</i>
-Internal electrode using a hole in the model.
+Voltages in a slide of a model with internal electrode
 </center>
-
 
 </td></tr></table>
 <p>
