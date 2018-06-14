@@ -30,8 +30,8 @@ Standing horse with an electrode belt allowing
 
 <h3>GREIT 3D software</h3>
 
-Code for Reconstruction using GREIT in 3D was
-recently added. If you have EIDORS v3.9, you will
+Code for Reconstruction using GREIT is in EIDORS v3.9.1.
+If you have an older version (EIDORS v3.9) you will
 need the following two files:
 <ul>
 <li> <a href="https://sourceforge.net/p/eidors3d/code/HEAD/tree/trunk/eidors/models/solve_RM_2Dslice.m?format=raw"><tt>solve_RM_2Dslice.m</tt></a>
