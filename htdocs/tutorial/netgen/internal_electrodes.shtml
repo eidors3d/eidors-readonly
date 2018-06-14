@@ -1,0 +1,53 @@
+[% root = "../../" %]
+[% show_tut = "1" %]
+[% PROCESS "../../nav-sidebar.shtml" %]
+
+<h2> 
+Internal electrodes
+</h2>
+
+
+If you would like to use electrodes inside the
+FEM models, it needs a little work from EIDORS,
+because EIDORS uses the model boundary to look
+for electrode complete electrode model nodes.
+There are two ways to get around this.
+
+<h3>Electrode in a hole in the model</h3>
+
+</p>
+<pre>
+[% PROCESS "internal_electrodes01.m" %]
+</pre>
+
+<center>
+<img src="internal_electrodes01a.jpg">
+<br><i>Figure:</i>
+Internal electrode using a hole in the model.
+</center>
+
+<pre>
+[% PROCESS "internal_electrodes01.m" %]
+</pre>
+
+<center>
+<img src="internal_electrodes02a.jpg">
+<br><i>Figure:</i>
+Internal electrode using a hole in the model.
+</center>
+
+<center>
+<img src="internal_electrodes03a.jpg">
+<br><i>Figure:</i>
+Internal electrode using a hole in the model.
+</center>
+
+
+</td></tr></table>
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</BODY></HTML>
+<!--
+      -->
