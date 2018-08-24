@@ -525,8 +525,13 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
         el_z  = [el_z ; on_elecs*elec_pos(i)];
       end
    else
-      el_th = elec_pos(:,1)*2*pi/360;
-      el_z  = elec_pos(:,2);
+      th = elec_pos(:,1)*2*pi/360;
+      el_th = []; 
+      el_z  = []; 
+      for i=2:size(elec_pos,2)
+        el_th = [el_th; th];
+        el_z  = [el_z ; elec_pos(:,i)];
+      end
    end
       
    n_elecs= size(el_z,1); 
