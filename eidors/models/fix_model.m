@@ -71,6 +71,23 @@ for i = 1:numel(flds)
    mdl.(flds{i}) = tmp.(flds{i});
 end
 
+% This code may not stay here. Think about where to put it
+function fmdl = remove_unused_nodes( fmdl );
+   usednodes = unique(fmdl.elems(:));
+   if max(usednodes) > num_nodes(fmdl)
+      error('more nodes are used than exist');
+   end
+   nidx = zeros(num_nodes(fmdl),1);
+   nidx(usednodes) = 1:length(usednodes);
+   fmdl.nodes(nidx==0,:) = [];
+   fmdl.elems = reshape(nidx(fmdl.elems),[],size(fmdl.elems,2));
+
+   for i=1:length(fmdl.electrode)
+      fmdl.electrode(i).nodes =  nidx( ...
+         fmdl.electrode(i).nodes);
+   end
+   fmdl.boundary = find_boundary(fmdl);
+   fmdl.gnd_node = usednodes(fmdl.gnd_node);
 
 
 % Complete the function
