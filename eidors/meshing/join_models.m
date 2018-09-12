@@ -9,6 +9,8 @@ function [fmdlo]= join_models(fmdl1, fmdl2, tol)
 % join_models only works on the elems, nodes and electrode fields;
 % any c2f, mat_idx, stimulation structures must be redefined
 %
+% See also: MERGE_MESHES
+%
 
 % (C) 2018 Andy Adler. License: GPL version 2 or version 3
 % $Id$
