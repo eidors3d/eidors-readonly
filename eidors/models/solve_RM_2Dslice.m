@@ -56,6 +56,9 @@ fb = any(imdl.rec_model.coarse2fine,1);
 imdl.rec_model.coarse2fine(:,~fb) = [];
 imdl.fwd_model.coarse2fine(:,~fb) = [];
 imdl.solve_use_matrix.RM(~fb,:) = [];
+if isfield(imdl.solve_use_matrix,'PJt')
+   imdl.solve_use_matrix.PJt(~fb,:) = [];
+end
 
 if keep3D; 
    imdl.rec_model.boundary = find_boundary(imdl.rec_model);
