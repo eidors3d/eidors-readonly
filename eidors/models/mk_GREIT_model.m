@@ -176,7 +176,8 @@ imdl.solve_use_matrix.RM = RM;
 if opt.keep_intermediate_results
    % store additional data to be used for faulty electrode compensation
    imdl.solve_use_matrix.PJt = PJt;
-   imdl.solve_use_matrix.X = inv(M);
+   imdl.solve_use_matrix.M = M;
+   imdl.solve_use_matrix.X = inv(M); % Not sure why we are keeping X - perhaps remove(AA)
 end
 % imdl.solve_use_matrix.RM = resize_if_reqd(RM,inside,imdl.rec_model);
 imdl.jacobian_bkgnd = imgs;
