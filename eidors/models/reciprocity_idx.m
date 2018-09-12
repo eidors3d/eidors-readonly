@@ -1,4 +1,4 @@
-function idxr = reciprocity_idx( fmdl);
+function idxr = reciprocity_idx( fmdl, opt);
 % RECIPROCITY_IDX: find indices of stim, meas pairs that are recirocal
 %     ie. stimulation/measurement is same as measurement/stimulation on other
 % usage:  idx = reciprocity_idx( fwd_model);
@@ -11,8 +11,15 @@ function idxr = reciprocity_idx( fmdl);
 % example 
 %     imdl= mk_common_model('a2c2',8);
 %     idx = reciprocity_idx(imdl.fwd_model);
+%
+% With an options vector
+%     idxr = reciprocity_idx( fmdl, 'reduce');
+%   calculates a 'reduced' idx which can be used to keep 
+%   only the unique parts of a measurement. For example
+%   to average pair-drive measurements
+%     vh_reduce = sparse(idxr,1:length(idxr),0.5)*vh
 
-% (C) 2010 Andy Adler. License: GPL version 2 or version 3
+% (C) 2010-2018 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
@@ -40,6 +47,12 @@ for i=1:size(idxr)
   else
       idxr(i) = m;
   end
+end
+
+if nargin>=2 && strcmp(lower(opt),'reduce');
+% Reduce idx to the minimal vector output
+   idxk= min([idxr,idxr(idxr)],[],2);
+   [~,~,idxr] = unique(idxk);
 end
 
 function do_unit_test
@@ -74,6 +87,11 @@ tst.stimulation = mk_stim_patterns(6,1,[0,1],[0,1],{'rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6); 
 unit_test_cmp('6-[01]-[01]-rotate',idx(:,[1,4]), [9,11,13;18 2 4]');
 
+
+idxr= reciprocity_idx( tst,'reduce' );
+unit_test_cmp('6-[01]-[01]-reduce-rotate',idxr,[1;2;3;4;5;6;7;8;1;9;2;4;3;5;7;6;8;9]);
+
+
 tst.stimulation = mk_stim_patterns(6,1,[0,1],[0,1],{'no_rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6); 
 unit_test_cmp('6-[01]-[01]-no_rotate',idx(:,[1,4]), [7,10,13;2 4 18]');
@@ -92,6 +110,10 @@ unit_test_cmp('6-[02]-[02]-rotate',idx(:,[1,4]), [6,11,16;15,2,7]');
 tst.stimulation = mk_stim_patterns(6,1,[0,2],[0,2],{'no_rotate_meas'},1);
 idx = reciprocity_idx( tst ); idx = reshape(idx,3,6); 
 unit_test_cmp('6-[02]-[02]-no_rotate',idx(:,[1,4]), [4,10,16;2,8,14]');
+
+idxr= reciprocity_idx( tst,'reduce' );
+unit_test_cmp('6-[02]-[02]-reduce-no_rotate',idxr,[1;2;3;1;4;5;4;6;7;2;6;8;5;8;9;3;7;9]);
+
 
 %     [02]   [13]   [24]   [35]   [40]   [51] 
 % [02] 1  1   7  12  13 17  19 22  25 27  31 32
