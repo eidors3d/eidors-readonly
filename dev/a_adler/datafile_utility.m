@@ -1,4 +1,12 @@
-function splitEITfile(filename, newFilename, range)
+function datafile_utility(inputFile, outputFile, opt) 
+% DATAFILE_UTILITY(INPUTFILE, OUTPUTFILE, OPT) 
+% utility to operate on EIT data files
+% 
+% (C) 2018 Andy Adler and Beat Mueller
+% License: GPL version 2 or version 3
+% $Id$  
+
+function LQ4_splitEITfile(filename, newFilename, range)
 % split EIT file
 %
 % filename:     name of file
