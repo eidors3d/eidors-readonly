@@ -1,17 +1,25 @@
 function datafile_utility(inputFile, outputFile, opt) 
 % DATAFILE_UTILITY(INPUTFILE, OUTPUTFILE, OPT) 
 % utility to operate on EIT data files
+%
+% INPUTFILE:  Name of input file
+% OUTPUTFILE: Name of output file
+% opt.action:
+%      LQ4_splitEITfile
+%      opt.range = [startFrame, endFrame]
+%      opt.transform = fcn_to_call on each frame
 % 
 % (C) 2018 Andy Adler and Beat Mueller
 % License: GPL version 2 or version 3
 % $Id$  
 
-function LQ4_splitEITfile(filename, newFilename, range)
+function LQ4_splitEITfile(filename, newFilename, opt)
 % split EIT file
 %
 % filename:     name of file
 % newFilename:  store file here
-% range:        [startFrame endFrame]
+% opt.range:            [startFrame endFrame]
+% opt.transform:        function to call 
 %
 % header is same as filename
 % if endFrame is bigger than number of frames, only available frames are 
