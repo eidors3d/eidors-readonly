@@ -21,6 +21,7 @@ function print_convert(filename, varargin)
 %                                        % images, 2 for graphs). Higher is
 %                                        % smoother.
 %   opt.crop_slack   = [top,bot,left,right] %don't crop right to boundary
+%   opt.figno        = number            % print figure, otherwise gca
 %
 %  Note that opt.imwrite_opts takes precedence over opt.jpeq_quality.
 %
@@ -61,7 +62,8 @@ set(gcf,'Color','w');
 
 set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
 %%% The -dpng driver is broken in R2014a on linux (and maybe others);
-print('-dpng',pp.resolution,tmpnam);
+pp.figno
+print(pp.figno,'-dpng',pp.resolution,tmpnam);
 set(gcf,'PaperPosition',pp.page);
  
 set(gcf,'InvertHardCopy',old_ihc); % 
@@ -170,6 +172,7 @@ function pp = parse_options(filename,varargin)
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
    pp.crop_slack = [0,0,0,0];
+   pp.figno = gcf; % default
    
    
  
@@ -239,6 +242,9 @@ function pp = parse_options(filename,varargin)
      end
      if isfield(opt,'crop_slack');
         pp.crop_slack = opt.crop_slack;
+     end
+     if isfield(opt,'figno');
+        pp.figno = opt.figno;
      end
    else
       error('Can''t parse options');
