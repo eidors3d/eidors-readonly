@@ -107,6 +107,7 @@ if ~axes_msm
 else
    msm = img.fwd_model.mdl_slice_mapper;
    image(msm.x_pts, msm.y_pts, out_img);
+   set(gca,'Ydir','normal');
 end
 
 if nargout==0; clear('out_img'); end
