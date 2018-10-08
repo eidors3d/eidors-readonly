@@ -41,11 +41,11 @@ function LQ4_splitEITfile(filename, newFilename, opt)
     nFrames = fread(fid, 1, 'uint32', 'ieee-le');
     
     % check range:
-    if length(range) ~= 2
+    if length(opt.range) ~= 2
         error('range has wrong size');
     end
     
-    if range(1) > nFrames || range(1) > range(2)
+    if opt.range(1) > nFrames || opt.range(1) > opt.range(2)
         error('range not well defined');
     end
     
@@ -75,7 +75,7 @@ function LQ4_splitEITfile(filename, newFilename, opt)
         if ft == 0
             i = i + 1;
             
-            if i >= range(1) && i <= range(2)
+            if i >= opt.range(1) && i <= opt.range(2)
                 storeFrames = 1;
                 copiedFrames = copiedFrames + 1;
             else
