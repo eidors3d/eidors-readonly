@@ -62,7 +62,6 @@ set(gcf,'Color','w');
 
 set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
 %%% The -dpng driver is broken in R2014a on linux (and maybe others);
-pp.figno
 print(pp.figno,'-dpng',pp.resolution,tmpnam);
 set(gcf,'PaperPosition',pp.page);
  
