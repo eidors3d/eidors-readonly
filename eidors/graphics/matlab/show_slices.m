@@ -21,6 +21,7 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.levels (same as above);
 %   img.show_slices.img_cols = number of columns in image
 %   img.show_slices.sep = number of pixels between the individual images
+%   img.show_slices.axes_msm = use mdl_slice_mapper for x,y axes
 %   img.calc_colours.npoints = pixel width/height to map to
 %   img.get_img_data.frame_select = which frames of image to display
 %
@@ -94,11 +95,19 @@ c_img = calc_colours( r_img, img);
 out_img= reshape(c_img, size(r_img,1), size(r_img,2) ,[]);
 
 
-image(out_img);
-axis image
-axis off
-axis equal
-axis tight
+axes_msm = false;
+try axes_msm = img.show_slices.axes_msm; end
+
+if ~axes_msm
+   image(out_img);
+   axis image
+   axis off
+   axis equal
+   axis tight
+else
+   msm = img.fwd_model.mdl_slice_mapper;
+   image(msm.x_pts, msm.y_pts, out_img);
+end
 
 if nargout==0; clear('out_img'); end
 
