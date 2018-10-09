@@ -343,6 +343,7 @@ function flag = assign_flag(struct, n_structs, struct_name, field_name, default_
                                      isreal(value) && (value == 0 || value == 1))))
                 flag(i) = value;
             else
+value
                 error('%s(%d).%s value is not valid.', struct_name, i, field_name);
             end
         end
@@ -500,8 +501,10 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
                             geo_code = [geo_code ...
                                         parse_geometry_cone(geometry(i).(field_names{j}), field_operator_string)];
                         case 'cylinder'
-                            geo_code = [geo_code ...
-                                        parse_geometry_cylinder(geometry(i).(field_names{j}), field_operator_string)];
+                            [geo_code_temp, extra_code_temp] = ...
+                                        parse_geometry_cylinder(geometry(i).(field_names{j}), field_operator_string);
+                            geo_code   = [geo_code geo_code_temp];        
+                            extra_code = [extra_code extra_code_temp];
                         case 'ellipsoid'
                             geo_code = [geo_code ...
                                         parse_geometry_ellipsoid(geometry(i).(field_names{j}), field_operator_string)];
@@ -819,7 +822,7 @@ function geo_code = parse_geometry_cone(cone, operator_string)
     
     eidors_msg('@@@ called with "%s" returning.', operator_string, 4);
     
-function geo_code = parse_geometry_cylinder(cylinder, operator_string)
+function [geo_code,extra_code] = parse_geometry_cylinder(cylinder, operator_string)
 
     eidors_msg('@@@ called with "%s" starting.', operator_string, 4);
 
@@ -838,6 +841,7 @@ function geo_code = parse_geometry_cylinder(cylinder, operator_string)
         top_center      = [0;0;1]*ones(1, n_cylinders);
         bottom_center   = [0;0;0]*ones(1, n_cylinders);
         complement_flag = false(1, n_cylinders);
+        max_edge_length = inf(1,n_cylinders);;
         
         % Parse all structure fields.
         for i = 1:n_fields
@@ -850,13 +854,23 @@ function geo_code = parse_geometry_cylinder(cylinder, operator_string)
                     bottom_center = assign_point(cylinder, n_cylinders, 'cylinder', field_names{i}, bottom_center);
                 case 'complement_flag'
                     complement_flag = assign_flag(cylinder, n_cylinders, 'cylinder', field_names{i}, complement_flag);
+                case 'max_edge_length'
+                    for ii=1:length(cylinder);
+                       mel = cylinder(ii).max_edge_length;
+                       if isempty(mel)
+                          max_edge_length(ii) = inf;
+                       else
+                          max_edge_length(ii) = mel;
+                       end
+                    end
                 otherwise
                     error(['Field name ''%s'' is not valid for a cylinder!\nAvailable field names for a cylinder are: '...
-                           'bottom_center, top_center, radius, and complement_flag.'], field_names{i});
+                           'bottom_center, top_center, radius, max_edge_length and complement_flag.'], field_names{i});
             end
         end
         
         % Start geo code with an opening parenthesis.
+        extra_code = '';
         geo_code = '(';
 
         % Add geo code for each cylinder.
@@ -867,8 +881,17 @@ function geo_code = parse_geometry_cylinder(cylinder, operator_string)
             
             n_vector = top_center(:,i) - bottom_center(:,i); 
             
-            geo_code = [geo_code sprintf('(cylinder(%g, %g, %g ; %g, %g, %g ; %g) and plane(%g, %g, %g ; %g, %g, %g) and plane(%g, %g, %g ; %g, %g, %g))', ...
-                        bottom_center(:,i), top_center(:,i), radius(i), bottom_center(:,i), -n_vector, top_center(:,i), n_vector)];
+            if isinf(max_edge_length(i))
+               geo_code = [geo_code sprintf('(cylinder(%g, %g, %g ; %g, %g, %g ; %g) and plane(%g, %g, %g ; %g, %g, %g) and plane(%g, %g, %g ; %g, %g, %g))', ...
+                           bottom_center(:,i), top_center(:,i), radius(i), bottom_center(:,i), -n_vector, top_center(:,i), n_vector)];
+            else
+               tmpvar   = sprintf('V%015d',round(1e15*rand));
+               extra_code = [extra_code, sprintf( ...
+                  'solid %s = cylinder(%g, %g, %g ; %g, %g, %g ; %g) -maxh=%g;\n', ...
+                  tmpvar, bottom_center(:,i), top_center(:,i), radius(i), max_edge_length(i))];
+               geo_code = [geo_code sprintf('((%s) and plane(%g, %g, %g ; %g, %g, %g) and plane(%g, %g, %g ; %g, %g, %g))', ...
+                           tmpvar, bottom_center(:,i), -n_vector, top_center(:,i), n_vector)];
+            end
                     
             if (i < n_cylinders)
                 geo_code = [geo_code operator_string];
