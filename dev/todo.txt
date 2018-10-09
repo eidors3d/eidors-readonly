@@ -1,5 +1,9 @@
 Modifications post 3.9.1
  - Fix bug in ng_mk_extruded_model with 3D electrode positions.
+
+ - Complete modifications started in ng_mk_geometric_models
+    - Complete code for maxh
+    - Better handling of temp variables
 ===========================
  - Fix bug in calc_hm_set - use with 3D arrays
 
