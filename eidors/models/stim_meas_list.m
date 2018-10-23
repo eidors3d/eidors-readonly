@@ -50,9 +50,10 @@ end
 stim = struct([]);
 Npat = size(sp_mp,1);
 is = 0;
+current = current.*ones(Npat,1); % Extend if required
 for i=1:Npat
    cur = sp_mp(i,1:2);
-   new_stim = sparse( cur, 1, current*[-1,1], Nelec,1);
+   new_stim = sparse( cur, 1, current(i)*[-1,1], Nelec,1);
    % create a new stim if it isn't the same as the last one
    if (is < 1) || any(any(stim(is).stim_pattern ~= new_stim))
      is = is + 1;
@@ -146,6 +147,8 @@ function  do_unit_test
    sp_mp = stim_meas_list(stim);
    inj_diff = mod(sp_mp(:,2) - sp_mp(:,1), nElecs);
    meas_diff = mod(sp_mp(:,3) - sp_mp(:,4), nElecs);
+
+
    unit_test_cmp('pattern#7', true, all(inj_diff == Skip+1) && all(meas_diff == Skip+1));
    
    
