@@ -1,25 +1,55 @@
-function datafile_utility(inputFile, outputFile, opt) 
-% DATAFILE_UTILITY(INPUTFILE, OUTPUTFILE, OPT) 
+function datafile_utility(inputFile, outputFile, opt)
+% DATAFILE_UTILITY(INPUTFILE, OUTPUTFILE, OPT)
 % utility to operate on EIT data files
 %
-% INPUTFILE:  Name of input file
+% INPUTFILE: Name of input file
 % OUTPUTFILE: Name of output file
 % opt.action:
-%      LQ4_splitEITfile
-%      opt.range = [startFrame, endFrame]
-%      opt.transform = fcn_to_call on each frame
+%     LQ4_splitEITfile
+%     opt.range = [startFrame, endFrame]
+%     opt.transform = fcn_to_call on each frame
+%          if opt.transform is numeric, multiply by it.
+%
+% In order to "shrink" EIT files, do
+% PAT = [0,5];
+% skip5 = {32,1,PAT,PAT,{'meas_current'},1};
+% [tst.stimulation,~] = mk_stim_patterns(skip5{:});
+% idx = reciprocity_idx( tst );
+% mvr =  idx == max([idx,idx(idx)],[],2);
+% mv2 = idx; mv2(~mvr) = [];
+% mvr = find(mvr);
+% mult = sparse(mvr,mvr,1,1024,1024) +  ...
+%        sparse(mvr,mv2,1,1024,1024);
+% skip5{4} = 'no_meas_current_next2';
+% [~,msel] = mk_stim_patterns(skip5{:});
+% mult(~msel,:) = 0;
 % 
+% opt.transform  = sparse(2048,2048);
+% opt.transform(1:2:2048,1:2:2048)  = real(mult);
+% %opt.transform(2:2:2048,2:2:2048)  = imaginary
+% datafile_utility(infile,outfile,opt);
+%
 % (C) 2018 Andy Adler and Beat Mueller
 % License: GPL version 2 or version 3
-% $Id$  
+% $Id$
 
-function LQ4_splitEITfile(filename, newFilename, opt)
+
+switch opt.action
+   case 'LQ4_splitEITfile';
+      if ~isfield(opt,'transform'); 
+         opt.transform = 1; %
+      end
+      splitEITfile(inputFile, outputFile, opt.range, opt.transform);
+   otherwise;
+      error('opt.action = "%s" not recognized', opt.action);
+end
+
+function splitEITfile(filename, newFilename, range, fcall)
 % split EIT file
 %
 % filename:     name of file
 % newFilename:  store file here
-% opt.range:            [startFrame endFrame]
-% opt.transform:        function to call 
+% range:        [startFrame endFrame]
 %
 % header is same as filename
 % if endFrame is bigger than number of frames, only available frames are 
@@ -41,11 +71,11 @@ function LQ4_splitEITfile(filename, newFilename, opt)
     nFrames = fread(fid, 1, 'uint32', 'ieee-le');
     
     % check range:
-    if length(opt.range) ~= 2
+    if length(range) ~= 2
         error('range has wrong size');
     end
     
-    if opt.range(1) > nFrames || opt.range(1) > opt.range(2)
+    if range(1) > nFrames || range(1) > range(2)
         error('range not well defined');
     end
     
@@ -75,7 +105,7 @@ function LQ4_splitEITfile(filename, newFilename, opt)
         if ft == 0
             i = i + 1;
             
-            if i >= opt.range(1) && i <= opt.range(2)
+            if i >= range(1) && i <= range(2)
                 storeFrames = 1;
                 copiedFrames = copiedFrames + 1;
             else
@@ -89,8 +119,28 @@ function LQ4_splitEITfile(filename, newFilename, opt)
             fwrite(fNewId, ft, 'int32', 'ieee-le');
             fwrite(fNewId, pl, 'int32', 'ieee-le');
             if pl > 0
+                vi_payload = 64;
+                iq_payload = 2048;
+                p_startframe = ftell(fid);
                 payLoad = fread(fid, pl, 'int8', 'ieee-le');
+                p_endframe   = ftell(fid);
+
+                fseek(fid,p_startframe + 15*4 + 12 + 4*vi_payload,'bof');
+                iqPayload = fread(fid,iq_payload,'int32','ieee-le');
+                fseek(fid,p_endframe,'bof');
+
+                p_startframe = ftell(fNewId);
                 fwrite(fNewId, payLoad, 'int8', 'ieee-le');
+                p_endframe   = ftell(fNewId);
+
+                fseek(fNewId,p_startframe + 15*4 + 12 + 4*vi_payload,'bof');
+                if isnumeric(fcall)
+                   iqPayload = fcall*iqPayload; % transform it
+                else
+                   iqPayload = fcall(iqPayload); % transform it
+                end
+                fwrite(fNewId, iqPayload, 'int32', 'ieee-le');
+                fseek(fNewId,p_endframe,'bof');
             end
         elseif pl > 0
             % go to the next frame
