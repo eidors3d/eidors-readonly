@@ -9,6 +9,13 @@ function datafile_utility(inputFile, outputFile, opt)
 %     opt.range = [startFrame, endFrame]
 %     opt.transform = fcn_to_call on each frame
 %          if opt.transform is numeric, multiply by it.
+%     opt.addition  = add opt.addition(:,i) to frame i
+%
+% To replace EIT files with other content, do
+%opt.range  = [1,2];
+%opt.transform  = sparse(2048,2048);
+%opt.addition = zeros(2048,2);
+%opt.addition(1:2:2048,:) = [vh.meas,vi.meas]*1e6;
 %
 % In order to "shrink" EIT files, do
 % PAT = [0,5];
@@ -39,12 +46,16 @@ switch opt.action
       if ~isfield(opt,'transform'); 
          opt.transform = 1; %
       end
-      splitEITfile(inputFile, outputFile, opt.range, opt.transform);
+      if ~isfield(opt,'addition'); 
+         opt.addition = 0; %
+      end
+      splitEITfile(inputFile, outputFile, opt.range, ...
+                   opt.transform, opt.addition);
    otherwise;
       error('opt.action = "%s" not recognized', opt.action);
 end
 
-function splitEITfile(filename, newFilename, range, fcall)
+function splitEITfile(filename, newFilename, range, fcall, addvec)
 % split EIT file
 %
 % filename:     name of file
@@ -135,9 +146,14 @@ function splitEITfile(filename, newFilename, range, fcall)
 
                 fseek(fNewId,p_startframe + 15*4 + 12 + 4*vi_payload,'bof');
                 if isnumeric(fcall)
-                   iqPayload = fcall*iqPayload; % transform it
+                   iqPayload = full(fcall*iqPayload); % transform it
                 else
                    iqPayload = fcall(iqPayload); % transform it
+                end
+                if size(addvec,2) == 1
+                   iqPayload = iqPayload + addvec;
+                else
+                   iqPayload = iqPayload + addvec(:,i);
                 end
                 fwrite(fNewId, iqPayload, 'int32', 'ieee-le');
                 fseek(fNewId,p_endframe,'bof');
