@@ -62,15 +62,15 @@ popts.update_U0 = 1;
 
 
 %% test scenarios
-sepv=0.2:0.05:1;
-radv=0.15;%logspace(log10(0.16), log10(0.25),2);
+sepv=0.1:0.025:0.55;
+radv=0.1;%logspace(log10(0.16), log10(0.25),2);
 %%
 % sepv=0.2
 % radv =0.1646
 % conv=1.5
 
-cond_obj1 = 0.01;
-cond_obj2 = 0.01;%1.5;
+cond_obj1 = 2;
+cond_obj2 = 2;%1.5;
 
 nsep = length(sepv);
 nrad = length(radv);
@@ -99,11 +99,11 @@ for ii = 1:nsep
     % Sim data
     sep = sepv(ii);
     rad = radv;
-    sb1 = sprintf('solid ball1 = cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,1;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
-    sb2 = sprintf('solid ball2 = cylinder(-%0.3f,-%0.3f,0;-%0.3f,-%0.3f,1;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) and not cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,1;%0.3f) -maxh=0.1;',sep,sep,sep,sep,rad, sep,sep,sep,sep,rad);
+    sb1 = sprintf('solid ball1 = cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,3;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) -maxh=0.1;',sep,sep,sep,sep,rad);
+    sb2 = sprintf('solid ball2 = cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,3;%0.3f) and orthobrick(-1,-1,0;1,1,0.05) and not cylinder(%0.3f,%0.3f,0;%0.3f,%0.3f,3;%0.3f) -maxh=0.1;',-sep,-sep,-sep,-sep,rad, sep,sep,sep,sep,rad);
     extra={'ball1','ball2',[sb1,sb2]};
     
-    fmdl_t= ng_mk_cyl_models([0., 3, 0.05],[16],[0.2,0,0.05],extra);
+    fmdl_t= ng_mk_cyl_models([0., 1, 0.05],[16],[0.2,0,0.05],extra);
     fmdl_t=fix_model(fmdl_t);
     fmdl_t.stimulation = stim; %Add to model
     fmdl_t.approx_type='tri3';
@@ -131,17 +131,41 @@ for ii = 1:nsep
     sim_img{ii}.elem_data(fmdl_t.mat_idx{3})=cond_obj2;
     data_2{ii} = fwd_solve(sim_img{ii});
     
-    vdiff{ii} = data_sep{ii}.volt(:,1) - data_1{ii}.volt(:,1) - data_2{ii}.volt(:,1);
-    ddiff(ii) = norm(data_sep{ii}.meas(:) - (data_1{ii}.meas(:) + data_2{ii}.meas(:)));
+    vdiff{ii} = data_sep{ii}.meas(:,1) - data_1{ii}.meas(:,1) - data_2{ii}.meas(:,1);
+    
+    %Norm of difference of meas
+    ddiff_n(ii) = norm(data_sep{ii}.meas(:) - (data_1{ii}.meas(:) + data_2{ii}.meas(:)));
+    %Difference of every meas
+    ddiff_all(ii,:) = data_sep{ii}.meas(:) - (data_1{ii}.meas(:) + data_2{ii}.meas(:));
+    
+    
+    
     mnorm(ii) = norm(data_sep{ii}.meas);
             
 end
-%%
+
+%figure;
+%sim_img{1}.elem_data = vdiff{1};
+%show_fem(sim_img{1})
+
+
+%Superposition: Non-monotonic for single meas (with adj stim/meas) as expected
+%since distance between electrodes to inclusions does not vary
+%monotonically with separation
 figure;
-sim_img{1}.elem_data = vdiff{1};
-show_fem(sim_img{1}, 1)
+plot(sepv, ddiff_n./mnorm);
+xrange([0.1,0.55])
+ylabel('||d||','FontSize',14);
+xlabel('Separation','FontSize',14);
+
+
+meas_idx=4;
 figure;
-plot(sepv, ddiff./mnorm);
+plot(sepv, ddiff_all(:,meas_idx));
+ylabel('d','FontSize',14);
+xlabel('Separation','FontSize',14);
+
+
 
 %% Contrast
 conv = 0.1:0.01:10;
@@ -161,8 +185,8 @@ for ii=1:length(conv)
     fmdl_t=fix_model(fmdl_t);
     fmdl_t.stimulation = stim; %Add to model
     fmdl_t.approx_type='tri3';
-    sim_img{ii}= mk_image(fmdl_t, cond_bkg );
-    sim_img{ii}.elem_data(fmdl_t.mat_idx{2})=conv(ii);
+    sim_img2{ii}= mk_image(fmdl_t, cond_bkg );
+    sim_img2{ii}.elem_data(fmdl_t.mat_idx{2})=conv(ii);
     %   figure; show_fem(img);
     pixel_group=[fmdl_t.mat_idx{2}];
     %pixel_group = [102,123,103,83,66,82]; %b2C
@@ -171,10 +195,20 @@ for ii=1:length(conv)
     
     n_level = 50;
     
-    data_sat{ii} = fwd_solve(sim_img{ii});
-    meas(ii) = data_sat{ii}.meas(measindx);
+    data_sat{ii} = fwd_solve(sim_img2{ii});
+    meas_all(ii,:) = data_sat{ii}.meas(:);
+    meas_n(ii) = norm(data_sat{ii}.meas(:));
 end
 
 
+meas_s=meas_all(:,measindx)
+
+%Contrast monotonic for single/norm measurements as expected
 figure;
-plot(conv, meas)
+plot(conv, meas_n);
+ylabel('||d||','FontSize',14);
+xlabel('Contrast','FontSize',14);
+
+figure; plot(conv, meas_s);
+ylabel('d','FontSize',14);
+xlabel('Contrast','FontSize',14);
