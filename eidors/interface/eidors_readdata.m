@@ -1043,6 +1043,7 @@ function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( 
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
    
    elecImps = viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:);
+   %% elecImps depends on a factor which varies with the SBC version
 
 function [vv] = landquart4pre_readdata( fname )
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
