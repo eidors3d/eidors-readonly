@@ -155,7 +155,11 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
                % FIXME: make current defs between point electrodes and CEMs compatible
              [bdy_idx,srf_area]= find_electrode_bdy( bdy, ...
                             fwd_model.nodes, elec_nodes);
-             N2E(i, elec_nodes) = srf_area/sum(srf_area);
+             s_srf_area =  sum(srf_area);
+             if s_srf_area == 0;
+                error('Surface area for elec#%d is zero. Is boundary correct?',i);
+             end
+             N2E(i, elec_nodes) = srf_area/s_srf_area;
           end
        end
    end
