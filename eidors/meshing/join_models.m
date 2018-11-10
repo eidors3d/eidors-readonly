@@ -64,6 +64,9 @@ function fmdlo = do_join_models(fmdl1,fmdl2,thresh);
    end
    fmdlo.boundary = find_boundary(fmdlo.elems);
 
+   for i=1:num_elecs(fmdlo)
+      fmdlo.electrode(i).nodes = fmdlo.electrode(i).nodes(:)'; % force row
+   end
 
 
 function do_unit_test
