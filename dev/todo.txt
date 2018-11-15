@@ -5,6 +5,7 @@ Modifications post 3.9.1
  - Complete modifications started in ng_mk_geometric_models
     - Complete code for maxh
     - Better handling of temp variables
+ - Clean up caching in mk_grid_c2f (don't cache three times)
 ===========================
  - Fix bug in calc_hm_set - use with 3D arrays
 

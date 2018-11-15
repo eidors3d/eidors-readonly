@@ -79,9 +79,9 @@ if ~isempty(save_memory)
    end
 end
 
-[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt);
+[fmdl,rmdl] = eidors_cache(@center_scale_models,{fmdl,rmdl, opt});
 
-opt = parse_opts(fmdl,rmdl, opt);
+opt = eidors_cache(@parse_opts,{fmdl,rmdl, opt});
 
 copt.cache_obj = {fmdl.nodes,
                   fmdl.elems,
