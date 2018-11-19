@@ -39,6 +39,7 @@ function parse_config
   eval('config'); 
 
   subplot(611);
+  mycolormap;
   image(linspace(0,256,32)); axis off;
   print_convert(pp.colourbar,struct('resolution',30));
 
