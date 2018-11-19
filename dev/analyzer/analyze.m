@@ -170,6 +170,47 @@ function out= flow_volume_global(dd,ii)
    fout, fout);
   print_convert(fout);
 
+function out= flow_volume_components(dd,ii)
+  global pp; % parameters
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Flow-Volume Components';
+     return
+  end
+  clf;plot(NaN); hold on;
+  intersect=[];
+  for i=1:dd.n_breaths
+     eie = dd.breaths(i,[1,2,3]);
+     eflo= eie(2) + pp.flow_window;
+     efla= eie(3) - (40:130);
+     vol = dd.CV(eie(1):eie(3));
+     volD= dd.CV(eflo);
+     volA= dd.CV(efla);
+     volA= volA-vol(1);   volD= volD-vol(1);   vol = vol-vol(1);
+     volA= volA/max(vol); volD= volD/max(vol); vol = vol/max(vol);
+     volA= 100*volA;      volD= 100*volD;      vol = 100*vol;
+
+     flow=    dd.flow(eie(1):eie(3));
+     flowD=   dd.flow(eflo);
+     flowA=   dd.flow(efla);
+     plot(vol,flow,'LineWidth',2,'Color',[0,0,1]); 
+     plot(volD,flowD,'LineWidth',4,'Color',[0,0.5,0]); 
+     plot(volA,flowA,'LineWidth',4,'Color',[0.5,0,0]); 
+
+     pD = polyfit(volD,flowD,1); idx = [30,90];
+     plot(idx,polyval(pD,idx),'LineWidth',1,'Color',[0,0.5,0]); 
+     pA = mean(flowA); idx = [5,50];
+     plot(idx,polyval(pA,idx),'LineWidth',1,'Color',[0.5,0,0]); 
+     intersect(i) = (pA-pD(2))/pD(1); 
+     plot(intersect(i),pA,'k*');
+  end
+  hold off; xlim([0,100]);
+  fout = sprintf('g_fv_comp%03d.png',ii);
+  out = sprintf(['<center>Intercept = %3.1f%%<br>' ...
+   '<a href="%s"><img width="300" src="%s"></a>', ...
+   '</center>'],...
+   median(intersect), fout, fout);
+  print_convert(fout);
+
 function out= flow_volume_global_slope(dd,ii)
   global pp; % parameters
   if ischar(dd) && strcmp(dd,'TITLE');
