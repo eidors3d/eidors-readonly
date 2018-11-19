@@ -14,8 +14,7 @@ function analyze
 function iterate_over_files
   global pp; % parameters
   files= dir('*.mat');
-% for f= 1 %:length(files)
-  for f= 6:length(files)
+  for f= 1:length(files)
      fn = files(f).name;
      disp(fn);
      dd = loadfile(fn);
