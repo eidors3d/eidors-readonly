@@ -55,18 +55,18 @@ pp = parse_options(filename, varargin{:});
 
 tmpnam = [tempname,'.png'];
 
-old_ihc = get(gcf, 'InvertHardcopy');
-old_col = get(gcf, 'Color');
-set(gcf,'InvertHardCopy','off'); 
-set(gcf,'Color','w');
+old_ihc = get(pp.figno, 'InvertHardcopy');
+old_col = get(pp.figno, 'Color');
+set(pp.figno,'InvertHardCopy','off'); 
+set(pp.figno,'Color','w');
 
-set(gcf,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
+set(pp.figno,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
 %%% The -dpng driver is broken in R2014a on linux (and maybe others);
 print(pp.figno,'-dpng',pp.resolution,tmpnam);
-set(gcf,'PaperPosition',pp.page);
+set(pp.figno,'PaperPosition',pp.page);
  
-set(gcf,'InvertHardCopy',old_ihc); % 
-set(gcf,'Color',old_col);
+set(pp.figno,'InvertHardCopy',old_ihc); % 
+set(pp.figno,'Color',old_col);
  
 im = imread(tmpnam,'png');
 delete(tmpnam);
@@ -171,7 +171,7 @@ function pp = parse_options(filename,varargin)
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
    pp.crop_slack = [0,0,0,0];
-   pp.figno = gcf; % default
+   pp.figno = get(gcf,'Number'); % default
    
    
  
@@ -244,6 +244,8 @@ function pp = parse_options(filename,varargin)
      end
      if isfield(opt,'figno');
         pp.figno = opt.figno;
+        pp.page = get(pp.figno,'PaperPosition');
+        pp.posn = pp.page;
      end
    else
       error('Can''t parse options');
