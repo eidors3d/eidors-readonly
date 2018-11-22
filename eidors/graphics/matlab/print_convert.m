@@ -194,6 +194,11 @@ function pp = parse_options(filename,varargin)
          pp.resolution = sprintf('-r%d', str2double(val{1}{1}) * pp.factor);
       end
    elseif isstruct(opt)
+     if isfield(opt,'figno');
+        pp.figno = opt.figno;
+        pp.page = get(pp.figno,'PaperPosition');
+        pp.posn = pp.page;
+     end
      if isfield(opt,'supersampling_factor')
         pp.factor = opt.supersampling_factor;
      end
@@ -241,11 +246,6 @@ function pp = parse_options(filename,varargin)
      end
      if isfield(opt,'crop_slack');
         pp.crop_slack = opt.crop_slack;
-     end
-     if isfield(opt,'figno');
-        pp.figno = opt.figno;
-        pp.page = get(pp.figno,'PaperPosition');
-        pp.posn = pp.page;
      end
    else
       error('Can''t parse options');
