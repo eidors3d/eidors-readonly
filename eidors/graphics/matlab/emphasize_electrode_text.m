@@ -18,7 +18,7 @@ for hi = hh(:)'
   end
   set(hi, 'BackgroundColor', bgcolour);
   set(hi, 'FontSize', 12);
-  pn = get(hi, 'Position') 
+  pn = get(hi, 'Position');
   set(hi, 'Position', pn + dirn);
 end
 
