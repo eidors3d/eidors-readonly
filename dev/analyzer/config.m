@@ -10,5 +10,7 @@
  DO flow_volume_components
 
 CONFIG rotate 180
-CONFIG min_breath_length 2 % seconds
+CONFIG min_insp_length 0.5 % seconds
+CONFIG min_expi_length 1.0 % seconds
+CONFIG FRC_search_window  0.3  % search 100ms for FRC
 CONFIG slices 4 

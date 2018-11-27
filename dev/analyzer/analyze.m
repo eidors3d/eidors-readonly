@@ -37,8 +37,9 @@ function parse_config
   pp.callfns = cell();
   pp.rotate  = 0;
   pp.slices  = 4;
-  pp.min_breath_length  = 6; % 1 seconds for horses
-  pp.breath_search_window = 0.2; % search 100ms for FRC
+  pp.min_insp_length  = 0.5; % 1 seconds for horses
+  pp.min_insp_length  = 1.0; % 1 seconds for horses
+  pp.FRC_search_window = 0.2; % search 100ms for FRC
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
   eval('config'); 
@@ -65,7 +66,9 @@ function CONFIG(varargin)
   van = str2num(var);
   switch cmd
     case 'rotate';            pp.rotate= van;
-    case 'min_breath_length'; pp.min_breath_length= van;
+    case 'min_insp_length';   pp.min_insp_length=   van;
+    case 'min_expi_length';   pp.min_expi_length=   van;
+    case 'FRC_search_window'; pp.FRC_search_window= van;
     case 'slices'           ; pp.slices= van;
     otherwise;
       error('CONFIG parameter %s not understood', cmd);
@@ -426,7 +429,6 @@ function breaths= find_frc( data );
    inout= zeros(lseq,1);
    i = 1;
    inout(i) = sign( flow(i)+eps ); % eps to force not zero
-   min_breath_length = round(pp.min_breath_length*data.FR);
    for i = 2:lseq-1
      cval= inout(i-1);
      if cval*flow(i) > -thresh
@@ -437,40 +439,46 @@ function breaths= find_frc( data );
    end
    inout(lseq) = inout(lseq-1);
 
-   breath_window= round(pp.breath_search_window/2*data.FR);
+% Shorter forward window because detection is lagging
+   breath_window_fwd= round(pp.FRC_search_window/4*data.FR);
+   breath_window_bak= round(pp.FRC_search_window*data.FR);
 
    dinout= diff( inout );
    fdiff = find( diff(inout) );
-   fdiff(fdiff<breath_window       )= []; % too close
-   fdiff(fdiff>lseq - breath_window)= []; % too close
+   fdiff(fdiff<=breath_window_bak      )= []; % too close
+   fdiff(fdiff>lseq - breath_window_fwd)= []; % too close
 
    eexpi= fdiff( (dinout(fdiff)>0) );
    einsp= fdiff( (dinout(fdiff)<0) );
 
    % Find the best point
-   ww= -breath_window:breath_window;
+   ww= -breath_window_bak:breath_window_fwd;
    for i=1:length(eexpi);
      wind= seq( eexpi(i)+ ww );
      ff = find( wind== min(wind) );
-     ff= ff(1)-breath_window-1;
+     ff= ff(1)+min(ww)-1;
      eexpi(i)= eexpi(i) + ff;
    end
    for i=1:length(einsp);
      wind= seq( einsp(i)+ ww );
      ff = find( wind== max(wind) );
-     ff= ff(1)-breath_window -1;
+     ff= ff(1)+min(ww)-1;
      einsp(i)= einsp(i) + ff;
    end
 
+   min_insp_length = round(pp.min_insp_length*data.FR);
+   min_expi_length = round(pp.min_expi_length*data.FR);
    breaths = [];
    i=1;e=1; while true;
       if i>=length(einsp) && e>=length(eexpi)-1; break; end
       if einsp(i) < eexpi(e);
          i=i+1;
       else
-         if einsp(i) - eexpi(e) > min_breath_length && ...
-            eexpi(e+1)-einsp(i) > min_breath_length;
+         if einsp(i) - eexpi(e) > min_insp_length && ...
+            eexpi(e+1)-einsp(i) > min_expi_length;
             breaths(end+1,:) = [eexpi(e), einsp(i), eexpi(e+1)]; 
+         else
+            keyboard
          end
          i=i+1; e=e+1;
       end
