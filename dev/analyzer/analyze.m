@@ -21,7 +21,12 @@ function iterate_over_files
      fid = outfile;
      fprintf(fid,'<TR><TD>%s',fn(1:end-4));
      for i=1:length(pp.callfns)
-        out = feval(pp.callfns{i},dd,f);
+        reqbreaths = feval(pp.callfns{i},'REQBREATHS?');
+        if reqbreaths && dd.n_breaths==0
+           out = '<font size="+2"><center><b>No breaths detected</b></center></font>';
+        else
+           out = feval(pp.callfns{i},dd,f);
+        end
         fprintf(fid,'<TD>%s',out);
      end
      fclose(fid);
@@ -83,8 +88,10 @@ function dd = loadfile(fname);
 
 function out= show_breaths(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
-     out = 'Breaths';
-     return
+     out = 'Breaths'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = false; return
   end
   fout = sprintf('breaths%03d.png',ii);
   out = sprintf( ...
@@ -103,8 +110,10 @@ function out= show_breaths(dd,ii)
 
 function out= show_volume_n_flow(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
-     out = 'Volume/Flow vs t';
-     return
+     out = 'Volume/Flow vs t'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
   end
   fout = sprintf('vol_flow%03d.png',ii);
   out = sprintf( ...
@@ -127,6 +136,9 @@ function out= stats_volume_n_flow(dd,ii)
      out = 'Volume/Flow stats';
      return
   end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
   TV = []; Pif = []; Pef = [];
   for i=1:dd.n_breaths
      eie = dd.breaths(i,[1,2,3]);
@@ -148,6 +160,9 @@ function out= flow_volume_global(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'Flow-Volume';
      return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
   end
   clf;plot(NaN); hold on;
   for i=1:dd.n_breaths
@@ -175,6 +190,9 @@ function out= flow_volume_components(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'Flow-Volume Components';
      return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
   end
   clf;plot(NaN); hold on;
   intersect=[];
@@ -217,6 +235,9 @@ function out= flow_volume_global_slope(dd,ii)
      out = 'F-V Slope';
      return
   end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
   out= '<table border=1><TR><TH>#<TH>Slope';
   for i=1:dd.n_breaths
      eie = dd.breaths(i,[1,2,3]);
@@ -258,6 +279,9 @@ function out= TV_image(dd,ii)
      out = 'TV Image';
      return
   end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
   TV = TVcalc(dd);
   TV(dd.ZR(:,:,1)==0) = NaN;
   mycolormap;
@@ -276,6 +300,9 @@ function out= TV_slices(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'TV Slices';
      return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
   end
   TV = TVcalc(dd);
   TV = my_image(TV); %rotate if req'd
@@ -327,6 +354,9 @@ function out= flow_volume_image(dd,ii)
      out = 'Flow-Volume Image';
      return
   end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
   FV = FV_calc(dd);
   mycolormap;
   my_image(FV*200/max(FV(:))+50);
@@ -343,6 +373,9 @@ function out= flow_volume_slices(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'Flow-volume Slices';
      return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
   end
   FV = FV_calc(dd);
   FV = my_image(FV); %rotate if req'd
