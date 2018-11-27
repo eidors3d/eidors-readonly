@@ -40,6 +40,7 @@ function parse_config
   pp.min_insp_length  = 0.5; % 1 seconds for horses
   pp.min_insp_length  = 1.0; % 1 seconds for horses
   pp.FRC_search_window = 0.2; % search 100ms for FRC
+  pp.FRC_relative_match = 0.2; % match start/end FRC
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
   eval('config'); 
@@ -65,11 +66,12 @@ function CONFIG(varargin)
   var = varargin{2};
   van = str2num(var);
   switch cmd
-    case 'rotate';            pp.rotate= van;
-    case 'min_insp_length';   pp.min_insp_length=   van;
-    case 'min_expi_length';   pp.min_expi_length=   van;
-    case 'FRC_search_window'; pp.FRC_search_window= van;
-    case 'slices'           ; pp.slices= van;
+    case 'rotate';             pp.rotate= van;
+    case 'min_insp_length';    pp.min_insp_length=   van;
+    case 'min_expi_length';    pp.min_expi_length=   van;
+    case 'FRC_search_window';  pp.FRC_search_window= van;
+    case 'FRC_relative_match'; pp.FRC_relative_match= van;
+    case 'slices'           ;  pp.slices= van;
     otherwise;
       error('CONFIG parameter %s not understood', cmd);
   end
@@ -474,12 +476,18 @@ function breaths= find_frc( data );
       if einsp(i) < eexpi(e);
          i=i+1;
       else
-         if einsp(i) - eexpi(e) > min_insp_length && ...
-            eexpi(e+1)-einsp(i) > min_expi_length;
+         rstr =  sprintf('rejecting breath (%d) [%i-%i-%i]: ', ...
+               i, eexpi(e), einsp(i), eexpi(e+1));
+         FRCs= seq1(eexpi(e+[0:1]));
+         TV  = seq1(einsp(i)) - mean(FRCs);
+         if einsp(i) - eexpi(e) < min_insp_length 
+            disp([rstr,'min_insp_length']);
+         elseif eexpi(e+1)-einsp(i) < min_expi_length;
+            disp([rstr,'min_expi_length']);
+         elseif abs(diff(FRCs))/TV > pp.FRC_relative_match
+            disp([rstr,'FRC_relative_match']);
+         else %accept breath
             breaths(end+1,:) = [eexpi(e), einsp(i), eexpi(e+1)]; 
-         else
-            fprintf('rejecting breath (%d) [%i %i %i]\n', ...
-               i, eexpi(e), einsp(i), eexpi(e));
          end
          i=i+1; e=e+1;
       end
