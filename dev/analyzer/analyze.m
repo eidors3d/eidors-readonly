@@ -478,7 +478,8 @@ function breaths= find_frc( data );
             eexpi(e+1)-einsp(i) > min_expi_length;
             breaths(end+1,:) = [eexpi(e), einsp(i), eexpi(e+1)]; 
          else
-            keyboard
+            fprintf('rejecting breath (%d) [%i %i %i]\n', ...
+               i, eexpi(e), einsp(i), eexpi(e));
          end
          i=i+1; e=e+1;
       end
