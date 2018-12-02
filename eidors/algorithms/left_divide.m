@@ -40,10 +40,17 @@ try
     %    mesh
     if issparse(E)
         
-        [Q,R] = qr(I,0);
-        rnotzeros = any(R~=0,2);
-        Q= Q(:,rnotzeros);
+% This should speed up, and help issue with octave on QR
+        inotzeros = any(I,2);
+        [Qi,R] = qr(I(inotzeros,:),0);
+        rnotzeros = any(R,2);
         R= R(rnotzeros,:);
+        Q = sparse(size(I,1), size(R,1));
+        Q(inotzeros,:) = Qi(:,rnotzeros);
+%        [Q,R] = qr(I,0);
+%        rnotzeros = any(R~=0,2);
+%        Q= Q(:,rnotzeros);
+%        R= R(rnotzeros,:);
         V= (E \ Q)*R;
         
     else
