@@ -41,9 +41,13 @@ try
     if issparse(E)
         
 % This should speed up, and help issue with octave on QR
-        inotzeros = any(I,2);
+        inotzeros = logical(any(I,2));
+      if exist('OCTAVE_VERSION') == 5 % v 4.4 has problems with sparse qr
+        [Qi,R] = qr(full(I(inotzeros,:)),0);
+      else
         [Qi,R] = qr(I(inotzeros,:),0);
-        rnotzeros = any(R,2);
+      end
+        rnotzeros = logical(any(R,2));
         R= R(rnotzeros,:);
         Q = sparse(size(I,1), size(R,1));
         Q(inotzeros,:) = Qi(:,rnotzeros);

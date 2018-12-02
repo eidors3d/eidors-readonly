@@ -126,3 +126,22 @@ disp(JJ(:,1:6))
 unit_test_cmp('Jaa vs Jnp', Jaa, Jnp, 1e-6);
 unit_test_cmp('Jaa vs Jp1', Jaa, Jp1, 1e-6);
 unit_test_cmp('Jaa vs Jp2', Jaa, Jp2, 1e-3);
+
+
+function cleaner_code
+% Cleaner code using newer EIDORS helper functions (AA - dec 2018)
+ll=5; ww=1; hh=1; z_contact= 1e-1; conduc= .13; current= 4; scale = .46;
+mdl= rmfield( mk_grid_model([],0:ww,0:hh,0:ll), 'coarse2fine');
+mdl.boundary= find_boundary(mdl.elems); mdl.gnd_node = 1;
+mdl.electrode(1)=struct('z_contact', z_contact, 'nodes', ...
+     find(mdl.nodes(:,3)==0));
+mdl.electrode(2)=struct('z_contact', z_contact, 'nodes', ...
+     find(mdl.nodes(:,3)==ll));
+mdl.stimulation= stim_meas_list([1,2,1,2],2,current);
+mdl.nodes = mdl.nodes * scale;
+show_fem(mdl);
+Block_R =  ll / ww / hh / scale/ conduc;
+Contact_R = z_contact/(ww*hh)/scale^2;
+Vs = current * ( Block_R + 2*Contact_R );
+vh = fwd_solve(mk_image(mdl, conduc));
+unit_test_cmp('3D Resistor',Vs, vh.meas, 1e-10);
