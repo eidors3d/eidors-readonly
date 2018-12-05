@@ -34,6 +34,11 @@ function mdl_pts = interp_mesh( mdl, n_interp)
 if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); do_unit_test;return; end
 
 if nargin<2; n_interp=0; end
+if strcmp(mdl.type,'image') || strcmp(mdl.type,'inv_model')
+   mdl = mdl.fwd_model;
+end
+
+
 try n_interp = mdl.interp_mesh.n_interp; end % Override if provided
 
 
