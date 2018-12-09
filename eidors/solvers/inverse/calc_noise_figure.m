@@ -54,6 +54,19 @@ end
 if nargin == 3 && numel(hp) > 1
     h_data = hp;
     c_data = iterations;
+    if isstruct(c_data) && strcmp(c_data.type,'data'); 
+       c_data = c_data.meas;
+    end
+elseif nargin == 3 && isstruct(hp);
+    if strcmp(hp.type,'data'); 
+       h_data = hp.meas;
+    else
+       error('expecting object of type "data"')
+    end
+    c_data = iterations;
+    if isstruct(c_data) && strcmp(c_data.type,'data'); 
+       c_data = c_data.meas;
+    end
 else
     [inv_model, h_data, c_data] = process_parameters( inv_model );
 end
