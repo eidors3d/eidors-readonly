@@ -188,6 +188,7 @@ if isfield(opt,'show_NF_chosen') && opt.show_NF_chosen
    xyzr = opt.noise_figure_targets;
    [jnk,vi_NF] = simulate_movement(imgs,xyzr');
    NF = calc_noise_figure(imdl,vh, vi_NF);
+   imdl.show_NF_chosen = NF; 
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
 end
 
