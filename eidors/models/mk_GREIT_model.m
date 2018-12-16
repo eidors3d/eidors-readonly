@@ -54,6 +54,7 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     keep_intermediate_results - if true, stores additional data of 
 %         reconstruction matrix computation to be used later on, 
 %         e.g. for faulty electrode compensation
+%     show_NF_chosen - Show the NF value chosen
 %
 % NOTE
 %   currently extra_noise is not supported
@@ -183,6 +184,12 @@ end
 imdl.jacobian_bkgnd = imgs;
 %imdl.solve_use_matrix.map = inside;
 imdl.hyperparameter.value = weight;     % store the applied weight as "hyperparameter" value
+if isfield(opt,'show_NF_chosen') && opt.show_NF_chosen
+   xyzr = opt.noise_figure_targets;
+   [jnk,vi_NF] = simulate_movement(imgs,xyzr');
+   NF = calc_noise_figure(imdl,vh, vi_NF);
+   eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
+end
 
 function out = to_optimise(vh,vi,xy,radius,weight, opt, imdl, ...
     target,vi_NF)
