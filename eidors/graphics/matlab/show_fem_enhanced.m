@@ -1,4 +1,4 @@
-function hh = show_fem(mdl, options)
+function hh = show_fem_enhanced(mdl, options)
 % SHOW_FEM: show the EIDORS3D finite element model
 % hh = show_fem(mdl, options)
 % mdl is an EIDORS3D 'model' or 'image' structure
