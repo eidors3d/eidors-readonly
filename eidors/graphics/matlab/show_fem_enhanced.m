@@ -100,9 +100,11 @@ hh = draw_all(img, mdl, opts);
 
 % Setup callback function.
 if (opts.edge.significant.viewpoint_dependent.callback)
+    if ~exist('OCTAVE_VERSION'); %octave's not compativble (4.4.1)
     h3d = rotate3d;
     set(gca, 'UserData', struct('name', 'show_fem_data', 'img', img, 'mdl', mdl, 'opts', opts));
     set(h3d, 'ActionPostCallback' , @refresh_current_axis)
+    end
 end
 
 if (nargout == 0)
@@ -315,8 +317,12 @@ function hh = draw_fem(img, mdl, opts)
         
         if opts.edge.significant.show
             if opts.edge.significant.viewpoint_dependent.show 
+                if exist('viewmtx')
                 % Highlight profile of boundary according to viewing angle.
                 T = viewmtx(opts.viewpoint.az, opts.viewpoint.el);
+                else % octave doesn't have viewmtx yet
+                T = ones(4);
+                end
                 transformed_boundary_normal_vector = mdl.boundary_normal_vector*T(1:3,1:3)';
                 boundary_edges_idx2 = (transformed_boundary_normal_vector(mdl.edge2boundary(:, 1), 3).*transformed_boundary_normal_vector(mdl.edge2boundary(:, 2), 3) <= 0);
 
