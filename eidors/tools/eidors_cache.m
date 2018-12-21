@@ -366,17 +366,17 @@ function cache_list (order)
    meta(:,N+1) = num2cell(get_cache_priority);
    switch order
        case 'time'
-           meta = sortrows(meta,c.time); % sort by time
+           meta = mysortrows(meta,c.time); % sort by time
        case {'prop','name'}
-           meta = sortrows(meta,c.prop); % sort by name
+           meta = mysortrows(meta,c.prop); % sort by name
        case 'rank'
-           meta = sortrows(meta,N+1); % sort by rank
+           meta = mysortrows(meta,N+1); % sort by rank
        case 'size'
-           meta = sortrows(meta,-c.size); % sort by rank
+           meta = mysortrows(meta,-c.size); % sort by rank
        case 'effort'
-           meta = sortrows(meta,-c.effort);
+           meta = mysortrows(meta,-c.effort);
        case 'count'
-           meta = sortrows(meta,-c.count);
+           meta = mysortrows(meta,-c.count);
        otherwise
            error('Unrecognized sort order');
    end
@@ -391,7 +391,7 @@ function priidx = get_cache_priority
    if isfield(eidors_objects.cache, 'meta') && isfield(eidors_objects.cache, 'cols')
       meta = eidors_objects.cache.meta;
       c = eidors_objects.cache.cols;
-      [jnk, priidx] = sortrows(meta,[-c.score_eff c.score_sz -c.time]);
+      [jnk, priidx] = mysortrows(meta,[-c.score_eff c.score_sz -c.time]);
       priidx(priidx) = 1:size(meta,1);
    end
 
@@ -577,6 +577,17 @@ function [v1 v2] = test_function(a,b,c,d)
    v1 = rand(1);
    v2 = rand(1);
    
+function [meta,idx] = mysortrows(meta, cols)
+   if ~exist('OCTAVE_VERSION') % octave doesn't sort cells
+      [meta,idx] = sortrows(meta, cols);
+   else
+      metm = cell2mat(meta(:,3:end));
+      cols = ( abs(cols) - 2 ) .* sign(cols);
+      [~,idx] = sortrows(metm, cols);
+      meta = meta(idx,:);
+   end
+
+
 function test_debug
    eidors_cache clear
    eidors_obj('set-cache',{5}, 'test1',50);
