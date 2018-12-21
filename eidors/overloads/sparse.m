@@ -11,6 +11,8 @@ function S = sparse(varargin)
 % $Id$
 
 for i= 1:nargin
-  varargin{i} = double(varargin{i});
+  if ~isa(varargin{i},'double')
+     varargin{i} = double(varargin{i});
+  end
 end
 S = builtin('sparse',varargin{:});
