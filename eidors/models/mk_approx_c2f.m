@@ -156,12 +156,15 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    % lower density interpolation in higher dimentions, since 
    % the added dimensions will give extra interpolation points.
    n_interp = 7-df;
+   interp_mdl.type= 'fwd_model';
    interp_mdl.nodes= fm.nodes;
    interp_mdl.elems= fm.elems(fidx,:);
    interp_mdl.interp_mesh.n_interp = fm.interp_mesh.n_interp;
  
 
+disp(1)
    fm_pts = interp_mesh( interp_mdl, n_interp);
+disp(2)
    l_interp = size(fm_pts,3);
 
    fm_pts = permute( fm_pts, [3,1,2]);
