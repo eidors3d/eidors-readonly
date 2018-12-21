@@ -20,7 +20,7 @@ end
 fwd_model= img.fwd_model;
 
 solver = @eidors_default;
-try
+try % replace solver if this one exists
    solver = fwd_model.fwd_solve_apparent_resistivity.solve;
 end
 
@@ -48,6 +48,7 @@ if isa(fctr, 'function_handle')
 end
 
 if isnan(fctr)
+   
    vh = fwd_solve(mk_image(img.fwd_model,1));
    n = length(vh.meas);
    fctr = spdiags(1./vh.meas,0,n,n);
@@ -55,17 +56,13 @@ end
 
 
 function do_unit_test
-   imdl = mk_common_model('a2c2',8); 
-   img = mk_image(imdl);
-   vrh = fwd_solve( img );
-   img.elem_data(1) = 1.1;
-   vri = fwd_solve( img );
+   img = mk_image(mk_common_model('a2c2',8)); 
+   img.elem_data(:) = 1.0; vrh = fwd_solve( img );
+   img.elem_data(1) = 1.1; vri = fwd_solve( img );
 
-   img = mk_image(imdl);
    img.fwd_model.solve = @fwd_solve_apparent_resistivity;
-   vah = fwd_solve( img );
-   img.elem_data(1) = 1.1;
-   vai = fwd_solve( img );
+   img.elem_data(:) = 1.0; vah = fwd_solve( img );
+   img.elem_data(1) = 1.1; vai = fwd_solve( img );
 
    unit_test_cmp('homog is ones', vah.meas, ones(size(vah.meas)), 1e-10);
    unit_test_cmp('ratio is same', vai.meas./vah.meas, vri.meas./vrh.meas, 1e-10);

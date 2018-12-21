@@ -401,7 +401,6 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     #endif
     hash_struct( c, var);
   } else
-#ifndef OCTAVE_API // Octave can't do this yet
   if ( mxIsFunctionHandle(var) ) {
     // function_handle. Get string of fcn name
     /* I can't find any documentation on getting fcn string in mex */
@@ -421,7 +420,6 @@ recurse_hash( hash_context *c, const mxArray *var ) {
     }
     mxDestroyArray( lhs[0] );
   } else
-#endif
   {
     #ifdef VERBOSE
       mexPrintf("ignoring var of ClassID ( %d ):", mxGetClassID( var ) );
