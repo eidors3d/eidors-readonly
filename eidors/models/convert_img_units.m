@@ -93,11 +93,18 @@ if strcmp(cur_unit, new_unit)
     return %nothing to do 
 end
 
-f = str2func(sprintf('%s2%s',cur_unit,new_unit));
 try
+   f = str2func(sprintf('%s2%s',cur_unit,new_unit));
    x = feval(f,x);
    x = fix_and_test(x);
 catch err
+  if isempty(err.identifier) % Octave error off str2func
+     if strcmp(err.message(end-(30:-1:0)), ...
+            'no function and no method found')
+        err.identifier='MATLAB:UndefinedFunction';
+     end
+  end
+   
   if strcmp(err.identifier,'MATLAB:UndefinedFunction')
     cur_pre = regexp(cur_unit,'^(.*?)_','match');
     if ~isempty(cur_pre) && ismember(cur_pre{1}, {'log_', 'log10_'});
