@@ -140,24 +140,32 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
                   rmdl.nodes(r_nodes(:,t),:)];
          last_v = last_v + 1;
          if size(pts,1) < 3, continue, end 
+         % move points to origin (helps for small elements at
+         % large coordinates
+         ctr = mean(pts);
+         pts = bsxfun(@minus,pts,ctr);
+         scale = max(abs(pts(:)));
+         if scale == 0 %happens when there's only one point
+            continue
+         end
+         % scale largest coordinate to 1 (helps with precision)
+         pts = pts ./ scale;
+         % force thorough search for initinal simplex and
+         % supress precision warnings
+         if any(std(pts)<1e-12); continue; end
          try
-            % move points to origin (helps for small elements at
-            % large coordinates
-            ctr = mean(pts);
-            pts = bsxfun(@minus,pts,ctr);
-            scale = max(abs(pts(:)));
-            if scale == 0 %happens when there's only one point
-               continue
-            end
-            % scale largest coordinate to 1 (helps with precision)
-            pts = pts ./ scale;
-            % force thorough search for initinal simplex and
-            % supress precision warnings
             [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
+
             V(last_v) = max(V(last_v),0); % numerical issues may produce tiny negative volume
             V(last_v) = V(last_v) * scale^2; % undo scaling
          catch err
             ok = false;
+            if exist('OCTAVE_VERSION')
+               if strcmp(err.message,'convhulln: qhull failed')
+                  err.identifier =  'MATLAB:qhullmx:DegenerateData';
+               end
+                  
+            end
             switch err.identifier
                case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
                   % border case point may be included multiple times.

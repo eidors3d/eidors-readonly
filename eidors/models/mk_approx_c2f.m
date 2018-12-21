@@ -162,9 +162,7 @@ function c_elems = contained_elems_i( fm, cm, idx, z_depth)
    interp_mdl.interp_mesh.n_interp = fm.interp_mesh.n_interp;
  
 
-disp(1)
    fm_pts = interp_mesh( interp_mdl, n_interp);
-disp(2)
    l_interp = size(fm_pts,3);
 
    fm_pts = permute( fm_pts, [3,1,2]);
