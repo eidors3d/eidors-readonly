@@ -110,7 +110,3 @@ function do_unit_test
 
    i2 = mk_common_model('b2c0',8); fmdl2= i2.fwd_model;
    c2f = mk_coarse_fine_mapping(fmdl2, img.fwd_model);
-   img.fwd_model.coarse2fine = c2f;
-   unit_test_cmp('c2f_01', get_img_data(img), c2f*ones(64,1))
-    
-   % TODO ADD TESTS WHICH GIVE C2F ON NODE_DATA
