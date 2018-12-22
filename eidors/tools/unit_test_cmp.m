@@ -11,13 +11,19 @@ function unit_test_cmp(txt,a,b,tol)
 % License GPL v2 or v3: $Id$
 
 persistent ntotal;
+persistent test_start_time;
 persistent npass;
-if strcmp(txt,'RESET_COUNTER'); ntotal=0; npass=0; return; end
+if strcmp(txt,'RESET_COUNTER');
+    ntotal=0; npass=0; test_start_time=cputime(); return;
+end
 if strcmp(txt,'SHOW_COUNTER');
   if ntotal == 0;
-     eidors_msg('%s: pass %d/%d',a, npass, ntotal,0); return;
+     eidors_msg('%s: pass %d/%d (t=%6.2fs)',a, ...
+         npass, ntotal, cputime() - test_start_time, 0 );
   else
-     eidors_msg('%s: pass %d/%d = %5.1f%%',a, npass, ntotal, 100*npass/ntotal,0);
+     eidors_msg('%s: pass %d/%d = %5.1f%% (t=%6.2fs)', a, ...
+         npass, ntotal, 100*npass/ntotal, ...
+         cputime() - test_start_time, 0 );
   end
   return;
 end
