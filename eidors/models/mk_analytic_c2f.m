@@ -38,7 +38,7 @@ function [mapping, outside] = mk_analytic_c2f( f_mdl, c_mdl, opt)
 
 if ischar(f_mdl) && strcmp(f_mdl, 'UNIT_TEST'); do_unit_test; return; end
 
-if ischar(f_mdl) && strcmp(f_mdl, 'LOAD'); load; return; end
+if ischar(f_mdl) && strcmp(f_mdl, 'LOAD'); preload; return; end
 
 if nargin== 2, opt = struct; end
 
@@ -180,21 +180,22 @@ function do_original_2d_tests
    % show_fem(fmdl); hold on ; show_fem(cmdl); hold off
    c2f = mk_analytic_c2f( fmdl, cmdl);
 
-function load
+% preload into cache before tests
+function preload
 
-% Create forward, fine tank model
-electrodes_per_plane = 16;
-number_of_planes = 2;
-tank_radius = 0.2;
-tank_height = 0.5;
-fine_mdl = ng_mk_cyl_models([tank_height,tank_radius],...
-    [electrodes_per_plane,0.15,0.35],[0.01]);
- 
-% Create coarse model for inverse problem
-coarse_mdl_maxh = 0.07; % maximum element size 
-coarse_mdl = ng_mk_cyl_models([tank_height,tank_radius,coarse_mdl_maxh],[0],[]);
+   % Create forward, fine tank model
+   electrodes_per_plane = 16;
+   number_of_planes = 2;
+   tank_radius = 0.2;
+   tank_height = 0.5;
+   fine_mdl = ng_mk_cyl_models([tank_height,tank_radius],...
+       [electrodes_per_plane,0.15,0.35],[0.01]);
+    
+   % Create coarse model for inverse problem
+   coarse_mdl_maxh = 0.07; % maximum element size 
+   coarse_mdl = ng_mk_cyl_models([tank_height,tank_radius,coarse_mdl_maxh],[0],[]);
 
-disp('Calculating coarse2fine mapping ...');
-inv3d.fwd_model.coarse2fine = ...
-       mk_analytic_c2f( fine_mdl, coarse_mdl);
-disp('   ... done');
+   disp('Calculating coarse2fine mapping ...');
+   inv3d.fwd_model.coarse2fine = ...
+          mk_analytic_c2f( fine_mdl, coarse_mdl);
+   disp('   ... done');
