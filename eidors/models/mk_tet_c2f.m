@@ -533,7 +533,6 @@ function do_case_test
 
    X = 2; Y = 3; % subplot matrix
    for i = 1:30
-        fprintf('%d\n',i);
         t1.nodes = [0 0 0; 0 1 0; 1 0 0; 0 0 1];
         t2 = t1;
         switch i
@@ -541,30 +540,32 @@ function do_case_test
               txt = 'identical';
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              unit_test_cmp(txt,c2f,1,eps);
+              tol = eps; cmptarg = 1;
            case 2
               txt = 'shared face';
               t2.nodes(end,end) = -1;
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              unit_test_cmp(txt,c2f,0,0);
+              tol = 0; cmptarg = 0;
            case 3
               txt = 'coplanar faces';
               t2.nodes(end,end) = -1;
               t1.nodes(:,1:2) = t1.nodes(:,1:2) + .2;
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              unit_test_cmp(txt,c2f,0,0);
+              tol = 0; cmptarg = 0;
            case 4
               txt = 'point on edge';
               t2.nodes(:,1) = t1.nodes(:,1) + 1;
               t2.nodes(:,2) = t1.nodes(:,2) - .3;
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              unit_test_cmp(txt,c2f,0,0);
+              tol = 0; cmptarg = 0;
            otherwise
              break;
         end
+        txt = sprintf('%02d: %s',i,txt);
+        unit_test_cmp(txt,c2f,cmptarg,tol);
 
       
    end
