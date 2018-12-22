@@ -140,19 +140,23 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
                   rmdl.nodes(r_nodes(:,t),:)];
          last_v = last_v + 1;
          if size(pts,1) < 3, continue, end 
-         % move points to origin (helps for small elements at
-         % large coordinates
-         ctr = mean(pts);
-         pts = bsxfun(@minus,pts,ctr);
-         scale = max(abs(pts(:)));
-         if scale == 0 %happens when there's only one point
-            continue
-         end
-         % scale largest coordinate to 1 (helps with precision)
-         pts = pts ./ scale;
-         % force thorough search for initinal simplex and
-         % supress precision warnings
-         if any(any(dist2(pts))); continue; end
+            % move points to origin (helps for small elements at
+            % large coordinates
+            ctr = mean(pts);
+            pts = bsxfun(@minus,pts,ctr);
+            scale = max(abs(pts(:)));
+            if scale == 0 %happens when there's only one point
+               continue
+            end
+            % scale largest coordinate to 1 (helps with precision)
+            pts = pts ./ scale;
+            % force thorough search for initinal simplex and
+            % supress precision warnings
+%           if any(any(dist2(pts))); continue; end
+         pts= uniquetol(pts,1e-10,'ByRows',true,'DataScale',1);
+         % This won't catch all cases
+         if size(pts,1)<=size(pts,2); continue; end
+         if any(std(pts)<1e-14); continue; end
          try
             [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
 
@@ -161,7 +165,7 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
          catch err
 %    Save cases were errors called
 %           if ~exist('ok'); ptsi={}; end
-%           ptsi{end+1} = {pts,dist2(pts)};
+%           ptsi{end+1} = pts;
 %           save -mat CHP.mat ptsi; 
             ok = false;
             if exist('OCTAVE_VERSION')
@@ -207,7 +211,7 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
                   keyboard
                else
                   fprintf('\n');
-                  eidors_msg(['convhulln has thrown an error. ' ...
+                  eidors_msg(['convhulln has thrown an error. (',e.message,')', ...
                      'Enable eidors_debug on mk_tri_c2f and re-run to see a debug plot'],0);
                   rethrow(err);
                end
@@ -369,16 +373,6 @@ end
 
 function do_unit_test
    do_small_test
-end
-
-function [dmat,opt] = dist2(xy);
-% Code from distmat.m (C) J Kirk
-   [n,dims] = size(xy);
-   a = reshape(xy,1,n,dims);
-   b = reshape(xy,n,1,dims);
-%  dmat = sum((a(ones(n,1),:,:) - b(:,ones(n,1),:)).^2,3);
-   dmat = sum(abs(a(ones(n,1),:,:) - b(:,ones(n,1),:)),3);
-   dmat = ((dmat + eye(n)<1e-12)); % any non-zeros
 end
 
 function do_small_test
