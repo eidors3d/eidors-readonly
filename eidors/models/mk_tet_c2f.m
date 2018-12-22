@@ -176,7 +176,6 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
             % numerical issues alone
             continue
          end
-         try
             % move points to origin (helps for small elements at
             % large coordinates
             ctr = mean(pts);
@@ -189,10 +188,21 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
             pts = pts ./ scale;
             % force thorough search for initinal simplex and
             % supress precision warnings
+%        pts= uniquetol(pts,1e-10,'ByRows',true,'DataScale',1);
+         % This won't catch all cases
+%        if size(pts,1)<=size(pts,2); continue; end
+%        if any(std(pts)<1e-14); continue; end
+         try
             [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
             V(last_v) = V(last_v) * scale^3; % undo scaling
          catch err
             ok = false;
+            if exist('OCTAVE_VERSION')
+               if strcmp(err.message,'convhulln: qhull failed')
+                  err.identifier =  'MATLAB:qhullmx:DegenerateData';
+               end
+                  
+            end
             switch err.identifier
                case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
                   if size(pts,1) > 3
@@ -566,8 +576,6 @@ function do_case_test
         end
         txt = sprintf('%02d: %s',i,txt);
         unit_test_cmp(txt,c2f,cmptarg,tol);
-
-      
    end
    eidors_msg('log_level',ll);
 
