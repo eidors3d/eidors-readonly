@@ -152,13 +152,17 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
          pts = pts ./ scale;
          % force thorough search for initinal simplex and
          % supress precision warnings
-         if any(std(pts)<1e-12); continue; end
+         if any(any(dist2(pts))); continue; end
          try
             [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
 
             V(last_v) = max(V(last_v),0); % numerical issues may produce tiny negative volume
             V(last_v) = V(last_v) * scale^2; % undo scaling
          catch err
+%    Save cases were errors called
+%           if ~exist('ok'); ptsi={}; end
+%           ptsi{end+1} = {pts,dist2(pts)};
+%           save -mat CHP.mat ptsi; 
             ok = false;
             if exist('OCTAVE_VERSION')
                if strcmp(err.message,'convhulln: qhull failed')
@@ -365,6 +369,16 @@ end
 
 function do_unit_test
    do_small_test
+end
+
+function [dmat,opt] = dist2(xy);
+% Code from distmat.m (C) J Kirk
+   [n,dims] = size(xy);
+   a = reshape(xy,1,n,dims);
+   b = reshape(xy,n,1,dims);
+%  dmat = sum((a(ones(n,1),:,:) - b(:,ones(n,1),:)).^2,3);
+   dmat = sum(abs(a(ones(n,1),:,:) - b(:,ones(n,1),:)),3);
+   dmat = ((dmat + eye(n)<1e-12)); % any non-zeros
 end
 
 function do_small_test
