@@ -11,9 +11,10 @@ function out = uniquetol(in, tol, varargin)
 % $Id$ 
 
 if ischar(in) && strcmp(in,'UNIT_TEST'); do_unit_test; return; end
-DEBUG = 0; % IF == ## then only this test
 
-if (~DEBUG && exist('uniquetol','builtin')) || (DEBUG == 1)
+DEBUG = eidors_debug('query','eidors:uniquetol');
+
+if DEBUG==1 || exist('uniquetol','builtin')
    if DEBUG;   disp('using builtin uniquetol'); end
    out = builtin('uniquetol',in, tol, varargin{:});
    return;
@@ -34,7 +35,7 @@ for i=1:2:length(varargin);
    end
 end
 
-if (~DEBUG && exist('_mergesimpts','builtin')) || (DEBUG == 2)
+if (DEBUG==2) || exist('_mergesimpts','builtin')
    if DEBUG;   disp('using _mergesimpts'); end
    out = builtin('_mergesimpts',in,tol,'first');
    return;
@@ -43,6 +44,34 @@ end
 out = eidors_uniquetol(in, tol);
 
 
+%Fom code by
+% Siyi Deng; 03-19-2010; 05-15-2010; 10-29-2010;
+
+% Licence:
+% Copyright (c) 2010, Siyi Deng
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without 
+% modification, are permitted provided that the following conditions are 
+% met:
+% 
+%     * Redistributions of source code must retain the above copyright 
+%       notice, this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright 
+%       notice, this list of conditions and the following disclaimer in 
+%       the documentation and/or other materials provided with the distribution
+%       
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+% POSSIBILITY OF SUCH DAMAGE.
 function out = eidors_uniquetol(in, tol)
 % first run unique
 out = unique(in,'rows');
@@ -95,33 +124,6 @@ function [z,ii,jj] = uniquetol_repl(x,tol,varargin)
 %
 %   See also UNIQUE.
 
-% Siyi Deng; 03-19-2010; 05-15-2010; 10-29-2010;
-
-% Licence:
-% Copyright (c) 2010, Siyi Deng
-% All rights reserved.
-% 
-% Redistribution and use in source and binary forms, with or without 
-% modification, are permitted provided that the following conditions are 
-% met:
-% 
-%     * Redistributions of source code must retain the above copyright 
-%       notice, this list of conditions and the following disclaimer.
-%     * Redistributions in binary form must reproduce the above copyright 
-%       notice, this list of conditions and the following disclaimer in 
-%       the documentation and/or other materials provided with the distribution
-%       
-% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-% POSSIBILITY OF SUCH DAMAGE.
 
 if size(x,1) == 1, x = x(:); end
 if nargin < 2 || isempty(tol) || tol == 0

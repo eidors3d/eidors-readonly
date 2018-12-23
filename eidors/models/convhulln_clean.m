@@ -34,9 +34,21 @@ function [K,V] = convhulln_clean(pts,p);
  % numerical issues may produce tiny negative volume
  % undo scaling
   V = scale^dim * max(V,0);
-   
 
 function [K,V] = call_convhulln(pts,p);
+  K=0; V=0;
+  dim = size(pts,2);
+
+try
+    [K, V] = convhulln(pts,{'Qt Pp Qs'});
+catch
+    %redo it with "Joggle", but set to zero if small
+    [K, V] = convhulln(pts,{'Qt Pp Qs QJ'});
+    if V<1e-8; V=0; end
+end
+   
+
+function [K,V] = call_convhulln_old(pts,p);
   K=0; V=0;
   dim = size(pts,2);
 
