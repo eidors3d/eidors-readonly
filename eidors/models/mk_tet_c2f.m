@@ -171,7 +171,7 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
             fmdl.nodes(f_nodes(:,t),:);
             rmdl.nodes(r_nodes(:,t),:)];
          last_v = last_v + 1;
-         [~,V(last_v)] = convhulln_clean(pts);
+         [~,V(last_v)] = convhulln_clean(pts,fmdl);
       end
    end
    progress_msg(Inf);

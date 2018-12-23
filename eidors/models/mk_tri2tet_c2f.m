@@ -77,8 +77,8 @@ c2f(fmdl_idx,rmdl_idx) = eidors_cache(@do_mk_tri2tet_c2f,{fmdl,rmdl,opt},copt);
 end
 
 function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
-
-   DEBUG =  eidors_debug('query','mk_tri2tet_c2f');
+   p=struct();
+   p.debug = eidors_debug('query','mk_tri2tet_c2f:convhulln');
 
    r_elems = size(rmdl.elems,1);
    f_elems = size(fmdl.elems,1);
@@ -323,67 +323,12 @@ function c2f = do_mk_tri2tet_c2f(fmdl,rmdl,opt)
                   bot_nodes(bot_nodes_tet(:,t),:)];
          end
          last_v = last_v + 1;
-         
-         if size(pts,1) < 4
-%             debug_plot(fmdl,rmdl,v,tet_todo(t), bot, top, pts)
-%             keyboard
-            continue
+         if p.debug
+           p.fmdl = fmdl; p.rmdl = rmdl;
+           p.v    = v;   p.t    = t;
+           p.bot  = bot; p.top  = top; p.pts  = pts;
          end
-         if any(isnan(pts(:))), keyboard, end
-%          debug_plot(fmdl,rmdl,v,tet_todo(t), bot, top, pts);
-         try
-            % move points to origin (helps for small elements at
-            % large coordinates
-            ctr = mean(pts);
-            if any(isnan(ctr)), keyboard,end
-            pts = bsxfun(@minus,pts,ctr);
-            scale = max(abs(pts(:)));
-            if scale == 0 %happens when there's only one point
-               continue
-            end
-            % scale largest coordinate to 1 (helps with precision)
-            pts = pts ./ scale;
-            % force thorough search for initinal simplex and
-            % supress precision warnings
-            [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
-            V(last_v) = max(V(last_v),0); % numerical issues may produce tiny negative volume
-            V(last_v) = V(last_v) * scale^3; % undo scaling
-         catch err
-            ok = false;
-            switch err.identifier
-               case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
-                  pts = bsxfun(@plus, pts .* scale, ctr);
-                  u = uniquetol(pts,1e-14,'ByRows',true,'DataScale', 1);
-                  ok = ok | size(u,1) < 4;
-                  if ~ok
-                     % test for colinearity in the xy plane
-                     u12 = uniquetol(pts(:,1:2),1e-14,'ByRows',true,'DataScale',1);
-                     cp = bsxfun(@minus, u12(2:end,1:2), u12(1,1:2));
-                     l = sqrt(sum(cp.^2,2));
-                     cp = bsxfun(@rdivide, cp, l);
-                     % counteract colinear vectors in different directions
-                     cp = abs(cp); 
-                     un = uniquetol(cp,1e-12,'ByRows',true,'DataScale',1);
-                     ok = ok | size(un,1) == 1; % co-linear points
-                  end
-                  if ~ok
-                     % test if all points lie on the top or bottom caps
-                     ok = ok | all(abs(pts(:,3) - top) < eps);
-                     ok = ok | all(abs(pts(:,3) - bot) < eps);
-                  end
-            end
-            if ~ok
-               if DEBUG || eidors_debug('query','mk_tri2tet_c2f:convhulln')
-                  debug_plot(fmdl,rmdl,v,tet_todo(t), bot, top, pts)
-                  keyboard
-               else
-                  fprintf('\n');
-                  eidors_msg(['convhulln has thrown an error. ' ...
-                     'Enable eidors_debug on mk_tri2tet_c2f and re-run to see a debug plot'],0);
-                  rethrow(err);
-               end
-            end
-         end
+         [~,V(last_v)] = convhulln_clean(pts,p);
       end
    end
    progress_msg(Inf);
