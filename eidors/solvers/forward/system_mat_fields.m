@@ -176,7 +176,9 @@ function do_unit_test
    fmdl.electrode(5) = struct('nodes',1:3,'z_contact',.01);
    fmdl.system_mat_fields.CEM_boundary = [1,2;2,3;3,1];
    FC = system_mat_fields( fmdl );
-   unit_test_cmp('sys_mat-b2cCEM-1', size(FC),[142,46]);
+   unit_test_cmp('sys_mat-b2cCEM-1', size(FC), ...
+       [142,num_nodes(fmdl)+num_elecs(fmdl)]);
+   % This is failing. Fixme why is size 142?
    unit_test_cmp('sys_mat-b2cCEM-2', FC(129:136,42:45), ...
              -13.967473716321374*kron(eye(4),[1;1]),1e-12)
    unit_test_cmp('sys_mat-ctrCEM-3', FC([137:138,141:142],end), ...

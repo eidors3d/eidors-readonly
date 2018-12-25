@@ -73,6 +73,9 @@ if isfield(fwd_model,'boundary')
 else
     bdy = find_boundary(fwd_model.elems);
 end
+try %add system_mat_fields.CEM_boundary if it exists
+   bdy = [bdy;fwd_model.system_mat_fields.CEM_boundary];
+end
 
 % Matrix to convert Nodes to Electrodes
 % Complete electrode model for all electrodes
