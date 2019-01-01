@@ -397,7 +397,8 @@ end
 p= logspace(log10(perturb(2)),log10(perturb(end)),50);
 semilogx(p, FF(pf, p),'k','linewidth',2);
 semilogx(p, p*0+mlist(1),'k--','linewidth',1); % alpha=0 should be plotted as well
-legend('perturb', 'selected', '1st est', '1st act', 'fit', '\alpha=0');
+%% *&^%@!# Idiot matlab now doesn't allow "selected" in legend!
+legend('perturb', 'selected ', '1st est', '1st act', 'fit', '\alpha=0');
 legend('Location', 'EastOutside');
 m = [mlist meas_err meas_err1];
 mi=find(isnan(m) | isinf(m)); m(mi) = []; % remove bad values
