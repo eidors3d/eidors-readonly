@@ -1,13 +1,20 @@
- DO show_breaths
- DO show_volume_n_flow
- DO stats_volume_n_flow
- DO flow_volume_global
- DO flow_volume_global_slope
- DO TV_image
- DO TV_slices
- DO flow_volume_image
- DO flow_volume_slices
- DO flow_volume_components
+% Breathing analysis
+% DO show_breaths
+% DO show_volume_n_flow
+% DO stats_volume_n_flow
+% DO flow_volume_global
+% DO flow_volume_global_slope
+% DO TV_image
+% DO TV_slices
+% DO flow_volume_image
+% DO flow_volume_slices
+% DO flow_volume_components
+
+% Perfusion/Pulsatility analysis 
+ DO show_apnoea
+% DO filter_find_beats % Filters the apnoea segment and highlights heart peaks
+% DO show_perfusion
+% DO perfusion_slices
 
 CONFIG rotate 180
 CONFIG min_insp_length 0.2 % seconds

@@ -1,8 +1,8 @@
 function analyze
 %ANALYZE: analyze EIT files for lung parameters
-% Usage
+% Usage: will run using Octave - not Matlab
 
-% (C) Andy Adler 2018. License: GPL v2 or v3.
+% (C) Andy Adler & Symon Stowe 2018-2019. License: GPL v2 or v3.
 % $Id$
 
   parse_config;
@@ -20,6 +20,8 @@ function iterate_over_files
      dd = loadfile(fn);
      fid = outfile;
      fprintf(fid,'<TR><TD>%s',fn(1:end-4));
+	 % Do the DO statements require breaths or beats? 
+	 % Can they be detected?
      for i=1:length(pp.callfns)
         reqbreaths = feval(pp.callfns{i},'REQBREATHS?');
         if reqbreaths && dd.n_breaths==0
@@ -29,18 +31,30 @@ function iterate_over_files
         end
         fprintf(fid,'<TD>%s',out);
      end
+	 % Do any of the functions require the heart peaks?
+	 for i=1:length(pp.callfns)
+	    reqbeats = feval(pp.callfns{i},'REQBEATS?'); % evaluate if a function needs beats
+		if reqbeats && dd.n_beats==0
+		   out = '<font size="+2"><center><b>No heart peaks detected</b></center></font>';
+        else
+		   out = feval(pp.callfns{i},dd,f);
+		end
+		fprintf(fid,'<TD>%s',out);
+     end
      fclose(fid);
   end
 
 function parse_config 
   global pp; pp=struct();
-  pp.callfns = cell();
+  pp.callfns = cell(); % error in matlab - cell cannot be empty TODO - fix?
   pp.rotate  = 0;
   pp.slices  = 4;
   pp.min_insp_length  = 0.5; % 1 seconds for horses
   pp.min_insp_length  = 1.0; % 1 seconds for horses
   pp.FRC_search_window = 0.2; % search 100ms for FRC
   pp.FRC_relative_match = 0.2; % match start/end FRC
+  pp.min_heart_peak_separation = 1.5; % horse min heart beat separation
+
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
   eval('config'); 
@@ -84,12 +98,156 @@ function dd = loadfile(fname);
    dd.tt = (0:length(dd.CV)-1)/dd.FR;
    dd.breaths = find_frc(dd);
    dd.n_breaths = size(dd.breaths,1);
-
+   dd.beats = find_beats(dd); 
+   dd.n_beats = size(dd.beats,1);
    ls = linspace(0,1,10);
    ls = [ls,-fliplr(ls)];
    dd.flow= -conv2(dd.CV,ls,'same');
    ls = reshape(ls,1,1,[]);
    dd.ZF = -convn(dd.ZR,ls,'same');
+
+function out= show_apnoea(dd,ii) 
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Apnoea Segment'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = false; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  fout = sprintf('apnoea_segment%03d.png',ii);
+  out = sprintf( ...
+  '<a href="%s"><img width="300" src="%s"></a>',...
+  fout, fout);
+  clf; subplot(211);
+  plot(dd.tt,dd.CV,'LineWidth',4); box off;
+  axis tight
+  print_convert(fout);
+
+function out= show_beats(dd,ii)
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Apnoea Segment'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = false; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = true; return
+  end
+  fout = sprintf('apnoea_segment%03d.png',ii);
+  out = sprintf( ...
+  '<a href="%s"><img width="300" src="%s"></a>',...
+  fout, fout);
+  clf; subplot(211);
+  plot(dd.tt,dd.CV,'LineWidth',4); box off;
+  H = (max(dd.CV) - min(dd.CV))/10;
+  for i=1:dd.n_beats
+     eie = dd.beats(i,[1,3,2,1]);
+     line(dd.tt(eie), dd.CV(eie), 'color',[0,0,0],'LineWidth',2);
+  end
+
+  axis tight
+  print_convert(fout);
+
+function beats = find_beats(data)
+% Identify the heart beats in the Apnoea signal
+% May work on ventilation segments
+
+  global pp;
+  % Take an FFT of the data...
+  seq = data.CV;
+  lseq = length(seq);
+  Fseq= fft(seq);
+  % Cut off freq
+  % each point is frate/2/len Hz TODO - why 2?
+  % want to cut a 0.25Hz = L *frate/2/len; L=CUTOFF *2*len/frate
+  LP_Fcutoff = 0.65; % Hz
+  HP_Fcutoff = 0.35; % Hz
+  L_LP = round( LP_Fcutoff*lseq/data.FR ); % TODO - why was there 2*2?
+  L_HP = round( HP_Fcutoff*lseq/data.FR );
+  Fseq([1+L_LP+1:end-L_LP])=0; %LPF
+  Fseq([1:L_HP,end])=0; %HPF
+  seq1= ifft(Fseq);
+  % Test and take real part - This test doesn't work as well here...
+  % The imaginary component is too large... or the real component is too small in comparison
+  % Is this also an issue in the breathing code if the wrong start segment is selected?
+  % TODO - ask about this test
+  %if std(imag(seq1))>1e-10; error('Heart Frequency FFT code'); end
+  seq1= real(seq1);
+  % HERE
+  % Flow calc
+  flow = diff(seq1);% first differences
+  thresh = median( abs(flow));
+
+  inout= zeros(lseq,1);
+  i = 1;
+  inout(i) = sign( flow(i)+eps ); % eps to force not zero
+  for i = 2:lseq-1
+    cval= inout(i-1);
+    if cval*flow(i) > -thresh
+       inout(i) = cval;
+    else
+       inout(i) = -cval;
+    end
+  end
+  inout(lseq) = inout(lseq-1);
+
+% Shorter forward window because detection is lagging
+  beat_window_fwd= round(pp.min_heart_peak_separation/4*data.FR);
+  beat_window_bak= round(pp.min_heart_peak_separation*data.FR);
+
+  dinout= diff( inout );
+  fdiff = find( diff(inout) ); % This has all peaks and throughs from filtered signal
+  fdiff(fdiff<=beat_window_bak      )= []; % too close
+  fdiff(fdiff>lseq - beat_window_fwd)= []; % too close
+
+  min_beat = fdiff( (dinout(fdiff)>0) ); % Minimim point of abs HR signal
+  max_beat = fdiff( (dinout(fdiff)<0) ); % Max point of abs heart signal
+
+  % Basic beat detection done here...
+
+  % Find the best point
+  ww= -beat_window_bak:beat_window_fwd;
+  for i=1:length(min_beat);
+    wind= seq( min_beat(i)+ ww );
+    ff = find( wind== min(wind) );
+    ff= ff(1)+min(ww)-1;
+    min_beat(i)= min_beat(i) + ff;
+  end
+  for i=1:length(max_beat);
+    wind= seq( max_beat(i)+ ww );
+    ff = find( wind== max(wind) );
+    ff= ff(1)+min(ww)-1;
+    max_beat(i)= max_beat(i) + ff;
+  end
+
+  min_inc_length = round(pp.min_inc_length*data.FR);
+  min_dec_length = round(pp.min_dec_length*data.FR);
+  beats = [];
+  i=1;e=1; while true;
+     if i>=length(max_beat) && e>=length(min_beat)-1; break; end
+     if max_beat(i) < min_beat(e);
+        i=i+1;
+     else
+        rstr =  sprintf('rejecting breath (%d) [%i-%i-%i]: ', ...
+              i, min_beat(e), max_beat(i), min_beat(e+1));
+        FRCs= seq1(eexpi(e+[0:1]));
+        TV  = seq1(max_beat(i)) - mean(FRCs);
+        if max_beat(i) - min_beat(e) < min_inc_length 
+           disp([rstr,'too soon after previous beat']);
+        elseif min_beat(e+1)-max_beat(i) < min_dec_length;
+           disp([rstr,'too close to next beat']);
+        elseif abs(diff(FRCs))/TV > pp.FRC_relative_match % TODO fix
+           disp([rstr,'heart peak accepted']);
+        else %accept beat
+           breaths(end+1,:) = [min_beat(e), max_beat(i), min_beat(e+1)]; 
+        end
+        i=i+1; e=e+1;
+     end
+  end
+
+  
 
 function out= show_breaths(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
@@ -415,15 +573,14 @@ function breaths= find_frc( data );
    % each point is frate/2/len Hz
    % want to cut a 0.25Hz = L *frate/2/len; L=CUTOFF *2*len/frate
    Fcutoff = 0.25;
-   L = round( Fcutoff * 2*2*lseq/data.FR );
+   L = round( Fcutoff * 2*2*lseq/data.FR ); % TODO why is there 2*2? 
    Fseq([1+L+1:end-L])=0; %HPF
    Fseq([1,2,end])=0;     %LPF
    seq1= ifft(Fseq);
 
    % Test and take real part
-   if std(imag(seq1))>1e-10; error('FFT code'); end
+   if std(imag(seq1))>1e-10; error('Breathing FFT code'); end
    seq1= real(seq1);
-
    % Flow calc
    flow = diff(seq1);
    thresh = median( abs(flow));
