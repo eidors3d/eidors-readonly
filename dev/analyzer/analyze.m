@@ -160,26 +160,35 @@ function beats = find_beats(data)
   lseq = length(seq);
   Fseq= fft(seq);
   % Cut off freq
-  % each point is frate/2/len Hz TODO - why 2?
-  % want to cut a 0.25Hz = L *frate/2/len; L=CUTOFF *2*len/frate
-  LP_Fcutoff = 0.65; % Hz
-  HP_Fcutoff = 0.35; % Hz
-  L_LP = round( LP_Fcutoff*lseq/data.FR ); % TODO - why was there 2*2?
-  L_HP = round( HP_Fcutoff*lseq/data.FR );
-  Fseq([1+L_LP+1:end-L_LP])=0; %LPF
-  Fseq([1:L_HP,end])=0; %HPF
+  fc_low = 0.35; % Low frequency cutoff (Hz)
+  fc_high= 0.65; % High frequency cutoff (Hz)
+  fc_low = round(fc_low*lseq/data.FR);
+  fc_high = round(fc_high*lseq/data.FR);
+  L = fc_high-fc_low+11;% window Length
+  filter = zeros(size(Fseq));
+  window = blackman(L);
+  filter([fc_low-5:fc_high+5]) = window; % TODO playing with some values
+  Fseq = Fseq.*filter;
+  %Fseq([1+L+1:end-L])=0; 
+  %Fseq([1:2,end])=0;
   seq1= ifft(Fseq);
-  % Test and take real part - This test doesn't work as well here...
-  % The imaginary component is too large... or the real component is too small in comparison
-  % Is this also an issue in the breathing code if the wrong start segment is selected?
-  % TODO - ask about this test
-  %if std(imag(seq1))>1e-10; error('Heart Frequency FFT code'); end
+  std(imag(seq1)) 
+  keyboard
+  if std(imag(seq1))>1e-10; error('Heart Frequency FFT code'); end
   seq1= real(seq1);
+  keyboard
+  % Make a plot to examine
+  P2 = abs(Fseq/lseq);%2 sided
+  P1 = P2(1:lseq/2+1);%1 sided
+  P1(2:end-1) = 2*P1(2:end-1);
+  f = data.FR*(0:(lseq/2))/lseq;
+  plot(f,P1)
+
   % HERE
   % Flow calc
   flow = diff(seq1);% first differences
   thresh = median( abs(flow));
-
+keyboard
   inout= zeros(lseq,1);
   i = 1;
   inout(i) = sign( flow(i)+eps ); % eps to force not zero
