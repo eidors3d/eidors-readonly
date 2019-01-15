@@ -31,16 +31,6 @@ function iterate_over_files
         end
         fprintf(fid,'<TD>%s',out);
      end
-	 % Do any of the functions require the heart peaks?
-	 for i=1:length(pp.callfns)
-	    reqbeats = feval(pp.callfns{i},'REQBEATS?'); % evaluate if a function needs beats
-		if reqbeats && dd.n_beats==0
-		   out = '<font size="+2"><center><b>No heart peaks detected</b></center></font>';
-        else
-		   out = feval(pp.callfns{i},dd,f);
-		end
-		fprintf(fid,'<TD>%s',out);
-     end
      fclose(fid);
   end
 
@@ -121,7 +111,7 @@ function out= show_perfusion(dd,ii)
   perfusion = perfusion_calc(dd);
   perfusion(dd.ZR(:,:,1)==0) = NaN;
   mycolormap;
-  my_image(perfusion*100/max(perfusion(:))+50);
+  my_image(perfusion*150/max(perfusion(:))+100);
   fout = sprintf('perfusion_image%03d.png',ii);
   out = sprintf(['<center>max pixel=%1.3f<br>' ...
    '<a href="%s"><img width="200" src="%s">' ...
@@ -135,7 +125,7 @@ function perfusion = perfusion_calc(dd);
     eie = dd.beats(i,[1,2,3]);
     perfusion(:,:,i) = dd.ZR(:,:,eie(2)) - mean(dd.ZR(:,:,eie([1,3])),3);
   end
-  perfusion= mean(perfusion,3);
+  perfusion=-mean(perfusion,3);
 
 function out= show_apnoea(dd,ii) 
   if ischar(dd) && strcmp(dd,'TITLE');
@@ -153,6 +143,29 @@ function out= show_apnoea(dd,ii)
   fout, fout);
   clf; subplot(211);
   plot(dd.tt,dd.CV,'LineWidth',4); box off;
+  axis tight
+  print_convert(fout);
+
+function out= show_max_pixel(dd,ii) 
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Maximum Pixels'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = false; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  fout = sprintf('max_pixel_segment%03d.png',ii);
+  out = sprintf( ...
+  '<a href="%s"><img width="300" src="%s"></a>',...
+  fout, fout);
+  clf; subplot(211);
+  stdi = std(dd.ZR,[],3);
+  [~,idx] = max(stdi(:));
+  ZRr = reshape(dd.ZR,[], size(dd.ZR,3));
+% plot(dd.tt,ZRr(idx,:),'LineWidth',2); box off;
+  plot(ZRr(idx,:),'LineWidth',2); box off;  % Fixme when sizes are the same
   axis tight
   print_convert(fout);
 

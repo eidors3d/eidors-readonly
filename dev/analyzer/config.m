@@ -14,6 +14,7 @@
 DO show_apnoea
 DO show_beats
 DO show_perfusion
+DO show_max_pixel
 % DO filter_find_beats % Filters the apnoea segment and highlights heart peaks
 % DO show_perfusion
 % DO perfusion_slices
