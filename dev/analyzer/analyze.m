@@ -53,7 +53,7 @@ function parse_config
   pp.min_insp_length  = 1.0; % 1 seconds for horses
   pp.FRC_search_window = 0.2; % search 100ms for FRC
   pp.FRC_relative_match = 0.2; % match start/end FRC
-  pp.min_heart_peak_separation = 1.5; % horse min heart beat separation
+  pp.min_heart_peak_separation = 0.2; % (seconds) horse min heart beat separation
 
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
@@ -106,6 +106,22 @@ function dd = loadfile(fname);
    ls = reshape(ls,1,1,[]);
    dd.ZF = -convn(dd.ZR,ls,'same');
 
+function out= show_perfusion(dd,ii)
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Apnoea Segment'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = false; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  fout = sprintf('apnoea_segment%03d.png',ii);
+  out = sprintf( ...
+  '<a href="%s"><img width="300" src="%s"></a>',...
+  fout, fout);
+
+
 function out= show_apnoea(dd,ii) 
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'Apnoea Segment'; return
@@ -127,15 +143,15 @@ function out= show_apnoea(dd,ii)
 
 function out= show_beats(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
-     out = 'Apnoea Segment'; return
+     out = 'Beat Detection'; return
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = false; return
   end
   if ischar(dd) && strcmp(dd,'REQBEATS?');
-     out = true; return
+     out = false; return
   end
-  fout = sprintf('apnoea_segment%03d.png',ii);
+  fout = sprintf('beat_detection%03d.png',ii);
   out = sprintf( ...
   '<a href="%s"><img width="300" src="%s"></a>',...
   fout, fout);
@@ -153,42 +169,51 @@ function out= show_beats(dd,ii)
 function beats = find_beats(data)
 % Identify the heart beats in the Apnoea signal
 % May work on ventilation segments
-
   global pp;
   % Take an FFT of the data...
   seq = data.CV;
   lseq = length(seq);
   Fseq= fft(seq);
-  % Cut off freq
+  % Cut off freqs
   fc_low = 0.35; % Low frequency cutoff (Hz)
   fc_high= 0.65; % High frequency cutoff (Hz)
   fc_low = round(fc_low*lseq/data.FR);
   fc_high = round(fc_high*lseq/data.FR);
-  L = fc_high-fc_low+11;% window Length
-  filter = zeros(size(Fseq));
+  fc_center = floor((fc_high-fc_low)/2+fc_low);
+  dwn = fc_center - fc_low+5;
+  up  = fc_high - fc_center+5;
+  L = up+dwn;% window Length
+  mask = zeros(size(Fseq));
   window = blackman(L);
-  filter([fc_low-5:fc_high+5]) = window; % TODO playing with some values
-  Fseq = Fseq.*filter;
-  %Fseq([1+L+1:end-L])=0; 
-  %Fseq([1:2,end])=0;
+  % Added in some harmonics to keep more of the shape
+  if mod(length(Fseq),2) == 1
+    adjust = 1;
+	shift = 3;
+  else 
+    adjust = 1;
+	shift = 3;
+  end
+  mask([shift+(fc_center)-dwn:shift+(fc_center)+up-adjust]) = window;
+  mask([end-fc_center-up:end-fc_center+dwn-adjust]) = window; % Other end
+  % Harmonic 1 - 0.5 blackman
+  mask([shift+2*(fc_center)-dwn:shift+2*(fc_center)+up-adjust]) = 0.5*window;
+  mask([end-2*fc_center-up:end-2*fc_center+dwn-adjust]) = 0.5*window; % Other end
+  % Harmonic 2 - 0.25 blackman
+  mask([shift+3*fc_center-dwn:shift+3*fc_center+up-adjust]) = 0.25*window;
+  mask([end-3*fc_center-up:end-3*fc_center+dwn-adjust]) = 0.25*window; % Other end
+  % harmonic 3 - 0.15 blackman
+  mask([shift+4*fc_center-dwn:shift+4*fc_center+up-adjust]) = 0.15*window;
+  mask([end-4*fc_center-up:end-4*fc_center+dwn-adjust]) = 0.15*window; % Other end
+  % Harmonic 4 - 0.1 blackman
+  mask([shift+5*fc_center-dwn:shift+5*fc_center+up-adjust]) = 0.1*window;
+  mask([end-5*fc_center-up:end-5*fc_center+dwn-adjust]) = 0.1*window; % Other end
+  Fseq = Fseq.*mask;
   seq1= ifft(Fseq);
-  std(imag(seq1)) 
-  keyboard
   if std(imag(seq1))>1e-10; error('Heart Frequency FFT code'); end
   seq1= real(seq1);
-  keyboard
-  % Make a plot to examine
-  P2 = abs(Fseq/lseq);%2 sided
-  P1 = P2(1:lseq/2+1);%1 sided
-  P1(2:end-1) = 2*P1(2:end-1);
-  f = data.FR*(0:(lseq/2))/lseq;
-  plot(f,P1)
-
-  % HERE
   % Flow calc
   flow = diff(seq1);% first differences
-  thresh = median( abs(flow));
-keyboard
+  thresh = 0.5*median( abs(flow)); % /2 to allow for the detection of all of the heart beats...
   inout= zeros(lseq,1);
   i = 1;
   inout(i) = sign( flow(i)+eps ); % eps to force not zero
@@ -203,11 +228,11 @@ keyboard
   inout(lseq) = inout(lseq-1);
 
 % Shorter forward window because detection is lagging
-  beat_window_fwd= round(pp.min_heart_peak_separation/4*data.FR);
+  beat_window_fwd= round(pp.min_heart_peak_separation/5*data.FR);
   beat_window_bak= round(pp.min_heart_peak_separation*data.FR);
 
   dinout= diff( inout );
-  fdiff = find( diff(inout) ); % This has all peaks and throughs from filtered signal
+  fdiff = find( diff(inout) ); % This has all peaks and troughs from filtered signal
   fdiff(fdiff<=beat_window_bak      )= []; % too close
   fdiff(fdiff>lseq - beat_window_fwd)= []; % too close
 
@@ -230,33 +255,42 @@ keyboard
     ff= ff(1)+min(ww)-1;
     max_beat(i)= max_beat(i) + ff;
   end
-
-  min_inc_length = round(pp.min_inc_length*data.FR);
-  min_dec_length = round(pp.min_dec_length*data.FR);
+  beat_sep = pp.min_heart_peak_separation;
   beats = [];
+  % cycle through all of the beats
   i=1;e=1; while true;
-     if i>=length(max_beat) && e>=length(min_beat)-1; break; end
-     if max_beat(i) < min_beat(e);
+     if i>=length(max_beat) && e>=length(min_beat)-1; break; end % no beats
+     if max_beat(i) < min_beat(e); 
         i=i+1;
      else
-        rstr =  sprintf('rejecting breath (%d) [%i-%i-%i]: ', ...
+        rstr =  sprintf('rejecting beat (%d) [%i-%i-%i]: ', ...
               i, min_beat(e), max_beat(i), min_beat(e+1));
-        FRCs= seq1(eexpi(e+[0:1]));
-        TV  = seq1(max_beat(i)) - mean(FRCs);
-        if max_beat(i) - min_beat(e) < min_inc_length 
+        heart_trough = seq1(min_beat(e+[0:1])); % select the troughs between peaks
+		heart_peak  = seq1(max_beat(i)) - mean(heart_trough); % select the heart peaks
+        if max_beat(i) - min_beat(e) < beat_sep/1.2;
            disp([rstr,'too soon after previous beat']);
-        elseif min_beat(e+1)-max_beat(i) < min_dec_length;
-           disp([rstr,'too close to next beat']);
-        elseif abs(diff(FRCs))/TV > pp.FRC_relative_match % TODO fix
-           disp([rstr,'heart peak accepted']);
+        elseif seq1(max_beat(i)) < 0; 
+          disp([rstr,'The beat is too small']);
+         elseif abs(diff(heart_trough))/heart_peak > 0.8;
+	      disp([rstr,'The baseline is too inconsistant']);
         else %accept beat
-           breaths(end+1,:) = [min_beat(e), max_beat(i), min_beat(e+1)]; 
+           beats(end+1,:) = [min_beat(e), max_beat(i), min_beat(e+1)]; 
         end
         i=i+1; e=e+1;
      end
   end
-
-  
+%  % Test stuff....
+%  clf
+%  subplot(211)
+%  plot(seq1)
+%  hold on
+%  plot(beats(:,2),seq1(beats(:,2)),'o')
+%  subplot(212)
+%  plot(beats(:,2),seq(beats(:,2)),'o')
+%  hold on
+%  plot(seq)
+%
+%  keyboard
 
 function out= show_breaths(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
@@ -586,7 +620,6 @@ function breaths= find_frc( data );
    Fseq([1+L+1:end-L])=0; %HPF
    Fseq([1,2,end])=0;     %LPF
    seq1= ifft(Fseq);
-
    % Test and take real part
    if std(imag(seq1))>1e-10; error('Breathing FFT code'); end
    seq1= real(seq1);
