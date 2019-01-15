@@ -125,7 +125,7 @@ function perfusion = perfusion_calc(dd);
     eie = dd.beats(i,[1,2,3]);
     perfusion(:,:,i) = dd.ZR(:,:,eie(2)) - mean(dd.ZR(:,:,eie([1,3])),3);
   end
-  perfusion=-mean(perfusion,3);
+  perfusion= mean(perfusion,3);
 
 function out= show_apnoea(dd,ii) 
   if ischar(dd) && strcmp(dd,'TITLE');
@@ -141,9 +141,12 @@ function out= show_apnoea(dd,ii)
   out = sprintf( ...
   '<a href="%s"><img width="300" src="%s"></a>',...
   fout, fout);
-  clf; subplot(211);
-  plot(dd.tt,dd.CV,'LineWidth',4); box off;
-  axis tight
+  clf; subplot(311);
+  seg = dd.CV;
+  plot(dd.tt,seg,'LineWidth',2); box off; axis tight
+       subplot(312);
+  seg = max_pixel(dd);
+  plot(dd.tt,seg,'LineWidth',2); box off; axis tight
   print_convert(fout);
 
 function out= show_max_pixel(dd,ii) 
@@ -161,13 +164,19 @@ function out= show_max_pixel(dd,ii)
   '<a href="%s"><img width="300" src="%s"></a>',...
   fout, fout);
   clf; subplot(211);
+  pix_wave = max_pixel(dd);
+  plot(dd.tt,pix_wave,'LineWidth',2); box off;
+  axis tight
+  print_convert(fout);
+
+% TODO: Let N be the N maximum pixels (separated watershed-like)
+function pix_wave = max_pixel(dd, N)
+  if nargin == 1; N=1; end
   stdi = std(dd.ZR,[],3);
   [~,idx] = max(stdi(:));
   ZRr = reshape(dd.ZR,[], size(dd.ZR,3));
-% plot(dd.tt,ZRr(idx,:),'LineWidth',2); box off;
-  plot(ZRr(idx,:),'LineWidth',2); box off;  % Fixme when sizes are the same
-  axis tight
-  print_convert(fout);
+  pix_wave = ZRr(idx,:);
+  
 
 function out= show_beats(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
@@ -199,7 +208,10 @@ function beats = find_beats(data)
 % May work on ventilation segments
   global pp;
   % Take an FFT of the data...
-  seq = data.CV;
+% seq = data.CV;
+  seq = max_pixel(data);
+  % Take an FFT of the data...
+
   lseq = length(seq);
   Fseq= fft(seq);
   % Cut off freqs
