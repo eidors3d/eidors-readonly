@@ -107,20 +107,35 @@ function dd = loadfile(fname);
    dd.ZF = -convn(dd.ZR,ls,'same');
 
 function out= show_perfusion(dd,ii)
+  global pp;
   if ischar(dd) && strcmp(dd,'TITLE');
-     out = 'Apnoea Segment'; return
+     out = 'Perfusion Image'; return
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = false; return
   end
   if ischar(dd) && strcmp(dd,'REQBEATS?');
-     out = false; return
+     out = true; return
   end
-  fout = sprintf('apnoea_segment%03d.png',ii);
-  out = sprintf( ...
-  '<a href="%s"><img width="300" src="%s"></a>',...
-  fout, fout);
-
+  clf;
+  perfusion = perfusion_calc(dd);
+  perfusion(dd.ZR(:,:,1)==0) = NaN;
+  mycolormap;
+  my_image(perfusion*100/max(perfusion(:))+50);
+  fout = sprintf('perfusion_image%03d.png',ii);
+  out = sprintf(['<center>max pixel=%1.3f<br>' ...
+   '<a href="%s"><img width="200" src="%s">' ...
+   '</a><p><img src="%s"></center>'], ...
+   max(perfusion(:)), fout, fout, pp.colourbar);
+  print_convert(fout);
+ 
+function perfusion = perfusion_calc(dd);
+  perfusion = [];
+  for i=1:dd.n_beats
+    eie = dd.beats(i,[1,2,3]);
+    perfusion(:,:,i) = dd.ZR(:,:,eie(2)) - mean(dd.ZR(:,:,eie([1,3])),3);
+  end
+  perfusion= mean(perfusion,3);
 
 function out= show_apnoea(dd,ii) 
   if ischar(dd) && strcmp(dd,'TITLE');
