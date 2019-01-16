@@ -20,12 +20,13 @@ function iterate_over_files
      dd = loadfile(fn);
      fid = outfile;
      fprintf(fid,'<TR><TD>%s',fn(1:end-4));
-	 % Do the DO statements require breaths or beats? 
-	 % Can they be detected?
      for i=1:length(pp.callfns)
         reqbreaths = feval(pp.callfns{i},'REQBREATHS?');
+		reqbeats   = feval(pp.callfns{i},'REQBEATS?');
         if reqbreaths && dd.n_breaths==0
            out = '<font size="+2"><center><b>No breaths detected</b></center></font>';
+        elseif reqbeats && dd.n_beats==0
+		   out = '<font size="+2"><center><b>No beats detected</b></center></font>';
         else
            out = feval(pp.callfns{i},dd,f);
         end
@@ -36,7 +37,7 @@ function iterate_over_files
 
 function parse_config 
   global pp; pp=struct();
-  pp.callfns = cell(); % error in matlab - cell cannot be empty TODO - fix?
+  pp.callfns = cell(0,0); 
   pp.rotate  = 0;
   pp.slices  = 4;
   pp.min_insp_length  = 0.5; % 1 seconds for horses
@@ -47,7 +48,19 @@ function parse_config
 
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
-  eval('config'); 
+  % Matlab can't access current functions when eval is used -- eval('config'); % octave only
+  fid = fopen('config.m');
+    tline = fgetl(fid);
+    while ischar(tline)
+	  if strncmpi('DO',tline,2)		
+	    tline = tline(4:end);	  
+	    pp.callfns{end+1,1} = tline;
+      elseif strncmpi('CONFIG',tline,6)
+		eval(tline);
+      end		
+	  tline = fgetl(fid);
+    end
+  fclose(fid);
 
   subplot(611);
   mycolormap;
@@ -56,7 +69,7 @@ function parse_config
 
 function DO(varargin);
   global pp;
-  fname = varargin{1};
+    fname = varargin{1};
   if nargin>1; error('DO expects one argument'); end
   try outstr = feval(fname,'TITLE');
      pp.callfns{end+1} = fname;
@@ -141,12 +154,16 @@ function out= show_apnoea(dd,ii)
   out = sprintf( ...
   '<a href="%s"><img width="300" src="%s"></a>',...
   fout, fout);
-  clf; subplot(311);
+  clf; subplot(211);
   seg = dd.CV;
   plot(dd.tt,seg,'LineWidth',2); box off; axis tight
-       subplot(312);
+  title('All pixels')
+  xlabel('seconds')
+  subplot(212);
   seg = max_pixel(dd);
   plot(dd.tt,seg,'LineWidth',2); box off; axis tight
+  title('Maximum pixels')
+  xlabel('seconds')
   print_convert(fout);
 
 function out= show_max_pixel(dd,ii) 
@@ -179,6 +196,7 @@ function pix_wave = max_pixel(dd, N)
   
 
 function out= show_beats(dd,ii)
+  global pp;
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'Beat Detection'; return
   end
@@ -186,29 +204,42 @@ function out= show_beats(dd,ii)
      out = false; return
   end
   if ischar(dd) && strcmp(dd,'REQBEATS?');
-     out = false; return
+     out = true; return
   end
+  % Calculate the heart rate
+  HR = (dd.n_beats-1)/((dd.beats(end,2)-dd.beats(1,2))/dd.FR)*60; 
   fout = sprintf('beat_detection%03d.png',ii);
-  out = sprintf( ...
-  '<a href="%s"><img width="300" src="%s"></a>',...
-  fout, fout);
-  clf; subplot(211);
-  plot(dd.tt,dd.CV,'LineWidth',4); box off;
+  out = sprintf(['<center>Average heart rate=%1.0f bpm<br>' ...
+   '<a href="%s"><img width="300" src="%s"></a></center>'], ...
+  HR, fout, fout);
+  clf; subplot(211); % All pixels
+  plot(dd.tt,dd.CV,'LineWidth',2); box off;
   H = (max(dd.CV) - min(dd.CV))/10;
   for i=1:dd.n_beats
      eie = dd.beats(i,[1,3,2,1]);
      line(dd.tt(eie), dd.CV(eie), 'color',[0,0,0],'LineWidth',2);
   end
-
   axis tight
+  title('All pixels')
+  xlabel('seconds')
+  subplot(212); % Brightest pixels
+  pix_wave = max_pixel(dd);
+  plot(dd.tt,pix_wave,'LineWidth',2); box off;
+  H = (max(pix_wave) - min(pix_wave))/10;
+  for i=1:dd.n_beats
+     eie = dd.beats(i,[1,3,2,1]);
+     line(dd.tt(eie), pix_wave(eie), 'color',[0,0,0],'LineWidth',2);
+  end
+  axis tight
+  title('Maximum pixels')
+  xlabel('seconds')
   print_convert(fout);
 
 function beats = find_beats(data)
 % Identify the heart beats in the Apnoea signal
 % May work on ventilation segments
   global pp;
-  % Take an FFT of the data...
-% seq = data.CV;
+  % seq = data.CV;
   seq = max_pixel(data);
   % Take an FFT of the data...
 
@@ -226,13 +257,8 @@ function beats = find_beats(data)
   mask = zeros(size(Fseq));
   window = blackman(L);
   % Added in some harmonics to keep more of the shape
-  if mod(length(Fseq),2) == 1
-    adjust = 1;
-	shift = 3;
-  else 
-    adjust = 1;
-	shift = 3;
-  end
+  adjust = 1;
+  shift = 3;
   mask([shift+(fc_center)-dwn:shift+(fc_center)+up-adjust]) = window;
   mask([end-fc_center-up:end-fc_center+dwn-adjust]) = window; % Other end
   % Harmonic 1 - 0.5 blackman
@@ -319,18 +345,6 @@ function beats = find_beats(data)
         i=i+1; e=e+1;
      end
   end
-%  % Test stuff....
-%  clf
-%  subplot(211)
-%  plot(seq1)
-%  hold on
-%  plot(beats(:,2),seq1(beats(:,2)),'o')
-%  subplot(212)
-%  plot(beats(:,2),seq(beats(:,2)),'o')
-%  hold on
-%  plot(seq)
-%
-%  keyboard
 
 function out= show_breaths(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
@@ -567,7 +581,7 @@ function out= TV_slices(dd,ii)
 function mycolormap
 % colormap(gray(256));
 % colormap(viridis(256));
-  colormap(ocean(256));
+  colormap(bone(256));
 
 function FV = FV_calc(dd);
   global pp;
