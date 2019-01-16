@@ -351,6 +351,9 @@ function out= show_breaths(dd,ii)
      out = 'Breaths'; return
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
      out = false; return
   end
   fout = sprintf('breaths%03d.png',ii);
@@ -374,6 +377,9 @@ function out= show_volume_n_flow(dd,ii)
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
   end
   fout = sprintf('vol_flow%03d.png',ii);
   out = sprintf( ...
@@ -399,6 +405,9 @@ function out= stats_volume_n_flow(dd,ii)
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
   end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
   TV = []; Pif = []; Pef = [];
   for i=1:dd.n_breaths
      eie = dd.breaths(i,[1,2,3]);
@@ -423,6 +432,9 @@ function out= flow_volume_global(dd,ii)
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
   end
   clf;plot(NaN); hold on;
   for i=1:dd.n_breaths
@@ -453,6 +465,9 @@ function out= flow_volume_components(dd,ii)
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
   end
   clf;plot(NaN); hold on;
   intersect=[];
@@ -498,6 +513,9 @@ function out= flow_volume_global_slope(dd,ii)
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
   end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
   out= '<table border=1><TR><TH>#<TH>Slope';
   for i=1:dd.n_breaths
      eie = dd.breaths(i,[1,2,3]);
@@ -542,6 +560,9 @@ function out= TV_image(dd,ii)
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
   end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
   TV = TVcalc(dd);
   TV(dd.ZR(:,:,1)==0) = NaN;
   mycolormap;
@@ -564,6 +585,9 @@ function out= TV_slices(dd,ii)
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
   end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
   TV = TVcalc(dd);
   TV = my_image(TV); %rotate if req'd
   
@@ -581,7 +605,7 @@ function out= TV_slices(dd,ii)
 function mycolormap
 % colormap(gray(256));
 % colormap(viridis(256));
-  colormap(bone(256));
+  colormap(ocean(256));
 
 function FV = FV_calc(dd);
   global pp;
@@ -617,6 +641,9 @@ function out= flow_volume_image(dd,ii)
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
   end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
   FV = FV_calc(dd);
   mycolormap;
   my_image(FV*200/max(FV(:))+50);
@@ -636,6 +663,9 @@ function out= flow_volume_slices(dd,ii)
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
      out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
   end
   FV = FV_calc(dd);
   FV = my_image(FV); %rotate if req'd
