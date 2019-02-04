@@ -15,6 +15,16 @@ function [cmdl, c2f]= mk_grid_model(fmdl, xvec, yvec, zvec);
 % if fmdl == [], then just create the grid model without c2f
 %
 % See also MK_COARSE_FINE_MAPPING, MK_PIXEL_SLICE
+%
+% Example: for constructing an inverse model
+%  grid{1}= linspace(-2,2,20);     % x grid
+%  grid{2}= linspace(-0.5,+0.5,5); % y grid
+%  grid{3}= linspace(-2, 0,20);    % z grid
+%  imdl = select_imdl( fmdl, {'Basic GN dif'});
+%  [imdl.rec_model,imdl.fwd_model.coarse2fine]= mk_grid_model(fmdl,grid{:});
+%
+% ISSUES:
+%  Ensure that grids are defined from smallest to largest
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
