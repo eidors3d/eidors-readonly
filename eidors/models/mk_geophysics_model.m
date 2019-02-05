@@ -559,7 +559,7 @@ function [mdl2,idx2] = copy_mdl2d_from3d(mdl3,idx3,sel);
       end
    end
 
-   ignore = {'electrode', 'nodes', 'boundary', 'elems', 'gnd_node', 'boundary_numbers', 'mat_idx', 'mat_idx_reordered'};
+   ignore = {'electrode', 'nodes', 'boundary', 'elems', 'gnd_node', 'boundary_numbers', 'mat_idx'};
    for n=fieldnames(mdl3)'
       if ~any(strcmp(n,ignore))
          mdl2.(n{:}) = mdl3.(n{:});

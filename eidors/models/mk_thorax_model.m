@@ -102,7 +102,7 @@ function out = remesh_at_model(str)
    delete('ng.opt');
    
    out = rmfield(out,...
-      {'mat_idx','mat_idx_reordered','np_fwd_solve','boundary_numbers'});
+      {'mat_idx','np_fwd_solve','boundary_numbers'});
    
 end
 
