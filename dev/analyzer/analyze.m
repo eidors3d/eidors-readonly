@@ -1,6 +1,5 @@
 function analyze
 %ANALYZE: analyze EIT files for lung parameters
-% Usage: will run using Octave - not Matlab
 
 % (C) Andy Adler & Symon Stowe 2018-2019. License: GPL v2 or v3.
 % $Id$
