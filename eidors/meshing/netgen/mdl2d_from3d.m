@@ -37,9 +37,6 @@ function mdl2 = mdl2d_from3d(mdl3);
    end
 
    % set material indices
-   % NOTE this must be done for both mat_idx and
-   % mat_idx_reordered (which is DEPRECIATED but
-   % still required for backwards compatibilty)
    % TODO: vectorize code
    if isfield(mdl3,'mat_idx');
    mdl2.mat_idx = {};
@@ -57,22 +54,6 @@ function mdl2 = mdl2d_from3d(mdl3);
    end
    end %isfield
 
-   % TODO: vectorize code
-   if isfield(mdl3,'mat_idx_reordered');
-   mdl2.mat_idx_reordered = {};
-   idx0  = idx( lay0, :);
-   for i=1:size(mdl3.mat_idx_reordered,2)
-     mdl2.mat_idx_reordered{i} = [];
-     ii = 1;
-     for j=1:size(mdl3.mat_idx_reordered{i},1)
-         idx_tmp = find( idx0==mdl3.mat_idx_reordered{i}(j) );
-         if not(isempty(idx_tmp))
-           mdl2.mat_idx_reordered{i}(ii,1) = idx_tmp(1,1);
-           ii = ii + 1;
-         end
-     end
-   end
-   end %isfield
    
    % set electrode
    if isfield(mdl3,'electrode')
