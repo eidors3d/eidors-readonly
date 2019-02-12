@@ -1,4 +1,5 @@
 Plan for 3.9.10
+ - fix direction in emphasize_electrode_text
  - Add internal nodes functions
  - Add direct control of electrode surf
      - update remove_unused_nodes

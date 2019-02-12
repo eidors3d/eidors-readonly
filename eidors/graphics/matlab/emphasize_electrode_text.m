@@ -10,7 +10,7 @@ hh = get(gca,'Children');
 
 bgcolour = [1,1,1];
 tmp = view;
-dirn = tmp(1:3,3); dirn = -dirn'/norm(dirn) 
+dirn = tmp(1:3,3); dirn = -dirn'/norm(dirn);
 
 for hi = hh(:)'
   if ~strcmp(get(hi,'Type'),'text'); 
