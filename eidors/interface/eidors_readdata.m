@@ -1042,8 +1042,10 @@ function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( 
    amplitudeFactor = 2.048 / (2^20 * 360 * 1000);
    vv = amplitudeFactor * (iqPayload(1:2:end,:) + 1i*iqPayload(2:2:end,:));
    
-   elecImps = viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:);
-   %% elecImps depends on a factor which varies with the SBC version
+   %% elecImps depends on a factor which varies with the SBC version, 
+   %%   however the following value is close for most versions
+   impedanceFactor =  2.048 / (2^12 * 0.173 * 0.003) / 2^15 = 0.9633 / 2^15;
+   elecImps = impedanceFactor * (viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:));
 
 function [vv] = landquart4pre_readdata( fname )
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
