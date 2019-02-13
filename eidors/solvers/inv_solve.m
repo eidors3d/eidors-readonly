@@ -88,7 +88,8 @@ check_parametrization_handling(inv_model,imgc);
      
 img = eidors_obj('image', imgc );
 % img = data_mapper(img,1);
-if ~isfield(img,'current_params')
+if ~isfield(img,'current_params') % current_params is Bartek's units conversion control for img.elem_data.
+
   img.current_params = [];
 end
 
