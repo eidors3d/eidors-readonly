@@ -1044,7 +1044,7 @@ function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( 
    
    %% elecImps depends on a factor which varies with the SBC version, 
    %%   however the following value is close for most versions
-   impedanceFactor =  2.048 / (2^12 * 0.173 * 0.003) / 2^15 = 0.9633 / 2^15;
+   impedanceFactor =  2.048 / (2^12 * 0.173 * 0.003) / 2^15; % = 0.9633 / 2^15;
    elecImps = impedanceFactor * (viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:));
 
 function [vv] = landquart4pre_readdata( fname )
