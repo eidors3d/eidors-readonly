@@ -98,11 +98,14 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
    %  elecs(i).maxh  = '-maxh=#' or '';
    pts_elecs_idx = []; 
 
+   % elec_depth is the depth of the netgen object for the electrode
    if n_elecs > 1
       elec_depth = min(nonzeros(distmat(vertcat( elecs(:).pos ))))/2;
+   elseif n_elecs==1
       % tank_radius = norm( std( vertcat( elecs(:).pos ), 1), 2);
       % NOTE: all functions but the point electrode used to use
       % tank_radius/4. Point electrode used just tank_radius.
+      elec_depth = norm( std( vertcat( elecs(:).pos ), 1), 2)/4;
    end
    for i=1:n_elecs
       name = sprintf('elec%04d',i);
