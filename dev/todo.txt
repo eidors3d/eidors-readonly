@@ -3,7 +3,9 @@ Plan for 3.9.10
  - Add internal nodes functions
  - Add direct control of electrode surf
      - update remove_unused_nodes
- - remove mat_idx_reordered
+ + remove mat_idx_reordered
+ - rebuild netgen_cyl_models20.png
+
 
 Modifications post 3.9.1
  - Add test for print_convert for gcf/pp.figno

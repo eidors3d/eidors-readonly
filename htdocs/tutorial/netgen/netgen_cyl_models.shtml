@@ -303,6 +303,24 @@ show_fem(img);
 <img src="netgen_cyl_models19.png">
 </center>
 
+<h3>
+Converting internal structrures to electrodes
+</h3>
+
+<pre>
+   extra={'ball_inside','ball_surface', [ ...
+          'solid ball_inside  = sphere(-0.4,0,0.5;0.05);' ...
+          'solid ball_surface = sphere( 0.4,0,1.0;0.05);' ...
+          ]};
+   fmdl= ng_mk_cyl_models(1,[8,.5],[.1],extra); 
+   fmdl = mat_idx_to_electrode(fmdl, {2,3});
+show_fem(fmdl); view(3,12);
+</pre>
+
+<center>
+<img src="netgen_cyl_models20.png">
+</center>
+
 </td></tr></table>
 <p>
 <small>

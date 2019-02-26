@@ -1,6 +1,6 @@
 function netgen_cyl_models( numbers )
 
-if nargin==0; numbers = 1:19; end
+if nargin==0; numbers = 1:20; end
 for i=numbers(:)';
    do_sim(i);
 end
@@ -131,6 +131,15 @@ case 19;
     img.elem_data(fmdl.mat_idx{2}) = 1.5;
     img.elem_data(fmdl.mat_idx{3}) = 0.5;
 show_fem(img);
+
+case 20;
+   extra={'ball_inside','ball_surface', [ ...
+          'solid ball_inside  = sphere(-0.4,0,0.5;0.05);' ...
+          'solid ball_surface = sphere( 0.4,0,1.0;0.05);' ...
+          ]};
+   fmdl= ng_mk_cyl_models(1,[8,.5],[.1],extra); 
+   fmdl = mat_idx_to_electrode(fmdl, {2,3});
+   show_fem(fmdl); view(3,12);
 end
 
 %print('-dpng','-r75', ...
