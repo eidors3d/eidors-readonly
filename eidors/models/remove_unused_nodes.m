@@ -4,7 +4,7 @@ function fmdl = remove_unused_nodes( fmdl );
 
 % (C) 2019 Andy Adler. License: GPL v2 or v3. $Id$
 
-   if ischar(SNR) && strcmp(SNR,'UNIT_TEST'); do_unit_test; return; end
+   if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
    if num_elems(fmdl)==0; return; end; % don't operate on pathalogical models
 
