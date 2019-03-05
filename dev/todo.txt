@@ -5,6 +5,8 @@ Plan for 3.9.10
      - update remove_unused_nodes
  + remove mat_idx_reordered
  - rebuild netgen_cyl_models20.png
+ - fix view matrix in emphasize_electrode_text
+ - make show_3d_slices work with *node_data
 
 
 Modifications post 3.9.1

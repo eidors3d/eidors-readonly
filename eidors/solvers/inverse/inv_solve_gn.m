@@ -18,6 +18,17 @@ function img= inv_solve_gn( inv_model, data1, data2);
 %  vi=fwd_solve(fimg);
 %  img=inv_solve(imdl,vi); % ***
 %  show_fem(img,1);
+% Example#2:
+%imdl = mk_common_model('b2c2',16);
+%imdl.jacobian_bkgnd.value = 2;
+%img=mk_image(imdl);    vh=fwd_solve(img);
+%img.elem_data([5])=5;   vi=fwd_solve(img);
+%imgr = inv_solve(imdl,vh,vi);  % regular solve
+%
+%imdl.solve = @inv_solve_gn;
+%imdl.inv_solve_gn.max_iterations = 5;
+%imdl.inv_solve_gn.min_value = 2;
+%imgr = inv_solve(imdl,vh,vi); % new solve
 %
 % See INV_SOLVE_CORE for arguments, options and parameters.
 %
