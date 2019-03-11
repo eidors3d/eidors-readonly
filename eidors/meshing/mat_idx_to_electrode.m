@@ -25,7 +25,7 @@ function fmdl = create_electrode_from_mat_idx(fmdl,nmat_idx);
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    for i=1:length(fmdl.mat_idx) 
       els = false(num_elems(fmdl),1);
-      els(fmdl.mat_idx{i}) = 1;
+      els(fmdl.mat_idx{i}) = true;
       els(femobj) = [];
       fmdl.mat_idx{i} = find(els);
    end

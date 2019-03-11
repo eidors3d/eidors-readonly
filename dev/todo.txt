@@ -1,4 +1,5 @@
 Plan for 3.9.10
+ - write tests and fix ng_mk_geometric_models (bug line 1401 doesn't generate volumes)
  - fix direction in emphasize_electrode_text
  - Add internal nodes functions
  - Add direct control of electrode surf
