@@ -21,11 +21,11 @@ function iterate_over_files
      fprintf(fid,'<TR><TD>%s',fn(1:end-4));
      for i=1:length(pp.callfns)
         reqbreaths = feval(pp.callfns{i},'REQBREATHS?');
-		reqbeats   = feval(pp.callfns{i},'REQBEATS?');
+    	reqbeats   = feval(pp.callfns{i},'REQBEATS?');
         if reqbreaths && dd.n_breaths==0
            out = '<font size="+2"><center><b>No breaths detected</b></center></font>';
         elseif reqbeats && dd.n_beats==0
-		   out = '<font size="+2"><center><b>No beats detected</b></center></font>';
+    	   out = '<font size="+2"><center><b>No beats detected</b></center></font>';
         else
            out = feval(pp.callfns{i},dd,f);
         end
@@ -47,18 +47,23 @@ function parse_config
 
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
+  pp.color_map = 'ocean';
   % Matlab can't access current functions when eval is used -- eval('config'); % octave only
   fid = fopen('config.m');
-    tline = fgetl(fid);
-    while ischar(tline)
-	  if strncmpi('DO',tline,2)		
-	    tline = tline(4:end);	  
-	    pp.callfns{end+1,1} = tline;
-      elseif strncmpi('CONFIG',tline,6)
-		eval(tline);
-      end		
-	  tline = fgetl(fid);
-    end
+  while true;
+     tline = fgetl(fid);
+     if ~ischar(tline); break; end
+   % TODO: We really need a regex-based parser here
+     [~,idx]= min(tline==' '); % first non-space
+     tline = tline(idx:end);
+
+     if strncmpi('DO',tline,2)		
+        tline = tline(4:end);	  
+        pp.callfns{end+1,1} = tline;
+     elseif strncmpi('CONFIG',tline,6)
+        eval(tline);
+     end    	
+  end
   fclose(fid);
 
   subplot(611);
@@ -68,7 +73,7 @@ function parse_config
 
 function DO(varargin);
   global pp;
-    fname = varargin{1};
+  fname = varargin{1};
   if nargin>1; error('DO expects one argument'); end
   try outstr = feval(fname,'TITLE');
      pp.callfns{end+1} = fname;
@@ -79,34 +84,35 @@ function DO(varargin);
 function CONFIG(varargin)
   global pp;
   cmd = varargin{1};
-  var = varargin{2};
-  van = str2num(var);
+  v2str = varargin{2};
+  v2num = str2num(v2str);
   switch cmd
-    case 'rotate';             pp.rotate= van;
-    case 'min_insp_length';    pp.min_insp_length=   van;
-    case 'min_expi_length';    pp.min_expi_length=   van;
-    case 'FRC_search_window';  pp.FRC_search_window= van;
-    case 'FRC_relative_match'; pp.FRC_relative_match= van;
-    case 'slices'           ;  pp.slices= van;
+    case 'rotate';             pp.rotate= v2num;
+    case 'min_insp_length';    pp.min_insp_length=   v2num;
+    case 'min_expi_length';    pp.min_expi_length=   v2num;
+    case 'FRC_search_window';  pp.FRC_search_window= v2num;
+    case 'FRC_relative_match'; pp.FRC_relative_match= v2num;
+    case 'slices'           ;  pp.slices= v2num;
+    case 'color_map'        ;  pp.color_map = v2str;
     otherwise;
       error('CONFIG parameter %s not understood', cmd);
   end
 
 function dd = loadfile(fname);
-   in = load(fname);
-   dd.ZR = in.data.measurement.ZeroRef;
-   dd.CV = in.data.measurement.CompositValue(:)';
-   dd.FR = in.data.imageRate;
-   dd.tt = (0:length(dd.CV)-1)/dd.FR;
-   dd.breaths = find_frc(dd);
-   dd.n_breaths = size(dd.breaths,1);
-   dd.beats = find_beats(dd); 
-   dd.n_beats = size(dd.beats,1);
-   ls = linspace(0,1,10);
-   ls = [ls,-fliplr(ls)];
-   dd.flow= -conv2(dd.CV,ls,'same');
-   ls = reshape(ls,1,1,[]);
-   dd.ZF = -convn(dd.ZR,ls,'same');
+  in = load(fname);
+  dd.ZR = in.data.measurement.ZeroRef;
+  dd.CV = in.data.measurement.CompositValue(:)';
+  dd.FR = in.data.imageRate;
+  dd.tt = (0:length(dd.CV)-1)/dd.FR;
+  dd.breaths = find_frc(dd);
+  dd.n_breaths = size(dd.breaths,1);
+  dd.beats = find_beats(dd); 
+  dd.n_beats = size(dd.beats,1);
+  ls = linspace(0,1,10);
+  ls = [ls,-fliplr(ls)];
+  dd.flow= -conv2(dd.CV,ls,'same');
+  ls = reshape(ls,1,1,[]);
+  dd.ZF = -convn(dd.ZR,ls,'same');
 
 function out= show_perfusion(dd,ii)
   global pp;
@@ -126,9 +132,9 @@ function out= show_perfusion(dd,ii)
   my_image(perfusion*150/max(perfusion(:))+100);
   fout = sprintf('perfusion_image%03d.png',ii);
   out = sprintf(['<center>max pixel=%1.3f<br>' ...
-   '<a href="%s"><img width="200" src="%s">' ...
-   '</a><p><img src="%s"></center>'], ...
-   max(perfusion(:)), fout, fout, pp.colourbar);
+     '<a href="%s"><img width="200" src="%s">' ...
+     '</a><p><img src="%s"></center>'], ...
+     max(perfusion(:)), fout, fout, pp.colourbar);
   print_convert(fout);
  
 function perfusion = perfusion_calc(dd);
@@ -151,8 +157,8 @@ function out= show_apnoea(dd,ii)
   end
   fout = sprintf('apnoea_segment%03d.png',ii);
   out = sprintf( ...
-  '<a href="%s"><img width="300" src="%s"></a>',...
-  fout, fout);
+     '<a href="%s"><img width="300" src="%s"></a>',...
+     fout, fout);
   clf; subplot(211);
   seg = dd.CV;
   plot(dd.tt,seg,'LineWidth',2); box off; axis tight
@@ -177,8 +183,8 @@ function out= show_max_pixel(dd,ii)
   end
   fout = sprintf('max_pixel_segment%03d.png',ii);
   out = sprintf( ...
-  '<a href="%s"><img width="300" src="%s"></a>',...
-  fout, fout);
+     '<a href="%s"><img width="300" src="%s"></a>',...
+     fout, fout);
   clf; subplot(211);
   pix_wave = max_pixel(dd);
   plot(dd.tt,pix_wave,'LineWidth',2); box off;
@@ -206,11 +212,14 @@ function out= show_beats(dd,ii)
      out = true; return
   end
   % Calculate the heart rate
-  HR = (dd.n_beats-1)/((dd.beats(end,2)-dd.beats(1,2))/dd.FR)*60; 
+  last_first = (dd.beats(end,2)-dd.beats(1,2))/dd.FR
+  HR = (dd.n_beats-1)/last_first*60; 
   fout = sprintf('beat_detection%03d.png',ii);
-  out = sprintf(['<center>Average heart rate=%1.0f bpm<br>' ...
-   '<a href="%s"><img width="300" src="%s"></a></center>'], ...
-  HR, fout, fout);
+  out = sprintf([...
+       '<center>Average heart rate=%1.0f bpm<br>' ...
+       '<a href="%s"><img width="300" src="%s">' ...
+       '</a></center>'], ...
+       HR, fout, fout);
   clf; subplot(211); % All pixels
   plot(dd.tt,dd.CV,'LineWidth',2); box off;
   H = (max(dd.CV) - min(dd.CV))/10;
@@ -331,13 +340,13 @@ function beats = find_beats(data)
         rstr =  sprintf('rejecting beat (%d) [%i-%i-%i]: ', ...
               i, min_beat(e), max_beat(i), min_beat(e+1));
         heart_trough = seq1(min_beat(e+[0:1])); % select the troughs between peaks
-		heart_peak  = seq1(max_beat(i)) - mean(heart_trough); % select the heart peaks
+    	heart_peak  = seq1(max_beat(i)) - mean(heart_trough); % select the heart peaks
         if max_beat(i) - min_beat(e) < beat_sep/1.2;
            disp([rstr,'too soon after previous beat']);
         elseif seq1(max_beat(i)) < 0; 
           disp([rstr,'The beat is too small']);
          elseif abs(diff(heart_trough))/heart_peak > 0.8;
-	      disp([rstr,'The baseline is too inconsistant']);
+          disp([rstr,'The baseline is too inconsistant']);
         else %accept beat
            beats(end+1,:) = [min_beat(e), max_beat(i), min_beat(e+1)]; 
         end
@@ -498,9 +507,9 @@ function out= flow_volume_components(dd,ii)
   hold off; xlim([0,100]);
   fout = sprintf('g_fv_comp%03d.png',ii);
   out = sprintf(['<center>Intercept = %3.1f%%<br>' ...
-   '<a href="%s"><img width="300" src="%s"></a>', ...
-   '</center>'],...
-   median(intersect), fout, fout);
+     '<a href="%s"><img width="300" src="%s">', ...
+     '</a></center>'],...
+     median(intersect), fout, fout);
   print_convert(fout);
 
 function out= flow_volume_global_slope(dd,ii)
@@ -569,9 +578,9 @@ function out= TV_image(dd,ii)
   
   fout = sprintf('TV_image%03d.png',ii);
   out = sprintf(['<center>max pixel=%1.3f<br>' ...
-   '<a href="%s"><img width="200" src="%s">' ...
-   '</a><p><img src="%s"></center>'], ...
-   max(TV(:)), fout, fout, pp.colourbar);
+     '<a href="%s"><img width="200" src="%s">' ...
+     '</a><p><img src="%s"></center>'], ...
+     max(TV(:)), fout, fout, pp.colourbar);
   print_convert(fout);
 
 %DO flow_volume_slices
@@ -601,10 +610,13 @@ function out= TV_slices(dd,ii)
   end
   out = [out,'</table>'];
 
+% set color_map in config file
 function mycolormap
+  global pp;
+  colormap( feval(pp.color_map,256) ); 
 % colormap(gray(256));
 % colormap(viridis(256));
-  colormap(ocean(256));
+% colormap(ocean(256));
 
 function FV = FV_calc(dd);
   global pp;
