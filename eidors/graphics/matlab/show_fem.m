@@ -18,7 +18,8 @@ function hh=show_fem( mdl, options)
 % for control of colourbar, use img.calc_colours.cb_shrink_move
 %
 % parameters
-%     fwd_model.show_fem.linecolour
+%  img.fwd_model.show_fem.alpha_inhomogeneities
+%      1 is opaque. A value like 0.02 is transparent     
 %
 % to change line properties:
 %      hh=show_fem(...); set(hh,'EdgeColor',[0,0,1];
@@ -378,32 +379,17 @@ if size(elem_data,2)>1
    warning('backtrace',q.state);
 %    eidors_msg('warning: show_fem only shows first image',1);
 end
-repaint_inho(elem_data(:,1), 'use_global' , mdl.nodes, mdl.elems, ...
-    opt.transparency_thresh, img); 
+hh= repaint_inho(elem_data(:,1), 'use_global' , ...
+      mdl.nodes, mdl.elems, ...
+      opt.transparency_thresh, img); 
+try;
+    set(hh,'FaceAlpha',mdl.show_fem.alpha_inhomogeneities);
+end
 if ~exist('OCTAVE_VERSION');
 camlight('left');
 lighting('none'); % lighting doesn't help much
 end
 
-function paint_electrodes_old(sel,srf,vtx, colour, show_num);
-%function paint_electrodes(sel,srf,vtx);
-%
-% plots the electrodes red at the boundaries.
-%
-% sel = The index of the electrode faces in the srf matrix
-%       sel can be created by set_electrodes.m 
-% srf = the boundary faces (triangles)
-% vtx = The vertices matrix.
-
-l = srf(sel,1); m = srf(sel,2); n = srf(sel,3);
-
-Xs = [vtx(l,1);vtx(m,1);vtx(n,1)];
-Ys = [vtx(l,2);vtx(m,2);vtx(n,2)];
-Zs = [vtx(l,3);vtx(m,3);vtx(n,3)];
-
-h=patch(Xs,Ys,Zs, colour);
-% need 'direct' otherwise colourmap is screwed up
-set(h, 'FaceLighting','none', 'CDataMapping', 'direct' );
 
 function paint_electrodes(sel,srf,vtx, colour, show_num);
    if isempty(sel); return; end  % Not required after matlab 2014
@@ -612,7 +598,7 @@ function ee= get_boundary( mdl )
    end
 
 % Function copied from dev/n_polydorides/
-function repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);
+function hh_=repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);
 %function repaint_inho(mat,mat_ref,vtx,simp, thresh);
 %
 %Repaints the simulated inhomogeneity according to the reference
@@ -661,18 +647,12 @@ switch(size(this_x,2))
                 [1;3;4], ...
                 [2;3;4]];
 end
+hh_=[];
 for idx=idx_
    Xs(:)=vtx(this_x(:,idx)',1);
    Ys(:)=vtx(this_x(:,idx)',2);
    Zs(:)=vtx(this_x(:,idx)',3);
 
-   if exist('OCTAVE_VERSION');
-% TODO: This is really slow, can we do anything about it
-      cmap = colormap;
-      for i=1:size(colours,2);
-         patch(Xs(:,i),Ys(:,i),Zs(:,i),cmap(colours(i),:));
-      end
-   else
    if size(colours,1)==1 && size(colours,2)==3
       % need to work around ^%$#%$# matlab bug which
       % forces an incorrect interpretation is colours of this size
@@ -685,7 +665,7 @@ for idx=idx_
       hh= patch(Xs,Ys,Zs,colours, ...
             'EdgeColor','none','CDataMapping','direct');
    end
-   end
+   hh_ = [hh_,hh];
 end
 
 
