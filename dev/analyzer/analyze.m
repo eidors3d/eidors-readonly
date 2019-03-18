@@ -31,6 +31,7 @@ function iterate_over_files
         end
         fprintf(fid,'<TD>%s',out);
      end
+        fprintf(fid,'<TD>%s',fn(1:end-4));
      fclose(fid);
   end
 
@@ -94,11 +95,13 @@ function CONFIG(varargin)
     case 'FRC_relative_match'; pp.FRC_relative_match= v2num;
     case 'slices'           ;  pp.slices= v2num;
     case 'color_map'        ;  pp.color_map = v2str;
+    case 'LP_filter'        ;  pp.LP_filter = v2num; 
     otherwise;
       error('CONFIG parameter %s not understood', cmd);
   end
 
 function dd = loadfile(fname);
+  global pp;
   in = load(fname);
   dd.ZR = in.data.measurement.ZeroRef;
   dd.CV = in.data.measurement.CompositValue(:)';
@@ -108,6 +111,14 @@ function dd = loadfile(fname);
   dd.n_breaths = size(dd.breaths,1);
   dd.beats = find_beats(dd); 
   dd.n_beats = size(dd.beats,1);
+
+  if isinf(pp.LP_filter);
+     b=1; a=1;
+  else
+     [b,a] = butter(2,[pp.LP_filter/dd.FR]);
+  end
+  dd.CV = filtfilt(b,a,dd.CV);
+
   ls = linspace(0,1,10);
   ls = [ls,-fliplr(ls)];
   dd.flow= -conv2(dd.CV,ls,'same');
@@ -797,6 +808,7 @@ function write_table_hdr;
     out = feval(pp.callfns{i}, 'TITLE');
     fprintf(fid,'<TH>%s',out);
   end
+  fprintf(fid,'<TH>Filename');
   fclose(fid);
 
   
@@ -1002,6 +1014,7 @@ function pp = parse_options(filename,varargin)
    pp.resolution = sprintf('-r%d',125 * pp.factor);
    pp.crop_slack = [0,0,0,0];
    pp.figno = gcf; % default
+   pp.LP_filter = inf; % Don't LP filter
    
    
  
