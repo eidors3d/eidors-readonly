@@ -13,6 +13,7 @@ function analyze
 function iterate_over_files
   global pp; % parameters
   files= dir('*.mat');
+%% FIX
   for f= 1:length(files)
      fn = files(f).name;
      disp(fn);
@@ -20,6 +21,7 @@ function iterate_over_files
      fid = outfile;
      fprintf(fid,'<TR><TD>%s',fn(1:end-4));
      for i=1:length(pp.callfns)
+        clf;
         reqbreaths = feval(pp.callfns{i},'REQBREATHS?');
     	reqbeats   = feval(pp.callfns{i},'REQBEATS?');
         if reqbreaths && dd.n_breaths==0
@@ -58,10 +60,10 @@ function parse_config
      [~,idx]= min(tline==' '); % first non-space
      tline = tline(idx:end);
 
-     if strncmpi('DO',tline,2)		
+     if strncmpi('DO ',tline,3)
         tline = tline(4:end);	  
         pp.callfns{end+1,1} = tline;
-     elseif strncmpi('CONFIG',tline,6)
+     elseif strncmpi('CONFIG ',tline,7)
         eval(tline);
      end    	
   end
@@ -69,7 +71,10 @@ function parse_config
 
   subplot(611);
   mycolormap;
-  image(linspace(0,256,32)); axis off;
+  image(linspace(0,256,32));
+  set(gca,'YTick',[]);
+  set(gca,'XTick',linspace(0.5,32.5,3));
+  set(gca,'XTickLabel',{'0','50%','Max'});
   print_convert(pp.colourbar,struct('resolution',30));
 
 function DO(varargin);
@@ -96,6 +101,7 @@ function CONFIG(varargin)
     case 'slices'           ;  pp.slices= v2num;
     case 'color_map'        ;  pp.color_map = v2str;
     case 'LP_filter'        ;  pp.LP_filter = v2num; 
+    case 'model_breaths_ncos'; pp.model_breaths_ncos = v2num;
     otherwise;
       error('CONFIG parameter %s not understood', cmd);
   end
@@ -390,6 +396,76 @@ function out= show_breaths(dd,ii)
   axis tight
   print_convert(fout);
 
+function out= model_breaths(dd,ii)
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Model fit breaths'; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  fout = sprintf('model_breaths%03d.png',ii);
+  out = sprintf( ...
+   '<a href="%s"><img width="300" src="%s"></a>',...
+   fout, fout);
+  
+  clf; subplot(211);
+  plot(dd.tt,dd.CV,'LineWidth',4); box off;
+  for i=1:dd.n_breaths
+    eie = dd.breaths(i,[1,2,3]);
+    Lie = diff(eie)+1;
+    Teie = dd.tt(eie);
+    Ceie = dd.CV(eie);
+    inspL= linspace(Ceie(1),Ceie(2),Lie(1));
+    insp = dd.CV(eie(1):eie(2)) - inspL;
+    insp = low_order_fourier(insp,4) + inspL;
+    line(dd.tt(eie(1):eie(2)), insp, 'color',[0,.5,.1],'LineWidth',2);
+  
+    expiL= linspace(Ceie(2),Ceie(3),Lie(2));
+    expi = dd.CV(eie(2):eie(3)) - expiL;
+    expi = low_order_fourier(expi,4) + expiL;
+    line(dd.tt(eie(2):eie(3)), expi, 'color',[0,.4,.2],'LineWidth',2);
+  end
+
+  H = (max(dd.CV) - min(dd.CV))/10;
+  for i=1:dd.n_breaths
+     eie = dd.breaths(i,[1,3,2,1]);
+     line(dd.tt(eie), dd.CV(eie), 'color',[0,0,0],'LineWidth',2);
+  end
+  axis tight
+  subplot(212);
+  ls = linspace(0,1,10); ls = ls/sum(ls)/10;
+  ls = [ls,-fliplr(ls)];
+  for i=1:dd.n_breaths
+    eie = dd.breaths(i,[1,2,3]);
+    Lie = diff(eie)+1;
+    Teie = dd.tt(eie);
+    Ceie = dd.CV(eie);
+    inspL= linspace(Ceie(1),Ceie(2),Lie(1));
+    insp = dd.CV(eie(1):eie(2)) - inspL;
+    insp = low_order_fourier(insp,7);% + inspL;
+    iflow = -conv2(insp,ls,'same') - diff(Ceie(1:2))/Lie(1);
+    line(dd.tt(eie(1):eie(2)), iflow, 'color',[0,.5,.1],'LineWidth',2);
+  
+    expiL= linspace(Ceie(2),Ceie(3),Lie(2));
+    expi = dd.CV(eie(2):eie(3)) - expiL;
+    expi = low_order_fourier(expi,7);% + expiL;
+    eflow = -conv2(expi,ls,'same') - diff(Ceie(2:3))/Lie(2); ;
+    line(dd.tt(eie(2):eie(3)), eflow, 'color',[0,.4,.2],'LineWidth',2);
+  end
+  print_convert(fout);
+ 
+
+function s = low_order_fourier(s,N);
+  f = fft(s);
+  f([N+2:end-N]) = 0;
+  s= ifft(f);
+  if norm(imag(s)) > 1e-13; error('FFT'); end
+  s= real(s);
+
+
 function out= show_volume_n_flow(dd,ii)
   if ischar(dd) && strcmp(dd,'TITLE');
      out = 'Volume/Flow vs t'; return
@@ -585,7 +661,7 @@ function out= TV_image(dd,ii)
   TV = TVcalc(dd);
   TV(dd.ZR(:,:,1)==0) = NaN;
   mycolormap;
-  my_image(TV*200/max(TV(:))+50);
+  my_image(TV*250/max(TV(:))+5);
   
   fout = sprintf('TV_image%03d.png',ii);
   out = sprintf(['<center>max pixel=%1.3f<br>' ...
@@ -629,18 +705,21 @@ function mycolormap
 % colormap(viridis(256));
 % colormap(ocean(256));
 
-function FV = FV_calc(dd);
+function [FV,ROI] = FV_calc(dd);
   global pp;
   FV = TVcalc(dd);
   mFV = max(FV(:));
   FV(dd.ZR(:,:,1)==0) = NaN;
+  ROI = FV(:,:,1); ROI(~isnan(ROI))= 0;
    
   for i=1:32; for j=1:32
      if isnan(FV(i,j));
         1; % do nothing
      elseif FV(i,j) < 0.1*mFV
         FV(i,j) = 0;
+        ROI(i,j) = 0;
      else
+        ROI(i,j) = 1;
         slope = [];
         for l=1:dd.n_breaths
            eie = dd.breaths(l,[1,2,3]);
@@ -666,9 +745,12 @@ function out= flow_volume_image(dd,ii)
   if ischar(dd) && strcmp(dd,'REQBEATS?');
      out = false; return
   end
-  FV = FV_calc(dd);
+  [FV,ROI] = FV_calc(dd);
   mycolormap;
-  my_image(FV*200/max(FV(:))+50);
+  outimg = FV*200/max(FV(:));
+% Issue ... what if some components are negative
+  outimg(ROI==1) = outimg(ROI==1) + 50;
+  my_image(outimg);
   
   fout = sprintf('FV_image%03d.png',ii);
   out = sprintf(['<center>max pixel=%1.3f<br>' ...
@@ -1015,6 +1097,7 @@ function pp = parse_options(filename,varargin)
    pp.crop_slack = [0,0,0,0];
    pp.figno = gcf; % default
    pp.LP_filter = inf; % Don't LP filter
+   pp.model_breaths_ncos = 4;
    
    
  
@@ -1127,3 +1210,6 @@ catch
     % Subsample
     A = A(1+floor(mod(end-1, factor)/2):factor:end,1+floor(mod(end-1, factor)/2):factor:end,:);
 end
+
+
+
