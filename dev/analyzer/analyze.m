@@ -4,6 +4,10 @@ function analyze
 % (C) Andy Adler & Symon Stowe 2018-2019. License: GPL v2 or v3.
 % $Id$
 
+if ~exist('butter','file'); 
+   pkg load signal
+end
+
   parse_config;
   write_header;
   write_table_hdr;
@@ -13,7 +17,6 @@ function analyze
 function iterate_over_files
   global pp; % parameters
   files= dir('*.mat');
-%% FIX
   for f= 1:length(files)
      fn = files(f).name;
      disp(fn);
@@ -119,7 +122,7 @@ function dd = loadfile(fname);
   dd.n_beats = size(dd.beats,1);
 
   if isinf(pp.LP_filter);
-     b=1; a=1;
+     b=1; a=1; % no filter
   else
      [b,a] = butter(2,[pp.LP_filter/dd.FR]);
   end

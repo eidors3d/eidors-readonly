@@ -1,5 +1,4 @@
-% Breathing analysis
-DO show_breaths
+% Breathing analysis DO show_breaths
 DO model_breaths
 DO show_volume_n_flow
 DO stats_volume_n_flow
@@ -23,7 +22,7 @@ CONFIG min_expi_length 0.5 % seconds
 CONFIG FRC_relative_match 0.2 % match start/end FRC
 CONFIG FRC_search_window  0.3  % search 100ms for FRC
 CONFIG slices 4
-CONFIG LP_filter inf % LP filter cut-off frequency [HZ}
+CONFIG LP_filter inf % LP filter cut-off frequency [HZ]
 CONFIG model_breaths_ncos 4
 %CONFIG color_map ocean
 %CONFIG color_map gray
