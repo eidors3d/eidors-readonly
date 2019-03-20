@@ -171,7 +171,11 @@ function pp = parse_options(filename,varargin)
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
    pp.crop_slack = [0,0,0,0];
-   pp.figno = get(gcf,'Number'); % default
+   if exist('OCTAVE_VERSION')
+      pp.figno = gcf;
+   else
+      pp.figno = get(gcf,'Number');
+   end
    
    
  

@@ -9,7 +9,7 @@ function fmdl = mat_idx_to_electrode(fmdl, mat_idxes)
 % (C) 2019 Andy Adler. License: GPL v2 or v3.
 % $Id$
 
-if isstr(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
 for i = 1:length(mat_idxes)
    fmdl = create_electrode_from_mat_idx(fmdl, mat_idxes{i});
