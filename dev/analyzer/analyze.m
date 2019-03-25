@@ -54,21 +54,23 @@ function parse_config
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
   pp.color_map = 'ocean';
-  % Matlab can't access current functions when eval is used -- eval('config'); % octave only
+
   fid = fopen('config.m');
   while true;
      tline = fgetl(fid);
      if ~ischar(tline); break; end
-   % TODO: We really need a regex-based parser here
-     [~,idx]= min(tline==' '); % first non-space
-     tline = tline(idx:end);
-
-     if strncmpi('DO ',tline,3)
-        tline = tline(4:end);	  
-        pp.callfns{end+1,1} = tline;
-     elseif strncmpi('CONFIG ',tline,7)
-        eval(tline);
-     end    	
+     % Remove leading (and trailing) whitespace
+     tline = strtrim(tline); 
+     do_locs = regexpi(tline,'DO ');
+     config_locs = regexpi(tline,'EVAL ');
+     if do_locs == 1
+        tline = tline(4:end);
+        keyboard
+        %pp.callfns{end+1,1} = tline;
+     elseif config_locs == 1 
+        keyboard
+        %eval(tline);
+     end
   end
   fclose(fid);
 
