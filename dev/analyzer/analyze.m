@@ -56,20 +56,23 @@ function parse_config
   pp.color_map = 'ocean';
 
   fid = fopen('config.m');
+  count = 0;
   while true;
      tline = fgetl(fid);
      if ~ischar(tline); break; end
+     count = count+1;
      % Remove leading (and trailing) whitespace
      tline = strtrim(tline); 
      do_locs = regexpi(tline,'DO ');
-     config_locs = regexpi(tline,'EVAL ');
+     config_locs = regexpi(tline,'CONFIG ');
+     comment_locs = regexpi(tline,'%');
      if do_locs == 1
         tline = tline(4:end);
-        keyboard
-        %pp.callfns{end+1,1} = tline;
+        pp.callfns{end+1,1} = tline;
      elseif config_locs == 1 
-        keyboard
-        %eval(tline);
+        eval(tline);
+     elseif (comment_locs ~= 1) && (size(tline) > 0)
+        warning(['Unsupported input in file: ',fid,' on line: ',num2str(count),'.']) 
      end
   end
   fclose(fid);
@@ -276,6 +279,7 @@ function beats = find_beats(data)
   lseq = length(seq);
   Fseq= fft(seq);
   % Cut off freqs
+  % TODO - check this and potentially remove for non-frequency domain
   fc_low = 0.35; % Low frequency cutoff (Hz)
   fc_high= 0.65; % High frequency cutoff (Hz)
   fc_low = round(fc_low*lseq/data.FR);
