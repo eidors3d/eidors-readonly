@@ -707,12 +707,40 @@ function out= TV_slices(dd,ii)
   out = [out,'</table>'];
 
 % set color_map in config file
-function mycolormap
-  global pp;
-  colormap( feval(pp.color_map,256) ); 
-% colormap(gray(256));
-% colormap(viridis(256));
-% colormap(ocean(256));
+function mycolormap(cmap)
+  if nargin==0;
+     global pp;
+     colormap( feval(pp.color_map,256) ); 
+   % colormap(gray(256));
+   % colormap(viridis(256));
+   % colormap(ocean(256));
+  else
+     colormap( cmap );
+  end
+
+function [RGB] = blue_red_colours;
+
+   ofs= 1;
+   glev= 0.1;
+
+   D= (2*ofs - 1);
+   ofs= ofs - 2*(ofs==0);
+   F= 3*0.1;
+   DF= D*F; D_F= D/F;
+   scale_data = [linspace(-3,0,100),linspace(0,3,156)];
+
+   red= DF*abs(scale_data+D_F) - ofs;
+   red= red.*(red>0).*(red<1) + (red>=1);
+
+   grn= DF*abs(scale_data    ) - ofs;
+   grn= grn.*(grn>0).*(grn<1) + (grn>=1);
+
+   blu= DF*abs(scale_data-D_F) - ofs;
+   blu= blu.*(blu>0).*(blu<1) + (blu>=1);
+   RGB= [red;grn;blu]';
+   
+   vd = viridis(2);
+   RGB(1,:) = vd(1,:);
 
 function [FV,ROI] = FV_calc(dd);
   global pp;
@@ -756,16 +784,50 @@ function out= flow_volume_image(dd,ii)
   end
   [FV,ROI] = FV_calc(dd);
   mycolormap;
+    
   outimg = FV*200/max(FV(:));
 % Issue ... what if some components are negative
   outimg(ROI==1) = outimg(ROI==1) + 50;
-  my_image(outimg);
+  my_image(outimg); axis image;
+  str= ['<center>max pixel=%1.3f<br>' ...
+   '<a href="%s"><img width="200" src="%s">' ...
+   '</a><p><img src="%s"></center>'];
   
   fout = sprintf('FV_image%03d.png',ii);
-  out = sprintf(['<center>max pixel=%1.3f<br>' ...
-   '<a href="%s"><img width="200" src="%s">' ...
-   '</a><p><img src="%s"></center>'], ...
-   max(FV(:)), fout, fout, pp.colourbar);
+  out = sprintf(str, max(FV(:)), fout, fout, pp.colourbar);
+  print_convert(fout);
+
+function out= flow_volume_image_change(dd,ii)
+  global pp;
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Flow-Volume Image &Delta;';
+     return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  [FV,ROI] = FV_calc(dd);
+  mycolormap(blue_red_colours);
+
+% TODO Set parameter to choose BL image
+  if ii==1; pp.flow_volume_image_bl= FV; end
+    
+  FVd= FV-pp.flow_volume_image_bl;
+  outimg = FVd*100;
+  outimg(ROI==1) = outimg(ROI==1) + 100;
+  outimg( ROI==1 & outimg<2  ) = 2;
+  outimg( ROI==1 & outimg>255) = 255;
+  
+   my_image(outimg); axis image
+  str= ['<center>max &Delta;=%1.3f from BL<br>' ...
+  '<a href="%s"><img width="200" src="%s">' ...
+  '</a><p><img src="%s"></center>'];
+  
+  fout = sprintf('FVd_image%03d.png',ii);
+  out = sprintf(str, max(FVd(:)), fout, fout, pp.colourbar);
   print_convert(fout);
 
 function out= flow_volume_slices(dd,ii)
