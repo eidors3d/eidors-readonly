@@ -4,9 +4,6 @@ function analyze
 % (C) Andy Adler & Symon Stowe 2018-2019. License: GPL v2 or v3.
 % $Id$
 
-if ~exist('butter','file'); 
-   pkg load signal
-end
 
   parse_config;
   write_header;
@@ -1283,4 +1280,120 @@ catch
 end
 
 
+
+% butter from octave signal package (License: GPL)
+function [a, b] = butter (n, w)
+
+
+  stop = false;
+  digital = true;
+
+
+  %# Prewarp to the band edges to s plane
+  if (digital)
+    T = 2;       # sampling frequency of 2 Hz
+    w = 2 / T * tan (pi * w / T);
+  end
+
+  %# Generate splane poles for the prototype Butterworth filter
+  %# source: Kuc
+  C = 1;  ## default cutoff frequency
+  pole = C * exp (1i * pi * (2 * [1:n] + n - 1) / (2 * n));
+  if (mod (n, 2) == 1)
+    pole((n + 1) / 2) = -1;  ## pure real value at exp(i*pi)
+  end
+  zero = [];
+  gain = C^n;
+
+  %# splane frequency transform
+% [zero, pole, gain] = sftrans (zero, pole, gain, w, stop);
+% Low-pass code from sftrans
+  gain = gain * (C/w)^(length(zero)-length(pole));
+  pole = w * pole / C;
+  zero = w * zero / C;
+
+  %# Use bilinear transform to convert poles to the z plane
+  if (digital)
+    [zero, pole, gain] = bilinear (zero, pole, gain, T);
+  end
+
+  %# convert to the correct output form
+    a = real (gain * poly (zero));
+    b = real (poly (pole));
+
+% filtfilt from octave signal package (License: GPL)
+function y = filtfilt(b, a, x)
+
+  rotate = (size(x,1)==1);
+  if rotate,                    # a row vector
+    x = x(:);                   # make it a column vector
+  end
+
+  lx = size(x,1);
+  a = a(:).';
+  b = b(:).';
+  lb = length(b);
+  la = length(a);
+  n = max(lb, la);
+  lrefl = 3 * (n - 1);
+  if la < n, a(n) = 0; end
+  if lb < n, b(n) = 0; end
+
+  %# Compute a the initial state taking inspiration from
+  %# Likhterov & Kopeika, 2003. "Hardware-efficient technique for
+  %#     minimizing startup transients in Direct Form II digital filters"
+  kdc = sum(b) / sum(a);
+  if (abs(kdc) < inf) # neither NaN nor +/- Inf
+    si = fliplr(cumsum(fliplr(b - kdc * a)));
+  else
+    si = zeros(size(a)); # fall back to zero initialization
+  end
+  si(1) = [];
+
+  for (c = 1:size(x,2)) # filter all columns, one by one
+    v = [2*x(1,c)-x((lrefl+1):-1:2,c); x(:,c);
+         2*x(end,c)-x((end-1):-1:end-lrefl,c)]; # a column vector
+
+    %# Do forward and reverse filtering
+    v = filter(b,a,v,si*v(1));                   # forward filter
+    v = flipud(filter(b,a,flipud(v),si*v(end))); # reverse filter
+    y(:,c) = v((lrefl+1):(lx+lrefl));
+  end
+
+  if (rotate)                   # x was a row vector
+    y = rot90(y);               # rotate it back
+  end
+
+% biliear from signal toolbox (license: GPL)
+function [Zz, Zp, Zg] = bilinear(Sz, Sp, Sg, T)
+
+  if nargin==3
+    T = Sg;
+    [Sz, Sp, Sg] = tf2zp(Sz, Sp);
+  elseif nargin!=4
+    print_usage;
+  end
+
+  p = length(Sp);
+  z = length(Sz);
+  if z > p || p==0
+    error("bilinear: must have at least as many poles as zeros in s-plane");
+  end
+
+%# ----------------  -------------------------  ------------------------
+%# Bilinear          zero: (2+xT)/(2-xT)        pole: (2+xT)/(2-xT)
+%#      2 z-1        pole: -1                   zero: -1
+%# S -> - ---        gain: (2-xT)/T             gain: (2-xT)/T
+%#      T z+1
+%# ----------------  -------------------------  ------------------------
+  Zg = real(Sg * prod((2-Sz*T)/T) / prod((2-Sp*T)/T));
+  Zp = (2+Sp*T)./(2-Sp*T);
+  if isempty(Sz)
+    Zz = -ones(size(Zp));
+  else
+    Zz = [(2+Sz*T)./(2-Sz*T)];
+    Zz = postpad(Zz, p, -1);
+  end
+
+  if nargout==2, [Zz, Zp] = zp2tf(Zz, Zp, Zg); end
 
