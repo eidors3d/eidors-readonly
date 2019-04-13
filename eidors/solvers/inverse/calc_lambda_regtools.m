@@ -114,7 +114,6 @@ assert(isequal(W, speye(size(W))));
 % NOTE: We need it in standard form as l_curve and gcv routines only accept this
 [U_s, s_s] = csvd(A_s);
 
-
 %% Iterate through all frames to get a range of lambdas
 nFrames = size(vi,2);
 lambdas = nan(nFrames,1);
@@ -125,12 +124,17 @@ if doPlot
     figure(); 
 end
 
+data_width= max(num_frames(vi), num_frames(vh));
+vi = filt_data( imdl, vi, data_width );
+vh = filt_data( imdl, vh, data_width );
+B = vh - vi;
+
 for iFrame = 1:nFrames
     
     progress_msg(iFrame, nFrames);
     
     %% prepare differential data of current frame
-    b = vh - vi(:,iFrame);
+    b = B(:,iFrame);
 	
 	switch(lower(type))
 		case 'lcc'
@@ -192,6 +196,67 @@ progress_msg('Calculating lambda for each frame:', inf);
 
 end
 
+% TODO: this code really needs to be cleaned, but not before eidors 3.4
+function nf= num_frames(d0)
+   if isnumeric( d0 )
+      nf= size(d0,2);
+   elseif d0(1).type == 'data';
+      nf= size( horzcat( d0(:).meas ), 2);
+   else
+      error('Problem calculating number of frames. Expecting numeric or data object');
+   end
+end
+
+% test for existance of meas_select and filter data
+function d2= filt_data(inv_model, d0, data_width )
+   if ~isnumeric( d0 )
+       % we probably have a 'data' object
+
+       d1 = [];
+       for i=1:length(d0)
+          if strcmp( d0(i).type, 'data' )
+              d1 = [d1, d0(i).meas];
+          else
+              error('expecting an object of type data');
+          end
+       end
+
+   else
+      % we have a matrix of data. Hope for the best
+      d1 = d0;
+   end
+
+   d1= double(d1); % ensure we can do math on our object
+
+   if isfield(inv_model.fwd_model,'meas_select') && ...
+     ~isempty(inv_model.fwd_model.meas_select)
+      % we have a meas_select parameter that isn []
+
+      meas_select= inv_model.fwd_model.meas_select;
+      if     size(d1,1) == length(meas_select)
+         d2= d1(meas_select,:);
+      elseif size(d1,1) == sum(meas_select==1)
+         d2= d1;
+      else
+         error('inconsistent difference data: (%d ~= %d). Maybe check fwd_model.meas_select',  ...
+               size(d1,1), length(meas_select));
+      end
+   else
+      d2= d1;
+   end
+
+   if nargin==3 % expand to data width
+      d2_width= size(d2,2);
+      if d2_width == data_width
+         % ok
+      elseif d2_width == 1
+         d2= d2(:,ones(1,data_width));
+      else
+         error('inconsistent difference data: (%d ~= %d)',  ...
+               d2_width, data_width);
+      end
+   end
+end
 
 function doUnitTest()
 % inspired by the tutorial mentioned below:
