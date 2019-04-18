@@ -79,7 +79,7 @@ end
 copt.fstr = 'fwd_solve';
 n_frames = size(img.elem_data,2);
 for frame = 1:n_frames;
-   imgn = img; imgn.elem_data = imgn.elem_data(:,frame);
+   imgn = img; imgn.elem_data = imgn.elem_data(:,frame,:,:);
    copt.cache_obj = imgn;
    copt.boost_priority = -2; % fmdl evaluations are low priority
    tmp = eidors_cache(solver, {imgn}, copt);
