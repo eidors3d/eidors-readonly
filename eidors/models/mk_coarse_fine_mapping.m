@@ -1,6 +1,14 @@
 function [mapping, outside] = mk_coarse_fine_mapping(varargin)
 %MK_COARSE_FINE_MAPPING: create a mapping matrix from coarse to fine FEM
 % [c2f,out]= mk_coarse_fine_mapping( f_mdl, c_mdl, opt );
+%
+% C2F_ij is the fraction of f_mdl element i which is
+%   contained in c_mdl element j. This is used to map
+%   from data on the reconstruction model (c_mdl) to
+%   the forward model f_mdl as 
+%      elem_data_fine = Mapping*elem_data_coase
+% OUT_i is the fraction of f_mdl element i which is not
+%   contained in any c_mdl element.
 %  
 % Parameters:
 %    c_mdl is coarse fwd_model
