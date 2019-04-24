@@ -21,8 +21,9 @@ function fmdl = remove_unused_nodes( fmdl );
       fmdl.electrode(i).nodes =  nidx( ...
          fmdl.electrode(i).nodes);
    end
-   fmdl.boundary = find_boundary(fmdl);
-   fmdl.gnd_node = usednodes(fmdl.gnd_node);
+%  fmdl.boundary = find_boundary(fmdl);
+   fmdl.boundary = reshape(nidx(fmdl.boundary),size(fmdl.boundary));
+   fmdl.gnd_node = nidx(fmdl.gnd_node);
    if fmdl.gnd_node == 0 %% New gnd node if missing
       fmdl = assign_new_gnd_node( fmdl );
    end
@@ -33,3 +34,4 @@ function fmdl = assign_new_gnd_node( fmdl );
    [~,fmdl.gnd_node] = min(d2);
 
 function do_unit_test
+c
