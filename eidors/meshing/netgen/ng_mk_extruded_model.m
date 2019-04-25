@@ -515,6 +515,8 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
               else
                   error('curve_type unrecognized');
               end
+          otherwise;
+             error('Unrecognized value of curve_type specified in floor(elec_pos(2))')
       end
 
       on_elecs = ones(n_elecs, 1);
