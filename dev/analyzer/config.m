@@ -29,3 +29,6 @@ CONFIG model_breaths_ncos 4
 %CONFIG color_map ocean
 %CONFIG color_map gray
  CONFIG color_map viridis
+%CONFIG FILE "Example file name.mat" starttime 1 % [s]
+%CONFIG FILE "Example file name.mat" endtime 1 % [s]
+%CONFIG FILE "Example file name.mat" LPF_fc 1 % LPF cut off [Hz]

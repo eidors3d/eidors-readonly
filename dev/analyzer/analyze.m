@@ -4,6 +4,8 @@ function analyze
 % (C) Andy Adler & Symon Stowe 2018-2019. License: GPL v2 or v3.
 % $Id$
 
+% TODO:
+%  unify filtering -> Maybe into the "FILE" section
 
   parse_config;
   write_header;
@@ -107,9 +109,84 @@ function CONFIG(varargin)
     case 'color_map'        ;  pp.color_map = v2str;
     case 'LP_filter'        ;  pp.LP_filter = v2num; 
     case 'model_breaths_ncos'; pp.model_breaths_ncos = v2num;
+    case 'FILE';
+       fh = hsh(v2str);
+       vstr = varargin{4};
+       vnum = str2num(vstr);
+       switch varargin{3}
+          case 'endtime'; pp.( fh ).endtime = vnum;
+          case 'LPF_fc';  pp.( fh ).LPF_fc = vnum;
+          otherwise error(['CONFIG FILE parameter ', ...
+              ' %s not understood'], varargin{3});
+       end 
     otherwise;
       error('CONFIG parameter %s not understood', cmd);
   end
+
+% Make assoc arrays work
+function hh= hsh( str )
+   if exist('OCTAVE_VERSION')==5
+      hh= ['H',hash('sha1',str)];
+   else
+      hh= ['H',rptgen.hash(str)];
+   end
+   
+% Frequency axis for filtering
+function fax = freq_axis( dd );
+  fax = linspace(0,dd.FR,dd.lD+1);
+  fax(end)=[];
+  fax(fax>dd.FR/2) = fax(fax>dd.FR/2) - dd.FR;
+
+% Filter in the frequency direction
+function s = freq_filt(s,fresp,dim);
+  f = fft(s,[],dim);
+  if size(s,dim)~= length(fresp);
+     error('Incompatible sizes');
+  end
+  fshape = [1,1,1]; fshape(dim) = size(s,dim);
+  f = f .* reshape(fresp,fshape);
+  s= ifft(f,[],dim);
+  if norm(imag(s(:))) > 1e-13
+     error('FFT filter has imag output');
+  end
+  s = real(s);
+  
+
+function dd = filtfile(dd,fname);
+  global pp;
+  fh = hsh(fname); 
+  if ~isfield(pp,fh); return; end % no specific info
+  cfg = pp.( fh );
+  % make sure these are done in order
+  %   so that time cuts occur first
+  for fn = {'endtime','starttime','LPF_fc'}
+     if ~isfield(cfg,fn{1}); continue; end
+     fval = cfg.( fn{1} );
+     switch fn{1}
+        case 'endtime'; 
+           lim = round(fval * dd.FR);
+           dd.CV(lim:end) = [];
+           dd.tt(lim:end) = [];
+           dd.ZR(:,:,lim:end) = [];
+           dd.lD = length(dd.CV);
+        case 'starttime'; 
+           lim = round(fval * dd.FR);
+           dd.CV(1:lim) = [];
+           dd.tt(1:lim) = [];
+           dd.ZR(:,:,1:lim) = [];
+           dd.lD = length(dd.CV);
+        case 'LPF_fc'; 
+% TODO Add windowing and other controls
+           fax = freq_axis( dd );
+           fresp = abs(fax)<fval;
+           dd.ZR = freq_filt(dd.ZR,fresp,3);
+           dd.CV = freq_filt(dd.CV,fresp,2);
+
+        otherwise; 
+           error 'CONFIG FILE option not understood';
+     end
+  end
+
 
 function dd = loadfile(fname);
   global pp;
@@ -117,18 +194,14 @@ function dd = loadfile(fname);
   dd.ZR = in.data.measurement.ZeroRef;
   dd.CV = in.data.measurement.CompositValue(:)';
   dd.FR = in.data.imageRate;
-  dd.tt = (0:length(dd.CV)-1)/dd.FR;
+  dd.lD = length(dd.CV);
+  dd = filtfile(dd,fname); % filter if required
+
+  dd.tt = (0:dd.lD-1)/dd.FR;
   dd.breaths = find_frc(dd);
   dd.n_breaths = size(dd.breaths,1);
   dd.beats = find_beats(dd); 
   dd.n_beats = size(dd.beats,1);
-
-  if isinf(pp.LP_filter);
-     b=1; a=1; % no filter
-  else
-     [b,a] = butter(2,[pp.LP_filter/dd.FR]);
-  end
-  dd.CV = filtfilt(b,a,dd.CV);
 
   ls = linspace(0,1,10);
   ls = [ls,-fliplr(ls)];
@@ -417,6 +490,7 @@ function out= model_breaths(dd,ii)
    '<a href="%s"><img width="300" src="%s"></a>',...
    fout, fout);
   
+  xlimits = [0,dd.lD/dd.FR];
   clf; subplot(211);
   plot(dd.tt,dd.CV,'LineWidth',4); box off;
   for i=1:dd.n_breaths
@@ -441,6 +515,8 @@ function out= model_breaths(dd,ii)
      line(dd.tt(eie), dd.CV(eie), 'color',[0,0,0],'LineWidth',2);
   end
   axis tight
+  xlim(xlimits);
+
   subplot(212);
   ls = linspace(0,1,10); ls = ls/sum(ls)/10;
   ls = [ls,-fliplr(ls)];
@@ -461,6 +537,7 @@ function out= model_breaths(dd,ii)
     eflow = -conv2(expi,ls,'same') - diff(Ceie(2:3))/Lie(2); ;
     line(dd.tt(eie(2):eie(3)), eflow, 'color',[0,.4,.2],'LineWidth',2);
   end
+  xlim(xlimits);
   print_convert(fout);
  
 
