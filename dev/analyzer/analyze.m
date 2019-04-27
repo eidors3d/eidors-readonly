@@ -20,6 +20,7 @@ function iterate_over_files
      fn = files(f).name;
      disp(fn);
      dd = loadfile(fn);
+     if dd.lD == 0 ; continue; end
      fid = outfile;
      fprintf(fid,'<TR><TD>%s',fn(1:end-4));
      for i=1:length(pp.callfns)
@@ -111,11 +112,16 @@ function CONFIG(varargin)
     case 'model_breaths_ncos'; pp.model_breaths_ncos = v2num;
     case 'FILE';
        fh = hsh(v2str);
-       vstr = varargin{4};
+       if nargin>=4
+          vstr = varargin{4};
+       else
+          vstr = "";
+       end
        vnum = str2num(vstr);
-       switch varargin{3}
-          case 'endtime'; pp.( fh ).endtime = vnum;
-          case 'LPF_fc';  pp.( fh ).LPF_fc = vnum;
+       switch upper(varargin{3})
+          case 'ENDTIME'; pp.( fh ).endtime = vnum;
+          case 'SKIPFILE'; pp.( fh ).endtime = 0;
+          case 'LPF_FC';  pp.( fh ).LPF_fc = vnum;
           otherwise error(['CONFIG FILE parameter ', ...
               ' %s not understood'], varargin{3});
        end 
@@ -146,7 +152,7 @@ function s = freq_filt(s,fresp,dim);
   fshape = [1,1,1]; fshape(dim) = size(s,dim);
   f = f .* reshape(fresp,fshape);
   s= ifft(f,[],dim);
-  if norm(imag(s(:))) > 1e-13
+  if norm(imag(s(:))) > 1e-11
      error('FFT filter has imag output');
   end
   s = real(s);
@@ -164,7 +170,7 @@ function dd = filtfile(dd,fname);
      fval = cfg.( fn{1} );
      switch fn{1}
         case 'endtime'; 
-           lim = round(fval * dd.FR);
+           lim = max(round(fval * dd.FR),1);
            dd.CV(lim:end) = [];
            dd.tt(lim:end) = [];
            dd.ZR(:,:,lim:end) = [];
@@ -196,6 +202,10 @@ function dd = loadfile(fname);
   dd.FR = in.data.imageRate;
   dd.lD = length(dd.CV);
   dd = filtfile(dd,fname); % filter if required
+  if dd.lD == 0 ; 
+     fprintf('Skipping %s: \n', fname);
+     return
+  end
 
   dd.tt = (0:dd.lD-1)/dd.FR;
   dd.breaths = find_frc(dd);

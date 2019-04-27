@@ -32,3 +32,4 @@ CONFIG model_breaths_ncos 4
 %CONFIG FILE "Example file name.mat" starttime 1 % [s]
 %CONFIG FILE "Example file name.mat" endtime 1 % [s]
 %CONFIG FILE "Example file name.mat" LPF_fc 1 % LPF cut off [Hz]
+%CONFIG FILE "Example file name.mat" SKIPFILE
