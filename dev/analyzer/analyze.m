@@ -119,9 +119,10 @@ function CONFIG(varargin)
        end
        vnum = str2num(vstr);
        switch upper(varargin{3})
-          case 'ENDTIME'; pp.( fh ).endtime = vnum;
-          case 'SKIPFILE'; pp.( fh ).endtime = 0;
-          case 'LPF_FC';  pp.( fh ).LPF_fc = vnum;
+          case 'ENDTIME';   pp.( fh ).endtime = vnum;
+          case 'STARTTIME'; pp.( fh ).starttime = vnum;
+          case 'SKIPFILE';  pp.( fh ).endtime = 0;
+          case 'LPF_FC';    pp.( fh ).LPF_fc = vnum;
           otherwise error(['CONFIG FILE parameter ', ...
               ' %s not understood'], varargin{3});
        end 
@@ -172,13 +173,11 @@ function dd = filtfile(dd,fname);
         case 'endtime'; 
            lim = max(round(fval * dd.FR),1);
            dd.CV(lim:end) = [];
-           dd.tt(lim:end) = [];
            dd.ZR(:,:,lim:end) = [];
            dd.lD = length(dd.CV);
         case 'starttime'; 
            lim = round(fval * dd.FR);
            dd.CV(1:lim) = [];
-           dd.tt(1:lim) = [];
            dd.ZR(:,:,1:lim) = [];
            dd.lD = length(dd.CV);
         case 'LPF_fc'; 
