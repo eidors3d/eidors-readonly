@@ -10,6 +10,8 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 %   examples:
 %     crop_model([],  inline('z==3','x','y','z'))
 %     crop_model(gca, inline('x+y>0','x','y','z'))
+%   if the fcn_handle is a string, a function with x,y,z is created
+%     crop_model(gca, 'x+y>0') % same as previous
 %
 % USAGE #2: crop fwd_model to create new fwd_model
 %   fmdl_new= crop_model( fwd_model, fcn_handle );
@@ -29,9 +31,13 @@ if ischar(axis_handle) && strcmp(axis_handle,'UNIT_TEST'); do_unit_test; return;
 % TODO (update 2 apr 2012):
 %  - make crop_model work for 2D fems
 
-usage_graphics= 1;
+if isstr(fcn_handle)
+  fcn_handle = inline(fcn_handle,'x','y','z');
+end
+
+usage_graphics= true;
 try if axis_handle.type == 'fwd_model'
-   usage_graphics= 0;
+   usage_graphics= false;
 end; end
 
 if usage_graphics
@@ -125,6 +131,11 @@ function do_unit_test
    unit_test_cmp('crop_model-a2c0-01',length(fmdl.electrode),5);
    unit_test_cmp('crop_model-a2c0-02',size(fmdl.elems),[32,3]);
    unit_test_cmp('crop_model-a2c0-03',size(fmdl.nodes),[25,2]);
+
+   fmdl = crop_model(fmdl,'x<0'); % verify it's same
+   unit_test_cmp('crop_model-str-a2c0-01',length(fmdl.electrode),5);
+   unit_test_cmp('crop_model-str-a2c0-02',size(fmdl.elems),[32,3]);
+   unit_test_cmp('crop_model-str-a2c0-03',size(fmdl.nodes),[25,2]);
 
    imdl = mk_common_model('n3r2',[16,2]); fmdl= imdl.fwd_model;
    fmdl = crop_model(fmdl,inline('x<0','x','y','z'));
