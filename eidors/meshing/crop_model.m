@@ -35,18 +35,17 @@ if isstr(fcn_handle)
   fcn_handle = inline(fcn_handle,'x','y','z');
 end
 
-usage_graphics= true;
-try if axis_handle.type == 'fwd_model'
-   usage_graphics= false;
-end; end
 
-if usage_graphics
-   if isempty(axis_handle)
-      axis_handle= gca;
-   end
+if isempty(axis_handle)
+   axis_handle= gca;
    crop_graphics_model(axis_handle, fcn_handle);
-else
+elseif ishandle( axis_handle )
+   crop_graphics_model(axis_handle, fcn_handle);
+elseif axis_handle.type == 'fwd_model';
    [fmdl,c2f_idx]= crop_fwd_model(axis_handle, fcn_handle);
+elseif axis_handle.type == 'image';
+   [fmdl,c2f_idx]= crop_fwd_model(axis_handle.fwd_model, fcn_handle);
+   keyboard
 end
 
 % CROP GRAPHICS
