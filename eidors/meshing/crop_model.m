@@ -35,17 +35,24 @@ if isstr(fcn_handle)
   fcn_handle = inline(fcn_handle,'x','y','z');
 end
 
+type= isfield(axis_handle, 'type');
+if type; type = axis_handle.type; end
 
 if isempty(axis_handle)
    axis_handle= gca;
    crop_graphics_model(axis_handle, fcn_handle);
 elseif ishandle( axis_handle )
    crop_graphics_model(axis_handle, fcn_handle);
-elseif axis_handle.type == 'fwd_model';
+elseif strcmp(type, 'fwd_model');
    [fmdl,c2f_idx]= crop_fwd_model(axis_handle, fcn_handle);
-elseif axis_handle.type == 'image';
-   [fmdl,c2f_idx]= crop_fwd_model(axis_handle.fwd_model, fcn_handle);
-   keyboard
+elseif strcmp(type, 'image');
+   [fmdl_,c2f_idx]= crop_fwd_model(axis_handle.fwd_model, fcn_handle);
+   fmdl = axis_handle; % input parameter
+   fmdl.fwd_model = fmdl_;
+   fmdl.elem_data = fmdl.elem_data(c2f_idx,:);
+%  keyboard
+else
+   error('Not sure how to process first parameter');
 end
 
 % CROP GRAPHICS
@@ -163,6 +170,15 @@ function do_unit_test
    fmdlc = fmdl;
    fmdlc = crop_model(fmdlc,inline('x<0','x','y','z'));
    show_fem(fmdlc);
+
+   subplot(335)
+   img = mk_image(fmdl,1); 
+   load('datareal.mat','A'); img.elem_data(A)= 1.1;
+   imgs =  crop_model(img,'y-z<-2.5');
+   show_fem( imgs );
+   unit_test_cmp('crop img',find( imgs.elem_data>1),[476;479; 482; 485])
+
+
 
    subplot(337)
    imdl = mk_common_model('d2c2'); fmdl= imdl.fwd_model;
