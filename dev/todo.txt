@@ -8,6 +8,15 @@ Plan for 3.9.10
  - rebuild netgen_cyl_models20.png
  - fix view matrix in emphasize_electrode_text
  - make show_3d_slices work with *node_data
+ - in ng* files, make all %f to be full precision
+ - expose topandbot for most ng* files
+   - ng_mk_cyl_models.m
+   - ng_mk_ellip_models.m
+   - ng_mk_extruded_model.m
+ - verify ng* can take multiple parameters
+ - test eidors can handle two-digit verion 3.10beta1
+ - matlab 2019a has problems with eidors_var_id (sometimes)
+    - try to figure out when
 
 
 Modifications post 3.9.1
