@@ -253,35 +253,28 @@ function write_rect_elec(fid,name,c, dirn,wh,d,maxh)
 % hw = [height, width]  and depth d
 % direction is in the xy plane
 %
-% For electrodes oriented vertically, we arbitrarily choose 
-%   width = x axis, height = y axis
    d= min(d);
    w = wh(1); h= wh(2);
    dirn = dirn/norm(dirn);
-   dirnp = [-dirn(2),dirn(1),0];
-% if ||dirnp || < 1e-6, then it is zero
-if norm(dirnp)<1e-6
-   dirnp = [0,1,0];
-   dirn  = [1,0,0];
+% get perpendicular vector by cross product with non-colinear vector
+if norm(abs(dirn)-[0,0,1])>1e-1
+   dirnp = cross(dirn,[0,0,1]);
 else
-   dirnp = dirnp/norm(dirnp);
+% For electrodes oriented vertically, we arbitrarily choose 
+%   width = x axis, height = y axis
+   dirnp = cross(dirn,[0,1,0]);
 end
+   dirnp = dirnp/norm(dirnp);
+   dirnk = cross(dirn,dirnp); % the other surface normal
+   if any(isnan(dirnk)); warning('normal calc weird'); keyboard; end % debugging
 
-   bl = c - (d/2)* dirn + (w/2)*dirnp - [0,0,h/2];
-   tr = c + (d/2)* dirn - (w/2)*dirnp + [0,0,h/2];
    fprintf(fid,'solid %s  = ', name);
-   fprintf(fid,' plane (%6.3f,%6.3f,%6.3f;0, 0, -1) and\n', ...
-           bl(1),bl(2),bl(3));
-   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
-           bl(1),bl(2),bl(3),-dirn(1),-dirn(2),0);
-   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
-           bl(1),bl(2),bl(3),dirnp(1),dirnp(2),0);
-   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;0, 0, 1) and\n', ...
-           tr(1),tr(2),tr(3));
-   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f) and\n', ...
-           tr(1),tr(2),tr(3),dirn(1),dirn(2),0);
-   fprintf(fid,' plane(%6.3f,%6.3f,%6.3f;%6.3f,%6.3f,%6.3f  )%s;\n', ...
-           tr(1),tr(2),tr(3),-dirnp(1),-dirnp(2),0,maxh);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c+d/2*dirn , dirn );
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c-d/2*dirn ,-dirn );
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c+w/2*dirnp, dirnp);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c-w/2*dirnp,-dirnp);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c+h/2*dirnk,+dirnk);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) %s;\n',c-h/2*dirnk,-dirnk,maxh);
 
 function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % writes the specification for a netgen cylindrical rod on fid,
@@ -351,7 +344,7 @@ function square_elec_test
 function do_unit_test
   square_elec_test
 
-  for tn = 1:14
+  for tn = 1:16
      eidors_msg('ng_mk_gen_models: unit_test %02d',tn,1);
      fmdl= do_test_number(tn);
      show_fem(fmdl); drawnow
@@ -534,6 +527,58 @@ fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  fmdl = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
  % Throw away the first electrode (background). We don't need it
  fmdl.electrode = fmdl.electrode(2:end);
+
+   case 15;
+d = [-10,-20,-10,10,20,10];
+body_str= sprintf([ ...
+   'solid left   = plane( %f,  0,  0; -1, 0, 0);\n', ...
+   'solid back   = plane(  0, %f,  0;  0,-1, 0);\n', ...
+   'solid bot    = plane(  0,  0, %f;  0, 0,-1);\n', ...
+   'solid right  = plane( %f,  0,  0;  1, 0, 0);\n', ...
+   'solid front  = plane(  0, %f,  0;  0, 1, 0);\n', ...
+   'solid top    = plane(  0,  0, %f;  0, 0, 1);\n', ...
+   'solid mainobj= top and bot and left and right and back and front -maxh=2;\n', ...
+    ], d);
+elec_pos = [ ...
+   d(1), 0,    0,     1,  0,  0;
+   0,    d(2), 0,     0,  1,  0;
+   0,    0,    d(3),  0,  0,  1;
+   d(4), 0,    0,    -1,  0,  0;
+   0,    d(5), 0,     0, -1,  0;
+   0,    0,    d(6),  0,  0, -1;];
+elec_shape = ones(6,1)*[3,1,.5];
+elec_shape(4,1:2) = [2,0];
+elec_shape(5,1:2) = [1,8];
+elec_shape(6,1:2) = [1,3];
+elec_obj = {'left','back','bot','right','front','top'};
+fmdl = ng_mk_gen_models(body_str, elec_pos, elec_shape, elec_obj);
+
+   case 16;
+d = [-10,-20,-10,10,20,10];
+body_str= sprintf([ ...
+   'solid left   = plane( %f,  0,  0; -3,-1, 0);\n', ...
+   'solid back   = plane(  0, %f,  0;  0,-3,-1);\n', ...
+   'solid bot    = plane(  0,  0, %f; -1, 0,-3);\n', ...
+   'solid right  = plane( %f,  0,  0;  3, 1, 0);\n', ...
+   'solid front  = plane(  0, %f,  0;  0, 3, 1);\n', ...
+   'solid top    = plane(  0,  0, %f;  1, 0, 3);\n', ...
+   'solid mainobj= top and bot and left and right and back and front -maxh=2;\n', ...
+    ], d);
+elec_pos = [ ...
+   d(1), 0,    0,     3,  1,  0;
+   0,    d(2), 0,     0,  3,  1;
+   0,    0,    d(3),  1,  0,  3;
+   d(4), 0,    0,    -3, -1,  0;
+   0,    d(5), 0,     0, -3, -1;
+   0,    0,    d(6), -1,  0, -3;];
+elec_shape = ones(6,1)*[3,1,.5];
+elec_shape(4,1:2) = [2,0];
+elec_shape(5,1:2) = [1,8];
+elec_shape(6,1:2) = [1,3];
+elec_obj = {'left','back','bot','right','front','top'};
+fmdl = ng_mk_gen_models(body_str, elec_pos, elec_shape, elec_obj);
+
+
   otherwise;
      error('huh?')
 end
