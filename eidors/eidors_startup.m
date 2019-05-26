@@ -120,7 +120,6 @@ function archdir = set_paths(HOMEDIR, ver,path_array)
     addpath([HOMEDIR, archdir]);
     fname = [HOMEDIR, archdir, '/eidors_var_id.', mexext];
     
-disp('boo');
     if ~exist(fname, 'file')
        eidors_msg('STARTUP: missing a required, pre-compiled mex file: eidors_var_id', 1);
        compile_mex(HOMEDIR,archdir,ver);
