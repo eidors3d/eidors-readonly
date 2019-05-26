@@ -39,7 +39,9 @@ switch nargin
             fname = [fname '.' fmt];
         else
             if ~strcmp(fmt1, fmt)
-                error('The extension specified in file name doesn''t match the file format');
+                warning(['The extension specified (',fmt1, ...
+                 ') in file name (',fname, ...
+                 ') doesn''t match the file format:',fmt]);
             end
         end
     otherwise
@@ -118,6 +120,7 @@ fclose(fid);
 
 function zriDmat_saveimg( img, fname,pp);
    imgs = calc_slices(img);
+   imgs(isnan(imgs))= 0;
    data = fill_in_params_zriDmat(pp, imgs);
    save(fname, 'data');
 
@@ -183,16 +186,16 @@ function do_unit_test
    imdl = mk_common_model('c2t3',16);
    imdl.hyperparameter.value = 0.1;
    imgr = inv_solve(imdl,zc_resp(:,1),zc_resp);
-   imgr.calc_colours.npoints = 32;
-   p.imageRate = 7;
-   p.patient.ROI.Inside = 100*ones(32);
+   imgr.calc_colours.npoints = 64;
+   p.imageRate = 4.7;
+   p.patient.ROI.Inside = 100*ones(64);
    show_slices(imgr);
    eidors_saveimg(imgr,'mtldata.zri.mat','zri.mat',p);
 
    load 'mtldata.zri.mat'
    unit_test_cmp('zri.mat',eidors_var_id(data.patient), ...
-         'id_62ECCCE89770EB9BB62D825054E4CE475C243C2A');
+         'id_D6A2DB33EB61F4756BFE55BB696BBC2412D9BB3F');
    unit_test_cmp('zri.mat',eidors_var_id(data.SensorBelt), ...
          'id_E57BF6A94F6263AAA469AD2B3A70631FD0FCE2A6');
    unit_test_cmp('zri.mat',eidors_var_id(data), ...
-         'id_EEBA193E428A3A27E21447155A139BBD1E33CB7B');
+         'id_A4D719762BF416C86AF2C27A3A9B4A2758CCAB6D');
