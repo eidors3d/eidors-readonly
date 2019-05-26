@@ -31,13 +31,7 @@ if nargin<4
    finelevel= '';
 end
 
-if  exist('OCTAVE_VERSION') % FIXME
-   islinux =1;
-elseif ~strncmp(computer,'PC',2) % Don't know if we have isunix
-   islinux =1;
-else
-   islinux =0;
-end
+islinux = isunix;
 
 % Netgen executable filename
 cache_path = eidors_cache('cache_path');
@@ -64,9 +58,9 @@ while( 1 )
    end
    fclose(fid);
 
-   if strncmp(computer,'PC',2)
+   if ~islinux
       % on Linux, Netgen runs in the current directory
-      % enforce this behavioud in Windows
+      % enforce this behaviour in Windows
       oldpath = getenv('NETGEN_USER_DIR');
       setenv('NETGEN_USER_DIR', cd);
    end
@@ -107,10 +101,10 @@ while( 1 )
              break;
          end
          if strcmp(ng_name,'e'); error('user requested'),end;
-      else
+      else % Windows
          % Check for a version of netgen shipped with eidors
          % Fixme if we ship a different version of netgen
-         netgen_path = [eidors_cache('eidors_path') '/../Netgen-5.3_x64/bin'];
+         netgen_path = [eidors_cache('eidors_path'),'/../Netgen-5.3_x64/bin'];
          if exist(netgen_path)
             fprintf('Creating batch file to access Netgen.\n')
             fid= fopen([cache_path, '/ng.bat'],'w');
