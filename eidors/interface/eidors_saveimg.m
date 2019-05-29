@@ -122,7 +122,11 @@ function zriDmat_saveimg( img, fname,pp);
    imgs = calc_slices(img);
    imgs(isnan(imgs))= 0;
    data = fill_in_params_zriDmat(pp, imgs);
-   save(fname, 'data');
+   if exist('OCTAVE_VERSION')
+      save(fname, 'data','-V7');
+   else
+      save(fname, 'data');
+   end
 
 function po = fill_in_params_zriDmat(pi, imgs);
    sz_imgs = size(imgs);
