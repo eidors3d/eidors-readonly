@@ -122,8 +122,9 @@ function zriDmat_saveimg( img, fname,pp);
    imgs = calc_slices(img);
    imgs(isnan(imgs))= 0;
    data = fill_in_params_zriDmat(pp, imgs);
-   if exist('OCTAVE_VERSION')
-      save(fname, 'data','-V7');
+   if exist('OCTAVE_VERSION')==5
+   % FIXME ... currently (4.4.1) octave gives errors for -V7
+      save(fname, 'data','-V6');
    else
       save(fname, 'data');
    end
