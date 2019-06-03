@@ -39,8 +39,7 @@ function [fmdl,femobj] = create_electrode_from_mat_idx(fmdl,nmat_idx);
    femobjnodes = fmdl.elems(femobj,:);
    fmdl.elems(femobj,:) = [];
 
-   fmdl.boundary = find_boundary(fmdl);
-   vt = intersect(femobjnodes,fmdl.boundary);
+   vt = find_bdynodes(fmdl,femobjnodes);
    elstr =  struct('nodes',vt(:)','z_contact',zc);
    if isfield(fmdl,'electrode')
      fmdl.electrode(end+1) = elstr;
@@ -48,6 +47,15 @@ function [fmdl,femobj] = create_electrode_from_mat_idx(fmdl,nmat_idx);
      fmdl.electrode(    1) = elstr;
    end
 
+function vt = find_bdynodes(fmdl,femobjnodes)
+% Slow way
+%  vt = intersect(femobjnodes,find_boundary(fmdl));
+% Fast: pre-process 
+   usenodes = reshape( ismember( ...
+      fmdl.elems, femobjnodes), size(fmdl.elems));
+   fmdl.elems(~any(usenodes,2),:) = [];
+   vt = intersect(femobjnodes,find_boundary(fmdl));
+      
 
 function do_unit_test
    extra={'ball_inside','ball_surface', [ ...
