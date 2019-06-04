@@ -172,16 +172,41 @@ function do_unit_test
              -4.204482076268572,1e-12)
 
 % Add a CEM via a boundary
-   imdl=  mk_common_model('a2C2',4); fmdl = imdl.fwd_model;
+   Nelec = 4;
+   fmdl= getfield( mk_common_model('a2C2',Nelec), 'fwd_model');
+if 0
+   FC = system_mat_fields( fmdl );
+   unit_test_cmp('sys_mat-b2cCEM-0', Nelec, num_elecs(fmdl));
+   fmdl.mat_idx{1} = [1];
+   fmdl2 = mat_idx_to_electrode(fmdl,{1});
+   fmdl2.electrode(5).nodes = fmdl2.electrode(5).nodes(:)';
+show_fem(fmdl2)
+   FC = system_mat_fields( fmdl2);
+spy(FC)
+%for i=129:148; disp([i,find(FC(i,:))]); end
+%full(FC(129:end,1:3))  
+
+
+   unit_test_cmp('sys_mat-b2cCEM-1', size(FC), ...
+       [num_elems(fmdl)*(size(fmdl.elems,2)-1) + ...
+        length([fmdl.electrode(:).nodes]), ...
+        num_nodes(fmdl)+num_elecs(fmdl)]);
+end
    fmdl.electrode(5) = struct('nodes',1:3,'z_contact',.01);
    fmdl.system_mat_fields.CEM_boundary = [1,2;2,3;3,1];
    FC = system_mat_fields( fmdl );
+
+   d1=num_elems(fmdl)*(size(fmdl.elems,2)-1) + ...
+        length([fmdl.electrode(:).nodes]);
+   d2= num_nodes(fmdl)+num_elecs(fmdl);
+   unit_test_cmp('sys_mat-b2cCEM-1', size(FC),[d1,d2]);
+disp([size(FC),d1,d2])
    unit_test_cmp('sys_mat-b2cCEM-1', size(FC), ...
        [142,num_nodes(fmdl)+num_elecs(fmdl)]);
    % This is failing. Fixme why is size 142?
-   unit_test_cmp('sys_mat-b2cCEM-2', FC(129:136,42:45), ...
+   unit_test_cmp('sys_mat-b2cCEM-3', FC(129:136,42:45), ...
              -13.967473716321374*kron(eye(4),[1;1]),1e-12)
-   unit_test_cmp('sys_mat-ctrCEM-3', FC([137:138,141:142],end), ...
+   unit_test_cmp('sys_mat-ctrCEM-4', FC([137:138,141:142],end), ...
              -3.535533905932737, 1e-12);
-   unit_test_cmp('sys_mat-ctrCEM-4', FC([139:140],end), ...
+   unit_test_cmp('sys_mat-ctrCEM-5', FC([139:140],end), ...
              -4.204482076268572, 1e-12);
