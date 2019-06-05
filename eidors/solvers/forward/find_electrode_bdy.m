@@ -9,9 +9,23 @@ function [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, elec_nodes)
 %   bdy_area => boundary area of each simplex in bdy_idx
 %  if the nodes in the electrode are points, then
 %   bdy_area is the area corresponding to these point electrodes
+%
+% if [bdy_idx, bdy_area] = find_electrode_bdy( bdy, vtx, [])
+%   calculate bdy_idx=[] and bdy_area for all on bdy
 
 % (C) 2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
+
+% special processing if elec_nodes==[]
+if isempty(elec_nodes);
+   bdy_idx = [];
+   l_bdy= size(bdy,1);
+   bdy_area = zeros(l_bdy,1);
+   for i=1:l_bdy
+      bdy_area(i) = tria_area( bdy(i,:) );
+   end
+   return;  
+end
 
 [bdy_idx, point] = find_bdy_idx( bdy, elec_nodes);
 if nargout==1; return;end
@@ -40,6 +54,7 @@ elseif l_bdy_idx == 0 && l_point >0
      bdy_area(i)= bdy_area(i) + this_area/dims;
    end
 else
+keyboard
    error(['Can''t model this electrode. ' ...
           'It has %d CEM and %d point nodes (e.g. nodes %d, %d)'], ...
             l_bdy_idx, l_point, bdy_idx(1), point(1) )

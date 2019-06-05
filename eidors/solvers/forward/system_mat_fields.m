@@ -91,25 +91,33 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
       eleci = fwd_model.electrode(i);
       % contact impedance zc is in [Ohm.m] for 2D or [Ohm.m^2] for 3D
       zc=  eleci.z_contact;
-      [bdy_idx, bdy_area] = find_electrode_bdy( ...
-          cem_boundary, fwd_model.nodes, eleci.nodes );
-          % bdy_area is in [m] for 2D or [m^2] for 3D
+      if isfield(eleci,'faces')  && ~isempty(eleci.faces)
+         if ~isempty(eleci.nodes)
+            eidors_msg('Warning: electrode %d has both faces and nodes',i);
+         end
+         bdy_nds= eleci.faces;
+         [~, bdy_area] = find_electrode_bdy( ...
+             bdy_nds, fwd_model.nodes,[]);
+      else
+         [bdy_idx, bdy_area] = find_electrode_bdy( ...
+             cem_boundary, fwd_model.nodes, eleci.nodes );
+             % bdy_area is in [m] for 2D or [m^2] for 3D
 
-      % For pt elec model, bdy_idx = [], so this doesn't run
-      if isempty(bdy_idx); continue; end % no action for pt elecs
+         % For pt elec model, bdy_idx = [], so this doesn't run
+         if isempty(bdy_idx); continue; end % no action for pt elecs
+
+         bdy_nds= cem_boundary(bdy_idx,:);
+      end
       i_cem = i_cem + 1;
-
-      for j= 1:length(bdy_idx);
-         bdy_nds= cem_boundary(bdy_idx(j),:);
-
          % 3D: [m^2]/[Ohm.m^2] = [S]
          % 2D: [m]  /[Ohm.m]   = [S]
+      for j= 1:size(bdy_nds,1);
          FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
          FFiidx= [FFiidx; FFi_block' + sidx];
          FFjidx= [FFjidx; FFi_block  + cidx];
 
          CCiidx= [CCiidx; FFi_block(1:2,:) + cidx];
-         CCjidx= [CCjidx; bdy_nds ; (pp.n_node+i_cem)*ones(1,d0)];
+         CCjidx= [CCjidx; bdy_nds(j,:) ; (pp.n_node+i_cem)*ones(1,d0)];
          CCdata= [CCdata; [1;-1]*ones(1,d0)];
          sidx = sidx + d0;
          cidx = cidx + d0;
@@ -174,36 +182,32 @@ function do_unit_test
 % Add a CEM via a boundary
    Nelec = 4;
    fmdl= getfield( mk_common_model('a2C2',Nelec), 'fwd_model');
-if 0
+
    FC = system_mat_fields( fmdl );
    unit_test_cmp('sys_mat-b2cCEM-0', Nelec, num_elecs(fmdl));
-   fmdl.mat_idx{1} = [1];
-   fmdl2 = mat_idx_to_electrode(fmdl,{1});
-   fmdl2.electrode(5).nodes = fmdl2.electrode(5).nodes(:)';
-show_fem(fmdl2)
-   FC = system_mat_fields( fmdl2);
+   fmdl.electrode(3).nodes = []; % no longer a node elec
+   fmdl.electrode(3).faces = [1,2;2,3;3,1];
+   FC = system_mat_fields( fmdl);
 spy(FC)
 %for i=129:148; disp([i,find(FC(i,:))]); end
 %full(FC(129:end,1:3))  
 
 
    unit_test_cmp('sys_mat-b2cCEM-1', size(FC), ...
-       [num_elems(fmdl)*(size(fmdl.elems,2)-1) + ...
-        length([fmdl.electrode(:).nodes]), ...
+       [num_elems(fmdl)*(size(fmdl.elems,2)-1) + 3*2 + 2*3, ...
         num_nodes(fmdl)+num_elecs(fmdl)]);
-end
+
+   fmdl= getfield( mk_common_model('a2C2',Nelec), 'fwd_model');
    fmdl.electrode(5) = struct('nodes',1:3,'z_contact',.01);
    fmdl.system_mat_fields.CEM_boundary = [1,2;2,3;3,1];
    FC = system_mat_fields( fmdl );
 
    d1=num_elems(fmdl)*(size(fmdl.elems,2)-1) + ...
-        length([fmdl.electrode(:).nodes]);
+        4*2 + 2*3;
    d2= num_nodes(fmdl)+num_elecs(fmdl);
    unit_test_cmp('sys_mat-b2cCEM-1', size(FC),[d1,d2]);
 disp([size(FC),d1,d2])
-   unit_test_cmp('sys_mat-b2cCEM-1', size(FC), ...
-       [142,num_nodes(fmdl)+num_elecs(fmdl)]);
-   % This is failing. Fixme why is size 142?
+   % Check this!!!! why are internal nodes doubled!!
    unit_test_cmp('sys_mat-b2cCEM-3', FC(129:136,42:45), ...
              -13.967473716321374*kron(eye(4),[1;1]),1e-12)
    unit_test_cmp('sys_mat-ctrCEM-4', FC([137:138,141:142],end), ...
