@@ -144,27 +144,9 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
            eidors_msg('Warning: electrode %d has no nodes',i);
            break; %Not a real electrode so don't include
        end
-       if length(elec_nodes) ==1 % point electrode (maybe inside body)
-          N2E(i, elec_nodes) = 1;
-       elseif length(elec_nodes) ==0
-         error('EIDORS:fwd_model_parameters:electrode','zero length electrode specified');
-       else
-          bdy_idx= find_electrode_bdy( bdy, [], elec_nodes);
-
-          if ~isempty(bdy_idx) % CEM electrode
-             cem_electrodes = cem_electrodes+1;
-             N2E(i, n+cem_electrodes) =1;
-          else % point electrodes
-               % FIXME: make current defs between point electrodes and CEMs compatible
-             [bdy_idx,srf_area]= find_electrode_bdy( bdy, ...
-                            fwd_model.nodes, elec_nodes);
-             s_srf_area =  sum(srf_area);
-             if s_srf_area == 0;
-                error('Surface area for elec#%d is zero. Is boundary correct?',i);
-             end
-             N2E(i, elec_nodes) = srf_area/s_srf_area;
-          end
-       end
+      [N2Ei,N2Ei_nodes] = N2Ei_from_nodes( ...
+         bdy, elec_nodes, cem_electrodes);
+      N2E(i, N2Ei_nodes) = N2Ei;
    end
    N2E = N2E(:, 1:(n+cem_electrodes));
 
@@ -172,6 +154,35 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    if all(N2E(find(N2E(:)))==1)
       N2E = logical(N2E);
    end
+
+
+
+function [N2Ei,N2Ei_nodes] = N2Ei_from_nodes( ...
+    bdy, elec_nodes, cem_electrodes);
+  if length(elec_nodes) ==1 % point electrode (maybe inside body)
+     N2Ei = 1;
+     N2Ei_nodes = elec_nodes;
+  elseif length(elec_nodes) ==0
+    error('EIDORS:fwd_model_parameters:electrode','zero length electrode specified');
+  else
+     bdy_idx= find_electrode_bdy( bdy, [], elec_nodes);
+
+     if ~isempty(bdy_idx) % CEM electrode
+        cem_electrodes = cem_electrodes+1;
+        N2Ei= 1;
+        N2Ei_nodes = n+cem_electrodes;
+     else % point electrodes
+          % FIXME: make current defs between point electrodes and CEMs compatible
+        [bdy_idx,srf_area]= find_electrode_bdy( bdy, ...
+                       fwd_model.nodes, elec_nodes);
+        s_srf_area =  sum(srf_area);
+        if s_srf_area == 0;
+           error('Surface area for elec#%d is zero. Is boundary correct?',i);
+        end
+        N2Ei = srf_area/s_srf_area;
+        N2Ei_nodes= elec_nodes;
+     end
+  end
 
 
 function [QQ, VV, n_meas] = calc_QQ_slow(N2E, stim, p)
