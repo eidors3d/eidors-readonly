@@ -6,6 +6,12 @@ function [fmdl,rm_elems] = mat_idx_to_electrode(fmdl, mat_idxes)
 % mat_idxes = cell array of mat_idxes => convert electrode
 %    example mat_idxes = {1:2, 5, [12,14]}
 %
+% by default, adds a 'faces'-type electrode (i.e. an
+%    electrode defined in terms of its faces)
+% Parameter
+%   fmdl.mat_idx_to_electrode.nodes_electrode = true
+%      Add a 'nodes'-type electrode
+%
 % To work with an image object, use:
 %  [img.fwd_model,rm_elems] = mat_idx_to_electrode(img.fwd_model,{mat_idxes});
 %  img.elem_data(rm_elems) = [];
@@ -15,14 +21,28 @@ function [fmdl,rm_elems] = mat_idx_to_electrode(fmdl, mat_idxes)
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
+elec_faces = true;
+elec_faces = false;
+try 
+   elec_faces = ~fmdl.mat_idx_to_electrode.nodes_electrode;
+end
+
 rm_elems = [];
 for i = 1:length(mat_idxes)
-   [fmdl,rm_elemi] = create_electrode_nodes_from_mat_idx(fmdl, mat_idxes{i});
+   if elec_faces 
+      [fmdl,rm_elemi] = create_electrode_faces_from_mat_idx(fmdl, mat_idxes{i});
+   else
+      [fmdl,rm_elemi] = create_electrode_nodes_from_mat_idx(fmdl, mat_idxes{i});
+   end
    rm_elems = union(rm_elems,rm_elemi); 
 end
 
 fmdl = remove_unused_nodes(fmdl);
+if any(fmdl.boundary(:) == 0)
+   keyboard
+end
 
+% This code adds the new electrode as a elec(i).nodes
 % adds electrode to the end
 % femobj is removed elems
 function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
@@ -31,7 +51,17 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
    end
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    faces = calc_elec_faces(fmdl.elems,femobj);
+figure(998); fmk = fmdl; fmk.boundary = faces; show_fem(fmk);
    fmdl.boundary = unique([fmdl.boundary;faces],'rows');
+
+   femobjnodes = fmdl.elems(femobj,:);
+   fmdl = rm_elems( fmdl, femobj);
+
+   vt = find_bdynodes(fmdl,femobjnodes);
+   elstr =  struct('nodes',vt(:)','z_contact',zc);
+   fmdl = add_elec(fmdl, elstr);
+
+function fmdl = rm_elems( fmdl, femobj);
    % fix the mat_idx object, since we remove femobj
    for i=1:length(fmdl.mat_idx) 
       els = false(num_elems(fmdl),1);
@@ -39,11 +69,26 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
       els(femobj) = [];
       fmdl.mat_idx{i} = find(els);
    end
-   femobjnodes = fmdl.elems(femobj,:);
    fmdl.elems(femobj,:) = [];
 
-   vt = find_bdynodes(fmdl,femobjnodes);
-   elstr =  struct('nodes',vt(:)','z_contact',zc);
+% This code adds the new electrode as a elec(i).faces
+% adds electrode to the end
+% femobj is removed elems
+function [fmdl,femobj] = create_electrode_faces_from_mat_idx(fmdl,nmat_idx);
+   zc = 1e-5;
+   try zc = fmdl.mat_idx_to_electrode.z_contact;
+   end
+   femobj = vertcat(fmdl.mat_idx{nmat_idx});
+   faces = calc_elec_faces(fmdl.elems,femobj);
+   fmdl.boundary = unique([fmdl.boundary;faces],'rows');
+
+   fmdl = rm_elems( fmdl, femobj);
+
+   elstr =  struct('nodes',[],'z_contact',zc,'faces',faces);
+
+   fmdl = add_elec(fmdl, elstr);
+
+function fmdl = add_elec(fmdl, elstr)
    if isfield(fmdl,'electrode')
      fmdl.electrode(end+1) = elstr;
    else
@@ -67,6 +112,7 @@ function faces = calc_elec_faces(elems,femobj);
      otherwise;
        error 'Dimensions of elems';
    end
+   allfaces = sort(allfaces,2);
    % remove all faces which exist more than once
    [faces,ia,ib] = unique(allfaces,'rows');
    exist_faces = sparse(1,ib,1);
@@ -84,12 +130,13 @@ function vt = find_bdynodes(fmdl,femobjnodes)
 
 function do_unit_test
    clf; subplot(221);
-   do_unit_test_2d
+   do_unit_test_2d(true)
    subplot(223);
-%  do_unit_test_3d_netgen
+   do_unit_test_3d_netgen
 
-function do_unit_test_2d
+function do_unit_test_2d(nodes_electrode)
    fmdl = getfield(mk_common_model('a2c2',1),'fwd_model');
+   fmdl.mat_idx_to_electrode.nodes_electrode = nodes_electrode;
    fmdl.electrode(1).nodes = 26:41;
    fmdl.mat_idx{1} = [1:4];
    fmdl= mat_idx_to_electrode(fmdl, {1});
@@ -118,6 +165,8 @@ function do_unit_test_3d_netgen
           'solid ball_surface = sphere( 0.4,0,1.0;0.05) -maxh=.005;' ...
           ]};
    fmdl= ng_mk_cyl_models(1,[8,.5],[.1],extra); 
+   fmdl.mat_idx_to_electrode.nodes_electrode = true;
+
    fmd_= mat_idx_to_electrode(fmdl, {2,3});
    unit_test_cmp('cyl_models 01',num_elecs(fmd_),10);
 
