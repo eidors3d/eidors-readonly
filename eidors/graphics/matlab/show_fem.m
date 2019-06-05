@@ -336,15 +336,20 @@ if ~isfield(mdl,'electrode'); return; end
 ee= get_boundary( mdl );
 for e=1:length(mdl.electrode)
     colour= electr_colour( e);
+    elece = mdl.electrode(e);
     
-    if isfield(mdl.electrode(e),'pos') && ~isfield(mdl.electrode(e),'nodes')
+    if isfield(elece,'pos') && ~isfield(mdl.electrode(e),'nodes')
         show_electrodes_surf(mdl, number_electrodes);
         return
     end
-    elec_nodes= mdl.electrode(e).nodes;
+    elec_nodes= elece.nodes;
     
     
-    if length(elec_nodes) == 1  % point electrode model
+    if isfield(elece,'faces') && isempty(elec_nodes);
+        hh= patch(struct('vertices',mdl.nodes,'faces',elece.faces));
+        % need 'direct' otherwise colourmap is screwed up
+        set(hh,'FaceColor',colour, 'FaceLighting','none', 'CDataMapping', 'direct' );
+    elseif length(elec_nodes) == 1  % point electrode model
         vtx= mdl.nodes(elec_nodes,:);
         line(vtx(1),vtx(2),vtx(3), ...
             'Marker','o','MarkerSize',12, ...
@@ -356,28 +361,31 @@ for e=1:length(mdl.electrode)
     else
         % find elems on boundary attached to this electrode
         map = zeros(length(mdl.nodes),1);
-        map(mdl.electrode(e).nodes) = 1;
+        map(elece.nodes) = 1;
         ec = map(ee);
         sels= find(all(ec'));
         
         ee= get_boundary( mdl );
         paint_electrodes(sels,ee,mdl.nodes,colour,number_electrodes);
         
-        if number_electrodes
-            el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
-            switch number_electrodes
-               case {1 true}
-                  txt = num2str(e);
-               case 2
-                  try, txt = mdl.electrode(e).label; end
-            end
-            hh=text( mean(el_nodes(:,1)), ...
-                     mean(el_nodes(:,2)), ...
-                     mean(el_nodes(:,3)), txt );
-            set(hh,'FontWeight','bold','Color',[.8,.2,0],'FontSize',8);
-        end
+        number_elecs_3d(number_electrodes, e, mdl,sels );
     end
 end
+
+function number_elecs_3d(number_electrodes, e, mdl, sels )
+   el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
+   switch number_electrodes
+      case {0,false}
+         return
+      case {1 true}
+         txt = num2str(e);
+      case 2
+         try, txt = mdl.electrode(e).label; end
+   end
+   hh=text( mean(el_nodes(:,1)), ...
+            mean(el_nodes(:,2)), ...
+            mean(el_nodes(:,3)), txt );
+   set(hh,'FontWeight','bold','Color',[.8,.2,0],'FontSize',8);
 
 function show_inhomogeneities( elem_data, mdl, img, opt)
 % show
@@ -682,7 +690,6 @@ end
 function do_unit_test
    clf
 
-if 0
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
    subplot(4,4,1); show_fem(img.fwd_model,[0,0,1]) 
@@ -726,17 +733,20 @@ end
    subplot(4,4,6); show_fem(img3,[1])
    subplot(4,4,7); show_fem(img3,[1,1])
    subplot(4,4,8); show_fem(img3,[1,1,1])
-end
 
    fmdl=getfield(mk_common_model('a2c0',8),'fwd_model'); 
    fmdl.mat_idx{1} = [3,7,13,14]; fmdl.mat_idx{2} = [14,23];
-   fmdl2= mat_idx_to_electrode(fmdl,{1,2});
-   subplot(4,4,13); show_fem(fmdl2,[0,0,1]) 
+   fmdlA= mat_idx_to_electrode(fmdl,{1,2});
+   subplot(4,4,13); show_fem(fmdlA,[0,0,1]) 
 
    fmdl.mat_idx_to_electrode.nodes_electrode= true;
-   fmdl3= mat_idx_to_electrode(fmdl,{1,2});
-   subplot(4,4,14); show_fem(fmdl3,[0,0,1]) 
+   fmdlB= mat_idx_to_electrode(fmdl,{1,2});
+   subplot(4,4,14); show_fem(fmdlB,[0,0,1]) 
 
+   fmdl3=getfield(mk_common_model('n3r2',[16,2]),'fwd_model');
+   fmdl3.electrode(1:16)= [];
+   fmdl3.mat_idx{1}= [543;546;549;552];
+   fmdl3.mat_idx{2}= [817;818;819;820;821;822;823;824;825;826;827;828];
+   fmdlA= mat_idx_to_electrode(fmdl3,{1:2});
 
-
-fmdl.electrode(9)
+   subplot(4,4,15); show_fem(fmdlA,[0,1]); view(0,20);

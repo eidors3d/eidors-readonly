@@ -15,6 +15,9 @@ function [fmdl,rm_elems] = mat_idx_to_electrode(fmdl, mat_idxes)
 % To work with an image object, use:
 %  [img.fwd_model,rm_elems] = mat_idx_to_electrode(img.fwd_model,{mat_idxes});
 %  img.elem_data(rm_elems) = [];
+%
+% Notes:
+%   mat_idx regions cannot be directly touching each other.
 
 % (C) 2019 Andy Adler. License: GPL v2 or v3.
 % $Id$
