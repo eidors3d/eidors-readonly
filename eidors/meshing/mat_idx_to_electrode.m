@@ -51,17 +51,26 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
    end
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    faces = calc_elec_faces(fmdl.elems,femobj);
-figure(998); fmk = fmdl; fmk.boundary = faces; show_fem(fmk);
-   fmdl.boundary = unique([fmdl.boundary;faces],'rows');
 
    femobjnodes = fmdl.elems(femobj,:);
-   fmdl = rm_elems( fmdl, femobj);
+   [fmdl,faces] = rm_elems( fmdl, femobj, faces);
+if 0 % DEBUG CODE
+figure(998); clf; fmk = fmdl; fmk.boundary = faces; show_fem(fmk);
+uf = unique(faces(:))';
+ufk = uf(find(~ismember(uf, fmdl.elems(:))))';
+fmkn = fmdl.nodes(ufk,:);
+hold on
+plot3(fmkn(:,1),fmkn(:,2),fmkn(:,3),'r*');
+hold off
+end
+
+   fmdl.boundary = unique([fmdl.boundary;faces],'rows');
 
    vt = find_bdynodes(fmdl,femobjnodes);
    elstr =  struct('nodes',vt(:)','z_contact',zc);
    fmdl = add_elec(fmdl, elstr);
 
-function fmdl = rm_elems( fmdl, femobj);
+function [fmdl,faces] = rm_elems( fmdl, femobj, faces);
    % fix the mat_idx object, since we remove femobj
    for i=1:length(fmdl.mat_idx) 
       els = false(num_elems(fmdl),1);
@@ -70,6 +79,12 @@ function fmdl = rm_elems( fmdl, femobj);
       fmdl.mat_idx{i} = find(els);
    end
    fmdl.elems(femobj,:) = [];
+
+   if nargin>2
+      inels = reshape(... 
+           ismember(faces(:),fmdl.elems(:)), size(faces));
+      faces(any(~inels,2),:) = [];
+   end
 
 % This code adds the new electrode as a elec(i).faces
 % adds electrode to the end
