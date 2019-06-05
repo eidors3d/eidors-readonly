@@ -151,7 +151,7 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
       elseif isfield(eleci,'nodes') 
           elec_nodes = fwd_model.electrode(i).nodes;
          [N2Ei,N2Ei_nodes,cem_electrodes] =  ...
-             N2Ei_from_nodes( ...
+             N2Ei_from_nodes(fwd_model, ...
               bdy, elec_nodes, cem_electrodes,n);
       else
           eidors_msg('Warning: electrode %d has no nodes',i);
@@ -167,8 +167,8 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    end
 
 
-function [N2Ei,N2Ei_nodes,cem_electrodes] =  ...
-     N2Ei_from_nodes(bdy, elec_nodes, cem_electrodes,n);
+function [N2Ei,N2Ei_nodes,cem_electrodes]= N2Ei_from_nodes( ...
+      fwd_model, bdy, elec_nodes, cem_electrodes,n);
   if length(elec_nodes) ==1 % point electrode (maybe inside body)
      N2Ei = 1;
      N2Ei_nodes = elec_nodes;
@@ -181,7 +181,7 @@ function [N2Ei,N2Ei_nodes,cem_electrodes] =  ...
         cem_electrodes = cem_electrodes+1;
         N2Ei= 1;
         N2Ei_nodes = n+cem_electrodes;
-     else % point electrodes
+     else % a set of point electrodes
           % FIXME: make current defs between point electrodes and CEMs compatible
         [bdy_idx,srf_area]= find_electrode_bdy( bdy, ...
                        fwd_model.nodes, elec_nodes);

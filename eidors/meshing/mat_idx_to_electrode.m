@@ -31,7 +31,7 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
    end
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    faces = calc_elec_faces(fmdl.elems,femobj);
-   fmdl.boundary = [fmdl.boundary;faces];
+   fmdl.boundary = unique([fmdl.boundary;faces],'rows');
    % fix the mat_idx object, since we remove femobj
    for i=1:length(fmdl.mat_idx) 
       els = false(num_elems(fmdl),1);
@@ -109,6 +109,7 @@ function do_unit_test_2d
    unit_test_cmp('a2c2-03', std(vh.volt(13:24)),0,0.002);
    vd = mean(vh.volt(5:12)) - mean(vh.volt(13:24));
    unit_test_cmp('a2c2-03', vd,0.065251,1e-6);
+
 
 
 function do_unit_test_3d_netgen
