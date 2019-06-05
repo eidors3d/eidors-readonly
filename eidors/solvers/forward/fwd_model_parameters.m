@@ -145,7 +145,7 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
            break; %Not a real electrode so don't include
        end
       [N2Ei,N2Ei_nodes] = N2Ei_from_nodes( ...
-         bdy, elec_nodes, cem_electrodes);
+         bdy, elec_nodes, cem_electrodes,n);
       N2E(i, N2Ei_nodes) = N2Ei;
    end
    N2E = N2E(:, 1:(n+cem_electrodes));
@@ -158,7 +158,7 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
 
 
 function [N2Ei,N2Ei_nodes] = N2Ei_from_nodes( ...
-    bdy, elec_nodes, cem_electrodes);
+    bdy, elec_nodes, cem_electrodes,n);
   if length(elec_nodes) ==1 % point electrode (maybe inside body)
      N2Ei = 1;
      N2Ei_nodes = elec_nodes;
