@@ -22,7 +22,7 @@ if isempty(elec_nodes);
    l_bdy= size(bdy,1);
    bdy_area = zeros(l_bdy,1);
    for i=1:l_bdy
-      bdy_area(i) = tria_area( bdy(i,:) );
+      bdy_area(i) = tria_area( vtx(bdy(i,:),:) );
    end
    return;  
 end
