@@ -15,19 +15,25 @@ function fmdl = remove_unused_nodes( fmdl );
    nidx = zeros(num_nodes(fmdl),1);
    nidx(usednodes) = 1:length(usednodes);
    fmdl.nodes(nidx==0,:) = [];
-   fmdl.elems = reshape(nidx(fmdl.elems),[],size(fmdl.elems,2));
+   fmdl.elems = remap(nidx, fmdl.elems);
 
    for i=1:length(fmdl.electrode)
-      fmdl.electrode(i).nodes =  nidx( ...
-         fmdl.electrode(i).nodes);
+      fmdl.electrode(i).nodes =  remap(nidx, fmdl.electrode(i).nodes);
+      if isfield(fmdl.electrode(i),'faces')
+      fmdl.electrode(i).faces =  remap(nidx, fmdl.electrode(i).faces);
+      end
    end
 %  fmdl.boundary = find_boundary(fmdl);
-   fmdl.boundary = reshape(nidx(fmdl.boundary),size(fmdl.boundary));
+   fmdl.boundary = remap(nidx, fmdl.boundary);
    fmdl.boundary(any(fmdl.boundary==0,2),:) = [];
    fmdl.gnd_node = nidx(fmdl.gnd_node);
    if fmdl.gnd_node == 0 %% New gnd node if missing
       fmdl = assign_new_gnd_node( fmdl );
    end
+
+%  fmdl.elems = reshape(nidx(fmdl.elems),[],size(fmdl.elems,2));
+function mat = remap(nidx,mat)
+   mat = reshape(nidx(mat),size(mat));
 
 function fmdl = assign_new_gnd_node( fmdl );
    eidors_msg('FEM_ELECTRODE: Lost ground node => replacing',1);

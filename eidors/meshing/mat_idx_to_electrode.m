@@ -21,7 +21,6 @@ function [fmdl,rm_elems] = mat_idx_to_electrode(fmdl, mat_idxes)
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
-elec_faces = true;
 elec_faces = false;
 try 
    elec_faces = ~fmdl.mat_idx_to_electrode.nodes_electrode;
@@ -54,15 +53,6 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
 
    femobjnodes = fmdl.elems(femobj,:);
    [fmdl,faces] = rm_elems( fmdl, femobj, faces);
-if 0 % DEBUG CODE
-figure(998); clf; fmk = fmdl; fmk.boundary = faces; show_fem(fmk);
-uf = unique(faces(:))';
-ufk = uf(find(~ismember(uf, fmdl.elems(:))))';
-fmkn = fmdl.nodes(ufk,:);
-hold on
-plot3(fmkn(:,1),fmkn(:,2),fmkn(:,3),'r*');
-hold off
-end
 
    fmdl.boundary = unique([fmdl.boundary;faces],'rows');
 
@@ -95,9 +85,8 @@ function [fmdl,femobj] = create_electrode_faces_from_mat_idx(fmdl,nmat_idx);
    end
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    faces = calc_elec_faces(fmdl.elems,femobj);
+   [fmdl,faces] = rm_elems( fmdl, femobj, faces);
    fmdl.boundary = unique([fmdl.boundary;faces],'rows');
-
-   fmdl = rm_elems( fmdl, femobj);
 
    elstr =  struct('nodes',[],'z_contact',zc,'faces',faces);
 
@@ -105,6 +94,10 @@ function [fmdl,femobj] = create_electrode_faces_from_mat_idx(fmdl,nmat_idx);
 
 function fmdl = add_elec(fmdl, elstr)
    if isfield(fmdl,'electrode')
+%    Stupid matlab forces you to add this
+     if isfield(elstr,'faces') && ~isfield(fmdl.electrode,'faces');
+        [fmdl.electrode(:).faces] = deal([]);
+     end
      fmdl.electrode(end+1) = elstr;
    else
      fmdl.electrode(    1) = elstr;
@@ -146,8 +139,9 @@ function vt = find_bdynodes(fmdl,femobjnodes)
 function do_unit_test
    clf; subplot(221);
    do_unit_test_2d(true)
+   do_unit_test_2d(false)
    subplot(223);
-   do_unit_test_3d_netgen
+%  do_unit_test_3d_netgen
 
 function do_unit_test_2d(nodes_electrode)
    fmdl = getfield(mk_common_model('a2c2',1),'fwd_model');
@@ -156,7 +150,12 @@ function do_unit_test_2d(nodes_electrode)
    fmdl.mat_idx{1} = [1:4];
    fmdl= mat_idx_to_electrode(fmdl, {1});
    unit_test_cmp('a2c2-01',num_elems(fmdl),64-4);
-   unit_test_cmp('a2c2-02',length(fmdl.electrode(2).nodes),4);
+   if nodes_electrode;
+      unit_test_cmp('a2c2-02',length(fmdl.electrode(2).nodes),4);
+   else
+      unit_test_cmp('a2c2-02a',length(fmdl.electrode(2).nodes),0);
+      unit_test_cmp('a2c2-02b',size(fmdl.electrode(2).faces),[4,2]);
+   end
 
    fmdl.stimulation = stim_meas_list([1,2,1,2]);
    img = mk_image(fmdl,1);
@@ -166,6 +165,7 @@ function do_unit_test_2d(nodes_electrode)
    img = rmfield(img,'elem_data');
    img.node_data = vh.volt;
    
+   img.fwd_model = rmfield(img.fwd_model,'electrode');
    show_fem(img,[0,0,2]);
 %  plot(sqrt(sum(fmdl.nodes.^2,2)),vh.volt,'*');
    unit_test_cmp('a2c2-03', std(vh.volt(13:24)),0,0.002);
