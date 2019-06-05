@@ -365,6 +365,10 @@ function do_unit_test
    unit_test_cmp('2D R voltages', vs.volt(1:3:10)-vs.volt(1), ...
                  R(1)*current*linspace(0,1,4)', 1e-12);
 
+   [R,img] = test_2d_resistor_faces(current,measure);
+   vs = fwd_solve_1st_order( img);
+   unit_test_cmp('2D resistor faces', va, vs.meas, 1e-12);
+
    %3D resistor
    [R,img] = test_3d_resistor(current,measure);
    img.fwd_solve.get_all_nodes = 1;
@@ -376,6 +380,10 @@ function do_unit_test
    unit_test_cmp('3D R z_contact', ...
                  [diff(vs.volt([73,1])), diff(vs.volt([74,72]))], ...
                  R(2)/2*current*[1,-1], 1e-10);
+
+   [R,img] = test_3d_resistor_faces(current,measure);
+   vs = fwd_solve_1st_order( img);
+   unit_test_cmp('3D resistor faces', va, vs.meas, 1e-10);
 
 
 function [R,img] = test_2d_resistor(current,measure)
@@ -393,12 +401,51 @@ function [R,img] = test_2d_resistor(current,measure)
    Contact_R = z_contact/wid;
    R = [Block_R, 2*Contact_R];
 
+% define electrode using face rather than nodes
+function [R,img] = test_2d_resistor_faces(current,measure)
+   conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
+   z_contact= .1; wid = 3; len = 12; 
+
+   fmdl=mk_grid_model([],linspace(0,wid,3), linspace(0,len,4));
+   bdy = fmdl.boundary;
+   bdy( any(reshape(fmdl.nodes(bdy,2),size(bdy))>0,2),:)=[];
+   fmdl.electrode(1).nodes = [];
+   fmdl.electrode(1).faces = bdy;
+   fmdl.electrode(2).nodes = find(fmdl.nodes(:,2) == len);
+   [fmdl.electrode(:).z_contact] = deal(z_contact);
+   fmdl.stimulation = stim_meas_list([1,2,1,2],2,current,measure);
+   img= mk_image(fmdl,conduc);
+
+   Block_R = len / wid / conduc;
+   Contact_R = z_contact/wid;
+   R = [Block_R, 2*Contact_R];
+
 function [R,img] = test_3d_resistor(current,measure);;
    conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
    z_contact= .1; wid = 2; len = 5; hig=3; 
 
    fmdl=mk_grid_model([],0:wid, 0:hig, 0:len);
    fmdl.electrode(1).nodes = find(fmdl.nodes(:,3) ==   0);
+   fmdl.electrode(2).nodes = find(fmdl.nodes(:,3) == len);
+   [fmdl.electrode(:).z_contact] = deal(z_contact);
+   fmdl.stimulation = stim_meas_list([1,2,1,2],2,current,measure);
+   img= mk_image(fmdl,conduc);
+
+   Block_R =  len / wid / hig / conduc;
+   Contact_R = z_contact/(wid*hig);
+   R = [Block_R, 2*Contact_R];
+
+% define electrode using face rather than nodes
+function [R,img] = test_3d_resistor_faces(current,measure);;
+   conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
+   z_contact= .1; wid = 2; len = 5; hig=3; 
+
+   fmdl=mk_grid_model([],0:wid, 0:hig, 0:len);
+%  fmdl.electrode(1).nodes = find(fmdl.nodes(:,3) ==   0);
+   bdy = fmdl.boundary;
+   bdy( any(reshape(fmdl.nodes(bdy,3),size(bdy))>0,2),:)=[];
+   fmdl.electrode(1).nodes = [];
+   fmdl.electrode(1).faces = bdy;
    fmdl.electrode(2).nodes = find(fmdl.nodes(:,3) == len);
    [fmdl.electrode(:).z_contact] = deal(z_contact);
    fmdl.stimulation = stim_meas_list([1,2,1,2],2,current,measure);
