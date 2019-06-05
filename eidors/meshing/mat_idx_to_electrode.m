@@ -21,7 +21,7 @@ function [fmdl,rm_elems] = mat_idx_to_electrode(fmdl, mat_idxes)
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
-elec_faces = false;
+elec_faces = true;
 try 
    elec_faces = ~fmdl.mat_idx_to_electrode.nodes_electrode;
 end
@@ -210,5 +210,4 @@ function do_unit_test_3d_netgen
 
    img.calc_colours.ref_level = 1;
    show_fem(img); view(3,12);
-
 

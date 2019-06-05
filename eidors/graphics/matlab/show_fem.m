@@ -217,33 +217,42 @@ function show_electrodes_2d(mdl, number_electrodes)
 % scale away from model
 
 for e=1:length(mdl.electrode)
-    if isfield(mdl.electrode(e),'nodes')
-        elec_nodes= mdl.electrode(e).nodes;
+    elece = mdl.electrode(e);
+    if isfield(elece,'faces') && isfield(elece,'nodes') && isempty(elece.nodes);
+        faces= elece.faces;
+        
+        S= 1.00;
+        vx= (reshape(mdl.nodes(faces,1),size(faces))' - ctr_x)*S;
+        vy= (reshape(mdl.nodes(faces,2),size(faces))' - ctr_y)*S;
+
+    elseif isfield(mdl.electrode(e),'nodes')
+        elec_nodes= elece.nodes;
         
         S= 1.00;
         vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
         vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
         % sort nodes around the model (to avoid crossed lines)
         [jnk,idx] = order_loop( [vx,vy] );
-    elseif isfield(mdl.electrode(e),'pos')
-        vx = mdl.electrode(e).pos(:,1) - ctr_x;
-        vy = mdl.electrode(e).pos(:,2) - ctr_y;
-        idx = 1:length(vx);
+        vx = vx(idx);
+        vy = vy(idx);
+    elseif isfield(elece,'pos')
+        vx = elece.pos(:,1) - ctr_x;
+        vy = elece.pos(:,2) - ctr_y;
     else
-       eidors_msg('show_fem: WARNING: electrode %d has no nodes. Not showing.',e,2);
+       eidors_msg('show_fem: WARNING: electrode %d has no nodes/faces/pos. Not showing.',e,2);
        continue;
     end
         
     ecolour = electr_colour( e );
     if numel(vx) == 1
        % Point Electrode Models: put a circle around the node
-       line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
+       line(vx+ctr_x,vy+ctr_y,  ...
             'LineWidth', 2, 'LineStyle','-','Color', ecolour, ...
             'Marker','o','MarkerSize', 6,'MarkerEdgeColor',ecolour);
     else
        % Complete/Shunt Electrode Models (multiple nodes per electrode)
        %  put a line along the edges that form the electrode
-       line(vx(idx)+ctr_x,vy(idx)+ctr_y,  ...
+       line(vx+ctr_x,vy+ctr_y,  ...
             'LineWidth', 3, 'LineStyle','-','Color', ecolour, ...
             'Marker','none','MarkerSize', 6,'MarkerEdgeColor',ecolour);
     end
@@ -671,50 +680,63 @@ end
 
 % TESTS:
 function do_unit_test
-     ver= eidors_obj('interpreter_version');
    clf
 
+if 0
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
-   subplot(3,4,1); show_fem(img.fwd_model,[0,0,1]) 
+   subplot(4,4,1); show_fem(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
 
-if ~ver.isoctave 
+if ~exist('OCTAVE_VERSION')
    imgn = rmfield(img,'elem_data');
    imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
-   subplot(3,4,9); show_fem(imgn) 
+   subplot(4,4,9); show_fem(imgn) 
    title('interpolated node colours');
 end
 
    img2(1) = img; img2(2) = img;
-   subplot(3,4,2); show_fem(img,[1]);
+   subplot(4,4,2); show_fem(img,[1]);
    title('colours with legend');
-   subplot(3,4,3); show_fem(img2,[0,1]);
+   subplot(4,4,3); show_fem(img2,[0,1]);
    title('colours with legend');
    img.calc_colours.mapped_colour = 0; % USE RGB colours
-   subplot(3,4,4); show_fem(img,[0,1,1]);
+   subplot(4,4,4); show_fem(img,[0,1,1]);
    title('RGB colours');
-   subplot(3,4,4); show_fem(img);
+   subplot(4,4,4); show_fem(img);
    title('RGB colours');
 
    img.elem_data = [1:10];
-   subplot(3,4,12);show_fem(img); %Should show grey
+   subplot(4,4,12);show_fem(img); %Should show grey
    title('error -> show grey');
 
-if ~ver.isoctave
+if ~exist('OCTAVE_VERSION')
    imgn.calc_colours.mapped_colour = 0; % USE RGB colours
-   subplot(3,4,10);show_fem(imgn,[0,1]) 
+   subplot(4,4,10);show_fem(imgn,[0,1]) 
    title('interpolated node colours');
 
 
-   subplot(3,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
+   subplot(4,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
    title('with edge colours');
 end
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2]));
    img3.elem_data= randn(828,1);                       
-   subplot(3,4,5); show_fem(img3.fwd_model) 
-   subplot(3,4,6); show_fem(img3,[1])
-   subplot(3,4,7); show_fem(img3,[1,1])
-   subplot(3,4,8); show_fem(img3,[1,1,1])
+   subplot(4,4,5); show_fem(img3.fwd_model) 
+   subplot(4,4,6); show_fem(img3,[1])
+   subplot(4,4,7); show_fem(img3,[1,1])
+   subplot(4,4,8); show_fem(img3,[1,1,1])
+end
 
+   fmdl=getfield(mk_common_model('a2c0',8),'fwd_model'); 
+   fmdl.mat_idx{1} = [3,7,13,14]; fmdl.mat_idx{2} = [14,23];
+   fmdl2= mat_idx_to_electrode(fmdl,{1,2});
+   subplot(4,4,13); show_fem(fmdl2,[0,0,1]) 
+
+   fmdl.mat_idx_to_electrode.nodes_electrode= true;
+   fmdl3= mat_idx_to_electrode(fmdl,{1,2});
+   subplot(4,4,14); show_fem(fmdl3,[0,0,1]) 
+
+
+
+fmdl.electrode(9)
