@@ -346,9 +346,12 @@ for e=1:length(mdl.electrode)
     
     
     if isfield(elece,'faces') && isempty(elec_nodes);
-        hh= patch(struct('vertices',mdl.nodes,'faces',elece.faces));
+        faces= elece.faces;
+        hh= patch(struct('vertices',mdl.nodes,'faces',faces));
         % need 'direct' otherwise colourmap is screwed up
         set(hh,'FaceColor',colour, 'FaceLighting','none', 'CDataMapping', 'direct' );
+        el_nodes = mdl.nodes(unique(faces),:);
+        number_elecs_3d(number_electrodes, e, mdl, el_nodes )
     elseif length(elec_nodes) == 1  % point electrode model
         vtx= mdl.nodes(elec_nodes,:);
         line(vtx(1),vtx(2),vtx(3), ...
@@ -368,12 +371,12 @@ for e=1:length(mdl.electrode)
         ee= get_boundary( mdl );
         paint_electrodes(sels,ee,mdl.nodes,colour,number_electrodes);
         
-        number_elecs_3d(number_electrodes, e, mdl,sels );
+        el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
+        number_elecs_3d(number_electrodes, e, mdl, el_nodes );
     end
 end
 
-function number_elecs_3d(number_electrodes, e, mdl, sels )
-   el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
+function number_elecs_3d(number_electrodes, e, mdl, el_nodes )
    switch number_electrodes
       case {0,false}
          return
@@ -737,11 +740,11 @@ end
    fmdl=getfield(mk_common_model('a2c0',8),'fwd_model'); 
    fmdl.mat_idx{1} = [3,7,13,14]; fmdl.mat_idx{2} = [14,23];
    fmdlA= mat_idx_to_electrode(fmdl,{1,2});
-   subplot(4,4,13); show_fem(fmdlA,[0,0,1]) 
+   subplot(4,4,13); show_fem(fmdlA,[0,0,1]); title 'elec faces'; 
 
    fmdl.mat_idx_to_electrode.nodes_electrode= true;
    fmdlB= mat_idx_to_electrode(fmdl,{1,2});
-   subplot(4,4,14); show_fem(fmdlB,[0,0,1]) 
+   subplot(4,4,14); show_fem(fmdlB,[0,0,1]); title 'elec nodes';
 
    fmdl3=getfield(mk_common_model('n3r2',[16,2]),'fwd_model');
    fmdl3.electrode(1:16)= [];
