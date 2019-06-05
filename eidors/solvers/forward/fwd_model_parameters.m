@@ -137,14 +137,26 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    cem_electrodes= 0; % num electrodes part of Compl. Elec Model
    N2E = sparse(n_elec, n+n_elec);
    for i=1:n_elec
-       try
-           elec_nodes = fwd_model.electrode(i).nodes;
-       catch
-           eidors_msg('Warning: electrode %d has no nodes',i);
-           break; %Not a real electrode so don't include
-       end
-      [N2Ei,N2Ei_nodes,cem_electrodes] = N2Ei_from_nodes( ...
-         bdy, elec_nodes, cem_electrodes,n);
+      eleci = fwd_model.electrode(i);
+% The faces field is used only if 
+      if isfield(eleci,'faces')  && ~isempty(eleci.faces)
+        if ~isempty(eleci.nodes)
+           eidors_msg('Warning: electrode %d has both faces and nodes',i);
+        end
+        % This is a CEM electrode
+        cem_electrodes = cem_electrodes+1;
+        N2Ei= 1;
+        N2Ei_nodes = n+cem_electrodes;
+
+      elseif isfield(eleci,'nodes') 
+          elec_nodes = fwd_model.electrode(i).nodes;
+         [N2Ei,N2Ei_nodes,cem_electrodes] =  ...
+             N2Ei_from_nodes( ...
+              bdy, elec_nodes, cem_electrodes,n);
+      else
+          eidors_msg('Warning: electrode %d has no nodes',i);
+          break; %Not a real electrode so don't include
+      end
       N2E(i, N2Ei_nodes) = N2Ei;
    end
    N2E = N2E(:, 1:(n+cem_electrodes));
@@ -153,7 +165,6 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
    if all(N2E(find(N2E(:)))==1)
       N2E = logical(N2E);
    end
-
 
 
 function [N2Ei,N2Ei_nodes,cem_electrodes] =  ...
@@ -251,7 +262,7 @@ function do_unit_test
    unit_test_cmp('calc_VV1', norm(VV1,'fro'), 0, 1e-15);
    unit_test_cmp('calc_VV2', norm(VV2,'fro'), 0, 1e-15);
 
-   for i=1:5;
+   for i=1:6;
       imdl = mk_common_model('a2C0',4); fmdl = imdl.fwd_model;
       switch i
          case 1; fmdl.stimulation(3).stim_pattern = fmdl.stimulation(3).stim_pattern*[1,2]; 
@@ -267,6 +278,11 @@ function do_unit_test
                  param = 'VV';
          case 5; fmdl.stimulation(3).volt_pattern = [ones(4,2)];
                  expected_err = 'EIDORS:fwd_model_parameters:volt_pattern';
+         case 6; fmdl.electrode(3).faces = [1,2;2,3;3,1];
+                 fmdl.electrode(3).nodes = [];
+                 expected_err = ''; expected = zeros(4,45);
+                 expected(:,42:45) = eye(4);
+                 param = 'N2E';
       end
       err= '';
       try;  pp = fwd_model_parameters(fmdl);
