@@ -17,6 +17,11 @@ Plan for 3.9.10
  - test eidors can handle two-digit verion 3.10beta1
  - matlab 2019a has problems with eidors_var_id (sometimes)
     - try to figure out when
+ - eidors_var_id is not reliable under octave (win+linux)
+    (parts of it work)
+
+Defer (not for 3.9.10)
+ - GREIT3D doesn't work for non-extruded shapes (see apr 2019 email discussion)
 
 
 Modifications post 3.9.1
