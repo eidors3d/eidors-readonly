@@ -95,6 +95,10 @@ function varargout=eidors_cache( command, varargin )
 %        opt.log_level
 %            - message level to use with eidors_msg. By default, it's 4 for
 %              'setting cache' and 3 for 'using cached value'
+%        opt.cache_to_disk = true or '.'  
+%        opt.cache_to_disk = 'path/to/cache/dir'
+%            - Save the cached file to disk and reload it when called
+%            - The file is named 'eidors_cache_id????.mat' or opt.fstr,'_id???'
 %
 %   eidors_cache( 'cache_path' )
 %   eidors_cache( 'cache_path', '/path/to/cache/path' )
@@ -481,8 +485,29 @@ function varargout = cache_shorthand(fhandle, varargin)
        level_in = 4;
        level_out = 3;
    end
-   
-   varargout = eidors_obj('get-cache', cache_obj, fstr );
+   cache_to_disk = false;
+   if isfield(opt, 'cache_to_disk')
+       cache_locn    = opt.cache_to_disk;
+       if cache_locn
+          cache_to_disk = true;
+       end
+       if cache_locn==true
+          cache_locn = '.';
+       end
+       if isfield(opt,'fstr')
+          cache_str = opt.fstr;
+       else
+          cache_str = 'eidors_cache';
+       end
+   end
+
+   [varargout,obj_id] = eidors_obj('get-cache', cache_obj, fstr );
+   if length(varargout)==0 && cache_to_disk % if not in memory cache
+       savename = [cache_locn,'/',cache_str,'_',obj_id,'.mat'];
+       if exist(savename,'file')
+          load(savename)
+       end  
+   end
    if numel(varargout) < nargout
       eidors_msg('@@ (Re)calculating %s',fstr, level_in);
       output = mk_varargout_str(nargout);
@@ -494,7 +519,13 @@ function varargout = cache_shorthand(fhandle, varargin)
          eidors_cache('boost_priority',opt.boost_priority);
       end
       
-      eidors_obj('set-cache', cache_obj, fstr, varargout, t);
+
+      if cache_to_disk
+         eidors_msg('@@ Caching to %s', savename, level_in+1);
+         save(savename,'varargout','-V7'); % -V7 for octave support
+      else
+         eidors_obj('set-cache', cache_obj, fstr, varargout, t);
+      end
       
       if isfield(opt,'boost_priority');
          eidors_cache('boost_priority',-opt.boost_priority);
