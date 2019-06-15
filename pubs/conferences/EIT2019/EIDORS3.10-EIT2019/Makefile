@@ -1,7 +1,7 @@
 pdflatex:=pdflatex -file-line-error -halt-on-error -shell-escape
-latexmk:=latexmk -pdf -pdflatex="$(pdflatex)" -bibtex
+latexmk:=latexmk -pdf -f -pdflatex="$(pdflatex)" -bibtex
 
-all: eidors3p9-eit2017.pdf
+all: eidors3p10-eit2019.pdf
 %.pdf: %.tex
 	$(latexmk) $<
 
