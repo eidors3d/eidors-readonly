@@ -94,56 +94,53 @@
 \noindent {\bf Abstract:}
 This paper announces the release of version 3.10 of the
 EIDORS software suite. We review its new features, and 
-discusses its growth and citations.
+discusses its growth and use.
 
 \section{Introduction}
 We proudly announce the release of EIDORS version 3.10,
 for the 20th Int.\ Conf.\ on Biomedical Applications of EIT,
 in July 2019.
 The software is available at \href{www.eidors.org}{eidors.org}\, and licensed under the GNU GPLv2 or GPLv3. Archived versions are now available on Zenodo
-\cite{eidors3p10}.
+\cite{eidors3p10,
+      eidors3p9p1,
+      eidors3p9,
+      eidors3p8}.
 
 
-EIDORS aims to provide free software algorithms for forward modelling
+EIDORS provides free software algorithms for forward modelling
 and inverse solutions
 of Electrical Impedance and (to some extent) Diffusion-based Optical Tomography, in
-medical, industrial and geophysical settings and to share data and promote
-collaboration.
+medical, industrial and geophysical settings.
+EIDORS also aims to share data and promote
+collaboration amongst its users.
 
 \section{New Features}
 Release 3.10 of EIDORS builds upon a strong foundation in reconstruction
 algorithms, adding and improving a number of aspects.
 \begin{itemize}
-\item Faster forward solve times for real conductivity distributions
+\item Modelling and management of internal electrodes.
+
+\item New electrode specifications on electrode faces (in addition to nodes)
+
+\item Improved FEM utility methods (mesh merging, removal, faster boundary calculations)
+
+\item Improved support for GNU Octave
 
 \item Improved support for GREIT reconstructions in 3D \cite{grychtol2019}
 
-\item Improved support for mixed point and CEM electrode models
+\item Support for caching to disk
 
-%  - 5358 model reduction: added tutorial for diodes: model reduction from fem to resistor mesh
-
-\item Improved testing framework esp.\ for core solver algs
-
-%  - improved swisstom and draeger file loaders
-%  - 5288 new 2.5D rank-1 movement jacobian
-
+\item Improved graphics and visualization functions
 
 \item Improved support for geophysical FEM models
-%  - mk geophysics model improvements
-%  - efficiency improvements
-%  - 5266 Serial correct files added to R_yerworth folder
-%  - 5218 l-curve/GCV hyperparameter
 
+\item Updated utilities for device file formats 
+      (new datafile\_utility) and integration with
+      SenTec ibeX software.
 
-\item Improved support for Octave
+\item Expanded shape library with new species shapes
 
-\item Updated ability to load recent device file formats including
-       auxiliary data (Dr\"ager and Swisstom formats)
-
-
-
-
-\item Expanded shape library
+\item (As always) bug fixes 
 \end{itemize}
 
 \section{Growth}
@@ -194,12 +191,13 @@ contributions in progress.
   \vspace{-2.5mm}
 \centering
 % trim=left botm right top
- \includegraphics[width=.96\columnwidth]{fig_loc.pdf}
+ \includegraphics[width=.99\columnwidth]{fig_loc.pdf}
 \caption{\label{fig:loc}%
 %graph and table combo chart, including line for test code.
   Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
-   (red), Eidors (i.e.\ release branch, brown), Tutorials (green), development code (blue).
-   Releases are indicated by gray bars.
+   (red), EIDORS (i.e.\ release branch, brown), Tutorials (green), development code (blue).
+   Releases are indicated by gray bars (The 3.10 release is
+   at the right).
 }
 \end{figure}
 
@@ -210,18 +208,18 @@ cross-platform support, integration of meshing,
 tutorials, and the contributed data repository.
 These aspects, along with an open source code-base, have enabled EIDORS to
 maintain research relevance.
-Presenting version 3.10!
+Version 3.10 (hopefully) continues the tradition.
 
 
 
 \footnotesize
 \begin{thebibliography}{99}
 \bibitem{eidors3p10}
-   Adler A, ``EIDORS ver 3.10'',
+   Adler A, ``EIDORS version 3.10'',
    \href{http://dx.doi.org/10.5281/zenodo.3247168}{DOI:10.5281/zenodo.3247168},
     2019.
 \bibitem{eidors3p9p1}
-   Adler A {\em et al}, ``EIDORS ver 3.9.1'',
+   Adler A {\em et al}, ``EIDORS version 3.9.1'',
    \href{http://dx.doi.org/10.5281/zenodo.1257670}{DOI:10.5281/zenodo.1257670},
     2018.
 \bibitem{eidors3p9}
