@@ -386,6 +386,7 @@ function cache_list (order)
    end
    
    meta = meta';
+   fprintf('CACHE__:  Date+Time     bytes       Score_szPrio CountXEffort   Score_eff   #  obj_id ___\n');
    fprintf('%s b=%9.0d [%4d]  p=%02d t=%3dx%.2e [%4d] i=%4d: %s { %s }\n', ...
       meta{[c.time,c.size,c.score_sz,c.prio,c.count,c.effort,c.score_eff,N+1,c.obj_id, c.prop],:});
 
@@ -620,6 +621,7 @@ function [meta,idx] = mysortrows(meta, cols)
 
 
 function test_debug
+   fprintf('\n\n************************\n        CACHE DEBUG: VERBOSE OUTPUT\n************************\n');
    eidors_cache clear
    eidors_obj('set-cache',{5}, 'test1',50);
    eidors_obj('set-cache',{5}, 'test2',500);
@@ -637,6 +639,7 @@ function test_debug
    eidors_cache('clear_max',0)
    eidors_cache('show_objs')
    eidors_cache debug_off
+   fprintf('\n\n************************\n        CACHE DEBUG: DEBUG FINISHED\n************************\n');
    
    
 function test_priority
