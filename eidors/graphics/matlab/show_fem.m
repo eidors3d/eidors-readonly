@@ -8,7 +8,8 @@ function hh=show_fem( mdl, options)
 %
 % options specifies a set of options
 %   options(1) => show colourbar
-%   options(2) => show numbering on electrodes
+%   options(2) => show numbering on electrodes (fontsize can be controlled by
+%      the fractional part, ie [0,1.012] => 12pt font)
 %   options(3) => number elements (==1) or nodes (==2);
 %
 % for detailed control of colours, use
@@ -155,8 +156,7 @@ function hh= show_2d(img,mdl,opts)
       colours= [1,1,1]; % white elements if no image
    end
    hh= show_2d_fem( mdl, colours );
-   show_electrodes_2d(mdl, opts.number_electrodes);
-
+   show_electrodes_2d(mdl, opts.number_electrodes) 
    set(hax,'position', pax);
    view(0, 90); axis('xy'); grid('off');
 
@@ -260,14 +260,16 @@ for e=1:length(mdl.electrode)
        S= 1.05;
        vx= vx*S;
        vy= vy*S;
-       switch number_electrodes
+       switch floor(number_electrodes)
           case {1 true}
              txt = num2str(e);
           case 2
              try, txt = mdl.electrode(e).label; end
+          otherwise; error('value of number_electrodes not understood');
        end
        hh= text(mean(vx)+ctr_x, mean(vy)+ctr_y, txt);
-       set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
+       fontsize= getfontsizefromnumber_electrodes(number_electrodes);
+       set(hh, 'HorizontalAlignment','center', 'FontWeight','bold','FontSize',fontsize);
     end
 end
 
@@ -318,16 +320,27 @@ for e=1:length(mdl.electrode)
 %        vx= (mdl.nodes(elec_nodes,1) - ctr_x)*S;
 %        vy= (mdl.nodes(elec_nodes,2) - ctr_y)*S;
 %        vz= (mdl.nodes(elec_nodes,3) - ctr_z)*S;
-       switch number_electrodes
+       switch floor(number_electrodes)
           case {1 true}
             txt = num2str(e);
           case 2
              try, txt = mdl.electrode(e).label; end
+          otherwise; error('value of number_electrodes not understood');
        end
        hh= text(S*mean(vx)+ctr_x, S*mean(vy)+ctr_y,S*mean(vz)+ctr_z,txt);
-       set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
+       fontsize= getfontsizefromnumber_electrodes(number_electrodes);
+       set(hh, 'HorizontalAlignment','center', 'FontWeight','bold','FontSize',fontsize);
     end
 end
+
+% Fontsize is 8, unless number_electrodes = 1.012 => 12 etc
+function fontsize= getfontsizefromnumber_electrodes(number_electrodes)
+   ne = rem(number_electrodes,1);
+   if ne==0; 
+     fontsize = 8;
+   else
+     fontsize = round(ne*1000);
+   end
 
 function show_electrodes_3d(mdl, number_electrodes)
 % show electrode positions on model
@@ -377,18 +390,20 @@ for e=1:length(mdl.electrode)
 end
 
 function number_elecs_3d(number_electrodes, e, mdl, el_nodes )
-   switch number_electrodes
+   switch floor(number_electrodes)
       case {0,false}
          return
       case {1 true}
          txt = num2str(e);
       case 2
          try, txt = mdl.electrode(e).label; end
+      otherwise; error('value of number_electrodes not understood');
    end
    hh=text( mean(el_nodes(:,1)), ...
             mean(el_nodes(:,2)), ...
             mean(el_nodes(:,3)), txt );
-   set(hh,'FontWeight','bold','Color',[.8,.2,0],'FontSize',8);
+   fontsize= getfontsizefromnumber_electrodes(number_electrodes);
+   set(hh,'FontWeight','bold','Color',[.8,.2,0],'FontSize',fontsize);
 
 function show_inhomogeneities( elem_data, mdl, img, opt)
 % show
@@ -575,7 +590,7 @@ function plot_2d_mesh(NODE,ELEM,el_pos, S, options)
   if options(2) %donodenum
     nodenum= reshape(sprintf('%3d',1:length(NODE)),3,length(NODE))';
     text(NODE(1,:),NODE(2,:),nodenum, ...
-         'Color','yellow','HorizontalAlignment','center','FontSize',14);
+         'Color','yellow','HorizontalAlignment','center','FontSize',8);
   end %if domesnum
 
   if options(3) %dotext
