@@ -91,8 +91,10 @@ function elem_data = check_elem_data(fwd_model, img);
               elem_data = elem_data + fwd_model.background;
           end
 
-       otherwise; error(['system_mat_1st_order: provided elem_data ' ...
-            ' (sz=%d) does not match c2f (sz=%d %d)'], sz_elem_data(1), sz_c2f);
+       otherwise;
+           error(['system_mat_1st_order: provided elem_data ' ...
+                  ' (sz=%d) does not match c2f (sz=[%d %d])'], ...
+                   sz_elem_data(1), sz_c2f(1), sz_c2f(2));
      end
    else
      if sz_elem_data(1) ~= num_elems(fwd_model)

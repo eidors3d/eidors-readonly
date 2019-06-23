@@ -26,6 +26,7 @@ else
    warning('EIDORS:DeprecatedInterface', ...
       ['Calling CALC_SYSTEM_MAT with two arguments is deprecated and will cause' ...
        ' an error in a future version. First argument ignored.']);
+   img.fwd_model = fwd_model;
 end
 warning off EIDORS:DeprecatedInterface
 fwd_model= img.fwd_model;
@@ -42,7 +43,7 @@ else
        fwd_model.system_mat = str2func(fwd_model.system_mat); 
    end
    
-   system_mat = eidors_cache(fwd_model.system_mat,{fwd_model,img},copt);
+   system_mat = eidors_cache(fwd_model.system_mat,img,copt);
    
 end
 
