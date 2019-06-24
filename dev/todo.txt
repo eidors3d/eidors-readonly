@@ -10,8 +10,8 @@ Plan for 3.9.10
  - make show_3d_slices work with *node_data
  + in ng* files, make all %f to be full precision
  - verify ng* can take multiple parameters
- - test eidors can handle two-digit verion 3.10beta1
- - update default colour
+ + test eidors can handle two-digit verion 3.10beta1
+ + update default colour
  - matlab 2019a has problems with eidors_var_id (sometimes)
     - try to figure out when
  - eidors_var_id is not reliable under octave (win+linux)
