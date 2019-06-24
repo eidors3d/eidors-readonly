@@ -8,20 +8,21 @@ Plan for 3.9.10
  - rebuild netgen_cyl_models20.png
  - fix view matrix in emphasize_electrode_text
  - make show_3d_slices work with *node_data
- - in ng* files, make all %f to be full precision
- - expose topandbot for most ng* files
-   - ng_mk_cyl_models.m
-   - ng_mk_ellip_models.m
-   - ng_mk_extruded_model.m
+ + in ng* files, make all %f to be full precision
  - verify ng* can take multiple parameters
  - test eidors can handle two-digit verion 3.10beta1
+ - update default colour
  - matlab 2019a has problems with eidors_var_id (sometimes)
     - try to figure out when
  - eidors_var_id is not reliable under octave (win+linux)
     (parts of it work)
 
-Defer (not for 3.9.10)
+Defer (after 3.9.10)
  - GREIT3D doesn't work for non-extruded shapes (see apr 2019 email discussion)
+ - expose topandbot for most ng* files (not sure this is useful)
+   - ng_mk_cyl_models.m
+   - ng_mk_ellip_models.m
+   - ng_mk_extruded_model.m
 
 
 Modifications post 3.9.1
