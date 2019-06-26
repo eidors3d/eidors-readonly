@@ -22,6 +22,11 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.img_cols = number of columns in image
 %   img.show_slices.sep = number of pixels between the individual images
 %   img.show_slices.axes_msm = use mdl_slice_mapper for x,y axes
+%        %% Example
+%        imgs.fwd_model.mdl_slice_mapper = struct('level',[inf,0,inf], ...
+%          'x_pts', linspace(-2,2,50), 'y_pts',linspace(2,10,100));
+%        imgs.show_slices.axes_msm = true;
+%        show_slices(imgs);
 %   img.calc_colours.npoints = pixel width/height to map to
 %   img.get_img_data.frame_select = which frames of image to display
 %
