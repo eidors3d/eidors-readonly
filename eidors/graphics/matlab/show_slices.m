@@ -21,14 +21,17 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.levels (same as above);
 %   img.show_slices.img_cols = number of columns in image
 %   img.show_slices.sep = number of pixels between the individual images
-%   img.show_slices.axes_msm = use mdl_slice_mapper for x,y axes
-%        %% Example
-%        imgs.fwd_model.mdl_slice_mapper = struct('level',[inf,0,inf], ...
-%          'x_pts', linspace(-2,2,50), 'y_pts',linspace(2,10,100));
-%        imgs.show_slices.axes_msm = true;
-%        show_slices(imgs);
 %   img.calc_colours.npoints = pixel width/height to map to
 %   img.get_img_data.frame_select = which frames of image to display
+%   img.show_slices.axes_msm = use mdl_slice_mapper for x,y axes
+%        %% Example
+%        img.fwd_model.mdl_slice_mapper = struct('level',[inf,0,inf], ...
+%          'x_pts', linspace(-2,2,50), 'y_pts',linspace(2,10,100));
+%        img.show_slices.axes_msm = true; show_slices(img);
+%   img.show_slices.contour_levels = true => Do a contour on the image
+%   img.show_slices.contour_levels = #    => Put this many contour lines
+%   img.show_slices.contour_levels = vector => Put contours at these locations
+%   img.show_slices.contour_properties => e.g. {'Color',[0,0,0],'LineWidth',2}
 %
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
@@ -115,25 +118,52 @@ else
    set(gca,'Ydir','normal');
 end
 
+% Do a contour plot?
+if isfield(img,'show_slices') && isfield(img.show_slices,'contour_levels');
+   clevs = img.show_slices.contour_levels;
+   if isfield(img.show_slices,'contour_properties');
+      contour_properties = img.show_slices.contour_properties;
+   else
+      contour_properties = {'Color',[0.2,0.2,0.3]};
+   end
+
+   if ~axes_msm;
+      msm.x_pts = 1:size(rimg,2);
+      msm.y_pts = 1:size(rimg,1);
+   end
+   ish= ishold;
+   if isnumeric(clevs)
+      if ~ish; hold on; end 
+      contour(msm.x_pts, msm.y_pts, rimg, clevs, contour_properties{:});
+      if ~ish; hold off; end 
+   elseif clevs % true but not numeric
+      if ~ish; hold on; end 
+      contour(msm.x_pts, msm.y_pts, rimg, contour_properties{:});
+      if ~ish; hold off; end 
+   else
+      error('img.show_slices.contour_levels parameter not understood');
+   end
+end
+
 if nargout==0; clear('out_img'); end
 
 function do_unit_test
-   clf
+   clf; sp=0;
 
    img=calc_jacobian_bkgnd(mk_common_model('a2t3',8)); 
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
-   subplot(4,4,1); show_slices(img) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
    img.calc_colours.npoints= 128;
-   subplot(4,4,2); show_slices(img) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
    img.calc_colours.npoints= 32;
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1:3);
-   subplot(4,4,3); show_slices(img) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
 
    img.show_slices.img_cols= 1;
-   subplot(4,4,4); show_slices(img) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
    imgn = rmfield(img,'elem_data');
    imgn.node_data=toeplitz(1:size(img.fwd_model.nodes,1),1);
@@ -142,61 +172,71 @@ function do_unit_test
    img.fwd_model.mdl_slice_mapper.npx = 10;
    img.fwd_model.mdl_slice_mapper.npy = 20;
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(4,4,5); show_slices(img);
+   sp=sp+1;subplot(4,5,sp); show_slices(img);
 
    img.elem_data = img.elem_data(:,1);
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-150,150,30);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(4,4,6); show_slices(img);
+   sp=sp+1;subplot(4,5,sp); show_slices(img);
 
-   subplot(4,4,7); show_slices(imgn) 
+   sp=sp+1;subplot(4,5,sp); show_slices(imgn) 
 
    imgn.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
    imgn.fwd_model.mdl_slice_mapper.y_pts = linspace(-150,150,30);
    imgn.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
-   subplot(4,4,8); show_slices(imgn) 
+   sp=sp+1;subplot(4,5,sp); show_slices(imgn) 
 
 
 % 3D images
    img=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2])); 
    img.calc_colours.npoints= 16;
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
-   subplot(4,4,9); show_slices(img,2) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img,2) 
 
 
    img.elem_data=img.elem_data*[1:3];
-   subplot(4,4,10); show_slices(img,2) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img,2) 
 
    img.elem_data=img.elem_data(:,1:2);
-   subplot(4,4,11); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);
+   sp=sp+1;subplot(4,5,sp); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);
 
    img.show_slices.sep = 5;
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-1,1,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-1,1,30);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
 
-   subplot(4,4,12); show_slices(img,2) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img,2) 
 
 
    img.elem_data = img.elem_data(:,1);
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,1;
            0,1,inf,3,1];
-   subplot(4,4,13); show_slices(img,levels) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
 
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,2;
            0,1,inf,  1,3];
-   subplot(4,4,14); show_slices(img,levels) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
 
    img.elem_data = img.elem_data(:,[1,1]);
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,1;
            0,1,inf,  3,1];
-   subplot(4,4,15); show_slices(img,levels) 
+   sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
    
    m = calc_slices(img,levels);
-   subplot(4,4,16); show_slices(m) 
+   sp=sp+1;subplot(4,5,sp); show_slices(m) 
    
+   img.elem_data = img.elem_data(:,1);
+   img.show_slices.contour_levels = true;
+   sp=sp+1;subplot(4,5,sp); show_slices(img) 
+
+   img.fwd_model.mdl_slice_mapper = struct('level',[inf,inf,1], ...
+     'x_pts', linspace(-1,1,50), 'y_pts',linspace(-2,2,100));
+   img.show_slices.axes_msm = true;
+   img.show_slices.contour_properties = {'LineWidth',2};
+   img.show_slices.contour_levels = 1:300;
+   sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
