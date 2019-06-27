@@ -17,8 +17,8 @@ FEM model (left) and reconstructed image (centre) and sequence (right)
 </center>
 <H3>Requirements</H3>
 <ul>
-<li> <a href="http://www.matlab.com">Matlab</a> (&ge;2015a or 8.5) or
-     <a href="http://www.octave.org">Octave</a> (&ge;4.2),
+<li> <a href="http://www.matlab.com">Matlab</a> (&ge;2016b or 9.1) or
+     <a href="http://www.octave.org">Octave</a> (&ge;4.4),
 <li> <a href="http://netgen-mesher.sf.net">Netgen Mesher</a> (optional),
 (Direct link to 
 <a href="http://sourceforge.net/projects/netgen-mesher/files/netgen-mesher/5.3/">Netgen 5.3</a>)
