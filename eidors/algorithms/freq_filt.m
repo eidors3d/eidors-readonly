@@ -44,9 +44,11 @@ end
 if isstruct(vin) && isfield(vin,'type');
    switch vin.type
      case 'data'
-        vfilt.meas = do_freq_filt(vin.meas, fresp, p);
+        vin.meas = do_freq_filt(vin.meas, fresp, p);
+        vfilt = vin;
      case 'image'
-        vfilt.elem_data = do_freq_filt(vin.elem_data, fresp, p);
+        vin.elem_data = do_freq_filt(vin.elem_data, fresp, p);
+        vfilt = vin;
      otherwise
         error('Can''t process object of type %',vin.type);
    end
