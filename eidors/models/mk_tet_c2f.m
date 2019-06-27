@@ -171,7 +171,74 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
             fmdl.nodes(f_nodes(:,t),:);
             rmdl.nodes(r_nodes(:,t),:)];
          last_v = last_v + 1;
-         [~,V(last_v)] = convhulln_clean(pts,fmdl);
+         if size(pts,1) < 4 
+            % there are some degenerate cases, sometimes caused by
+            % numerical issues alone
+            continue
+         end
+         try
+            % move points to origin (helps for small elements at
+            % large coordinates
+            ctr = mean(pts);
+            pts = bsxfun(@minus,pts,ctr);
+            scale = max(abs(pts(:)));
+            if scale == 0 %happens when there's only one point
+               continue
+            end
+            % scale largest coordinate to 1 (helps with precision)
+            pts = pts ./ scale;
+            % force thorough search for initinal simplex and
+            % supress precision warnings
+            [K, V(last_v)] = convhulln(pts,{'Qt Pp Qs'});
+            V(last_v) = V(last_v) * scale^3; % undo scaling
+         catch err
+            ok = false;
+            switch err.identifier
+               case {'MATLAB:qhullmx:DegenerateData', 'MATLAB:qhullmx:UndefinedError'}
+                  if size(pts,1) > 3
+                     u = uniquetol(pts*scale,6*eps,'ByRows',true,'DataScale', 1);
+                     ok = ok | size(u,1) < 4;
+                  end
+            end
+            if ~ok
+               if DEBUG || eidors_debug('query','mk_tet_c2f:convhulln')
+                  tet.nodes = fmdl.nodes;
+                  vox.nodes = rmdl.nodes;
+                  tet.type = 'fwd_model';
+                  vox.type = 'fwd_model';
+                  vox.elems = rmdl.faces(logical(rmdl.elem2face(v,:)),:);
+                  vox.boundary = vox.elems;
+                  tet.elems = fmdl.elems(tet_todo(t),:);
+                  clf
+                  pts = bsxfun(@plus,pts*scale,ctr);
+                  subplot(221)
+                  show_test(vox,tet,pts);
+                  
+                  subplot(222)
+                  show_test(vox,tet,pts);
+                  view(90,0)
+                  
+                  subplot(223)
+                  show_test(vox,tet,pts);
+                  view(0,90)
+                  
+                  subplot(224)
+                  show_test(vox,tet,pts);
+                  view(0,0)
+                  
+                  
+                  str = sprintf('mk_tet_c2f problem fe %d ce %d', v, tet_todo(t));
+                  print(gcf,'-dpng',str);
+%                   keyboard
+               else
+                  problem = true;
+%                   fprintf('\n');
+%                   eidors_msg(['convhulln has thrown an error. ' ...
+%                      'Enable eidors_debug on mk_tet_c2f and re-run to see a debug plot'],0);
+%                   rethrow(err);
+               end
+            end
+         end
       end
    end
    progress_msg(Inf);
@@ -260,18 +327,28 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
    
    epsilon = opt.tol_edge2tri;
    
-   excl =   bsxfun(@gt, face_bb(:,1), edge_bb(:,2)') ...
-          | bsxfun(@lt, face_bb(:,2), edge_bb(:,1)') ...
-          | bsxfun(@gt, face_bb(:,3), edge_bb(:,4)') ...
-          | bsxfun(@lt, face_bb(:,4), edge_bb(:,3)') ...
-          | bsxfun(@gt, face_bb(:,5), edge_bb(:,6)') ...
-          | bsxfun(@lt, face_bb(:,6), edge_bb(:,5)');
-   excl = ~excl;
+   chunk_size = 100;
+   chunk_end = 0;
    N_pts = 0;
    for i = 1:N_edges
       if mod(i,mint)==0, progress_msg(i/N_edges); end
-     
-      fidx = excl(:,i);
+      
+      if i > chunk_end
+        chunk_start = chunk_end + 1;
+        chunk_end = min(chunk_end+chunk_size,N_edges);
+        chunk = chunk_start:chunk_end;
+        excl =   face_bb(:,1) > edge_bb(chunk,2)' ...
+            | face_bb(:,2) < edge_bb(chunk,1)' ...
+            | face_bb(:,3) > edge_bb(chunk,4)' ...
+            | face_bb(:,4) < edge_bb(chunk,3)' ...
+            | face_bb(:,5) > edge_bb(chunk,6)' ...
+            | face_bb(:,6) < edge_bb(chunk,5)';
+        excl = ~excl;
+        chunk_i=1;
+      end
+      fidx = excl(:,chunk_i);
+      chunk_i = chunk_i + 1;
+      
       if ~any(fidx), continue, end;
       
       num = -d(fidx) + sum(bsxfun(@times,fmdl.normals(fidx,:),P1(i,:)),2);
@@ -318,6 +395,7 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
             N_pts = N_pts + N;
          end
       end
+      
    end
    T = T(1:N_pts);
    E = E(1:N_pts);
@@ -466,6 +544,7 @@ function do_case_test
 
    X = 2; Y = 3; % subplot matrix
    for i = 1:30
+        fprintf('%d\n',i);
         t1.nodes = [0 0 0; 0 1 0; 1 0 0; 0 0 1];
         t2 = t1;
         switch i
@@ -473,32 +552,32 @@ function do_case_test
               txt = 'identical';
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              tol = eps; cmptarg = 1;
+              unit_test_cmp(txt,c2f,1,eps);
            case 2
               txt = 'shared face';
               t2.nodes(end,end) = -1;
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              tol = 0; cmptarg = 0;
+              unit_test_cmp(txt,c2f,0,0);
            case 3
               txt = 'coplanar faces';
               t2.nodes(end,end) = -1;
               t1.nodes(:,1:2) = t1.nodes(:,1:2) + .2;
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              tol = 0; cmptarg = 0;
+              unit_test_cmp(txt,c2f,0,0);
            case 4
               txt = 'point on edge';
               t2.nodes(:,1) = t1.nodes(:,1) + 1;
               t2.nodes(:,2) = t1.nodes(:,2) - .3;
               subplot(X,Y,i), show_test(t1,t2);
               c2f = mk_tet_c2f(t1,t2);
-              tol = 0; cmptarg = 0;
+              unit_test_cmp(txt,c2f,0,0);
            otherwise
              break;
         end
-        txt = sprintf('%02d: %s',i,txt);
-        unit_test_cmp(txt,c2f,cmptarg,tol);
+
+      
    end
    eidors_msg('log_level',ll);
 
