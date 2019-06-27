@@ -123,8 +123,8 @@ case 18;
 show_fem(img);
 
 case 19;
-    t1= 'solid obj1 = torus( 0, 0,  .8; 1, 0, 0; .4 ; .1 );';
-    t2= 'solid obj2 = torus( 0, 0, 1.2; 0, 1, 0; .4 ; .1 );';
+    t1= 'solid obj1 = torus( 0, 0,  .8; 1, 0, 0; .4 ; .12);';
+    t2= 'solid obj2 = torus( 0, 0, 1.2; 0, 1, 0; .4 ; .12);';
     extra={'obj1','obj2',[t1,t2]};
     fmdl= ng_mk_cyl_models(2,[6,.5],[0.3,0.2],extra);
     img= mk_image(fmdl,1);
