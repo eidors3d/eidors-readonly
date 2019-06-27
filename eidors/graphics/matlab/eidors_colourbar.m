@@ -51,6 +51,10 @@ if isstruct(max_scale) && strcmp(max_scale.type,'image')
    pp=get_colours( img );
    img_data= get_img_data( img );
    [scl_data, ref_lev, max_scale] = scale_for_display( img_data(:), pp);
+   try if strcmp(pp.component,'imag');
+       ref_lev = imag(ref_lev);
+   end; end
+   ref_lev = real(ref_lev);
 end
 
    hh= colorbar;
@@ -165,7 +169,7 @@ function pp=get_colours( img );
    global eidors_colours;
    pp= eidors_colours;
 
-%  pp.component = 'real'; % Don't get from globals
+   pp.component = 'real'; % will be overriden if in image
 
 % override global if calc.colours specified
    try
