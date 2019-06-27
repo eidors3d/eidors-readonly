@@ -1,21 +1,25 @@
 Plan for 3.9.10
- - write tests and fix ng_mk_geometric_models (bug line 1401 doesn't generate volumes)
  - fix direction in emphasize_electrode_text
- - Add internal nodes functions
- - Add direct control of electrode surf
-     - update remove_unused_nodes
+ + Add internal nodes functions
+ + Add direct control of electrode surf
+     + update remove_unused_nodes
  + remove mat_idx_reordered
  - rebuild netgen_cyl_models20.png
- - fix view matrix in emphasize_electrode_text
  - make show_3d_slices work with *node_data
  + in ng* files, make all %f to be full precision
  - verify ng* can take multiple parameters
+ - fix documentation for ng_mk_closed_contour
+ + add time-filter function
+ - cache to disk
+ + add contour image function => added to show_slices
+ - fix bugs from the mailing list
  + test eidors can handle two-digit verion 3.10beta1
  + update default colour
  - matlab 2019a has problems with eidors_var_id (sometimes)
     - try to figure out when
  - eidors_var_id is not reliable under octave (win+linux)
     (parts of it work)
+ - add new animal models
 
 Defer (after 3.9.10)
  - GREIT3D doesn't work for non-extruded shapes (see apr 2019 email discussion)
@@ -23,6 +27,7 @@ Defer (after 3.9.10)
    - ng_mk_cyl_models.m
    - ng_mk_ellip_models.m
    - ng_mk_extruded_model.m
+ - write tests and fix ng_mk_geometric_models (bug line 1401 doesn't generate volumes)
 
 
 Modifications post 3.9.1

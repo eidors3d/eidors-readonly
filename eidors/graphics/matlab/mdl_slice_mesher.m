@@ -109,6 +109,9 @@ e_nodes = zeros(length(mdl.nodes),1);
 try
    for i = 1:length(mdl.electrode)
       e_nodes(mdl.electrode(i).nodes) = i;
+      if isfield(mdl.electrode(i),'faces')
+         e_nodes(unique(mdl.electrode(i).faces)) = i;
+      end
    end
 end
 e_edges = (sum(e_nodes(edges),2)/ 2)  .* (e_nodes(edges(:,1)) == e_nodes(edges(:,2)));
