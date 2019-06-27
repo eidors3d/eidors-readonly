@@ -165,7 +165,7 @@ function pp=get_colours( img );
    global eidors_colours;
    pp= eidors_colours;
 
-   pp.component = 'real'; % Don't get from globals
+%  pp.component = 'real'; % Don't get from globals
 
 % override global if calc.colours specified
    try

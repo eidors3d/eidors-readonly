@@ -16,6 +16,8 @@ function h = show_3d_slices(img, varargin);
 % License: GPL version 2 or version 3
 % $Id$
 
+% BUGS: for 2D images, large electrodes are not correctly shown (AA, jun 2019)
+
 if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 ok= 0;
@@ -115,6 +117,13 @@ function img = fake_3d_model( img );
   for i=1:num_elecs(fmdl)
      eni = fmdn.electrode(i).nodes;
      fmdn.electrode(i).nodes = [eni(:);eni(:)+Nn]';
+     if isempty(eni) && isfield(fmdn.electrode(i),'faces')
+        eni = unique(fmdn.electrode(i).faces);
+        fmdn.electrode(i).nodes = [eni(:);eni(:)+Nn]';
+     end
+  end
+  if isfield(fmdn.electrode,'faces'); % Horrible we need to code it like this
+     fmdn.electrode = rmfield(fmdn.electrode,'faces');
   end
   % Doesn't need to be a conformal model, don't worry about adjacency
   fmdn.elems =[[felems(:,[1,2,3]), felems(:,[1    ])+Nn];
@@ -175,21 +184,21 @@ function do_unit_test
    calc_colours('transparency_thresh', 0.25);
    show_3d_slices(imgr,[1.5,2],[],[]);
 
-   subplot(331);  show_3d_slices(imgr,[1,2],0,0.5);
-   subplot(332);  show_3d_slices(img ,[1,2],0,0.5);
+   subplot(4,4,1);  show_3d_slices(imgr,[1,2],0,0.5);
+   subplot(4,4,2);  show_3d_slices(img ,[1,2],0,0.5);
    cuts = [inf, -2.5, 1.5; inf, 10, 1.5];
-   subplot(333);  show_3d_slices(img ,[],[],[],cuts );
+   subplot(4,4,3);  show_3d_slices(img ,[],[],[],cuts );
    
    imgr.calc_colours.transparency_thresh = -1;
    img.calc_colours.transparency_thresh = -1;
-   subplot(334);  show_3d_slices(imgr,[1,2],0.3,0.7);
-   subplot(335);  
+   subplot(4,4,4);  show_3d_slices(imgr,[1,2],0.3,0.7);
+   subplot(4,4,5);  
    show_fem(img.fwd_model);
    hold on
    show_3d_slices(img ,[1,2],0.3,0.7);
    axis off
 
-   subplot(336);  
+   subplot(4,4,6);  
    img.elem_data = img.elem_data*[0,1];
    img.get_img_data.frame_select = 2;
    show_3d_slices(img ,[1],[],[]);
@@ -197,7 +206,7 @@ function do_unit_test
    view(10,18);
 
 
-   subplot(337);
+   subplot(4,4,7);
    imgs = img;        ed = img.elem_data(:,1);
    imgs.elem_data= [1;1.2;0.8]*[1];
    imgs.fwd_model.coarse2fine = [ed == img.elem_data(1),
@@ -205,9 +214,11 @@ function do_unit_test
                                  ed == img.elem_data(3)];
    show_3d_slices(img,[1,2],0,0.7);
   
+   subplot(4,4,8);
+   show_3d_slices(img,[1],[],[],[1,1,1]);
 
 
-   subplot(338);  
+   subplot(4,4,9);  
    vopt.imgsz = [10,10,10];
    % Build a model that has a c2f. This one isn't very good,
    % because of transpose, but that's OK for the test
@@ -216,15 +227,43 @@ function do_unit_test
                       img.fwd_model.coarse2fine')';
    show_3d_slices(img,[1,2],0,0.5);
 
-   subplot(339)
+   subplot(4,4,10);
+   fmdl = getfield(mk_common_model('a2C2',4),'fwd_model');
+   fmdl.mat_idx{1} = 1:4;
+   fmdl = mat_idx_to_electrode(fmdl,{1});
+   img= mk_image(fmdl,1);
+   show_3d_slices(img,[0])
+   
+   subplot(4,4,11);
+   img.fwd_model.electrode(1).faces=[28,29;29,30;30,31];
+   show_3d_slices(img,[0])
+
+   subplot(4,4,12)
 % Without C2f
    imdl = mk_common_model('a2c0',8); img= mk_image(imdl);
    img.elem_data([10,12]) = 1.1;
    show_3d_slices(img,[0],[0.2],[0]);
 
 
+   subplot(4,4,13)
 % With C2f
    ed = img.elem_data;
    img.fwd_model.coarse2fine = [ed==1, ed> 1];
    img.elem_data= [1;1.1];
    show_3d_slices(img,[0],[0.2],[0]);
+
+   subplot(4,4,14)
+% With internal electrode
+   extra={'ball','solid ball = sphere(0.5,0.5,1;0.1);'};
+   fmdl= ng_mk_cyl_models(2,[4,1],[0.2],extra); 
+   fmdl.mat_idx_to_electrode.nodes_electrode = true;
+   fmdl= mat_idx_to_electrode(fmdl,{2});
+   show_3d_slices(mk_image(fmdl,1),[1.0],[0.5],[0.5]);
+    
+   subplot(4,4,15)
+% With internal electrode
+   extra={'ball','solid ball = sphere(0.5,0.5,1;0.1);'};
+   fmdl= ng_mk_cyl_models(2,[4,1],[0.2],extra); 
+   fmdl.mat_idx_to_electrode.nodes_electrode = false;
+   fmdl= mat_idx_to_electrode(fmdl,{2});
+   show_3d_slices(mk_image(fmdl,1),[1.0],[0.5],[0.5]);
