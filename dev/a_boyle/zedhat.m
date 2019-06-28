@@ -438,8 +438,8 @@ function x = unit_test_svd_inv_solve(imdl, b, hp)
 end
 
 function out = do_unit_test()
-   ENABLE_C2F = 0;
-   eidors_cache clear;
+   ENABLE_C2F = 1;
+   %eidors_cache clear;
    for sel = 1:4
       switch sel
       case 4 % complex case
@@ -480,7 +480,13 @@ function out = do_unit_test()
       clf; show_fem(imdl.fwd_model)
       imgh = mk_image(imdl,1);
       imgi = create_inclusion(imgh, [+0.3 +0.3], 0.2, 0.9);
-      imgi = create_inclusion(imgi, [-0.4 -0.1], 0.1, 1.1); 
+      imgi = create_inclusion(imgi, [-0.4 -0.1], 0.1, 1.1);
+      imghf = imgh;
+      imgif = imgi;
+      if ENABLE_C2F
+          imgh.elem_data = f2c * imgh.elem_data;
+          imgi.elem_data = f2c * imgi.elem_data;
+      end
       clf; show_fem(imgi,1);
       vh = fwd_solve(imgh);
       vi = fwd_solve(imgi);
@@ -491,11 +497,16 @@ function out = do_unit_test()
       fprintf('calc_jacobian in %0.2f s\n', toc(t));
       img = inv_solve(imdl, vh, vi);
       clf;subplot(121); show_fem(imgi,1); subplot(122); show_fem(img,1);
-      vz = fwd_solve(img);
+      imgt = imgh; imgt.elem_data = img.elem_data; % solve on a ffwd_mdl w/ c2f, not the rec_model
+      vz = fwd_solve(imgt);
+      vzi = fwd_solve(img);
       imge = imdl;
       imge.elem_data = [imgh.elem_data imgi.elem_data img.elem_data];
-      zedhat(imge, sprintf('m%d.zh',sel));
-      zedhat({vh, vi, vz}, sprintf('m%d.zh',sel), 'a');
+      zedhat(imge, sprintf('m%df.zh',sel));
+      zedhat({vh, vi, vz}, sprintf('m%df.zh',sel), 'a');
+
+      zedhat(imge, sprintf('m%di.zh',sel));
+      zedhat({vh, vi, vzi}, sprintf('m%di.zh',sel), 'a');
 
 %      % create model in EIDORS
 %      disp('test: test.zh write');
@@ -538,7 +549,7 @@ function out = do_unit_test()
 %      disp('test: test.zh read');
 
       % test read-back of file
-      imgz = zedhat(sprintf('m%d.zh',sel));
+      imgz = zedhat(sprintf('m%df.zh',sel));
       clf; subplot(221); show_fem(imgi,1); xlabel('fwd');
            if isfield(imge, 'rec_model')
               imgr = imgi; imgr.fwd_model = imge.rec_model;
@@ -559,8 +570,10 @@ function out = do_unit_test()
       for e = 1:length(imge.fwd_model.electrode)
          assert(norm(imgz.fwd_model.electrode(e).nodes - imgz.fwd_model.electrode(e).nodes) < eps*10, 'ERROR: zedhat-eidors img.fmdl.electrode comparison failed');
       end
-      out(sel).imgz = imgz;
-      out(sel).imge = imge;
+      imgzi = zedhat(sprintf('m%di.zh',sel));
+      out(sel).imgzi = imgzi;
+      out(sel).imgzf = imgz;
+      out(sel).imgef = imge;
       %out(sel).imge = img_eidors_inv_solve;
 
       vd = fwd_solve(imgz);
