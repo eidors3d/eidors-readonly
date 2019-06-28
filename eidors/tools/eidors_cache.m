@@ -457,7 +457,7 @@ function varargout = cache_shorthand(fhandle, varargin)
       args = {args};
    end
    
-   if nargin >2
+   if nargin>=2
       opt = varargin{2};
    else
       opt = struct;
