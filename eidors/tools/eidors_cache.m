@@ -152,28 +152,8 @@ if isa(command, 'function_handle') || ...
          error('Cannot cache anonymous functions');
       end
    end
-   if 0
-      output = mk_varargout_str(nargout);
-      eval(sprintf('%s = %s', output, 'cache_shorthand(command, varargin{:});'));
-   elseif 0
-     switch nargout
-       case 1;
-       [varargout{1}] = ...
+   [varargout{1:nargout}] =  ...
            cache_shorthand(command, varargin{:});
-       case 2;
-       [varargout{1},varargout{2}] = ...
-           cache_shorthand(command, varargin{:});
-       case 3;
-       [varargout{1},varargout{2},varargout{3}] = ...
-           cache_shorthand(command, varargin{:});
-       otherwise
-           error('requested nargout >3');
-     end
-   else
-% This is the recommended way to do it
-      [varargout{1:nargout}] =  ...
-           cache_shorthand(command, varargin{:});
-   end
    return
 end
 
@@ -540,28 +520,8 @@ function varargout = cache_shorthand(fhandle, varargin)
    if numel(varargout) < nargout
       eidors_msg('@@ (Re)calculating %s',fstr, level_in);
       t0 = tic;
-      if 0
-         output = mk_varargout_str(nargout);
-         varargout = cell(0);
-         eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
-      elseif 0
-         switch nargout
-           case 1;
-           [varargout{1}] = ...
+      [varargout{1:nargout}] =  ...
                feval(fhandle, args{:});
-           case 2;
-           [varargout{1},varargout{2}] = ...
-               feval(fhandle, args{:});
-           case 3;
-           [varargout{1},varargout{2},varargout{3}] = ...
-               feval(fhandle, args{:});
-           otherwise
-               error('requested nargout >3');
-         end
-      else
-         [varargout{1:nargout}] =  ...
-               feval(fhandle, args{:});
-      end
       t = toc(t0);
       if isfield(opt,'boost_priority');
          eidors_cache('boost_priority',opt.boost_priority);
@@ -581,13 +541,6 @@ function varargout = cache_shorthand(fhandle, varargin)
       return
    end
    eidors_msg('%s: Using cached value',fstr,level_out);
-
-function output = mk_varargout_str(N)
-output = '[';
-for i = 1:N
-   output = [ output, sprintf('varargout{%d} ',i)];
-end
-output = [ output ']' ];
 
 function debug_msg(id,name,action)
 global eidors_objects;
