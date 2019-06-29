@@ -290,7 +290,7 @@ function unit_test_voltage_stims;
    unit_test_cmp('a2C2 Vstim #6', vh.volt(num_nodes(img)+[1,4],2), [1;1], 1e-14);
    tst = [ 1.029942389400905; 1.024198991581187; ...
            1.048244746016660; 1.006551737030278; 1.057453501332724];
-   unit_test_cmp('a2C2 Vstim #6', vh.volt(1:5:25,2), tst, 1e-14);
+   unit_test_cmp('a2C2 Vstim #7', vh.volt(1:5:25,2), tst, 1e-13); % needs weaker tolerance
 
    imgn = rmfield(img,'elem_data'); imgn.node_data = vh.volt(1:num_nodes(img),2);
    subplot(223); show_fem(imgn,1);
