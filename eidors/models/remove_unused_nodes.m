@@ -41,4 +41,10 @@ function fmdl = assign_new_gnd_node( fmdl );
    [~,fmdl.gnd_node] = min(d2);
 
 function do_unit_test
-c
+   fmdl = getfield(mk_common_model('a2c2',4),'fwd_model');
+   fmdl.elems(1:4,:) = [];
+   fmdl = remove_unused_nodes(fmdl);
+
+   unit_test_cmp('nodes',size(fmdl.nodes),[40,2]);
+   unit_test_cmp('elems',size(fmdl.elems),[60,3]);
+   unit_test_cmp('ground',fmdl.gnd_node,3);
