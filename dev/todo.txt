@@ -28,6 +28,7 @@ Defer (after 3.9.10)
    - ng_mk_ellip_models.m
    - ng_mk_extruded_model.m
  - write tests and fix ng_mk_geometric_models (bug line 1401 doesn't generate volumes)
+ - calc_slices given un unbalanced image in the centre for odd npoints.
 
 
 Modifications post 3.9.1
