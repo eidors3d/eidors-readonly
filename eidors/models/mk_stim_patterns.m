@@ -603,7 +603,7 @@ function do_unit_test
    [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next2','no_rotate_meas'},1);
    unit_test_cmp('meas_sel: next2b',msel(48+(1:16)), [0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0]);
    [stim,msel] = mk_stim_patterns(16,1,[0,5],[0,5],{'no_meas_current_next2','rotate_meas'},1);
-   unit_test_cmp('meas_sel: next2c',msel(48+(1:16)), [0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0]);
+   unit_test_cmp('meas_sel: next2c',msel(48+(1:16)), [0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0]);
 
    [stim,msel] = mk_stim_patterns(16,1,[0,1],[0,1],{'no_meas_current_next3','no_rotate_meas'},1);
    unit_test_cmp('meas_sel: next3a',msel(48+(1:16)), [0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;0]);
@@ -613,6 +613,28 @@ function do_unit_test
    unit_test_cmp('meas_sel: next3c',msel(48+(1:16)), [0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0]);
 
 
+   mselr=[];mseln=[]; for i=1:4; switch i;
+      case 1;nmc= 'no_meas_current';
+      case 2;nmc= 'no_meas_current_next1';
+      case 3;nmc= 'no_meas_current_next2';
+      case 4;nmc= 'no_meas_current_next3';
+      otherwise; error 'huh?';
+      end
+      [~,mselr(:,i)] = mk_stim_patterns(32,1,[0,5],[0,5],{nmc,'rotate_meas'},1);
+      [~,mseln(:,i)] = mk_stim_patterns(32,1,[0,5],[0,5],{nmc,'no_rotate_meas'},1);
+   end
+   ccv = zeros(32,1); ccv([1,2,end])=1/3;
+   rsp = reshape(mseln,32,32,4); nxl= 0*rsp;
+   for i=2:4; for j=1:32
+      nxl(:,j,i) = cconv(rsp(:,j,i-1),ccv,32)>1-.01;
+   end; end
+   unit_test_cmp('meas_sel: next*c',nxl(:,:,2:4),rsp(:,:,2:4));
+   rsp = reshape(mselr,32,32,4); nxl= 0*rsp;
+   for i=2:4; for j=1:32
+      nxl(:,j,i) = cconv(rsp(:,j,i-1),ccv,32)>1-.01;
+   end; end
+   unit_test_cmp('meas_sel: next*c',nxl(:,:,2:4),rsp(:,:,2:4));
+      
 
 
 % TESTS FROM OLD mk_stim_patterns_test CODE
