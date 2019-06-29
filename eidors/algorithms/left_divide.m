@@ -180,4 +180,4 @@ W   = calc_meas_icov(imdl);
 hp  = calc_hyperparameter(imdl);
 LHS = (J'*W*J +  hp^2*RtR);
 RHS = J'*W;
-unit_test_cmp('dense chol',LHS\RHS,left_divide(LHS,RHS))
+unit_test_cmp('dense chol',LHS\RHS,left_divide(LHS,RHS),1e-13)
