@@ -137,16 +137,43 @@ elseif nargin > 1
    limit = varargin{1};
 end
 
-if isa(command, 'function_handle')
+
+% In order to do caching, we need to have an existing
+% function, as a string which exists as a function 
+% handle.
+if isa(command, 'function_handle') || ...
+  (ischar(command) && ...
+   any(exist(command) == [2,3])) % m or mex-file
+   % Test if we're being asked to cache on anonymous function
+   %   and issue error 
+   if isa(command, 'function_handle')
       str = func2str(command);
       if str(1) == '@'
          error('Cannot cache anonymous functions');
       end
-end
-
-if isa(command, 'function_handle') || (ischar(command) && exist(command) == 2) % an m-file
-   output = mk_varargout_str(nargout);
-   eval(sprintf('%s = %s', output, 'cache_shorthand(command, varargin{:});'));
+   end
+   if 0
+      output = mk_varargout_str(nargout);
+      eval(sprintf('%s = %s', output, 'cache_shorthand(command, varargin{:});'));
+   elseif 0
+     switch nargout
+       case 1;
+       [varargout{1}] = ...
+           cache_shorthand(command, varargin{:});
+       case 2;
+       [varargout{1},varargout{2}] = ...
+           cache_shorthand(command, varargin{:});
+       case 3;
+       [varargout{1},varargout{2},varargout{3}] = ...
+           cache_shorthand(command, varargin{:});
+       otherwise
+           error('requested nargout >3');
+     end
+   else
+% This is the recommended way to do it
+      [varargout{1:nargout}] =  ...
+           cache_shorthand(command, varargin{:});
+   end
    return
 end
 
@@ -450,6 +477,7 @@ function remove_objids(idx, names, sizes)
       N, total_size, 2 );
    
        
+%   v1 = eidors_cache( @function_handle, {param1, param2, ...})
 function varargout = cache_shorthand(fhandle, varargin)
 % Will cache on all function inputs, unless opt.cache_obj is specified
    args = varargin{1};
@@ -457,7 +485,7 @@ function varargout = cache_shorthand(fhandle, varargin)
       args = {args};
    end
    
-   if nargin>=2
+   if nargin >2
       opt = varargin{2};
    else
       opt = struct;
@@ -511,10 +539,29 @@ function varargout = cache_shorthand(fhandle, varargin)
    end
    if numel(varargout) < nargout
       eidors_msg('@@ (Re)calculating %s',fstr, level_in);
-      output = mk_varargout_str(nargout);
-      varargout = cell(0);
       t0 = tic;
-      eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
+      if 0
+         output = mk_varargout_str(nargout);
+         varargout = cell(0);
+         eval(sprintf('%s = %s', output, 'feval(fhandle,args{:});'));
+      elseif 0
+         switch nargout
+           case 1;
+           [varargout{1}] = ...
+               feval(fhandle, args{:});
+           case 2;
+           [varargout{1},varargout{2}] = ...
+               feval(fhandle, args{:});
+           case 3;
+           [varargout{1},varargout{2},varargout{3}] = ...
+               feval(fhandle, args{:});
+           otherwise
+               error('requested nargout >3');
+         end
+      else
+         [varargout{1:nargout}] =  ...
+               feval(fhandle, args{:});
+      end
       t = toc(t0);
       if isfield(opt,'boost_priority');
          eidors_cache('boost_priority',opt.boost_priority);
@@ -538,7 +585,7 @@ function varargout = cache_shorthand(fhandle, varargin)
 function output = mk_varargout_str(N)
 output = '[';
 for i = 1:N
-   output = [ output sprintf('varargout{%d} ',i)];
+   output = [ output, sprintf('varargout{%d} ',i)];
 end
 output = [ output ']' ];
 
@@ -605,12 +652,14 @@ function do_unit_test
    end
    test_debug
    test_priority
+   test_disk_caching
+ 
 function [v1 v2] = test_function(a,b,c,d)
    v1 = rand(1);
    v2 = rand(1);
    
 function [meta,idx] = mysortrows(meta, cols)
-   if ~exist('OCTAVE_VERSION') % octave doesn't sort cells
+   if ~exist('OCTAVE_VERSION') % octave doesn't sort cells (valid jun 2019)
       [meta,idx] = sortrows(meta, cols);
    else
       metm = cell2mat(meta(:,3:end));
@@ -641,6 +690,19 @@ function test_debug
    eidors_cache debug_off
    fprintf('\n\n************************\n        CACHE DEBUG: DEBUG FINISHED\n************************\n');
    
+function test_disk_caching
+   eidors_cache clear
+   tstdir = 'eidors_cache_test_dir1234321';
+   success = mkdir(tstdir);
+disp('============= DISK =============');
+opt = struct('cache_to_disk',tstdir);
+[v1]= eidors_cache( @sin, {1:1e5},opt);
+[v1]= eidors_cache( @sin, {1:1e5},opt);
+disp('============= !DISK =============');
+opt.cache_to_disk = false;
+[v1]= eidors_cache( @sin, {1},opt);
+[v1]= eidors_cache( @sin, {1},opt);
+
    
 function test_priority
    eidors_cache clear
