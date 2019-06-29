@@ -644,17 +644,47 @@ function test_debug
    fprintf('\n\n************************\n        CACHE DEBUG: DEBUG FINISHED\n************************\n');
    
 function test_disk_caching
-   eidors_cache clear
    tstdir = 'eidors_cache_test_dir1234321';
-   success = mkdir(tstdir);
-disp('============= DISK =============');
-opt = struct('cache_to_disk',tstdir);
-[v1]= eidors_cache( @sin, {1:1e5},opt);
-[v1]= eidors_cache( @sin, {1:1e5},opt);
-disp('============= !DISK =============');
-opt.cache_to_disk = false;
-[v1]= eidors_cache( @sin, {1},opt);
-[v1]= eidors_cache( @sin, {1},opt);
+   [~]=rmdir(tstdir,'s');
+   [~]=mkdir(tstdir);
+   disp('============= DISK =============');
+   opt = struct('cache_to_disk',tstdir);
+   eidors_cache clear; global eidors_objects
+   esz = length(fieldnames(eidors_objects.cache));
+   unit_test_cmp('disk 00',length(dir([tstdir,'/*.mat'])),0)
+   [v1]= eidors_cache( @sin, {1:100},opt);
+   unit_test_cmp('disk 01',length(dir([tstdir,'/*.mat'])),1)
+   unit_test_cmp('disk 02',0, ...
+      length(fieldnames(eidors_objects.cache))-esz);
+   obj_id = eidors_var_id({1:100,'sin'});
+   cfname = [tstdir,'/eidors_cache_',obj_id,'.mat'];
+   unit_test_cmp('disk 03',length(dir(cfname)),1); 
+   loader = load(cfname);
+   unit_test_cmp('disk 04',loader.varargout{1},v1);
+
+   [v1]= eidors_cache( @sin, {1:100},opt);
+   unit_test_cmp('disk 05',length(dir([tstdir,'/*.mat'])),1)
+   unit_test_cmp('disk 06',0, ...
+      length(fieldnames(eidors_objects.cache))-esz);
+   loader = load(cfname);
+   unit_test_cmp('disk 07',loader.varargout{1},v1);
+   [~]=rmdir(tstdir,'s');
+   disp('============= ~DISK =============');
+   eidors_cache clear; global eidors_objects
+   opt = struct('cache_to_disk',false);
+   esz = length(fieldnames(eidors_objects.cache));
+   [v1]= eidors_cache( @sin, {1:100},opt);
+   unit_test_cmp('not disk 01',1, ...
+      length(fieldnames(eidors_objects.cache))-esz);
+   obj_id = eidors_var_id({1:100,'sin'});
+   unit_test_cmp('not disk 02',1, ...
+      length(fieldnames(eidors_objects.cache))-esz);
+   unit_test_cmp('not disk 03',isfield(eidors_objects.cache,obj_id),1);
+   unit_test_cmp('not disk 04',eidors_objects.cache.(obj_id),[v1]);
+
+   [v1]= eidors_cache( @sin, {1:100},opt);
+   unit_test_cmp('not disk 05',1, ...
+      length(fieldnames(eidors_objects.cache))-esz);
 
    
 function test_priority

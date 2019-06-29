@@ -10,7 +10,7 @@ Plan for 3.9.10
  - verify ng* can take multiple parameters
  - fix documentation for ng_mk_closed_contour
  + add time-filter function
- - cache to disk
+ + cache to disk
  + add contour image function => added to show_slices
  - fix bugs from the mailing list
  + test eidors can handle two-digit verion 3.10beta1
