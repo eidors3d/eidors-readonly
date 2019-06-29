@@ -140,7 +140,7 @@ end; end
 end
 
 function do_unit_test
-   tol = 1e-14;
+   tol = 1e-13;
    vve = do_unit_test_2D;
    vve_ref = [
    0.898225115241117   0.921510761628436   0.928516596253320
