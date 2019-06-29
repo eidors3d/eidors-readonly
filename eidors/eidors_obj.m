@@ -48,7 +48,7 @@ switch type
       obj_id= set_obj( name, varargin{:} );
    case 'get-cache'
       test_install
-      obj_id = [];
+      obj_id = []; extra_out= [];
       if status_check(varargin{1})
         [obj_id, extra_out] = get_cache_obj( name, varargin{:} );
       end
@@ -195,6 +195,8 @@ function [value, obj_id] = get_cache_obj( obj, prop )
       return
    end
 
+   obj_id= calc_obj_id( { obj, prop} );
+
    if isempty(eidors_objects.cache.meta), 
       if DEBUG, fprintf('%s: NO META FIELD\n',str); end
       return 
@@ -202,7 +204,6 @@ function [value, obj_id] = get_cache_obj( obj, prop )
    c = eidors_objects.cache.cols;
 %    match = ismember(prop, eidors_objects.cache.meta(:,c.prop));
 %    if any(match)
-   obj_id= calc_obj_id( { obj, prop} ); % recalculate in case obj changed
    
    if DEBUG, str = [str, obj_id]; end
 % if cachename is specified, then cache to that file, rather
