@@ -119,7 +119,7 @@ else
 end
 
 % Do a contour plot?
-if isfield(img,'show_slices') && isfield(img.show_slices,'contour_levels');
+if isfield(img(1),'show_slices') && isfield(img(1).show_slices,'contour_levels');
    clevs = img.show_slices.contour_levels;
    if isfield(img.show_slices,'contour_properties');
       contour_properties = img.show_slices.contour_properties;
