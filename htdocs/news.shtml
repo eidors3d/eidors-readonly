@@ -12,8 +12,62 @@ EIDORS package.
 <b>EIDORS Workshop at <a href="http://www.eit2019.co.uk">EIT 2019</a></b>
 <p>Time: 14h00&minus;15h00, Sainsbury Wellcome Centre, London
 
-Workshop tutorial:
-<table border=1><tr><td>
+Code from workshop:
+<table border=1><tr><td><PRE>
+   imdl = mk_common_model('b2c2',16);
+   fmdl = imdl.fwd_model;
+   img = mk_image(fmdl,1);
+subplot(322);
+   img.fwd_model.stimulation = stim_meas_list( ...
+      [1,2,3,4],16);
+   img.fwd_solve.get_all_meas = true;
+   vh = fwd_solve(img);
+
+   imgv = rmfield(img,'elem_data');
+   imgv.node_data = vh.volt;
+   show_fem(imgv,[0,1]);
+      
+   [stim,msel] = mk_stim_patterns( ...
+        16,1,[0,1],[0,1],{'no_meas_current'},1);
+   img.fwd_model.stimulation = stim;
+   img.fwd_model.meas_select = msel;
+   vh = fwd_solve(img);
+   img.elem_data(40) = 1.5;
+   vi = fwd_solve(img);
+subplot(321); show_fem(img,[0,1,1]);
+  
+subplot(323);
+   plot([vh.meas,vi.meas]);
+
+   imdl = select_imdl(img.fwd_model, {'Basic GN dif'}); 
+subplot(324);
+   imdl.hyperparameter.value = 1e-3;
+   imgr = inv_solve(imdl, vh, vi);
+   show_fem(imgr);
+
+    
+load montreal_data_1995.mat
+vv = zc_demo3;
+   imdl.hyperparameter.value = 3e-2;
+   imgr = inv_solve(imdl, vv(:,1), vv(:,3:50));
+subplot(325);
+imgr.show_slices.img_cols = 5;
+show_slices(imgr);
+
+J = calc_jacobian( img);
+Jdvol = J(4,:)'./get_elem_volume(img);
+img.elem_data = Jdvol
+subplot(326); show_fem(img);
+return
+
+clf;
+for i=1:208
+Jdvol = J(i,:)'./get_elem_volume(img);
+img.elem_data = Jdvol
+show_fem(img);
+pause
+end
+</PRE>
 </table>
 
 <p><li> <b>
