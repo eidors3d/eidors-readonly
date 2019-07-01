@@ -161,7 +161,7 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
    fprintf(fid,'%d\n',n_pts_elecs);
    for i = pts_elecs_idx;
       posxy = elecs(i).pos(1:2);
-      fprintf(fid,'%.10f %.10f 0 %.10f\n', posxy, elecs(i).dims(1) );
+      fprintf(fid,'%10f %10f 0 %10f\n', posxy, elecs(i).dims(1) );
    end
    fclose(fid); % ptsfn
 
@@ -269,12 +269,12 @@ end
    if any(isnan(dirnk)); warning('normal calc weird'); keyboard; end % debugging
 
    fprintf(fid,'solid %s  = ', name);
-   fprintf(fid,' plane (%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',c+d/2*dirn , dirn );
-   fprintf(fid,' plane (%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',c-d/2*dirn ,-dirn );
-   fprintf(fid,' plane (%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',c+w/2*dirnp, dirnp);
-   fprintf(fid,' plane (%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',c-w/2*dirnp,-dirnp);
-   fprintf(fid,' plane (%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',c+h/2*dirnk,+dirnk);
-   fprintf(fid,' plane (%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) %s;\n',c-h/2*dirnk,-dirnk,maxh);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c+d/2*dirn , dirn );
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c-d/2*dirn ,-dirn );
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c+w/2*dirnp, dirnp);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c-w/2*dirnp,-dirnp);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) and\n',c+h/2*dirnk,+dirnk);
+   fprintf(fid,' plane (%f,%f,%f;%f,%f,%f) %s;\n',c-h/2*dirnk,-dirnk,maxh);
 
 function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
 % writes the specification for a netgen cylindrical rod on fid,
@@ -291,9 +291,9 @@ function write_circ_elec(fid,name,c, dirn,rd,ln,maxh)
    outpt =c + dirn.*(ln/1);
 
    fprintf(fid,'solid %s  = ', name);
-   fprintf(fid,'  plane(%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',       inpt, -dirn);
-   fprintf(fid,'  plane(%.10f,%.10f,%.10f;%.10f,%.10f,%.10f) and\n',       outpt, dirn);
-   fprintf(fid,'  cylinder(%.10f,%.10f,%.10f;%.10f,%.10f,%.10f;%.10f) %s;\n', inpt, outpt, rd,maxh);
+   fprintf(fid,'  plane(%f,%f,%f;%f,%f,%f) and\n',       inpt, -dirn);
+   fprintf(fid,'  plane(%f,%f,%f;%f,%f,%f) and\n',       outpt, dirn);
+   fprintf(fid,'  cylinder(%f,%f,%f;%f,%f,%f;%f) %s;\n', inpt, outpt, rd,maxh);
 
 
 function electrode = pem_from_cem(elecs, electrode, nodes)
@@ -347,7 +347,7 @@ function do_unit_test
   for tn = 1:16
      eidors_msg('ng_mk_gen_models: unit_test %02d',tn,1);
      fmdl= do_test_number(tn);
-     subplot(4,4,min(tn,16)); show_fem(fmdl); drawnow
+     show_fem(fmdl); drawnow
   end
 
 function fmdl= do_test_number(tn)
