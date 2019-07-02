@@ -202,5 +202,7 @@ function do_unit_test
          'id_D6A2DB33EB61F4756BFE55BB696BBC2412D9BB3F');
    unit_test_cmp('zri.mat',eidors_var_id(data.SensorBelt), ...
          'id_E57BF6A94F6263AAA469AD2B3A70631FD0FCE2A6');
+if 0 %% Remove test ... varies too much between versions
    unit_test_cmp('zri.mat',eidors_var_id(data), ...
          'id_A4D719762BF416C86AF2C27A3A9B4A2758CCAB6D');
+end
