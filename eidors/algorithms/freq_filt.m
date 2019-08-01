@@ -62,15 +62,18 @@ end
 
 % Filter in the frequency direction
 function s = do_freq_filt(s,fresp, p)
+  rs = isreal(s);
   s = padsignal(s,p);
   f = fft(s,[],p.dim);
   fax = freq_axis_filt(p.FR,size(s,p.dim),fresp);
   f = f .* fshape(p,fax);
   s= ifft(f,[],p.dim);
-  if norm(imag(s(:))) > 1e-11
-     error('FFT filter has imag output');
+  if rs % is signal is real
+     if norm(imag(s(:))) > 1e-11
+        error('FFT filter has imag output');
+     end
+     s = real(s);
   end
-  s = real(s);
   s = unpadsignal(s,p);
 
 function s = fshape(p,s);
@@ -158,3 +161,5 @@ function do_unit_test
   so = struct('type','image','elem_data',sv);
   sf= freq_filt(so,fresp, FR, 2);
   unit_test_cmp('ff21',sf.elem_data(2,1:2), sf12,1e-13)
+
+  % TODO add test for complex input
