@@ -172,9 +172,7 @@ function obj = set_obj( obj, varargin );
 %  
 
    for idx= 1:2:nargin-1
-%     obj.( obj_id ).( varargin{idx} )= varargin{idx+1};
-% for matlab 6.1 compatibility 
-      eval(sprintf('obj.%s=varargin{%d};', varargin{idx},idx+1 ));
+      obj.( obj_id ).( varargin{idx} )= varargin{idx+1};
    end
 
 % val= get_cache_obj( obj, prop, dep_obj1, dep_obj2, ...,  cachename );
