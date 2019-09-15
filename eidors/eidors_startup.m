@@ -40,6 +40,8 @@ function set_defaults(HOMEDIR)
     eidors_default('set','mk_coarse_fine_mapping','mk_analytic_c2f');
     %models are NOT normalized by default
     eidors_default('set','mdl_normalize',@(x) 0); 
+    %netgen finelevel is coarse
+    eidors_default('set','call_netgen_finelevel','');
 
     calc_colours('defaults'); % default calc_colours
 

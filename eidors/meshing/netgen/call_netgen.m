@@ -10,6 +10,9 @@ function status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 % Finelevel controls the fineness of the mesh
 %   default is '' -> coarse
 %   valid values are 'fine' or 'veryfine'
+% 
+% Finelevel can also be set using eidors_default
+%   eidors_default call_netgen_finelevel 'fine'
 %
 % To debug the shapes and view the netgen interface, use
 %   eidors_debug on call_netgen
@@ -28,7 +31,7 @@ end
 if nargin<4
    %  finelevel= '-veryfine';
    %  finelevel= '-fine';
-   finelevel= '';
+   finelevel= eidors_default('get','call_netgen_finelevel') 
 end
 
 islinux = isunix;
