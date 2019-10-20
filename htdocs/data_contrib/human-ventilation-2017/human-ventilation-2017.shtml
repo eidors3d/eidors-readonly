@@ -1,0 +1,60 @@
+<html>
+[% PROCESS "../../header.html" %]
+<body>
+
+<H2>Contributed EIT Data:</H2>
+   <table>
+   <tr><th valign="top"> Authors:
+       <td>
+J.X. Brunner, A. Adler, B M&uuml;ller,
+       <hr>
+   <tr><th valign="top"> Date:
+       <td> 2017
+       <hr>
+   <tr><th valign="top"> Brief Description:
+       <td> 
+These data are a brief sample of breathing in a healthy
+human, tested by Swisstom AG as part of system evaluation.
+The data represent a few tidal breaths as well as
+expiratory and inspiratory breath holds.
+<br>
+The data were measured on the same subject as the
+GREIT chest model given in this tutorial
+
+       <hr>
+   <tr><th valign="top"> License:
+       <td> Creative Commons Artistic License
+       <hr>
+   <tr><th valign="top"> Attribution Requirement:
+       <td> 
+Data are provided as-is. No attribution is
+formally required; however, users may acknowledge
+this tutorial.
+   <tr><th valign="top"> Format:
+       <td>
+EIT data were acquired with the Swisstom
+BB<sup>2</sup> device at a sample rate
+of 47 frames/s.
+       <hr>
+   <tr><th valign="top"> Methods:
+       <td>
+
+       <hr>
+   <tr><th valign="top"> Data:
+       <td> <a href="./if-experimental-lung-injury.zip"
+            >Data (zip format)</a>
+       <hr>
+   </table>
+
+<center>
+   <img src="human-ventilation-2017a.jpg">
+<br>
+Sample images
+</center>
+
+<p>
+<small>
+    Last Modified: $Date$ by $Author$
+</small>
+</body></html>
+
