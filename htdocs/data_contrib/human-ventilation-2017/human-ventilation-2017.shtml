@@ -20,6 +20,8 @@ expiratory and inspiratory breath holds.
 <br>
 The data were measured on the same subject as the
 GREIT chest model given in this tutorial
+<a href="../../tutorial/GREIT/adult_ex.shtml"
+>GREIT Reconstruction for an adult human thorax geometry</a>
 
        <hr>
    <tr><th valign="top"> License:
@@ -38,18 +40,29 @@ of 47 frames/s.
        <hr>
    <tr><th valign="top"> Methods:
        <td>
-
+An Swisstom Patient belt was attached to
+the seated subject and connected to the
+EIT system. The subject performed various
+breathing manoeuvres while data were collected.
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./if-experimental-lung-injury.zip"
-            >Data (zip format)</a>
+       <td> <a href="./human-ventilation-2017.eit"
+            >Data (EIT "LQ4" format)</a>
        <hr>
    </table>
 
 <center>
    <img src="human-ventilation-2017a.jpg">
 <br>
-Sample images
+Reconstructions from data set.
+<i>Left:</i>
+Sample tidal ventilation image
+<i>Right:</i>
+Waveforms vs time (s), of the global (sum) signal, as 
+well as pixel waveforms at vertical locations
+corresponding to a horizonal pixel #22.
+The variations in pulsatility as well as
+tidal excursions are seen.
 </center>
 
 <p>
