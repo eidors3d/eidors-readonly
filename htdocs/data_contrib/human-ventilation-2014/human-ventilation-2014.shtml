@@ -9,7 +9,7 @@
 J.X. Brunner, A. Adler, B M&uuml;ller,
        <hr>
    <tr><th valign="top"> Date:
-       <td> 2017
+       <td> 2014
        <hr>
    <tr><th valign="top"> Brief Description:
        <td> 
@@ -36,9 +36,11 @@ to making these data public under these
 requirements.
    <tr><th valign="top"> Format:
        <td>
-EIT data were acquired with the Swisstom
+EIT data were acquired with an early (2014) version of the Swisstom
 BB<sup>2</sup> device at a sample rate
-of 47 frames/s.
+of 28.13 frames/s.
+The excitation frequency was 144 kHz, current 3 mA. 
+
        <hr>
    <tr><th valign="top"> Methods:
        <td>
@@ -48,13 +50,13 @@ EIT system. The subject performed various
 breathing manoeuvres while data were collected.
        <hr>
    <tr><th valign="top"> Data:
-       <td> <a href="./human-ventilation-2017.eit"
-            >Data (EIT "LQ4" format)</a>
+       <td> <a href="./human-ventilation-2014.eit"
+            >Data (EIT "LQ2" format)</a>
        <hr>
    </table>
 
 <center>
-   <img src="human-ventilation-2017a.jpg">
+   <img src="human-ventilation-2014a.jpg">
 <br>
 Reconstructions from data set.
 <i>Left:</i>
