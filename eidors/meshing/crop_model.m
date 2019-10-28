@@ -10,6 +10,7 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 %   examples:
 %     crop_model([],  inline('z==3','x','y','z'))
 %     crop_model(gca, inline('x+y>0','x','y','z'))
+%     crop_model([],  @(x,y,z) z<0);
 %   if the fcn_handle is a string, a function with x,y,z is created
 %     crop_model(gca, 'x+y>0') % same as previous
 %
@@ -17,7 +18,7 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 %   fmdl_new= crop_model( fwd_model, fcn_handle );
 % 
 %   example:
-%   fmdl2= crop_model(fmdl1, inline('x+y>0','x','y','z'))
+%   fmdl2= crop_model(fmdl1, @(x,y,z) x+y>0);
 %
 %  with two parameters output
 % [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
@@ -175,6 +176,13 @@ function do_unit_test
    img = mk_image(fmdl,1); 
    load('datareal.mat','A'); img.elem_data(A)= 1.1;
    imgs =  crop_model(img,'y-z<-2.5');
+   show_fem( imgs );
+   unit_test_cmp('crop img',find( imgs.elem_data>1),[476;479; 482; 485])
+
+   subplot(336)
+   img = mk_image(fmdl,1); 
+   load('datareal.mat','A'); img.elem_data(A)= 1.1;
+   imgs =  crop_model(img,@(x,y,z) y-z<-2.5);
    show_fem( imgs );
    unit_test_cmp('crop img',find( imgs.elem_data>1),[476;479; 482; 485])
 
