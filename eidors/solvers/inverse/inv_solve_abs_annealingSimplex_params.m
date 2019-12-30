@@ -53,7 +53,7 @@ while temp>=tempfinale
     k=k+1;
 end
 D= zeros(k,1); temperature= zeros(k,1);
-niter= k
+niter= k;
 temp= tempInit; k= 1;
 
 % Estimate the number of parameters to adjust
