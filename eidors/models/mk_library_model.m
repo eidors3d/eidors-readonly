@@ -99,13 +99,22 @@ out = [];
 fname = [get_path '/' fname '.mat'];
 if exist(fname,'file')
    eidors_msg('MK_LIBRARY_MODEL: Using stored model');
-   load(fname);
+   if exist('OCTAVE_VERSION');
+      load(file_in_loadpath(fname));
+   else
+      load(fname);
+   end
    out = fmdl;
 end
 
 function store_model(fmdl,fname)
-fname = [get_path '/' fname '.mat'];
-save(fname,'fmdl');
+   fname = [get_path '/' fname '.mat'];
+   if exist('OCTAVE_VERSION');
+      savver = '-v7';
+   else
+      savver = '-v7.3';  
+   end
+   save(fname,savver,'fmdl');
 
 function out = build_if_needed(cmd,str)
 out = load_stored_model(str);
