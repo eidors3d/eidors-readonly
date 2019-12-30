@@ -561,9 +561,8 @@ function [elecs, centres] = parse_elecs(elec_pos, elec_shape, tank_shape, hig, i
        centres(i,3) = el_z(i);
        elecs(i).pos  = centres(i,:);
        if elecs(i).discretize > 0
-        % this bit is to prevent netgen choking on slightly misalligned
-        % electrods
-        th = cart2pol(normal(1),normal(2));
+        % this bit is to prevent netgen choking on slightly misalligned electrodes
+        [th,~] = cart2pol(normal(1),normal(2)); % ~ needed for octave
         frac = 2*pi /elecs(i).discretize ;
         th = frac * round( th / frac);
         [normal(1) normal(2)] = pol2cart(th,1);
