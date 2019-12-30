@@ -93,7 +93,10 @@ function do_unit_test
 
    unit_test_cmp('RM size', size(imdl.solve_use_matrix.RM), [4280,928]);
    unit_test_cmp('RM', imdl.solve_use_matrix.RM(1,1:2), ...
-       [7.896475314707559 -3.130412179315593], 1e-10);
+       [7.896475314622105 -3.130412179150207], 1e-10);
+%      [7.896475314707559 -3.130412179315593], 1e-10); % older values
+
+
 
    img = inv_solve(imdl, vh, vi);
    unit_test_cmp('img size', size(img.elem_data), [4280,5]);
@@ -110,7 +113,8 @@ function do_unit_test
 
    unit_test_cmp('RM size', size(imd2.solve_use_matrix.RM), [856,928]);
    unit_test_cmp('RM', imd2.solve_use_matrix.RM(1,1:2), ...
-       [-13.546930204456816   9.664897892901678], 1e-10);
+       [-13.546930204198315   9.664897892799864], 1e-10);
+%      [-13.546930204456816   9.664897892901678], 1e-10);
 
    img = inv_solve(imd2, vh, vi);
    unit_test_cmp('img size', size(img.elem_data), [856,5]);
