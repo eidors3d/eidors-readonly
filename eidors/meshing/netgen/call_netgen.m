@@ -31,7 +31,7 @@ end
 if nargin<4
    %  finelevel= '-veryfine';
    %  finelevel= '-fine';
-   finelevel= eidors_default('get','call_netgen_finelevel') 
+   finelevel= eidors_default('get','call_netgen_finelevel');
 end
 
 islinux = isunix;
