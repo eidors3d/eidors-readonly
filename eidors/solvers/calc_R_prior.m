@@ -3,6 +3,9 @@ function R_prior = calc_R_prior( inv_model, varargin )
 % CALC_R_PRIOR: calculate regularization matrix R
 %   The image prior is matrix n_elem x ??? 
 % 
+% NOTE: This function is mostly just a hack. It's not obvious
+%    how to to this correctly.
+%
 % calc_R_prior can be called as
 %    R_prior= calc_R_prior( inv_model, ... )
 %
@@ -54,9 +57,16 @@ function R_prior = calc_from_RtR_prior(inv_model)
       RtR_prior= eidors_cache( inv_model.RtR_prior, inv_model );
    end
    
-   [L,D,P] = ldl(RtR_prior);
-   R_prior = sqrt(D)*L'*P';
-   [L,D,P] = ldl(RtR_prior);
+   if exist('ldl') % not available for octave
+      [L,D,P] = ldl(RtR_prior);
+      R_prior = sqrt(D)*L'*P';
+   else
+      R_prior = sparse(size(RtR_prior,1),size(RtR_prior,2));
+      [R,f,P] = chol(RtR_prior); % will often be sigular
+      if f==0; f=size(RtR_prior,1); end % successful
+      if f==1; f=size(R,1); end
+      R_prior(1:f,:) = R*P';
+   end
 
 function inv_model = rec_or_fwd_model( inv_model);
 
