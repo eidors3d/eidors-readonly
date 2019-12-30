@@ -67,11 +67,11 @@ params= [snr_y(:)./snr_x(:)]';
 
 function do_unit_test
 ll = eidors_msg('log_level',1);
-test1; % can we deal with c2f ?
 imdl = mk_common_model('a2t2',16); test2(imdl);
 imdl = mk_common_model('d2t2',16); test2(imdl);
 imdl = mk_common_model('a2c2',16); test2(imdl);
 imdl = mk_common_model('d2c2',16); test2(imdl);
+test1; % can we deal with c2f ?
 ll = eidors_msg('log_level',ll);
 
 function test1
