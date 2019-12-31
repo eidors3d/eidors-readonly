@@ -104,7 +104,7 @@ if 0
 end
 % Convert elsrf into the EIDORS-3D matrix electrode matrix format
 
-nmel = size(elsrf,2);
+nmel = size(elsrf,2); 
 for loop1 = 1:nmel
     nmfc(loop1) = size(elsrf{loop1},1);
 end
@@ -131,24 +131,26 @@ function [sels,lgelfc] = find_selected_face(centres, face_coords, lgelfc)
        elecn_idx = [elecn_idx; i*ones(length(face_coords{i}),1)];
        elecnodes = [elecnodes; face_coords{i}];
    end
+   elecsep = sum(min(abs(diff(centres))));
    for ielec = 1:size(centres,1)
    % Find the distance from the centre of faces to this electrode
        dists =  (elecnodes(:,1) - centres(ielec,1)).^2 + ...
                 (elecnodes(:,2) - centres(ielec,2)).^2 + ...
                 (elecnodes(:,3) - centres(ielec,3)).^2;
        dmin = min(dists); %iface is closest face to this electrode.
-       % take the first, closest
-       iface = find(dmin== dists);
+       % take the first, closest ones
+       iface = find(dmin + elecsep >= dists);
        if length(iface)>1 % found electrode and background. Take smallest
-          ff = zeros(length(iface),1);
-          for i=1:length(iface)
-            ff(i) = sum( elecn_idx == elecn_idx(iface(i)));
+          tryfaces = unique( elecn_idx(iface));
+          ff=[]; for i=1:length(tryfaces)
+            ff(i) = max( dists( elecn_idx == tryfaces(i)));
           end
-          [jnk, i] = min(ff);
-          iface = iface(i);
+          [~, i] = min(ff);
+          iface = tryfaces(i);
+       else
+          iface = elecn_idx(iface);
        end
-       iface = elecn_idx(iface);
-       lgelfc(iface) = logical(1);
+       lgelfc(iface) = true;
        if sum(lgelfc) ~= ielec
 %           disp(ielec);
           error('Electrode #%d not found', ielec);
