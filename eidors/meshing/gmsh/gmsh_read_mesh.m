@@ -16,6 +16,9 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(filename)
 %              .name  = name (string)
 %              .tag   = physical tag
 %              .nodes = N-x-dim array of indices into vtx
+% 
+% This mostly works on GMSH v2. I very basic (and probably
+%   buggy GMSH v4 reader is now included)
 
 % $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
@@ -29,12 +32,14 @@ while 1
     tline = fgetl(fid);
     if ~ischar(tline); fclose(fid); break; end
 
-    if strcmp(tline,'$Elements')
-       elements= parse_elements( fid );
+    if strcmp(tline,'$MeshFormat')
+       gmshformat = parse_format( fid);
+    elseif strcmp(tline,'$Elements')
+       elements= parse_elements( fid, gmshformat );
     elseif strcmp(tline,'$Nodes')
-       nodes= get_lines_with_nodes( fid );
+       nodes= get_lines_with_nodes( fid, gmshformat );
     elseif strcmp(tline,'$PhysicalNames')
-       phys_names= parse_names( fid );
+       phys_names= parse_names( fid, gmshformat );
     end
 end
 
@@ -53,6 +58,7 @@ mat_ind = [];
 if length( unique( nodes(:,4) ) ) > 1 
     vtx = nodes(:,2:4);
     % Type 2: 3-node triangle
+keyboard
     tri = find(arrayfun(@(x)x.type==2,elements));
     % Type 4: 4-node tetrahedron
     tet = find(arrayfun(@(x)x.type==4,elements));
@@ -70,19 +76,52 @@ fc = elemtags(tri,1);
 end
 
 
-function mat = get_lines_with_nodes( fid )
+function mat = get_lines_with_nodes( fid, gmshformat )
+   tline = fgetl(fid);
+   n_rows = parse_rows(tline,gmshformat);
+   switch floor(gmshformat)
 % Line Format:
 % node-number x-coord y-coord z-coord
-tline = fgetl(fid);
-n_rows = sscanf(tline,'%d');
-mat= fscanf(fid,'%f',[4,n_rows])';
+     case 2; mat= fscanf(fid,'%f',[4,n_rows])';
+     case 4; mat= zeros(n_rows,4);
+        while (true)
+          tline = fgetl(fid);
+          n = sscanf(tline, '%d')';
+          n_block = n(4);
+          for b = 1:n_block;
+             tline = fgetl(fid);
+             el= sscanf(tline, '%f')';
+             mat(el(1),:) = el(1:end);
+          end
+          if (el(1) == n_rows); break; end % got them all
+      end
+      tline = fgetl(fid); % get the EndElements
+
+     otherwise; error('cant parse gmsh file of this format');
+   end
 end
 
-function names = parse_names( fid )
+function gmshformat = parse_format( fid);
+   tline = fgetl(fid);
+   rawformat = sscanf(tline,'%f');
+   tline = fgetl(fid); % should be EndMeshFormat
+   gmshformat = rawformat(1);
+end
+
+function n_rows = parse_rows(tline, gmshformat);
+   n_rows = sscanf(tline,'%d');
+   switch floor(gmshformat)
+     case 2; n_rows = n_rows(1);
+     case 4; n_rows = n_rows(2);
+     otherwise; error('cant parse gmsh file of this format');
+   end
+end
+
+function names = parse_names( fid, gmshformat )
 % Line Format:
 % physical-dimension physical-number "physical-name"
 tline = fgetl(fid);
-n_rows = sscanf(tline,'%d');
+n_rows = parse_rows(tline,gmshformat);
 names = struct('tag',{},'dim',{},'name',{});
 for i = 1:n_rows
     tline = fgetl(fid);
@@ -99,12 +138,42 @@ for i = 1:n_rows
 end
 end
 
-function elements = parse_elements( fid )
+function elements = parse_elements( fid, gmshformat )
+   tline = fgetl(fid);
+   n_rows = parse_rows(tline,gmshformat);
+   switch floor(gmshformat)
+     case 2; elements = parse_v2_elements(fid,n_rows);
+     case 4; elements = parse_v4_elements(fid,n_rows);
+     otherwise error('cant parse this file type');
+   end
+end
+
+function elements = parse_v4_elements(fid,n_rows);
+% http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format
+% Partial implementation ... look here
+   elements = struct('simp',{},'type',{},'phys_tag',{});
+   while (true)
+       tline = fgetl(fid);
+       n = sscanf(tline, '%d')';
+       n_block = n(4);
+       n_type = n(2);
+       for b = 1:n_block;
+          tline = fgetl(fid);
+          el= sscanf(tline, '%d')';
+          if n_type>1; %not interested in points
+             elements(end+1) = struct( ...
+              'simp',el(2:end),'type',n_type, ...
+              'phys_tag',0);
+          end
+       end
+       if (el(1) == n_rows); break; end % got them all
+   end
+   tline = fgetl(fid); % get the EndElements
+end
+
+function elements = parse_v2_elements(fid,n_rows);
 % Line Format:
 % elm-number elm-type number-of-tags < tag > ... node-number-list
-tline = fgetl(fid);
-n_rows = sscanf(tline,'%d');
-% elements = struct('simp',{},'phys_tag',{},'geom_tag',{});
 elements(n_rows).simp = [];
 elements(n_rows).phys_tag = [];
 elements(n_rows).geom_tag = [];
@@ -135,17 +204,20 @@ end
 
 function do_unit_test
    tmpnam = tempname;
+
+   fid = fopen(tmpnam,'w');
+   fprintf(fid,gmshv4file);
+   fclose(fid);
+   [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(tmpnam);
+    unit_test_cmp('v4 vtx ',vtx(2:3,:),[1,0;-1,0])
+    unit_test_cmp('v4 simp',simp(2:3,:),[3,7,12; 12, 7,14]);
+
    fid = fopen(tmpnam,'w');
    fprintf(fid,gmshv2file);
    fclose(fid);
    [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(tmpnam);
     unit_test_cmp('v2 vtx ',vtx(2:3,:),[1,0;-1,0])
     unit_test_cmp('v2 simp',simp(2:3,:),[2,4,15; 14,17,19]);
-
-   fid = fopen(tmpnam,'w');
-   fprintf(fid,gmshv4file);
-   fclose(fid);
-   [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(tmpnam);
     
 end
 

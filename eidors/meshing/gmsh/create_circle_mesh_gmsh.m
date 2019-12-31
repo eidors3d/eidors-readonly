@@ -59,9 +59,10 @@ msh_filename = sprintf('%s.msh', basename);
 disp(['Now reading back data from file: ' msh_filename])
 
 [srf,vtx,fc,bc,simp,edg,mat_ind] = gmsh_read_mesh('circle.msh');
+mdl.type     = 'fwd_model';
+mdl.name = 'GMSH Circle';
 mdl.nodes    = vtx;
 mdl.elems    = simp;
-mdl.name = 'Circle';
 mdl= eidors_obj('fwd_model', mdl);
 
 
@@ -70,4 +71,4 @@ object_center = [0.0, 0.1];
 object_radius = 0.6;
 
 mdl = create_circle_mesh_gmsh('circle', object_center, object_radius, 0.04 );
-show_fem(mdl)
+show_fem(mdl);
