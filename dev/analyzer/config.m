@@ -1,8 +1,6 @@
 % Breathing analysis DO show_breaths
 %DO manual_breath_select
 DO model_breaths
-DO show_volume_n_flow
-DO stats_volume_n_flow
 DO flow_volume_global
 DO flow_volume_global_slope
 DO TV_image
