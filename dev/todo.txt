@@ -29,6 +29,7 @@ Defer (after 3.9.10)
    - ng_mk_extruded_model.m
  - write tests and fix ng_mk_geometric_models (bug line 1401 doesn't generate volumes)
  - calc_slices given un unbalanced image in the centre for odd npoints.
+ - Fix failing unit test in system_mat_fields => why are internal nodes doubled?
 
 
 Modifications post 3.9.1
