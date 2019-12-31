@@ -93,6 +93,7 @@ function xy = fit_from_fourier(C,linear_frac,start);
    
 function do_unit_test
 
+subplot(211);
 a=[-0.8981  0.1404;-0.7492  0.5146;-0.2146  0.3504;
     0.3162  0.5069; 0.7935  0.2702; 0.9615 -0.2339;
     0.6751 -0.8677; 0.0565 -0.6997;-0.3635 -0.8563;
@@ -114,7 +115,8 @@ subplot(212);
  n_elecs = 8; centroid = mean(a);
  p = linspace(0,1,n_elecs+1)'; p(end) = [];
  xy = fourier_fit(a,'fit_spacing',p);
- plot(a(:,1),a(:,2),'r',xy(:,1),xy(:,2),'b*');
+ xyC= fourier_fit(C, linspace(.05,1.04,100));
+ plot(a(:,1),a(:,2),'r',xy(:,1),xy(:,2),'b*',xyC(:,1),xyC(:,2),'g');
 
   centroid = mean(a);
  th = atan2(xy(:,2)-centroid(2), xy(:,1)-centroid(1));
