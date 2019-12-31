@@ -444,7 +444,7 @@ end
 %-------------------------------------------------------------------------%
 % UNIT_TEST
 function do_unit_test
-    eidors_cache off GREIT_desired_img_sigmoid
+    eidors_cache clear_name GREIT_desired_img_sigmoid
     v = linspace(-1,1,32);
     mdl= mk_grid_model([],v,v,[0 .7 1:.2:2 2.3 3]);
     opt.rec_model = mdl;
