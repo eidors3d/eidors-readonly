@@ -92,6 +92,15 @@ if do_calc_slices
 else
    rimg= img;
 end
+% Eventualy we need to add a filter control to do this -aa'19
+%if 0
+%   filt = ones(5);
+%    filt = conv2(filt,filt);
+%   rnimg = rimg;
+%   rimg(isnan(rimg)) = 0;
+%   rimg = conv2(rimg, filt,'same') / sum(filt(:));
+%   rimg(isnan(rnimg)) = NaN;
+%end
 
 n_col = 0;
 try  n_col = img(1).show_slices.img_cols;
