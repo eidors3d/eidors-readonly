@@ -30,11 +30,11 @@ FEM model (left) and reconstructed image (centre) and sequence (right)
 To try the EIDORS software, follow these steps:
 <ol>
 <li> Download EIDORS :
-    <br>&minus; <i>Release (1 June 2018):</i>
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.1.zip"
-             >EIDORS 3.9.1</a>, or
-         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.9.1-ng.zip"
-             >EIDORS 3.9.1 with Netgen 5.3</a> (for windows 64 bit).
+    <br>&minus; <i>Release (31 December 2019):</i>
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.10.zip"
+             >EIDORS 3.10</a>, or
+         <a href="http://prdownloads.sf.net/eidors3d/eidors-v3.10-ng.zip"
+             >EIDORS 3.10 with Netgen 5.3</a> (for windows 64 bit).
        Or <a href="./download.shtml"><i>Developer Version</i></a>
     <br>&minus; <i>Optional ready-made FEM models:</i>
          <a href="http://prdownloads.sf.net/eidors3d/model_library.zip"

@@ -7,6 +7,23 @@ EIDORS package.
 <ul>
 
 <p><li> <b>
+ 31 December 2019
+   </b><br>
+<b>EIDORS Version 3.10 release</b>
+<p>Blobby the walrus is proud to announce the
+release of EIDORS version 3.10,
+available at <a href="http://www.eidors.org">www.eidors.org</a>,
+and DOI:<a href="http://dx.doi.org/10.5281/zenodo.3247168">10.5281/zenodo.3247168</a>.
+This is primarily a bug fixing release but it includes
+<ul>
+  <LI> New electrode models to better support internal electrodes
+  <li> Temporal filtering
+  <li> Improved octave support
+  <li> Datafile utilities and improved fileformat support
+  <LI> Breath-analysis tools
+</ul>
+
+<p><li> <b>
   30 June 2019
    </b><br>
 <b>EIDORS Workshop at <a href="http://www.eit2019.co.uk">EIT 2019</a></b>
