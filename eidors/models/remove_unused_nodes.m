@@ -37,7 +37,7 @@ function mat = remap(nidx,mat)
 
 function fmdl = assign_new_gnd_node( fmdl );
    eidors_msg('FEM_ELECTRODE: Lost ground node => replacing',1);
-   d2 = sum((fmdl.nodes - mean(fmdl.nodes)).^2,2);
+   d2 = sum((fmdl.nodes - repmat(mean(fmdl.nodes, 1), size(fmdl.nodes, 1), 1)).^2,2);
    [~,fmdl.gnd_node] = min(d2);
 
 function do_unit_test

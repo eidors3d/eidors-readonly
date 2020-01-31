@@ -520,6 +520,7 @@ function varargout = cache_shorthand(fhandle, varargin)
    if numel(varargout) < nargout
       eidors_msg('@@ (Re)calculating %s',fstr, level_in);
       t0 = tic;
+      clear varargout; % to ensure it still runs on older MLs (e.g. R2012b)
       [varargout{1:nargout}] =  ...
                feval(fhandle, args{:});
       t = toc(t0);
