@@ -71,7 +71,7 @@ function parse_config
         pp.callfns{end+1,1} = tline;
      elseif config_locs == 1 
         eval(tline);
-     elseif (comment_locs ~= 1) && (size(tline) > 0)
+     elseif all(comment_locs ~= 1) && (length(tline) > 0)
         warning(['Unsupported input in file: ',fid,' on line: ',num2str(count),'.']) 
      end
   end
@@ -1403,16 +1403,16 @@ function [a, b] = butter (n, w)
 
   %# Prewarp to the band edges to s plane
   if (digital)
-    T = 2;       # sampling frequency of 2 Hz
+    T = 2;      %# sampling frequency of 2 Hz
     w = 2 / T * tan (pi * w / T);
   end
 
   %# Generate splane poles for the prototype Butterworth filter
   %# source: Kuc
-  C = 1;  ## default cutoff frequency
+  C = 1; %# default cutoff frequency
   pole = C * exp (1i * pi * (2 * [1:n] + n - 1) / (2 * n));
   if (mod (n, 2) == 1)
-    pole((n + 1) / 2) = -1;  ## pure real value at exp(i*pi)
+    pole((n + 1) / 2) = -1;  %# pure real value at exp(i*pi)
   end
   zero = [];
   gain = C^n;
@@ -1437,8 +1437,8 @@ function [a, b] = butter (n, w)
 function y = filtfilt(b, a, x)
 
   rotate = (size(x,1)==1);
-  if rotate,                    # a row vector
-    x = x(:);                   # make it a column vector
+  if rotate,                   %# a row vector
+    x = x(:);                  %# make it a column vector
   end
 
   lx = size(x,1);
@@ -1455,25 +1455,25 @@ function y = filtfilt(b, a, x)
   %# Likhterov & Kopeika, 2003. "Hardware-efficient technique for
   %#     minimizing startup transients in Direct Form II digital filters"
   kdc = sum(b) / sum(a);
-  if (abs(kdc) < inf) # neither NaN nor +/- Inf
+  if (abs(kdc) < inf) %# neither NaN nor +/- Inf
     si = fliplr(cumsum(fliplr(b - kdc * a)));
   else
-    si = zeros(size(a)); # fall back to zero initialization
+    si = zeros(size(a)); %# fall back to zero initialization
   end
   si(1) = [];
 
-  for (c = 1:size(x,2)) # filter all columns, one by one
+  for (c = 1:size(x,2)) %# filter all columns, one by one
     v = [2*x(1,c)-x((lrefl+1):-1:2,c); x(:,c);
-         2*x(end,c)-x((end-1):-1:end-lrefl,c)]; # a column vector
+         2*x(end,c)-x((end-1):-1:end-lrefl,c)];
 
     %# Do forward and reverse filtering
-    v = filter(b,a,v,si*v(1));                   # forward filter
-    v = flipud(filter(b,a,flipud(v),si*v(end))); # reverse filter
+    v = filter(b,a,v,si*v(1));                  %# forward filter
+    v = flipud(filter(b,a,flipud(v),si*v(end)));%# reverse filter
     y(:,c) = v((lrefl+1):(lx+lrefl));
   end
 
-  if (rotate)                   # x was a row vector
-    y = rot90(y);               # rotate it back
+  if (rotate)                  %# x was a row vector
+    y = rot90(y);              %# rotate it back
   end
 
 % biliear from signal toolbox (license: GPL)
@@ -1482,7 +1482,7 @@ function [Zz, Zp, Zg] = bilinear(Sz, Sp, Sg, T)
   if nargin==3
     T = Sg;
     [Sz, Sp, Sg] = tf2zp(Sz, Sp);
-  elseif nargin!=4
+  elseif nargin~=4
     print_usage;
   end
 
