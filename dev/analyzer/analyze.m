@@ -735,6 +735,22 @@ function TV = TVcalc(dd);
   end
   TV= mean(TV,3);
 
+% Max Inspi, Expi flow
+function [MIF,MEF] = MaxFlow_calc(dd);
+  MIF = [];
+  MEF = [];
+  for i=1:dd.n_breaths
+    eie = dd.breaths(i,[1,2,3]);
+    Insp = dd.ZR(:,:,eie(1):eie(2));
+    Expi = dd.ZR(:,:,eie(2):eie(3));
+    Flow = 1/dd.FR * diff( Insp, 1, 3);
+    MIF(:,:,i) = max(Flow,[],3);
+    Flow = 1/dd.FR * diff( Expi, 1, 3);
+    MEF(:,:,i) = max(-Flow,[],3);
+  end
+  MIF= mean(MIF,3);
+  MEF= mean(MEF,3);
+
 function IM = my_image(IM)
   global pp;
   switch pp.rotate
@@ -767,6 +783,30 @@ function out= TV_image(dd,ii)
      '<a href="%s"><img width="200" src="%s">' ...
      '</a><p><img src="%s"></center>'], ...
      max(TV(:)), fout, fout, pp.colourbar);
+  print_convert(fout);
+
+function out= Max_Flow_Image(dd,ii)
+  global pp;
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = 'Max Inspi Flow Image';
+     return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  [MIF,~] = MaxFlow_calc(dd);
+  MIF(dd.ZR(:,:,1)==0) = NaN;
+  mycolormap;
+  my_image(MIF*250/max(MIF(:))+5);
+  
+  fout = sprintf('MIF_image%03d.png',ii);
+  out = sprintf(['<center>max pixel=%1.3f<br>' ...
+     '<a href="%s"><img width="200" src="%s">' ...
+     '</a><p><img src="%s"></center>'], ...
+     max(MIF(:)), fout, fout, pp.colourbar);
   print_convert(fout);
 
 %DO flow_volume_slices
