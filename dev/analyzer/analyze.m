@@ -215,7 +215,7 @@ function dd = loadfile(fname);
   ls = linspace(0,1,10);
   ls = [ls,-fliplr(ls)];
   dd.flow= -conv2(dd.CV,ls,'same');
-  ls = reshape(ls,1,1,[]);
+  ls = reshape(ls,1,1,[])/(abs(sum(ls.*(ls>0)))/2);
   dd.ZF = -convn(dd.ZR,ls,'same');
 
 function out= show_perfusion(dd,ii)
@@ -741,12 +741,10 @@ function [MIF,MEF] = MaxFlow_calc(dd);
   MEF = [];
   for i=1:dd.n_breaths
     eie = dd.breaths(i,[1,2,3]);
-    Insp = dd.ZR(:,:,eie(1):eie(2));
-    Expi = dd.ZR(:,:,eie(2):eie(3));
-    Flow = 1/dd.FR * diff( Insp, 1, 3);
-    MIF(:,:,i) = max(Flow,[],3);
-    Flow = 1/dd.FR * diff( Expi, 1, 3);
-    MEF(:,:,i) = max(-Flow,[],3);
+    Flow = dd.FR * dd.ZF(:,:,eie(1):eie(2));
+    MIF(:,:,i) = max(-Flow,[],3);
+    Flow = dd.FR * dd.ZF(:,:,eie(2):eie(3));
+    MEF(:,:,i) = max( Flow,[],3);
   end
   MIF= mean(MIF,3);
   MEF= mean(MEF,3);
@@ -785,10 +783,10 @@ function out= TV_image(dd,ii)
      max(TV(:)), fout, fout, pp.colourbar);
   print_convert(fout);
 
-function out= Max_Flow_Image(dd,ii)
+function out= Max_InspFlow_Image(dd,ii)
   global pp;
   if ischar(dd) && strcmp(dd,'TITLE');
-     out = 'Max Inspi Flow Image';
+     out = '<a title="Average of Maximum Inspiratory Flow over breaths">Max Insp Flow Image</a>';
      return
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
@@ -807,6 +805,30 @@ function out= Max_Flow_Image(dd,ii)
      '<a href="%s"><img width="200" src="%s">' ...
      '</a><p><img src="%s"></center>'], ...
      max(MIF(:)), fout, fout, pp.colourbar);
+  print_convert(fout);
+
+function out= Max_ExpiFlow_Image(dd,ii)
+  global pp;
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = '<a title="Average of Maximum Expiratory Flow over breaths">Max Expi Flow Image</a>';
+     return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  [~,MEF] = MaxFlow_calc(dd);
+  MEF(dd.ZR(:,:,1)==0) = NaN;
+  mycolormap;
+  my_image(MEF*250/max(MEF(:))+5);
+  
+  fout = sprintf('MEF_image%03d.png',ii);
+  out = sprintf(['<center>max pixel=%1.3f<br>' ...
+     '<a href="%s"><img width="200" src="%s">' ...
+     '</a><p><img src="%s"></center>'], ...
+     max(MEF(:)), fout, fout, pp.colourbar);
   print_convert(fout);
 
 %DO flow_volume_slices
