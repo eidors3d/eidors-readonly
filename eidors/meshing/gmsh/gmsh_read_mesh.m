@@ -23,6 +23,8 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(filename)
 % $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
 % Modified by James Snyder <jbsnyder@fanplastic.org>
+% Modified by Mark Campbell <markacampbell@cmail.carleton.ca>
+% Modified by Symon Stowe <symonstowe@gmail.com>
 
 if ischar(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
@@ -34,6 +36,8 @@ while 1
 
     if strcmp(tline,'$MeshFormat')
        gmshformat = parse_format( fid);
+    elseif strcmp(tline, '$Entities')
+        
     elseif strcmp(tline,'$Elements')
        elements= parse_elements( fid, gmshformat );
     elseif strcmp(tline,'$Nodes')
@@ -58,7 +62,6 @@ mat_ind = [];
 if length( unique( nodes(:,4) ) ) > 1 
     vtx = nodes(:,2:4);
     % Type 2: 3-node triangle
-keyboard
     tri = find(arrayfun(@(x)x.type==2,elements));
     % Type 4: 4-node tetrahedron
     tet = find(arrayfun(@(x)x.type==4,elements));
@@ -77,28 +80,31 @@ end
 
 
 function mat = get_lines_with_nodes( fid, gmshformat )
-   tline = fgetl(fid);
-   n_rows = parse_rows(tline,gmshformat);
-   switch floor(gmshformat)
-% Line Format:
+	tline = fgetl(fid);
+	n_rows = parse_rows(tline,gmshformat);
+    switch floor(gmshformat)
+% Version 2 Line Format:
 % node-number x-coord y-coord z-coord
-     case 2; mat= fscanf(fid,'%f',[4,n_rows])';
-     case 4; mat= zeros(n_rows,4);
-        while (true)
-          tline = fgetl(fid);
-          n = sscanf(tline, '%d')';
-          n_block = n(4);
-          for b = 1:n_block;
-             tline = fgetl(fid);
-             el= sscanf(tline, '%f')';
-             mat(el(1),:) = el(1:end);
-          end
-          if (el(1) == n_rows); break; end % got them all
-      end
-      tline = fgetl(fid); % get the EndElements
-
-     otherwise; error('cant parse gmsh file of this format');
-   end
+% Version 4 Line Format: (not always like this)
+% node-number 
+% x-coord y-coord z-coord
+    case 2; mat= fscanf(fid,'%f',[4,n_rows])';
+	case 4; mat= zeros(n_rows,4);
+        n = sscanf(tline, '%d')';
+        n_block = n(4);
+        mat = zeros(n_block,4);
+        node_idx = 1;
+        while ~strcmp(tline, '$EndNodes')
+            tline = fgetl(fid);
+            el= sscanf(tline, '%f')';
+            % Note: formatting of node numbers is inconsistent
+            if length(el) == 3 % It's coordinates
+                mat(node_idx,:) = [node_idx, el(1:end)];
+                node_idx = node_idx+1;
+            end
+        end
+	otherwise; error('cant parse gmsh file of this format');
+	end
 end
 
 function gmshformat = parse_format( fid);
@@ -143,32 +149,48 @@ function elements = parse_elements( fid, gmshformat )
    n_rows = parse_rows(tline,gmshformat);
    switch floor(gmshformat)
      case 2; elements = parse_v2_elements(fid,n_rows);
-     case 4; elements = parse_v4_elements(fid,n_rows);
+     case 4; elements = parse_v4_elements(fid,n_rows,tline);
      otherwise error('cant parse this file type');
    end
 end
 
-function elements = parse_v4_elements(fid,n_rows);
+function elements = parse_v4_elements(fid,n_rows,tline)
 % http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format
-% Partial implementation ... look here
-   elements = struct('simp',{},'type',{},'phys_tag',{});
-   while (true)
-       tline = fgetl(fid);
-       n = sscanf(tline, '%d')';
-       n_block = n(4);
-       n_type = n(2);
-       for b = 1:n_block;
-          tline = fgetl(fid);
-          el= sscanf(tline, '%d')';
-          if n_type>1; %not interested in points
-             elements(end+1) = struct( ...
-              'simp',el(2:end),'type',n_type, ...
-              'phys_tag',0);
-          end
-       end
-       if (el(1) == n_rows); break; end % got them all
-   end
-   tline = fgetl(fid); % get the EndElements
+% $Elements
+% numEntityBlocks numElements minElementTag maxElementTag
+% ...
+% entityDim entityTag elementType numElementsInBlock
+% elementTag nodeTag ... nodeTag
+% ...
+% $EndElements
+% An entitiy is a node, curve, surface or volume
+% Each entitiy has a list of contained elements and corresponding node tags
+% 0D - 1 node tag (ignoe these)
+% 1D - 2 node tags
+% 2D - 3 node tags
+% 3D - 4 node tags
+    elements = struct('simp',{},'type',{},'phys_tag',{});
+    tline = fgetl(fid);
+    while ~strcmp(tline, '$EndElements')  
+        bl = sscanf(tline, '%d')'; % Get the line info
+        % Check if the line is info or data (also ignore point entities)
+        %if (length(bl) == 4) && (bl(1) <= 3) && (bl(1) > 0)
+        if (length(bl) == 4) && (bl(1) <= 3)
+            e_block = bl(4); % Size of entitiy block
+            e_tag = bl(2); % Entitiy tag (not used)
+            e_type = bl(3);
+            for b = 1:e_block
+                tline = fgetl(fid);
+                el = sscanf(tline, '%d')';
+                elements(el(1)).simp = el(2:end);
+                elements(el(1)).type = e_type;
+                elements(el(1)).phys_tag = e_tag;
+            end
+        end
+        
+        tline = fgetl(fid);
+    end   
+    tline = fgetl(fid); % get the EndElements
 end
 
 function elements = parse_v2_elements(fid,n_rows);
@@ -221,7 +243,7 @@ function do_unit_test
     
 end
 
-% Example of gmsh v4 file
+% Example of gmsh v4 file % TODO - this has changed slightly in 4.1
 function t = gmshv4file; t=[ ...
 '$MeshFormat\n' ...
 '4 0 8\n' ...
@@ -259,7 +281,7 @@ function t = gmshv4file; t=[ ...
 '14 -0.1601886191568594 -0.3867295406713928 0\n' ...
 '$EndNodes\n' ...
 '$Elements\n' ...
-'6 27\n' ...
+'6 27 1 27\n' ...
 '1 0 15 1\n' ...
 '1 1 \n' ...
 '2 0 15 1\n' ...
