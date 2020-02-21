@@ -554,7 +554,7 @@ function s = low_order_fourier(s,N);
   f = fft(s);
   f([N+2:end-N]) = 0;
   s= ifft(f);
-  if norm(imag(s)) > 1e-13; error('FFT'); end
+  if norm(imag(s)) > 1e-12;  error('FFT');  end
   s= real(s);
 
 
