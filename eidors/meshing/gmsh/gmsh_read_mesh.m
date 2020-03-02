@@ -1,4 +1,4 @@
-function[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(filename)
+function [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(filename)
 %[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(filename)
 % Function to read in a mesh model from Gmsh and saves it in
 % five arrays; surface (srf), veritices (vtx), face no. (fc)
@@ -17,8 +17,8 @@ function[srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(filename)
 %              .tag   = physical tag
 %              .nodes = N-x-dim array of indices into vtx
 % 
-% This mostly works on GMSH v2. I very basic (and probably
-%   buggy GMSH v4 reader is now included)
+% This mostly works on GMSH v2. A very basic GMSH v4 reader is now
+% included.
 
 % $Id$
 % (C) 2009 Bartosz Sawicki. Licensed under GPL V2
@@ -67,6 +67,7 @@ if length( unique( nodes(:,4) ) ) > 1
     tet = find(arrayfun(@(x)x.type==4,elements));
     simp = cat(1,elements(tet).simp);
     srf = cat(1,elements(tri).simp);
+    mat_ind = parse_mat_ind(elements(tet), gmshformat);
 else
     vtx = nodes(:,2:3);
     tri = find(arrayfun(@(x)x.type==2,elements));
@@ -78,17 +79,16 @@ elemtags = cat(1,elements.phys_tag);
 fc = elemtags(tri,1);
 end
 
-
 function mat = get_lines_with_nodes( fid, gmshformat )
 	tline = fgetl(fid);
 	n_rows = parse_rows(tline,gmshformat);
     switch floor(gmshformat)
-% Version 2 Line Format:
-% node-number x-coord y-coord z-coord
-% Version 4 Line Format: (not always like this)
-% node-number 
-% x-coord y-coord z-coord
-    case 2; mat= fscanf(fid,'%f',[4,n_rows])';
+    % Version 2 Line Format:
+    % node-number x-coord y-coord z-coord
+    % Version 4 Line Format: (not always like this)
+    % node-number 
+    % x-coord y-coord z-coord
+	case 2; mat= fscanf(fid,'%f',[4,n_rows])';
 	case 4; mat= zeros(n_rows,4);
         n = sscanf(tline, '%d')';
         n_block = n(4);
@@ -103,18 +103,18 @@ function mat = get_lines_with_nodes( fid, gmshformat )
                 node_idx = node_idx+1;
             end
         end
-	otherwise; error('cant parse gmsh file of this format');
+    otherwise; error('cant parse gmsh file of this format');
 	end
 end
 
-function gmshformat = parse_format( fid);
+function gmshformat = parse_format( fid)
    tline = fgetl(fid);
    rawformat = sscanf(tline,'%f');
    tline = fgetl(fid); % should be EndMeshFormat
    gmshformat = rawformat(1);
 end
 
-function n_rows = parse_rows(tline, gmshformat);
+function n_rows = parse_rows(tline, gmshformat)
    n_rows = sscanf(tline,'%d');
    switch floor(gmshformat)
      case 2; n_rows = n_rows(1);
@@ -193,7 +193,7 @@ function elements = parse_v4_elements(fid,n_rows,tline)
     tline = fgetl(fid); % get the EndElements
 end
 
-function elements = parse_v2_elements(fid,n_rows);
+function elements = parse_v2_elements(fid,n_rows)
 % Line Format:
 % elm-number elm-type number-of-tags < tag > ... node-number-list
 elements(n_rows).simp = [];
@@ -221,6 +221,14 @@ for i = 1:n_rows
             end
         end
     end
+end
+end
+
+function mat_ind = parse_mat_ind(tet_elements, gmshformat)
+switch floor(gmshformat)
+    case 2; mat_ind= cat(1,tet_elements.geom_tag);
+    case 4; mat_ind= cat(1,tet_elements.phys_tag);
+    otherwise; error('cant parse gmsh file of this format');
 end
 end
 
@@ -407,4 +415,3 @@ function t = gmshv2file; t=[ ...
 '51 2 2 0 4 7 19 25\n' ...
 '$EndElements\n'];
 end
-
