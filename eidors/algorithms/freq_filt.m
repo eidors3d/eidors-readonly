@@ -35,10 +35,10 @@ else
      
       
 end
-if nargin<4; 
-   p.dim = 2;
-else
+if nargin>=4
    p.dim = dim;
+elseif ~isfield(p,'dim');
+   p.dim = 2;
 end
 
 if isstruct(vin) && isfield(vin,'type');
