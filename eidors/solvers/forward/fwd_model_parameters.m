@@ -159,7 +159,13 @@ function [N2E,cem_electrodes] = calculate_N2E( fwd_model, bdy, n_elec, n);
       end
       N2E(i, N2Ei_nodes) = N2Ei;
    end
-   N2E = N2E(:, 1:(n+cem_electrodes));
+   % Extra nodes are added if nodes for electronics components are added
+   try
+      extra_nodes = fwd_model.extra_nodes;
+   catch
+      extra_nodes = 0;
+   end
+   N2E = N2E(:, 1:(n+cem_electrodes+extra_nodes));
 
 % If N2E can be made a logical (0-1) matrix, do it.
    if all(N2E(find(N2E(:)))==1)
