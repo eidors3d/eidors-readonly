@@ -1,4 +1,4 @@
-function [vv, auxdata, stim ]= eidors_readdata( fname, format, frame_range, extra )
+function [vv, auxdata, stim]= eidors_readdata( fname, format, frame_range, extra )
 % EIDORS readdata - read data files from various EIT equipment
 %    manufacturers
 %
@@ -175,13 +175,16 @@ switch fmt
       stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
 
    case 'lq4'
-      [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( fname );
+      [vv, evtlist, elecImps, tStampsAbs, tStampsRel, n_elec, amp, skip, extra] = landquart4_readdata( fname );
       auxdata.event = evtlist;
       auxdata.elec_impedance = elecImps;
       auxdata.t_abs = tStampsAbs;
       auxdata.t_rel = tStampsRel;
+      for fn = fieldnames(extra)' % copy extra's fields into auxdata
+         auxdata.(fn{1}) = extra.(fn{1});
+      end
 
-      stim = mk_stim_patterns(32,1,[0,5],[0,5],{'no_rotate_meas','no_meas_current'},.005);
+      [stim, auxdata.meas_sel] = mk_stim_patterns(n_elec,1,[0,skip+1],[0,skip+1],{'no_rotate_meas','no_meas_current'},amp);
       
    case 'dixtal_encode'
       [vv] = dixtal_read_codepage( fname );
@@ -956,7 +959,7 @@ function [vv, elecImps, tStampsAbs, tStampsRel] = landquart2_readdata( fname )
    elecImps = viPayload(1:2:end,:) + 1i*viPayload(2:2:end,:);
 
 % Read data from the file format develped by Swisstom, Landquart, Switzerland.
-function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( fname )
+function [vv, evtlist, elecImps, tStampsAbs, tStampsRel, n_elec, amp, skip, extra] = landquart4_readdata( fname )
    evtlist = [];
    if ~exist('OCTAVE_VERSION')
    [fid msg]= fopen(fname,'r','ieee-le','UTF-8');
@@ -980,6 +983,23 @@ function [vv, evtlist, elecImps, tStampsAbs, tStampsRel] = landquart4_readdata( 
          tStampsRel = nan(1, nFrames);
          viPayload = nan(vi_payload, nFrames);
          iqPayload = nan(iq_payload, nFrames);
+
+         fseek(fid,424,'bof');
+         x = fread(fid, 2, 'int16', 'ieee-le');
+         extra.filename = str2mat(fread(fid, 100, 'int16', 'ieee-le')');
+         extra.conditions = str2mat(fread(fid, 300, 'int16', 'ieee-le')');
+         extra.comments = str2mat(fread(fid, 600, 'int16', 'ieee-le')');
+
+         %fseek(fid,2428,'bof');
+         extra.frame_rate = fread(fid, 1, 'float', 'ieee-le');
+         amp = fread(fid, 1, 'float', 'ieee-le');
+         extra.freq = fread(fid, 1, 'float', 'ieee-le');
+         extra.settle = fread(fid, 1, 'float', 'ieee-le');
+
+         %fseek(fid,2444,'bof');
+         skip = fread(fid, 1, 'int16', 'ieee-le');
+         x = fread(fid, 1, 'int16', 'ieee-le');
+         n_elec = fread(fid, 1, 'int16', 'ieee-le');
 
          fseek(fid,header_size,'bof');
          
