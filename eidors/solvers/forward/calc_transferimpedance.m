@@ -18,6 +18,8 @@ function transfimp = calc_transferimpedance( img)
 % stimulate with one ref electrode and then each in turn
 % make an equiv set of measurements
 
+if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
 copt.cache_obj = {img.fwd_model, img.elem_data};
 copt.fstr = 'calc_transferimpedance';
 transfimp = eidors_cache(@calc_T, img, copt);
@@ -26,10 +28,10 @@ transfimp = eidors_cache(@calc_T, img, copt);
 function transfimp = calc_T( img);
    n_elecs= length( img.fwd_model.electrode );
 
-   %[stim_pat, meas_pat]= trigonometric( n_elecs );
+    [stim_pat, meas_pat]= trigonometric( n_elecs );
    %[stim_pat, meas_pat]= electrode_wise( n_elecs );
    %[stim_pat, meas_pat]= monopolar( n_elecs );
-    [stim_pat, meas_pat]= monopolar_even( n_elecs );
+   %[stim_pat, meas_pat]= monopolar_even( n_elecs );
    img.fwd_model.stimulation = stim_pat;
 
    imeas_pat= pinv(meas_pat);
@@ -77,3 +79,25 @@ function [stim_pat, meas_pat] = monopolar_even( n_elecs)
         stim_pat(i).stim_pattern= meas_pat(i,:)';
         stim_pat(i).meas_pattern= meas_pat;
     end
+
+function do_unit_test
+   current = 4; measure=1;
+   [R,img] = test_2d_resistor(current,measure)
+   T = calc_transferimpedance(img);
+   unit_test_cmp('2D resistor',[1,-1]*T*[1;-1],sum(R), 1e-10);
+   
+
+function [R,img] = test_2d_resistor(current,measure)
+   conduc=  .4 + 2*pi*j*10; % conductivity in Ohm-meters
+   z_contact= .1; wid = 3; len = 12; 
+
+   fmdl=mk_grid_model([],linspace(0,wid,3), linspace(0,len,4));
+   fmdl.electrode(1).nodes = find(fmdl.nodes(:,2) ==   0);
+   fmdl.electrode(2).nodes = find(fmdl.nodes(:,2) == len);
+   [fmdl.electrode(:).z_contact] = deal(z_contact);
+   fmdl.stimulation = stim_meas_list([1,2,1,2],2,current,measure);
+   img= mk_image(fmdl,conduc);
+
+   Block_R = len / wid / conduc;
+   Contact_R = z_contact/wid;
+   R = [Block_R, 2*Contact_R];
