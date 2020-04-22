@@ -23,6 +23,9 @@ function [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 %  with two parameters output
 % [fmdl,c2f_idx]= crop_model( axis_handle, fcn_handle );
 %     c2f_idx maps each elemen in fmdl_new to fwd_model
+%
+% USAGE #3: crop img to create new img (preserve elem_data)
+%   img2= crop_model(img1, @(x,y,z) x+y>0);
 
 % (C) 2006-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
