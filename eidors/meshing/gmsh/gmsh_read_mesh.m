@@ -107,7 +107,7 @@ function mat = get_lines_with_nodes( fid, gmshformat )
 	end
 end
 
-function gmshformat = parse_format( fid)
+function gmshformat = parse_format(fid)
    tline = fgetl(fid);
    rawformat = sscanf(tline,'%f');
    tline = fgetl(fid); % should be EndMeshFormat
@@ -118,31 +118,31 @@ function n_rows = parse_rows(tline, gmshformat)
    n_rows = sscanf(tline,'%d');
    switch floor(gmshformat)
      case 2; n_rows = n_rows(1);
-     case 4; n_rows = n_rows(2);
+     case 4; n_rows = n_rows(2)
      otherwise; error('cant parse gmsh file of this format');
    end
 end
 
-function names = parse_names( fid, gmshformat )
-% Line Format:
-% physical-dimension physical-number "physical-name"
-tline = fgetl(fid);
-n_rows = parse_rows(tline,gmshformat);
-names = struct('tag',{},'dim',{},'name',{});
-for i = 1:n_rows
+function names = parse_names( fid, version )
+    % Line Format:
+    % physical-dimension physical-number "physical-name"
     tline = fgetl(fid);
-    if exist('OCTAVE_VERSION')
-        parts = strsplit(tline,' ');
-    else
-        parts = regexp(tline,' ','split');
+    n_rows = sscanf(tline,'%d');
+    names = struct('tag',{},'dim',{},'name',{});
+    for i = 1:n_rows
+        tline = fgetl(fid);
+        if exist('OCTAVE_VERSION')
+            parts = strsplit(tline,' ');
+        else
+            parts = regexp(tline,' ','split');
+        end
+        nsz = size(names,2)+1;
+        names(nsz).dim = str2double( parts(1) );
+        names(nsz).tag = str2double( parts(2) );
+        tname = parts(3);
+        names(nsz).name = strrep(tname{1},'"','');
     end
-    nsz = size(names,2)+1;
-    names(nsz).dim = str2double( parts(1) );
-    names(nsz).tag = str2double( parts(2) );
-    tname = parts(3);
-    names(nsz).name = strrep(tname{1},'"','');
-end
-end
+end % end function
 
 function elements = parse_elements( fid, gmshformat )
    tline = fgetl(fid);
