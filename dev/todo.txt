@@ -1,3 +1,7 @@
+Plan for 3.11
+ - Speed up / clean up _higher_order code
+ - Fix _higher_order to handle faces-type electrodes
+
 Plan for 3.9.10
  - fix direction in emphasize_electrode_text
  + Add internal nodes functions

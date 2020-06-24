@@ -18,6 +18,9 @@ elecstruc=fwd_model.electrode; nelecs=size(elecstruc,2);
 nodestruc=fwd_model.nodes; nnodes=size(nodestruc,1); 
 
 %Test - Point/Complete electrodes. Assume no mixed model so test first elect
+if isfield(elecstruc,'faces');
+   error('Can''t process faces-type electrodes. See mat_idx_to_electrode for help');
+end
 if(size(elecstruc(1).nodes,2)==1 && size(elecstruc(1).nodes,1)==1) %POINT ELECTRODE
     %IF POINT ELECTRODE
     [At,elemstiff]=mc_calc_stiffness(fwd_model,img);
