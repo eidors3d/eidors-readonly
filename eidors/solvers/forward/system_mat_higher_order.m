@@ -86,11 +86,7 @@ for kk=size(weight,2):-1:1
 end
 
 %Initialise global stiffness matrix
-%Agal=sparse(nnodes,nnodes);
-
-%Initialise structure
-%Initialise global stiffness matrix
- Agal=sparse(nnodes,nnodes);
+%Agal=sparse(nnodes,nnodes); 
 
 %Loop over the elements and calculate local Am matrix
 for i=nelems:-1:1
@@ -136,15 +132,18 @@ for i=nelems:-1:1
     stiff=Ammat*img.elem_data(i); 
     
     %Assemble global stiffness matrix (Silvester's book!!)    
-    Agal(elemstruc(i,:), elemstruc(i,:)) = Agal(elemstruc(i,:), elemstruc(i,:)) + stiff;
-    [ii,jj]= meshgrid(eleminodelist); ll = length(eleminodelist)^2;
-    idx = (i-1)*ll + (1:ll);
+%   Agal(elemstruc(i,:), elemstruc(i,:)) = Agal(elemstruc(i,:), elemstruc(i,:)) + stiff;
+%   [ii,jj]= meshgrid(eleminodelist); ll = length(eleminodelist)^2; %% meshgrid CRAZY SLOW
+    ll = length(eleminodelist);
+    ii = eleminodelist(ones(ll,1),:); jj=ii';
+    idx = (i-1)*ll^2 + (1:ll^2);
     AI(idx) = ii(:);
     AJ(idx) = jj(:);
     Aval(idx) = stiff(:); 
 
 end
-Agal2= sparse(AI, AJ, Aval, nnodes, nnodes); norm(Agal-Agal2,'fro') 
+%Agal2= sparse(AI, AJ, Aval, nnodes, nnodes); norm(Agal-Agal2,'fro') 
+Agal= sparse(AI, AJ, Aval, nnodes, nnodes);
 end
 
 %COMPLETE ELECTRODE MATRICES
@@ -254,7 +253,7 @@ end
 end
 
 function do_unit_test
-   for i= 0:1  ; switch i
+   for i=0:100 ; switch i
       case 0;img = mk_image( mk_common_model('c2C2',16),1);
              str = 'c2C2';
              tst= [4,[1,1,1]/3];
@@ -269,11 +268,11 @@ function do_unit_test
              ap0 = 'tet4'; ap1 = 'tet10';
       case 3;img = mk_image( mk_common_model('d3cr',16),1);
              str = 'd3cr';
-             tst= [0.268642857142857,0.028,0.009333333333333,0.028];
+             tst= [0.11125, 0.01, 0.003333333333333,0.01];
              ap0 = 'tet4'; ap1 = 'tet10';
       case 4;img = mk_image( ng_mk_cyl_models([1,1,.1],[6,0.5],.1),1);
              str = 'ng_mk_cyl2';
-             tst= [0.131643427733397,0.000323024820911,0,0];
+             tst= [0.061014587493642, 0.000551387020511, 0, 0];
              ap0 = 'tet4'; ap1 = 'tet10';
       case 5;break
       end
@@ -289,6 +288,5 @@ function do_unit_test
             fem_1st_to_higher_order(img.fwd_model);
       Sh= calc_system_mat( img );
       unit_test_cmp(['Linear ',str], Sh.E(1,1:4), tst, 1e-13) 
-%Sh.E(1,1:4)
    end
 end
