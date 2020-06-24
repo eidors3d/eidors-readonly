@@ -2,6 +2,8 @@ function [s_mat]=system_mat_higher_order(fwd_model,img)
 %Assemble the total stiffness matrix : s_mat.E=At;
 %M Crabb - 29.06.2012
 %TODO - Sparse assignment of the matrices
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end
+
 if nargin == 1
    img= fwd_model;
 elseif  strcmp(getfield(warning('query','EIDORS:DeprecatedInterface'),'state'),'on')
@@ -243,3 +245,26 @@ end
 
 end
 
+function do_unit_test
+   for i= 1:2; switch i
+      case 1;img = mk_image( mk_common_model('b3cr',16),1);
+             str = 'b3cr';
+             tst= [0.268642857142857,0.028,0.009333333333333,0.028];
+      case 2;img = mk_image( ng_mk_cyl_models(1,[6,0.5],.1),1);
+             str = 'ng_mk_cyl';
+             tst= [0.131643427733397,0.000323024820911,0,0];
+      end
+
+      img.fwd_model.approx_type = 'tet4'; % linear
+      S1= system_mat_1st_order( img );
+      Sl= system_mat_higher_order( img );
+      unit_test_cmp(['Linear ',str], S1.E, Sl.E, 1e-13) 
+
+      img.fwd_model.approx_type = 'tet10'; % quadratic
+      img.fwd_model.system_mat = @system_mat_higher_order;
+      [img.fwd_model.boundary,img.fwd_model.elems,img.fwd_model.nodes] = ...
+            fem_1st_to_higher_order(img.fwd_model);
+      Sh= calc_system_mat( img );
+      unit_test_cmp(['Linear ',str], Sh.E(1,1:4), tst, 1e-13) 
+   end
+end
