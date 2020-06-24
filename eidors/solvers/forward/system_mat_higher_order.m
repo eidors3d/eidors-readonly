@@ -25,7 +25,7 @@ else %COMPLETE ELECTRODE
     [Am,elemstiff]=mc_calc_stiffness(fwd_model,img);
     
      [Aw,Az,Ad]=mc_calc_complete(fwd_model);
-     At=zeros(nnodes+nelecs,nnodes+nelecs);     
+     At=sparse(nnodes+nelecs,nnodes+nelecs);     
 %     [i,j,s] = find(Am);
 %     At=At+sparse(i,j,s,nnodes+nelecs,nnodes+nelecs);
 %     [i,j,s] = find(Az);
@@ -86,9 +86,11 @@ for kk=size(weight,2):-1:1
 end
 
 %Initialise global stiffness matrix
-Agal=zeros(nnodes,nnodes); %sparse updating non zero slow
+%Agal=sparse(nnodes,nnodes);
 
 %Initialise structure
+%Initialise global stiffness matrix
+ Agal=sparse(nnodes,nnodes);
 
 %Loop over the elements and calculate local Am matrix
 for i=nelems:-1:1
@@ -111,7 +113,7 @@ for i=nelems:-1:1
     %Find the magnitude of the Jacobian of the mapping
     % magjacelem=det(jacobianelem);
     magjacelem=abs(det(jacobianelem));
-           
+
     %Initialise and find elemental stiffness matrices 
     Ammat=0;
     for kk=1:size(weight,2)
@@ -135,9 +137,14 @@ for i=nelems:-1:1
     
     %Assemble global stiffness matrix (Silvester's book!!)    
     Agal(elemstruc(i,:), elemstruc(i,:)) = Agal(elemstruc(i,:), elemstruc(i,:)) + stiff;
+    [ii,jj]= meshgrid(eleminodelist); ll = length(eleminodelist)^2;
+    idx = (i-1)*ll + (1:ll);
+    AI(idx) = ii(:);
+    AJ(idx) = jj(:);
+    Aval(idx) = stiff(:); 
 
 end
- 
+Agal2= sparse(AI, AJ, Aval, nnodes, nnodes); norm(Agal-Agal2,'fro') 
 end
 
 %COMPLETE ELECTRODE MATRICES
@@ -178,7 +185,8 @@ for kk=size(weight,2):-1:1
 end
 
 %1. Initialise global Az/Aw/Ad matrices and assemble a la Silvester
-Az=zeros(nnodes,nnodes); Aw=zeros(nnodes,nelecs); Ad=zeros(nelecs,nelecs); %sparse updating non zero slow
+Az=sparse(nnodes,nnodes); %sparse updating non zero slow
+Aw=zeros(nnodes,nelecs); Ad=zeros(nelecs,nelecs);
 
 %Loop over the electrodes
 for ke=1:nelecs    
@@ -246,25 +254,41 @@ end
 end
 
 function do_unit_test
-   for i= 1:2; switch i
+   for i= 0:1  ; switch i
+      case 0;img = mk_image( mk_common_model('c2C2',16),1);
+             str = 'c2C2';
+             tst= [4,[1,1,1]/3];
+             ap0 = 'tri3'; ap1 = 'tri6';
       case 1;img = mk_image( mk_common_model('b3cr',16),1);
              str = 'b3cr';
              tst= [0.268642857142857,0.028,0.009333333333333,0.028];
+             ap0 = 'tet4'; ap1 = 'tet10';
       case 2;img = mk_image( ng_mk_cyl_models(1,[6,0.5],.1),1);
-             str = 'ng_mk_cyl';
+             str = 'ng_mk_cyl1';
              tst= [0.131643427733397,0.000323024820911,0,0];
+             ap0 = 'tet4'; ap1 = 'tet10';
+      case 3;img = mk_image( mk_common_model('d3cr',16),1);
+             str = 'd3cr';
+             tst= [0.268642857142857,0.028,0.009333333333333,0.028];
+             ap0 = 'tet4'; ap1 = 'tet10';
+      case 4;img = mk_image( ng_mk_cyl_models([1,1,.1],[6,0.5],.1),1);
+             str = 'ng_mk_cyl2';
+             tst= [0.131643427733397,0.000323024820911,0,0];
+             ap0 = 'tet4'; ap1 = 'tet10';
+      case 5;break
       end
 
-      img.fwd_model.approx_type = 'tet4'; % linear
+      img.fwd_model.approx_type = ap0;
       S1= system_mat_1st_order( img );
       Sl= system_mat_higher_order( img );
       unit_test_cmp(['Linear ',str], S1.E, Sl.E, 1e-13) 
 
-      img.fwd_model.approx_type = 'tet10'; % quadratic
+      img.fwd_model.approx_type = ap1;
       img.fwd_model.system_mat = @system_mat_higher_order;
       [img.fwd_model.boundary,img.fwd_model.elems,img.fwd_model.nodes] = ...
             fem_1st_to_higher_order(img.fwd_model);
       Sh= calc_system_mat( img );
       unit_test_cmp(['Linear ',str], Sh.E(1,1:4), tst, 1e-13) 
+%Sh.E(1,1:4)
    end
 end
