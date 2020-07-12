@@ -50,6 +50,11 @@ end
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                        stim_pattern, centres, z_contact,fc)
+% maybe there were bugs from an unsorted boundary. Just in case
+srf = sort(srf,2);
+[srf,idx] = unique(srf,'rows');
+fc = fc(idx);
+
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
