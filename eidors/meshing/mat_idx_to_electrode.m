@@ -40,7 +40,9 @@ for i = 1:length(mat_idxes)
 end
 
 fmdl = remove_unused_nodes(fmdl);
+fmdl = remove_unused_boundary(fmdl);
 if any(fmdl.boundary(:) == 0)
+   eidors_msg('WARNING: PROBLEM WITH BOUNDARY',1)
    keyboard
 end
 
@@ -53,15 +55,34 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
    end
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    faces = calc_elec_faces(fmdl.elems,femobj);
+   face1=faces;
 
    femobjnodes = fmdl.elems(femobj,:);
    [fmdl,faces] = rm_elems( fmdl, femobj, faces);
 
+   % Add to the boundary with the boundary of the new electrode
    fmdl.boundary = unique([fmdl.boundary;faces],'rows');
 
    vt = find_bdynodes(fmdl,femobjnodes);
    elstr =  struct('nodes',vt(:)','z_contact',zc);
    fmdl = add_elec(fmdl, elstr);
+
+function fmdl = remove_unused_boundary(fmdl);
+   elems= fmdl.elems;
+   fmdl.boundary = unique(sort(fmdl.boundary,2),'rows');
+   switch mdl_dim(fmdl)
+      case 2; selem = [sort(elems(:,[1,2]),2);
+                       sort(elems(:,[1,3]),2);
+                       sort(elems(:,[2,3]),2)];
+      case 3; selem = [sort(elems(:,[1,2,3]),2);
+                       sort(elems(:,[1,2,4]),2);
+                       sort(elems(:,[1,3,4]),2);
+                       sort(elems(:,[2,3,4]),2)];
+      otherwise; error('Dims must be 2 or 3');
+   end
+   [~,idx] = setdiff(fmdl.boundary, selem,'rows');
+%  disp( fmdl.boundary(idx,:) )
+   fmdl.boundary(idx,:) = [];
 
 function [fmdl,faces] = rm_elems( fmdl, femobj, faces);
    % fix the mat_idx object, since we remove femobj
@@ -73,11 +94,20 @@ function [fmdl,faces] = rm_elems( fmdl, femobj, faces);
    end
    fmdl.elems(femobj,:) = [];
 
-   if nargin>2
-      inels = reshape(... 
-           ismember(faces(:),fmdl.elems(:)), size(faces));
-      faces(any(~inels,2),:) = [];
-   end
+% Taken care of by remove_unused_boundary
+%  % remove faces that are no longer on the boundary
+%  if nargin>2
+%     inels = reshape(... 
+%          ismember(faces(:),fmdl.elems(:)), size(faces));
+%     faces(any(~inels,2),:) = [];
+%     sfaces = sort(faces,2);
+%     selem1 = sort(fmdl.elems(:,[1,2,3]),2);
+%     selem2 = sort(fmdl.elems(:,[1,2,4]),2);
+%     selem3 = sort(fmdl.elems(:,[1,3,4]),2);
+%     selem4 = sort(fmdl.elems(:,[2,3,4]),2);
+%     [~,idx] = setdiff(sfaces,[selem1;selem2;selem3;selem4],'rows');
+%     faces(idx,:) = [];
+%  end
 
 % This code adds the new electrode as a elec(i).faces
 % adds electrode to the end
@@ -144,7 +174,8 @@ function do_unit_test
    do_unit_test_2d(true)
    do_unit_test_2d(false)
    subplot(223);
-%  do_unit_test_3d_netgen
+   do_unit_test_3d_netgen
+   do_unit_test_3d_netgen2
 
 function do_unit_test_2d(nodes_electrode)
    fmdl = getfield(mk_common_model('a2c2',1),'fwd_model');
@@ -213,4 +244,15 @@ function do_unit_test_3d_netgen
 
    img.calc_colours.ref_level = 1;
    show_fem(img); view(3,12);
+
+
+function do_unit_test_3d_netgen2
+   shape_str = ['solid sqelec = orthobrick(-1,-1,-1;1,1,0); tlo sqelec;' ...
+                'solid mainobj= orthobrick(-5,-5,-5;5,5,0) and not sqelec;'];
+   fmdl = ng_mk_gen_models(shape_str, [],[],'');
+   fmdl.mat_idx_to_electrode.nodes_electrode = true;
+   fmdl = mat_idx_to_electrode(fmdl,{1});
+   elimnodes = [2 35 36; 4 34 36; 6 31 35; 8 31 34; 31 34 35; 34 35 36];
+   sd = intersect(elimnodes,sort(fmdl.boundary,2),'rows');
+   unit_test_cmp('cut boundary', size(sd,1),0);
 
