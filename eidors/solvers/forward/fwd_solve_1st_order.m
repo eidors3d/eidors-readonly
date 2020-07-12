@@ -72,7 +72,8 @@ for i=1:length(dirichlet_nodes)
    if length(dirichlet_nodes) == 1; rhs = 1:size(pp.QQ,2);
    else                           ; rhs = i; end
    v(idx,rhs)= left_divide( s_mat.E(idx,idx), ...
-             neumann_nodes{i}(idx,:) - s_mat.E(idx,:)*dirichlet_values{i});
+                     neumann_nodes{i}(idx,:) - ...
+                     s_mat.E(idx,:)*dirichlet_values{i},fwd_model);
 end
 
 % If model has a ground node, check if current flowing in this node

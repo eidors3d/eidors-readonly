@@ -1,5 +1,6 @@
 function [V] = left_divide(E,I,tol,~,V)
 %[V] = LEFT_DIVIDE(E,I,tol,pp,V);
+%[V] = LEFT_DIVIDE(E,I,fmdl)
 % 
 % Implements left division for symmetric positive definite system solves
 % such as the sparse forward solve and dense solve for a GN descent
@@ -21,11 +22,48 @@ function [V] = left_divide(E,I,tol,~,V)
 
 if ischar(E) && strcmp(E,'UNIT_TEST'); do_unit_test; return; end
 
-if ~exist('tol','var'); tol = 1e-8; end
+if nargin<3;
+   tol=1e-8;
+end
+do_pcg = false;
+if isstruct(tol);
+   fmdl = tol;
+   try
+      do_pcg = fmdl.left_divide.do_pcg;
+   catch
+   end
+   try 
+      tol = fmdl.left_divide.tol;
+   catch
+      tol = 1e-8;
+   end
+   try 
+      V = fmdl.left_divide.V_initial;
+   catch
+      sz= [size(E),size(I)];
+      V = eidors_obj('get-cache', sz, 'left_divide_V');
+      if isempty(V); V = zeros(size(E,1),size(I,2)); end
+   end
+end
 
-[n_nodes,n_stims] = size(I);
 
-try
+if ~do_pcg
+   try
+     V= non_iterative(E,I);
+   catch excp
+       % TODO: check if this catch block is needed
+       if ~strcmp(excp.identifier , 'MATLAB:nomem')
+           rethrow(excp); % rethrow error
+       end
+       
+       eidors_msg('Memory exhausted for inverse. Trying PCG',2);
+       V=iterative_solve(E,I,tol,V,fmdl);
+   end
+else
+   V=iterative_solve(E,I,tol,V,fmdl);
+end
+
+function V= non_iterative(E,I);
     % V= E\I;
     % This takes MUCH longer when you have  more vectors in I,
     %  even if they are repeated. There must be some way to simplify
@@ -108,39 +146,18 @@ try
     % especially page 15 where it discusses the value of iterative refinement
     %  without extra precision bits.  ALso, we need to enable
     
+function V=iterative_solve(E,I,tol,V,fmdl)
     
-catch excp
-    % TODO: check if this catch block is needed
-    if ~strcmp(excp.identifier , 'MATLAB:nomem')
-        rethrow(excp); % rethrow error
-    end
-    
-    eidors_msg('Memory exhausted for inverse. Trying PCG',2);
-    
-    if nargin < 5
-        sz= [size(E,1),n_stims];
-        V = eidors_obj('get-cache', sz, 'left_divide_V');
-        if isempty(V); V= zeros(sz); end
-    end
-    
-    ver = eidors_obj('interpreter_version'); % Matlab2013 renamed cholinc -> ichol
+    [n_nodes,n_stims] = size(I);
     if isreal(E)
         opts.droptol = tol*100;
         opts.type = 'ict';
-        if ver.isoctave || ver.ver < 7.012
-            U = cholinc(E, opts.droptol);
-        else
-            U = ichol(E, opts);
-        end
+        U = ichol(E, opts);
         L = U';
         cgsolver = @pcg;
     else %Complex
         opts.droptol = tol/10;
-        if ver.isoctave || ver.ver < 7.012 % Matlab2007 introduced ilu, luinc has now been dropped
-            [L,U] = luinc(E, opts.droptol);
-        else
-            [L,U] = ilu(E, opts);
-        end
+        [L,U] = ilu(E, opts);
         cgsolver = @bicgstab;
     end
     
@@ -148,8 +165,9 @@ catch excp
         [V(:,i),~] = feval( cgsolver, E,I(:,i), ...
             tol*norm(I(:,i)),n_nodes,L,U,V(:,i));
     end
+    sz= [size(E),size(I)];
     eidors_obj('set-cache', sz, 'left_divide_V', V);
-end
+    
 
 % Test code
 function do_unit_test
