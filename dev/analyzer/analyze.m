@@ -137,6 +137,14 @@ function hh= hsh( str )
    else
       hh= ['H',rptgen.hash(str)];
    end
+
+% Error if sz1 ~= sz2
+function [sz,idx1,idx2] = isz( mat )
+   sz = size(mat);
+   if sz(1)~=sz(2); error('Can only handle square images'); end
+   sz = sz(1);
+   idx1 =               1:floor(sz/2);
+   idx2 = (floor(sz/2)+1):sz;
    
 % Frequency axis for filtering
 function fax = freq_axis( dd );
@@ -624,6 +632,10 @@ function out= flow_volume_global(dd,ii)
      out = false; return
   end
   clf;plot(NaN); hold on;
+  maxV = -inf;
+  minV = +inf;
+  maxF = -inf;
+  minF = -inf;
   for i=1:dd.n_breaths
      eie = dd.breaths(i,[1,2,3]);
      eflo= eie(2) + pp.flow_window;
@@ -631,13 +643,18 @@ function out= flow_volume_global(dd,ii)
      volD= dd.CV(eflo);
      volD= volD-vol(1);
      vol = vol-vol(1);
+     maxV = max([maxV, max(volD), max(vol)]); 
+     minV = min([minV, min(volD), min(vol)]); 
 
      flow=    dd.flow(eie(1):eie(3));
      flowD=   dd.flow(eflo);
+     maxF = max([maxF, max(flowD), max(flow)]); 
+     minF = min([minF, min(flowD), min(flow)]); 
      plot(vol,flow,'LineWidth',2,'Color',[0,0,1]); 
      plot(volD,flowD,'LineWidth',4,'Color',[0,0,0]); 
   end
   hold off;
+  axis([minV,maxV, minF, maxF]);
   fout = sprintf('g_flow_vol%03d.png',ii);
   out = sprintf( ...
    '<a href="%s"><img width="300" src="%s"></a>',...
@@ -848,13 +865,14 @@ function out= TV_slices(dd,ii)
   TV = my_image(TV); %rotate if req'd
   
   out = '<table border="1"><TR><TH>#<TH>Left %<TH>Right %';
-  cuts = round(linspace(0,32,pp.slices+1));
-  fac  = (32/pp.slices)/sum(TV(:))*100;
+  [sz,idx1,idx2] = isz( TV );
+  cuts = round(linspace(0,sz,pp.slices+1));
+  fac  = (sz/pp.slices)/sum(TV(:))*100;
   for i=1:pp.slices
      ss = fac*mean(TV(cuts(i)+1:cuts(i+1),:),1);
      out = [out, sprintf(['<TR><TD align="right">%d' ...
              '<TD align="right">%3.1f<TD align="right">%3.1f'], ...
-         i, sum(ss(1:16)), sum(ss(17:32)))];
+         i, sum(ss(idx1)), sum(ss(idx2)))];
   end
   out = [out,'</table>'];
 
@@ -894,18 +912,18 @@ function [RGB] = blue_red_colours;
    vd = viridis(2);
    RGB(1,:) = vd(1,:);
 
-function [FV,ROI] = FV_calc(dd);
+function [FVo,ROI] = FV_calc(dd);
   global pp;
   FV = TVcalc(dd);
   mFV = max(FV(:));
-  FV(dd.ZR(:,:,1)==0) = NaN;
+  FVo = FV(:,:,1); FVo(dd.ZR(:,:,1)==0) = NaN;
   ROI = FV(:,:,1); ROI(~isnan(ROI))= 0;
    
-  for i=1:32; for j=1:32
+  for i=1:isz(FV); for j=1:isz(FV)
      if isnan(FV(i,j));
         1; % do nothing
      elseif FV(i,j) < 0.1*mFV
-        FV(i,j) = 0;
+        FVo(i,j) = 0;
         ROI(i,j) = 0;
      else
         ROI(i,j) = 1;
@@ -918,7 +936,7 @@ function [FV,ROI] = FV_calc(dd);
            pf = polyfit(squeeze(volD),squeeze(flowD),1);
            slope(l) = pf(1);
         end
-        FV(i,j) = mean(slope);
+        FVo(i,j) = mean(slope);
      end
   end; end
 
@@ -999,13 +1017,14 @@ function out= flow_volume_slices(dd,ii)
   FV(isnan(FV)) = 0;
   
   out = '<table border="1"><TR><TH>#<TH>Left %<TH>Right %';
-  cuts = round(linspace(0,32,pp.slices+1));
-  fac  = (32/pp.slices)/sum(FV(:))*100;
+  [sz,idx1,idx2] = isz( FV );
+  cuts = round(linspace(0,sz,pp.slices+1));
+  fac  = (sz/pp.slices)/sum(FV(:))*100;
   for i=1:pp.slices
      ss = fac*mean(FV(cuts(i)+1:cuts(i+1),:),1);
      out = [out, sprintf(['<TR><TD align="right">%d' ...
              '<TD align="right">%3.1f<TD align="right">%3.1f'], ...
-         i, sum(ss(1:16)), sum(ss(17:32)))];
+         i, sum(ss(idx1)), sum(ss(idx2)))];
   end
   out = [out,'</table>'];
 
