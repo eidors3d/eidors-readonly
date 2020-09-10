@@ -204,8 +204,9 @@ function dd = filtfile(dd,fname);
 function dd = loadfile(fname);
   global pp;
   in = load(fname);
-  dd.ZR = in.data.measurement.ZeroRef;
-  dd.CV = in.data.measurement.CompositValue(:)';
+  SCALE = 1;
+  dd.ZR = SCALE*in.data.measurement.ZeroRef;
+  dd.CV = SCALE*in.data.measurement.CompositValue(:)';
   dd.FR = in.data.imageRate;
   dd.lD = length(dd.CV);
   dd = filtfile(dd,fname); % filter if required
