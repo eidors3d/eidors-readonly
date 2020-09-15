@@ -32,6 +32,7 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.contour_levels = #    => Put this many contour lines
 %   img.show_slices.contour_levels = vector => Put contours at these locations
 %   img.show_slices.contour_properties => e.g. {'Color',[0,0,0],'LineWidth',2}
+%   img.calc_slices.filter => e.g. conv2(ones(5),ones(5))/5^4   
 %
 % if levels is scalar, then make levels equispaced horizontal
 %          cuts through the object
@@ -93,6 +94,7 @@ else
    rimg= img;
 end
 % Eventualy we need to add a filter control to do this -aa'19
+%% This is replaced with calc_slices.filter
 %if 0
 %   filt = ones(5);
 %    filt = conv2(filt,filt);
