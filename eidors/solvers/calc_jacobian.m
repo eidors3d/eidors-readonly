@@ -81,13 +81,16 @@ function cache_obj= jacobian_cache_params( fwd_model, img );
    end
 
 function fwd_model_check(fmdl)
-pp = fwd_model_parameters(fmdl); % they cache, so no problem
-if pp.n_elec == 0
-    error('Cannot calculate Jacobian. No electrodes found.');
-end
-if pp.n_stim == 0
-    error('Cannot calculate Jacobian. No stimulation found.');
-end
-if pp.n_meas == 0
-    error('Cannot calculate Jacobian. No measurements found.');
-end
+   try; if fmdl.jacobian_dont_check
+      return
+   end; end
+   pp = fwd_model_parameters(fmdl); % they cache, so no problem
+   if pp.n_elec == 0
+       error('Cannot calculate Jacobian. No electrodes found.');
+   end
+   if pp.n_stim == 0
+       error('Cannot calculate Jacobian. No stimulation found.');
+   end
+   if pp.n_meas == 0
+       error('Cannot calculate Jacobian. No measurements found.');
+   end
