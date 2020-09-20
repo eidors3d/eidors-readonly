@@ -1,4 +1,4 @@
-function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj, extra_ng_code);
+function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, elec_obj, extra_ng_code, mszpoints);
 % NG_MK_GEN_MODELS: create generic models using netgen
 %[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj);
 %[fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code);
@@ -46,16 +46,17 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, ele
 if ischar(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin <= 4; extra_ng_code = ''; end
-copt.cache_obj = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
+if nargin <= 5; mszpoints = []; end
+args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code, mszpoints };
+copt.cache_obj = args;
 copt.fstr = 'ng_mk_gen_models';
-args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code };
 
 fmdl = eidors_cache(@mk_gen_model,args, copt);
 
 mat_idx = fmdl.mat_idx;
 
 function fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, ...
-                         elec_obj, extra_ng_code);
+                         elec_obj, extra_ng_code, mszpoints);
 
    fnstem = tempname;
    geofn= [fnstem,'.geo'];
@@ -65,7 +66,7 @@ function fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, ...
    is2D = 0;
    [elecs, centres] = parse_elecs( elec_pos, elec_shape, is2D, elec_obj );
 
-   n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs, extra_ng_code);
+   n_pts = write_geo_file(geofn, ptsfn, shape_str, elecs, extra_ng_code, mszpoints);
    if n_pts == 0 
       call_netgen( geofn, meshfn);
    else
@@ -87,7 +88,7 @@ function fmdl = mk_gen_model( shape_str, elec_pos, elec_shape, ...
 
 % for the newest netgen, we can't call msz file unless there are actually points in  it
 function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
-                          elecs, extra_ng_code);
+                          elecs, extra_ng_code, mszpoints);
    fid=fopen(geofn,'w');
    write_header(fid, shape_str);
 
@@ -156,13 +157,17 @@ function n_pts_elecs = write_geo_file(geofn, ptsfn, shape_str, ...
 % np
 % x1 y1 z1 h1
 % x2 y2 z2 h2
-   n_pts_elecs= length(pts_elecs_idx);
+   n_pts_elecs= length(pts_elecs_idx) + size(mszpoints,1);
    fid=fopen(ptsfn,'w');
    fprintf(fid,'%d\n',n_pts_elecs);
    for i = pts_elecs_idx;
       posxy = elecs(i).pos(1:2);
       fprintf(fid,'%10f %10f 0 %10f\n', posxy, elecs(i).dims(1) );
    end
+   for i = 1:size(mszpoints,1);
+      fprintf(fid,'%10f %10f %10f %10f\n', mszpoints(i,:));
+   end
+   fprintf(fid,'0\n'); % lines
    fclose(fid); % ptsfn
 
 
