@@ -372,7 +372,9 @@ for e=1:length(mdl.electrode)
             'MarkerFaceColor',colour, 'MarkerEdgeColor', colour);
         if number_electrodes
             hh= text(vtx(1),vtx(2),vtx(3), num2str(e));
-            set(hh, 'HorizontalAlignment','center', 'FontWeight','bold');
+            set(hh, 'HorizontalAlignment','center');
+            fontsize= getfontsizefromnumber_electrodes(number_electrodes);
+            set(hh,'FontWeight','bold','Color',[.8,.2,0],'FontSize',fontsize);
         end
     else
         % find elems on boundary attached to this electrode
