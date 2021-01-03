@@ -116,6 +116,7 @@ recurse_hash( hash_context *c, const mxArray *var );
 //    the same array will have the same ID
 
 #define sDBL sizeof(double)
+#define sSGL sizeof(float)
 #define sINT sizeof(int)
 #define sSZT sizeof(size_t)
    #undef VERBOSE 
@@ -342,6 +343,13 @@ recurse_hash( hash_context *c, const mxArray *var ) {
           mexPrintf("DBL len=%d, first=%5.3g\n:", len, *mxGetPr( var ) );
         #endif
         len= sDBL * len;
+    } else 
+    if( mxIsSingle(var) ) {
+        #ifdef VERBOSE    
+          if (len>0)
+          mexPrintf("SGL len=%d, first=%5.3g\n:", len, *mxGetPr( var ) );
+        #endif
+        len= sSGL * len;
     } else 
     if( mxIsInt32(var) || mxIsUint32(var) ) {
         len= 4 * len;
