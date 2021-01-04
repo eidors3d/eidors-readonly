@@ -20,7 +20,7 @@ function [fwd_mdl]= ...
 % (C) 2006 Andy Adler. (C) 2013 Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
-if isempty(name); 
+if isempty(name);
    name = ['MDL from', ng_vol_filename];
 end
 
@@ -30,7 +30,7 @@ end
 
 % Model Geometry
 [srf,vtx,fc,bc,simp,edg,mat_ind] = ng_read_mesh(ng_vol_filename);
-if isempty(vtx); 
+if isempty(vtx);
    error('EIDORS: ng_mk_fwd_model: Netgen meshing failed. Stopping');
 end
 if nargin>=6
@@ -52,13 +52,15 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                        stim_pattern, centres, z_contact,fc)
 % maybe there were bugs from an unsorted boundary. Just in case
 srf = sort(srf,2);
-[srf,idx] = unique(srf,'rows');
+% get rid of duplicates, if there are any
+[srf,idx] = unique(srf,'rows','stable');
 fc = fc(idx);
+bc = bc(idx);
 
 mdl.nodes    = vtx;
 mdl.elems    = simp;
 mdl.boundary = srf;
-mdl.boundary_numbers=fc;    
+mdl.boundary_numbers=fc;
 mdl.gnd_node=    find_centre_node(vtx);
 mdl.np_fwd_solve.perm_sym =     '{n}';
 mdl.name = name;
@@ -95,7 +97,7 @@ fwd_mdl= eidors_obj('fwd_model', mdl);
 % typei. Array order is the order of the specified material
 % (netgen 'tlo' statements in the .geo file).
 function [mat_idx] = mk_mat_indices( mat_ind);
-  % find length of mat_indices 
+  % find length of mat_indices
   % test example: mat_ind=[10 12 14 14 12 12 14 12];
 
   if isempty(mat_ind)
