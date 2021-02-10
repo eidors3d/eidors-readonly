@@ -51,11 +51,14 @@ end
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                        stim_pattern, centres, z_contact,fc)
 % maybe there were bugs from an unsorted boundary. Just in case
-srf = sort(srf,2);
+
 % get rid of duplicates, if there are any
-[srf,idx] = unique(srf,'rows','stable');
-fc = fc(idx);
-bc = bc(idx);
+[~,idx] = unique(sort(srf,2),'rows','stable');
+if length(idx)~=size(srf,1)
+   error('Duplicate elements on boundary. This in an EIDORS bug.')
+end
+%fc = fc(idx);
+%bc = bc(idx);
 
 mdl.nodes    = vtx;
 mdl.elems    = simp;

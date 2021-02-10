@@ -1,6 +1,7 @@
 Plan for 3.11
  - Speed up / clean up _higher_order code
  - Fix _higher_order to handle faces-type electrodes
+ - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
 
 Plan for 3.9.10
  - fix direction in emphasize_electrode_text
