@@ -5,7 +5,7 @@ function status= call_netgen(geo_file, vol_file, msz_file, finelevel)
 %
 % geo_file = geometry file (input)
 % vol_file = FEM mesh file (output)
-% msz_file = Meshsize file in netgen format
+% msz_file = (deprecated) Meshsize file in netgen format
 %
 % Finelevel controls the fineness of the mesh
 %   default is '' -> coarse
@@ -43,24 +43,25 @@ if  islinux
 else
    ng_name = [cache_path,'/ng'];
 end
- 
-while( 1 )
-   
-   fid= fopen('ng.opt','w'); %create ng.opt file in local dir
-   if fid==-1
-      error(['Netgen requires writing files in the current directory(%s). ', ...
-         'Unfortunately, you don''t have permission. ' ...
-         'Your options are: 1) change your working directory to one in which you have write permission, or ' ...
-         '2) change the permissions on the current working directory.'], pwd);
-   end
-   if ~isempty(msz_file)
-      %     fprintf(fid,'options.segmentsperedge 5\n'); % Another
-      %                                                   potentially useful parameter
-      %                                                   except netgen ignores it
-      fprintf(fid,'options.meshsizefilename= %s\n',msz_file);
-   end
-   fclose(fid);
+    
+if ~isempty(msz_file)
+    warning('EIDORS:Deprecated', 'Use ng_write_opt instead of specifying a meshsize file');
+    warning('Overwriting ng.opt file');
+    fid= fopen('ng.opt','w'); %create ng.opt file in local dir
+    if fid==-1
+        error(['Netgen requires writing files in the current directory(%s). ', ...
+            'Unfortunately, you don''t have permission. ' ...
+            'Your options are: 1) change your working directory to one in which you have write permission, or ' ...
+            '2) change the permissions on the current working directory.'], pwd);
+    end
+    %     fprintf(fid,'options.segmentsperedge 5\n'); % Another
+    %                                                   potentially useful parameter
+    %                                                   except netgen ignores it
+    fprintf(fid,'options.meshsizefilename= %s\n',msz_file);
+    fclose(fid);
+end
 
+while( 1 )
    if ~islinux
       % on Linux, Netgen runs in the current directory
       % enforce this behaviour in Windows
