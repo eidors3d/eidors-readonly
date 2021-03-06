@@ -24,8 +24,10 @@ function opt = ng_write_opt(varargin)
 %  call_netgen(...)
 %  delete('ng.opt'); % clean up
 %
-%  Caveat: Currently it seems that Netgen on Windows ignores the ng.opt
-%  file
+% To specify a volume for refinement, specify
+%  ng_write_opt('MSZPOINTS', [list of x,y,z,maxh])
+%   or
+%  ng_write_opt('MSZBRICK', [xmin, xmax, ymin, ymax, zmin, zmax, maxh])
 %
 %  See also CALL_NETGEN
 
@@ -71,9 +73,44 @@ end
 for i = 1:nargin/2
    idx = (i-1)*2 +1;
    val = varargin{idx+1};
-   eval(sprintf('opt.%s = val;',varargin{idx}));
+   switch varargin{idx}
+%  ng_write_opt('MSZPOINTS', [list of x,y,z,maxh])
+   case 'MSZPOINTS'
+    %  ng_write_opt('MSZPOINTS', [list of x,y,z,maxh])
+       tmpname = write_tmp_mszfile( val );
+       opt.options.meshsizefilename = tmpname;
+   case 'MSZBRICK'
+    %  ng_write_opt('MSZBRICK', [xmin, xmax, ymin, ymax, zmin, zmax, maxh])
+       maxh = val(7);
+       xpts= floor(abs(diff(val(1:2))/maxh))+1;
+       ypts= floor(abs(diff(val(3:4))/maxh))+1;
+       zpts= floor(abs(diff(val(5:6))/maxh))+1;
+       xsp= linspace(val(1),val(2), xpts);
+       ysp= linspace(val(3),val(4), ypts);
+       zsp= linspace(val(5),val(6), zpts);
+       [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
+       val = [xsp(:),ysp(:),zsp(:), maxh+0*xsp(:)];
+       tmpname = write_tmp_mszfile( val );
+       opt.options.meshsizefilename = tmpname;
+   otherwise
+       eval(sprintf('opt.%s = val;',varargin{idx}));
+   end
 end
 
+function fname = write_tmp_mszfile( mszpoints )
+   % From Documentation: Syntax is
+   % np
+   % x1 y1 z1 h1
+   % x2 y2 z2 h2
+   n_pts_elecs=  size(mszpoints,1);
+   fname = [tempname,'.msz'];
+   fid=fopen(fname,'w');
+   fprintf(fid,'%d\n',n_pts_elecs);
+   for i = 1:size(mszpoints,1);
+      fprintf(fid,'%10f %10f %10f %10f\n', mszpoints(i,:));
+   end
+   fprintf(fid,'0\n'); % lines
+   fclose(fid); % ptsfn
 
 % copy all fields from usr to opt
 % check that the fields exist in opt

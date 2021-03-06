@@ -46,7 +46,9 @@ function [fmdl,mat_idx] = ng_mk_gen_models(shape_str, elec_pos,  elec_shape, ele
 if ischar(shape_str) && strcmp(shape_str,'UNIT_TEST'); do_unit_test; return; end
 
 if nargin <= 4; extra_ng_code = ''; end
-if nargin <= 5; mszpoints = []; end
+if nargin <= 5; mszpoints = []; else
+   warning('Use ng_write_opt for mszpoints.');
+end
 args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code, mszpoints };
 copt.cache_obj = args;
 copt.fstr = 'ng_mk_gen_models';

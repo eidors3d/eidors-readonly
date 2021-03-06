@@ -25,7 +25,7 @@ if nargin<3
 end
 
 if ~isempty(msz_file)
-   eidors_msg('call_netgen: Warning. Using an *.msz file. This often fails.');
+   eidors_msg('call_netgen: Warning. Using an *.msz file. netgen rarely uses this file without care. Use the MSZPOINTS option in ng_write_opt instead.');
 end
 
 if nargin<4
