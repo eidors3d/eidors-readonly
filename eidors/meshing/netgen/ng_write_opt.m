@@ -104,6 +104,7 @@ function fname = write_tmp_mszfile( mszpoints )
    % x2 y2 z2 h2
    n_pts_elecs=  size(mszpoints,1);
    fname = [tempname,'.msz'];
+   fname = strrep(fname,'\','/'); % needs unix-style path on windows
    fid=fopen(fname,'w');
    fprintf(fid,'%d\n',n_pts_elecs);
    for i = 1:size(mszpoints,1);
