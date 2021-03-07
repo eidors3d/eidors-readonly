@@ -24,6 +24,7 @@ function [fmdl,rm_elems] = mat_idx_to_electrode(fmdl, mat_idxes)
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
 
+% Calculate electrodes on faces or nodes
 elec_faces = true;
 try 
    elec_faces = ~fmdl.mat_idx_to_electrode.nodes_electrode;
@@ -45,6 +46,16 @@ if any(fmdl.boundary(:) == 0)
    eidors_msg('WARNING: PROBLEM WITH BOUNDARY',1)
    keyboard
 end
+for i=1:num_elecs(fmdl)
+    zeroface = false;
+    try  
+       zeroface = any(fmdl.electrode(i).faces(:) == 0);
+    end
+    if zeroface || any(fmdl.electrode(i).nodes(:) == 0)
+       eidors_msg('WARNING: PROBLEM WITH BOUNDARY %d',i,1)
+       keyboard
+    end
+end
 
 % This code adds the new electrode as a elec(i).nodes
 % adds electrode to the end
@@ -55,7 +66,6 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
    end
    femobj = vertcat(fmdl.mat_idx{nmat_idx});
    faces = calc_elec_faces(fmdl.elems,femobj);
-   face1=faces;
 
    femobjnodes = fmdl.elems(femobj,:);
    [fmdl,faces] = rm_elems( fmdl, femobj, faces);
@@ -63,7 +73,11 @@ function [fmdl,femobj] = create_electrode_nodes_from_mat_idx(fmdl,nmat_idx);
    % Add to the boundary with the boundary of the new electrode
    fmdl.boundary = unique([fmdl.boundary;faces],'rows');
 
-   vt = find_bdynodes(fmdl,femobjnodes);
+   % vtx= intersect(fmdl.boundary,femobjnodes);
+   % This doesn't seem needed, just unique faces
+   % vt = find_bdynodes(fmdl,femobjnodes);
+   vt = unique(faces);
+
    elstr =  struct('nodes',vt(:)','z_contact',zc);
    fmdl = add_elec(fmdl, elstr);
 
@@ -136,6 +150,9 @@ function fmdl = add_elec(fmdl, elstr)
      fmdl.electrode(    1) = elstr;
    end
 
+% Detect outer face of electrode by
+%  removing all tet faces which exist more
+%  than once
 function faces = calc_elec_faces(elems,femobj);
    thisels = elems(femobj,:);
    switch size(thisels,2)  % dimentions
@@ -159,14 +176,16 @@ function faces = calc_elec_faces(elems,femobj);
    exist_faces = sparse(1,ib,1);
    faces(exist_faces>1,:) = [];
 
-function vt = find_bdynodes(fmdl,femobjnodes)
-% Slow way
-%  vt = intersect(femobjnodes,find_boundary(fmdl));
-% Fast: pre-process 
-   usenodes = reshape( ismember( ...
-      fmdl.elems, femobjnodes), size(fmdl.elems));
-   fmdl.elems(~any(usenodes,2),:) = [];
-   vt = intersect(femobjnodes,find_boundary(fmdl));
+% This functions doesn't seem necessary ... remove
+% AA: mar 2021
+%function vt = find_bdynodes(fmdl,femobjnodes)
+%% Slow way
+%   vt = intersect(femobjnodes,find_boundary(fmdl));
+%% Fast: pre-process 
+%   usenodes = reshape( ismember( ...
+%      fmdl.elems, femobjnodes), size(fmdl.elems));
+%   fmdl.elems(~any(usenodes,2),:) = [];
+%   vt = intersect(femobjnodes,find_boundary(fmdl));
       
 
 function do_unit_test
@@ -174,8 +193,10 @@ function do_unit_test
    do_unit_test_2d(true)
    do_unit_test_2d(false)
    subplot(223);
-   do_unit_test_3d_netgen
-   do_unit_test_3d_netgen2
+   do_unit_test_3d_netgen(true)
+   do_unit_test_3d_netgen(false)
+   do_unit_test_3d_netgen2(true)
+   do_unit_test_3d_netgen2(false)
 
 function do_unit_test_2d(nodes_electrode)
    fmdl = getfield(mk_common_model('a2c2',1),'fwd_model');
@@ -208,13 +229,13 @@ function do_unit_test_2d(nodes_electrode)
 
 
 
-function do_unit_test_3d_netgen
+function do_unit_test_3d_netgen(node_elecs_flag)
    extra={'ball_inside','ball_surface', [ ...
           'solid ball_inside  = sphere(-0.4,0,0.5;0.05);' ...
           'solid ball_surface = sphere( 0.4,0,1.0;0.05) -maxh=.005;' ...
           ]};
    fmdl= ng_mk_cyl_models(1,[8,.5],[.1],extra); 
-   fmdl.mat_idx_to_electrode.nodes_electrode = true;
+   fmdl.mat_idx_to_electrode.nodes_electrode = node_elecs_flag;
 
    fmd_= mat_idx_to_electrode(fmdl, {2,3});
    unit_test_cmp('cyl_models 01',num_elecs(fmd_),10);
@@ -232,6 +253,7 @@ function do_unit_test_3d_netgen
 
    img = mk_image(fmdl,1);
    img.elem_data(vertcat(fmdl.mat_idx{2:3}))= 1.1;
+   img.fwd_model.mat_idx_to_electrode.nodes_electrode=node_elecs_flag;
    [img.fwd_model,rm_elems]= mat_idx_to_electrode( ...
         img.fwd_model, {2});
    img.elem_data(rm_elems) = [];
@@ -246,11 +268,11 @@ function do_unit_test_3d_netgen
    show_fem(img); view(3,12);
 
 
-function do_unit_test_3d_netgen2
+function do_unit_test_3d_netgen2(node_elecs_flag)
    shape_str = ['solid sqelec = orthobrick(-1,-1,-1;1,1,0); tlo sqelec;' ...
                 'solid mainobj= orthobrick(-5,-5,-5;5,5,0) and not sqelec;'];
    fmdl = ng_mk_gen_models(shape_str, [],[],'');
-   fmdl.mat_idx_to_electrode.nodes_electrode = true;
+   fmdl.mat_idx_to_electrode.nodes_electrode = node_elecs_flag;
    fmdl = mat_idx_to_electrode(fmdl,{1});
    elimnodes = [2 35 36; 4 34 36; 6 31 35; 8 31 34; 31 34 35; 34 35 36];
    sd = intersect(elimnodes,sort(fmdl.boundary,2),'rows');
