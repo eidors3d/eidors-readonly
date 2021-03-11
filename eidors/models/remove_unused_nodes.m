@@ -12,6 +12,7 @@ function fmdl = remove_unused_nodes( fmdl );
    if max(usednodes) > num_nodes(fmdl)
       error('remove_unused_nodes: more nodes are used than exist');
    end
+   fmdl0 = fmdl;
    nidx = zeros(num_nodes(fmdl),1);
    nidx(usednodes) = 1:length(usednodes);
    fmdl.nodes(nidx==0,:) = [];
@@ -23,15 +24,15 @@ function fmdl = remove_unused_nodes( fmdl );
       fmdl.electrode(i).nodes( removed ) = [];
       if isfield(fmdl.electrode(i),'faces')
           fmdl.electrode(i).faces =  remap(nidx, fmdl.electrode(i).faces);
-          removed = any(fmdl.electrode(i).face == 0,2);
+          removed = any(fmdl.electrode(i).faces== 0,2);
           fmdl.electrode(i).faces(removed,:) = [];
           if isempty(fmdl.electrode(i).faces);
-             eidors_msg('Zeros in faces #%d',i,1);
+             eidors_msg('Zeros in electrode #%d faces',i,1);
              keyboard
           end
       else
           if isempty(fmdl.electrode(i).nodes);
-             eidors_msg('Zeros in nodes #%d',i,1);
+             eidors_msg('Zeros in electrode #%d nodes',i,1);
              keyboard
           end
       end

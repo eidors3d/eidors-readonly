@@ -44,7 +44,6 @@ fmdl = remove_unused_nodes(fmdl);
 fmdl = remove_unused_boundary(fmdl);
 if any(fmdl.boundary(:) == 0)
    eidors_msg('WARNING: PROBLEM WITH BOUNDARY',1)
-   keyboard
 end
 for i=1:num_elecs(fmdl)
     zeroface = false;
@@ -189,6 +188,9 @@ function faces = calc_elec_faces(elems,femobj);
       
 
 function do_unit_test
+   clf; do_unit_test_contained_shape(true)
+   clf; do_unit_test_contained_shape(false)
+   return
    clf; subplot(221);
    do_unit_test_2d(true)
    do_unit_test_2d(false)
@@ -278,3 +280,30 @@ function do_unit_test_3d_netgen2(node_elecs_flag)
    sd = intersect(elimnodes,sort(fmdl.boundary,2),'rows');
    unit_test_cmp('cut boundary', size(sd,1),0);
 
+function do_unit_test_contained_shape(node_elecs_flag)
+    splus = [ ' -maxh=10.02; tlo shape;' ...
+       'solid el1 = sphere(1,0,0;0.11); tlo el1;' ...
+       'solid el2 = sphere(0,1,0;0.11); tlo el2;' ...
+       'solid nots = not( shape or el1 or el2);' ...
+       'solid ground_ = sphere(0,0,0;2);' ...
+       'solid ground  = ground_ and nots; tlo ground;' ...
+       'solid mainobj = sphere(0,0,0;3) and not ground_;'];
+    shape = 'solid shape = sphere(0.5,0.0,.5;0.2)';
+    shape = 'solid shape = orthobrick(0.4,-0.1,.4;0.6,0.1,.6)';
+    shape_str = [shape, splus ];
+    fmdl = ng_mk_gen_models(shape_str,[],[],'');
+    fmdl.mat_idx_to_electrode.nodes_electrode = node_elecs_flag;
+    fmdl = mat_idx_to_electrode(fmdl,{1,2,3,5});
+    if node_elecs_flag
+        sizes = [8,61,61,134];
+        for i=1:4; 
+           unit_test_cmp('Contained ', ...
+              size(fmdl.electrode(i).nodes),[1,sizes(i)])
+        end
+    else
+        sizes = [12,118,118,264];
+        for i=1:4; 
+           unit_test_cmp('Contained ', ...
+              size(fmdl.electrode(i).faces),[sizes(i),3])
+        end
+    end
