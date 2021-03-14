@@ -77,7 +77,7 @@ if nargin < 4; extra_ng_code = {'',''}; end
 copt.cache_obj = { ellip_shape, elec_pos, elec_shape, extra_ng_code};
 copt.fstr = 'ng_mk_ellip_models';
 args = {ellip_shape, elec_pos, elec_shape, extra_ng_code};
-copt.args = {args, 'ng.opt'}; % algo cache on ng.opt
+copt.cache_on_ng_opt = true;
 
 fmdl = eidors_cache(@mk_ellip_model,args,copt);
 

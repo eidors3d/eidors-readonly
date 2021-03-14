@@ -99,6 +99,8 @@ function varargout=eidors_cache( command, varargin )
 %        opt.cache_to_disk = 'path/to/cache/dir'
 %            - Save the cached file to disk and reload it when called
 %            - The file is named 'eidors_cache_id????.mat' or opt.fstr,'_id???'
+%        opt.cache_on_ng_opt = true
+%            - Cache also on the contents of the 'ng.opt' file in current working dir
 %
 %   eidors_cache( 'cache_path' )
 %   eidors_cache( 'cache_path', '/path/to/cache/path' )
@@ -509,6 +511,12 @@ function varargout = cache_shorthand(fhandle, varargin)
           cache_str = 'eidors_cache';
        end
    end
+   if ~isfield(opt, 'cache_on_ng_opt')
+       opt.cache_on_ng_opt = false;
+   end
+   if opt.cache_on_ng_opt
+     cache_obj{end+1} = cache_ng_opt_bytes();
+   end
 
    [varargout,obj_id] = eidors_obj('get-cache', cache_obj, fstr );
    if length(varargout)==0 && cache_to_disk % if not in memory cache
@@ -542,6 +550,40 @@ function varargout = cache_shorthand(fhandle, varargin)
       return
    end
    eidors_msg('%s: Using cached value',fstr,level_out);
+
+function bytes = cache_ng_opt_bytes
+   if ~exist('ng.opt');
+      bytes = []; return
+   end
+   fid = fopen('ng.opt','rb');
+   bytes = uint8(fread(fid,[1,inf],'uint8'));
+   fclose(fid);
+
+% replace meshsizefilename with contents
+   mszstr = 'options.meshsizefilename  ';
+   ff = findstr(bytes,mszstr);
+   if isempty(ff); return; end
+   if length(ff)>1 
+      eidors_msg('Unexpected bug. Check ng.opt writer',1);
+   end
+   bytescut(1) = ff(1)+length(mszstr);
+   ff = findstr(bytes(bytescut(1):end),'.msz');
+   if length(ff)==0;
+      eidors_msg('Unexpected bug. Check ng.opt writer',1);
+   end
+   bytescut(2) = bytescut + ff(1) + 2;
+   mszfile = bytes(bytescut(1):bytescut(2));
+   fid = fopen(char(mszfile),'rb');
+   if fid>0
+       bytes2= uint8(fread(fid,[1,inf],'uint8'));
+       fclose(fid);
+   else
+       bytes2 = [];
+       eidors_msg('Warning. no MSZ file %s',mszfile,1);
+   end
+   bytes = [bytes(1:bytescut(1)-1), ...
+            bytes2, ...
+            bytes(bytescut(2)+3)];
 
 function debug_msg(id,name,action)
 global eidors_objects;

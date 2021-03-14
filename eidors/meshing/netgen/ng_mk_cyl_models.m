@@ -88,8 +88,8 @@ if ischar(cyl_shape) && strcmp(cyl_shape,'UNIT_TEST'); do_unit_test; return; end
 if nargin < 4; extra_ng_code = {'',''}; end
 copt.cache_obj = { cyl_shape, elec_pos, elec_shape, extra_ng_code};
 copt.fstr = 'ng_mk_cyl_models';
+copt.cache_on_ng_opt = true;
 args = {cyl_shape, elec_pos, elec_shape, extra_ng_code};
-copt.args = {args, 'ng.opt'}; % algo cache on ng.opt
 
 fmdl = eidors_cache(@mk_cyl_model, args, copt);
 
@@ -488,9 +488,9 @@ function fmdl= do_test_number(tn)
    case 12;
 % Simple 3D cylinder with a ball
     extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'};
-    [fmdl,mat_idx]= ng_mk_cyl_models(3,[0],[],extra); 
-    img= eidors_obj('image','ball'); img.fwd_model= fmdl;
-    img.elem_data(mat_idx{1}) = 1; img.elem_data(mat_idx{2}) = 2;
+    fmdl= ng_mk_cyl_models(3,[0],[],extra); 
+    img= mk_image(fmdl, 1);
+    img.elem_data(fmdl.mat_idx{2}) = 2;
 
    case 13;
 % 3D cylinder with 8 electrodes and cube
@@ -515,7 +515,16 @@ function fmdl= do_test_number(tn)
     ctr = interp_mesh(fmdl); ctr=(ctr(:,1)-0.2).^2 + (ctr(:,2)-0.2).^2;
     img.elem_data = 1 + 0.1*(ctr<0.2^2);
 
-   case 0; fmdl = 16; %%%% RETURN MAXIMUM
+   case 17;
+% Simple 3D cylinder with a ball
+    extra={'ball','solid ball = sphere(0.5,0.5,2;0.4);'};
+    ng_write_opt('MSZBRICK',[-1,1,-1,1,2,3,0.1]);  
+    fmdl= ng_mk_cyl_models(3,[0],[],extra); 
+    delete('ng.opt');
+    img= mk_image(fmdl, 1);
+    img.elem_data(fmdl.mat_idx{2}) = 2;
+
+   case 0; fmdl = 17; %%%% RETURN MAXIMUM
    otherwise;
      error('huh?')
    end

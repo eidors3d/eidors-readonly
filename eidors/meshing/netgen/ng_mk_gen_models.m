@@ -49,9 +49,8 @@ if nargin <= 4; extra_ng_code = ''; end
 if nargin <= 5; mszpoints = []; else
    warning('Use ng_write_opt for mszpoints.');
 end
-args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code, mszpoints, 'ng.opt' };
 args = { shape_str, elec_pos, elec_shape, elec_obj, extra_ng_code, mszpoints };
-copt.cache_obj = {args, 'ng.opt'};
+copt.cache_on_ng_opt = true;
 % Adding ng.opt makes it cache the mtime of the file
 copt.fstr = 'ng_mk_gen_models';
 
