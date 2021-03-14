@@ -148,7 +148,7 @@ void lookupfiletime( hash_context *c, const mxArray *var ) {
   }
 
   #ifdef VERBOSE
-  { char buf[100]; //it'll do for debugging
+  { char buf[300]; //it'll do for debugging
     mxGetString( var, buf, mxGetNumberOfElements(var)+1 );
     mexPrintf("exist('%s') => %3.1f\n", buf, (mxGetPr(lhs[0]))[0] );
   }
