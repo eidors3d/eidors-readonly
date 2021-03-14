@@ -72,6 +72,7 @@ if nargin < 4; extra_ng_code = {'',''}; end
 copt.cache_obj = { shape, elec_pos, elec_shape, extra_ng_code};
 copt.fstr = 'ng_mk_extruded_models';
 args = { shape, elec_pos, elec_shape, extra_ng_code};
+copt.args = {args, 'ng.opt'}; % algo cache on ng.opt
 
 fmdl = eidors_cache(@mk_extruded_model, args, copt);
 

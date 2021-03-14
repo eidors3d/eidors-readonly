@@ -161,6 +161,7 @@ end
 copt.cache_obj = {body_geometry, electrode_geometry};
 copt.fstr = 'ng_mk_geometric_models';
 args = {body_geometry, electrode_geometry};
+copt.args = {args, 'ng.opt'}; % algo cache on ng.opt
 fmdl_mat_idx = eidors_cache(@mk_geometric_models, args, copt);
 
 % Reformat output arguments. 
