@@ -27,12 +27,12 @@ function fmdl = remove_unused_nodes( fmdl );
           removed = any(fmdl.electrode(i).faces== 0,2);
           fmdl.electrode(i).faces(removed,:) = [];
           if isempty(fmdl.electrode(i).faces);
-             eidors_msg('Zeros in electrode #%d faces',i,1);
+             eidors_msg('Zeros in electrode #%d faces. Often this means parts of the model are disconnected.',i,1);
              keyboard
           end
       else
           if isempty(fmdl.electrode(i).nodes);
-             eidors_msg('Zeros in electrode #%d nodes',i,1);
+             eidors_msg('Zeros in electrode #%d nodes. Often this means parts of the model are disconnected.',i,1);
              keyboard
           end
       end
