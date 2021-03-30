@@ -22,19 +22,16 @@ function fmdl = remove_unused_nodes( fmdl );
       fmdl.electrode(i).nodes =  remap(nidx, fmdl.electrode(i).nodes);
       removed = fmdl.electrode(i).nodes == 0;
       fmdl.electrode(i).nodes( removed ) = [];
+      elec_empty = isempty(fmdl.electrode(i).nodes);
       if isfield(fmdl.electrode(i),'faces')
           fmdl.electrode(i).faces =  remap(nidx, fmdl.electrode(i).faces);
           removed = any(fmdl.electrode(i).faces== 0,2);
           fmdl.electrode(i).faces(removed,:) = [];
-          if isempty(fmdl.electrode(i).faces);
-             eidors_msg('Zeros in electrode #%d faces. Often this means parts of the model are disconnected.',i,1);
-             keyboard
-          end
-      else
-          if isempty(fmdl.electrode(i).nodes);
-             eidors_msg('Zeros in electrode #%d nodes. Often this means parts of the model are disconnected.',i,1);
-             keyboard
-          end
+          elec_empty= elec_empty && isempty(fmdl.electrode(i).faces);
+      end
+      if elec_empty
+         eidors_msg('Zeros in electrode #%d nodes and faces. Often this means parts of the model are disconnected.',i,1);
+         keyboard
       end
    end
 %  fmdl.boundary = find_boundary(fmdl);
