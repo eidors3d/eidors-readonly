@@ -81,7 +81,7 @@ if has_gnd_node
    Ignd = s_mat.E(dirichlet_nodes{1},:)*v;
    Irel = Ignd./sum(abs(pp.QQ)); % relative 
    if max(abs(Irel))>1e-6
-      eidors_msg('%4.5f%% of current is flowing through ground node. Check stimulation pattern', max(abs(Irel))*100,1)
+      eidors_msg('%4.5f%% of current is flowing through ground node. Check stimulation pattern', max(abs(Irel))*100,1);
    end
 end
 
