@@ -30,7 +30,7 @@ function inspect_eit_elec_and_data(eit_file, imdl, thresh)
 % VERSION:
 %   1.2.0
 % -------------------------------------------------------------------------
-% (C) 2019-2020 Mark Campbell. License: GPL version 2 or version 3
+% (C) 2019-2021 Mark Campbell. License: GPL version 2 or version 3
 % -------------------------------------------------------------------------
 msel= imdl.fwd_model.meas_select;
 mm  = find(msel);
@@ -85,51 +85,52 @@ ee = badMeas;
 ei = mean(elec_impedance, 2);
 
 % total boundary voltage
-subplot(4,2,1:2);
-    vv = detrend(real(data));
-    xax= (1:size(vv, 2))/ fs;
-    plot(xax, sum(vv(msel,:), 1));
-    ylabel('Voltage (V)')
-    xlabel('Time (s)');
-    title('Total Boundary Voltage (Raw)');
+% subplot(5,2,1:2);
+%     vv = detrend(real(data));
+%     xax= (1:size(vv, 2))/ fs;
+%     plot(xax, sum(vv(msel,:), 1));
+%     ylabel('Voltage (V)')
+%     xlabel('Time (s)');
+%     title('Total Boundary Voltage (Raw)');
 
 % U shapes 
-subplot(424);
-    vk = 1e3 * mean(vv, 2);
-    plot(vk,'k');    % all meas
-    hold on;
-    vk(~msel,:) = NaN;
-    plot(vk,'b');   % selected meas
-    vn = NaN * vk; vn(ee1,:) = vk(ee1,:); % measurements from rejected electrodes
-    plot(vn,'mo');
-    vn = NaN * vk; vn(ee,:) = vk(ee,:); % independently rejected measurements
-    plot(vn,'ro');
-    hold off;
-    box off; 
-    xlim([0,400]);
-    title 'U shapes';
+% subplot(524);
+%     vk = 1e3 * mean(vv, 2);
+%     plot(vk,'k');    % all meas
+%     hold on;
+%     vk(~msel,:) = NaN;
+%     plot(vk,'b');   % selected meas
+%     vn = NaN * vk; vn(ee1,:) = vk(ee1,:); % measurements from rejected electrodes
+%     plot(vn,'mo');
+%     vn = NaN * vk; vn(ee,:) = vk(ee,:); % independently rejected measurements
+%     plot(vn,'ro');
+%     hold off;
+%     box off; 
+%     xlim([0,400]);
+%     title 'U shapes';
 
 % IQ plot
-subplot(4,2,[3,5,7]);
-    % all meas
-    plot(1e3 * data(:, data_samp), 'k+');
+subplot(4,2,[1,3]);%subplot(5,2,[3,5]);
+    plot(1e3 * data(:, data_samp), 'k+'); % all meas
     hold on;
-    % used meas
-    plot(1e3 * data(msel, data_samp), 'b+');
-        
-    ee = mm(ee);
-    plot(1e3 * data(ee,data_samp), 'r+');   % independently rejected measurements
-    
-    ee1= mm(ee1);
-    plot(1e3 * data(ee1,data_samp), 'm+');  % measurements from rejected electrodes (covers rejected meas)
-
+    plot(1e3 * data(msel, data_samp), 'b+'); % used meas
+    plot(1e3 * data(mm(ee1),data_samp), 'm+');  % measurements from rejected electrodes (covers rejected meas)
     hold off; 
     box off;
     axis equal;
-    title 'IQ plot';
+    title 'IQ plot - rejected electrodes';
+subplot(4,2,[5,7]);%subplot(5,2,[7,9]);
+    plot(1e3 * data(:, data_samp), 'k+'); % all meas
+    hold on;
+    plot(1e3 * data(msel, data_samp), 'b+'); % used meas
+    plot(1e3 * data(mm(ee),data_samp), 'r+');   % independently rejected measurements
+    hold off; 
+    box off;
+    axis equal;
+    title 'IQ plot - rejected measurements';
 
 % median contact impedance
-subplot(426);
+subplot(4,2,[2,4]);
     b           = bar(ei,'FaceColor','flat');
     b.CData(:,:)= repmat([0 0 1], 32, 1);
     be          = badElecs;
@@ -142,10 +143,10 @@ subplot(426);
     hold off;
     box off; 
     xlim([0, 33]);
-    title 'Median Elec Z';
+    title 'Median Electrode Impedance';
 
 % Fourier Series
-subplot(428);
+subplot(4,2,[6,8]);
     ll  = size(data, 2);    
     ft  = fft(detrend(data.').', [], 2);
     fax = linspace(0, fs, ll+1); fax(end)=[];
