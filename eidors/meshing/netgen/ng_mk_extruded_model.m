@@ -175,7 +175,18 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
 %             tank_height = shape{1};
 %         end
         if length(shape) > 3
-            tank_maxh = shape{4};
+            maxh = shape{4};
+            tank_maxh = maxh(1);
+            if isfield(tank_shape,'additional_shapes')
+                N_curves = 1 + numel(tank_shape.additional_shapes);            
+                if numel(maxh) == 1
+                    tank_maxh(2:N_curves) = maxh(1);
+                elseif numel(maxh) == N_curves;
+                    tank_maxh = maxh;
+                else
+                    error('length of maxh must either be 1 or equal to the total number of curves');
+                end
+            end
         end
     else
         points = shape;
@@ -192,7 +203,7 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         N = 50;
     end
     points = interpolate(points,N, tank_shape.curve_type);
-    spln_sgmnts = zeros(size(points));
+    spln_sgmnts = zeros(size(points)); % WHY??
     
     if isfield(tank_shape, 'additional_curve_type')
         for i = 1:numel(tank_shape.additional_curve_type)
@@ -241,8 +252,8 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
         % Need some width to let netgen work, but not too much so
         % that it meshes the entire region
         tank_height = tank_shape.size/5; % initial estimate
-        if tank_maxh>0
-            tank_height = min(tank_height,2*tank_maxh);
+        if tank_maxh(1)>0
+            tank_height = min(tank_height,2*tank_maxh(1));
         end
     end
 
@@ -878,7 +889,7 @@ function write_geo_file(geofn, tank_height, tank_shape, ...
         end
     end
     
-    if tank_maxh ~= 0
+    if tank_maxh(1) ~= 0
         fprintf(fid,'tlo trunk -transparent -maxh=%f;\n',tank_maxh);
     else
         fprintf(fid,'tlo trunk -transparent;\n');
@@ -903,11 +914,11 @@ function write_geo_file(geofn, tank_height, tank_shape, ...
 
    
    
-   function write_header(fid,tank_height,tank_shape,maxsz,extra)
-   if maxsz==0; 
+   function write_header(fid,tank_height,tank_shape,maxh,extra)
+   if maxh(1)==0; 
       maxsz = '';
    else
-      maxsz = sprintf('-maxh=%f',maxsz);
+      maxsz = sprintf('-maxh=%f',maxh);
    end
 
    if ~isempty( extra{1} )
@@ -949,6 +960,12 @@ function write_geo_file(geofn, tank_height, tank_shape, ...
        name_curve = sprintf('add_curve%04d',i); 
        write_curve(fid,tank_shape.additional_shapes{i},name_curve);
        name_obj = sprintf('add_obj%04d',i); 
+       if maxh(1+i)==0
+           maxsz = '';
+       else
+           maxsz = sprintf('-maxh=%f',maxh(1+i));
+       end
+       
        fprintf(fid,['solid %s= plane(0,0,%6.2f;0,0,-1)\n' ...
            '      and  plane(0,0,%6.2f;0,0,1)\n' ...
            '      and  extrusion(extrsncurve;%s;0,1,0)'...
@@ -1170,8 +1187,8 @@ vtx(unused_v,:) = [];
 
 %%
 function do_unit_test
-   do_unit_test_basic;
-%  do_unit_test_human_thorax;
+   %do_unit_test_basic;
+ do_unit_test_human_thorax;
 
 
 function do_unit_test_basic;
@@ -1235,4 +1252,5 @@ function do_unit_test_human_thorax
 
  [fmdl, mat_idx] = ng_mk_extruded_model({2,{trunk, heart_lung, heart},1},[16,1,1],[0.1]);
 
+ 
   figure, show_fem( fmdl );
