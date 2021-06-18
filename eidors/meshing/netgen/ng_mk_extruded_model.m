@@ -20,7 +20,9 @@ function [fmdl,mat_idx] = ng_mk_extruded_model(shape, elec_pos, elec_shape, ...
 %                  NOTE: If additional curves are specified, curve_type can
 %                  also be a cell array. Otherwise, curve_type defaults to
 %                  1 for internal shapes.
-%   maxsz       -> max size of mesh elems (default = course mesh)
+%   maxsz       -> max size of mesh elems (default = course mesh). If there
+%                  multiple curves, maxh can be an array specifying the max
+%                  size for each internal object.
 %
 % ELECTRODE POSITIONS:
 %  elec_pos = [n_elecs_per_plane,spacing,z_planes] where spacing is either
