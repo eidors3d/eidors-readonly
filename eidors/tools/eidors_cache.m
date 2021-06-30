@@ -569,7 +569,7 @@ function bytes = cache_ng_opt_bytes
    bytescut(1) = ff(1)+length(mszstr);
    ff = findstr(bytes(bytescut(1):end),'.msz');
    if length(ff)==0;
-      eidors_msg('Unexpected bug. Check ng.opt writer',1);
+      bytes = []; return % empty meshsizefilename. That's OK.
    end
    bytescut(2) = bytescut + ff(1) + 2;
    mszfile = bytes(bytescut(1):bytescut(2));
