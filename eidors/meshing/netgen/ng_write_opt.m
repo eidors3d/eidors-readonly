@@ -64,7 +64,7 @@ if nargin >= 1 && ischar(varargin{1})
 end
 
 % get default options
-opt = default_opt(str{1});
+opt = default_opt(str{:});
 
 if nargs == 0
     usr = struct;
