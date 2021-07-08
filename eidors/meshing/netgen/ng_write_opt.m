@@ -4,14 +4,21 @@ function opt = ng_write_opt(varargin)
 %
 %  NG_WRITE_OPT(OPTSTRUCT) creates uses options as specified in OPTSTRUCT
 %
-%  NG_WRITE_OPT(PATH) copies the file specified in PATH as ng.opt to the
-%  current directory.
-%
 %  NG_WRITE_OPT('sec.option',val,...) offers an alternative interface to
 %  modify specific options
 %
+%  NG_WRITE_OPT(OPTSTR,...) where OPTSTR is one of 'very_coarse', 'coarse',
+%  'moderate', 'fine', and 'very_fine', based on the corresponding defaults
+%  in Netgen 5.0. Any additional inputs modify selected fields of that
+%  default. NG_WRITE_OPT('moderate',...) is equivalent to
+%  NG_WRITE_OPT(...).
+%
 %  OPTSTRUCT = NG_WRITE_OPT(...) returns a struct with the options.
 %  No file is written.
+%
+%  NG_WRITE_OPT(PATH) copies the file specified in PATH as ng.opt to the
+%  current directory.
+%
 % 
 %  Note: some options only take effect when meshoptions.fineness is 6
 %  (custom).
@@ -41,20 +48,32 @@ function opt = ng_write_opt(varargin)
 if nargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST') 
    do_unit_test; return; end
 
-if nargin == 1 && ischar(varargin{1}) % a path
+if nargin == 1 && ischar(varargin{1}) &&  exist(varargin{1},'file') % a path
    copyfile(varargin{1},'ng.opt');
    return
 end
+
+nargs = nargin;
+
+str = {};
+% modify as per user input
+if nargin >= 1 && ischar(varargin{1})
+   str = varargin(1);
+   varargin(1) = [];
+   nargs = nargs - 1;
+end
+
 % get default options
-opt = default_opt;
-if nargin == 0
+opt = default_opt(str{1});
+
+if nargs == 0
     usr = struct;
 end
 % modify as per user input
-if nargin == 1 && isstruct(varargin{1})
+if nargs == 1 && isstruct(varargin{1})
    usr = varargin{1};
 end
-if nargin > 1 % string value pairs
+if nargs > 1 % string value pairs
    usr = process_input(varargin{:}); 
 end
 opt = copy_field(opt,usr);
@@ -107,7 +126,7 @@ function fname = write_tmp_mszfile( mszpoints )
    fname = strrep(fname,'\','/'); % needs unix-style path on windows
    fid=fopen(fname,'w');
    fprintf(fid,'%d\n',n_pts_elecs);
-   for i = 1:size(mszpoints,1);
+   for i = 1:size(mszpoints,1)
       fprintf(fid,'%10f %10f %10f %10f\n', mszpoints(i,:));
    end
    fprintf(fid,'0\n'); % lines
@@ -158,11 +177,29 @@ else
 end
 
 
-function opt = default_opt
+function opt = default_opt(varargin)
+if nargin == 0
+    str = 'moderate';
+else
+    str = varargin{1};
+end
+switch str
+    case 'very_coarse'
+        v = [1, 1, 0.3, 0.7, 0.25, 0.8, 0.2, 0.5, 0.25, 1];
+    case 'coarse'
+        v = [2, 1.5, 0.5, 0.5, 1, 0.35, 1, 0.5, 1.5];
+    case 'moderate'
+        v = [3, 2, 1, 0.3, 1, 1.5, 0.5, 2, 1, 2];
+    case 'fine'
+        v = [4, 3, 2, 0.2, 1.5, 2, 1.5, 3.5, 1.5, 3];
+    case 'very_fine'
+        v = [5, 5, 3, 0.1, 3, 5, 3, 5, 3, 5];
+end
+
 opt.dirname = '.';
 opt.loadgeomtypevar = '"All Geometry types (*.stl,*.stlb,*.step,*.stp,...)"';
 opt.exportfiletype = '"Neutral Format"';
-opt.meshoptions.fineness = 3;
+opt.meshoptions.fineness = v(1);
 opt.meshoptions.firststep = 'ag';
 opt.meshoptions.laststep = 'ov';
 opt.options.localh = 1;
@@ -183,14 +220,14 @@ opt.options.inverttrigs = 0;
 opt.options.autozrefine = 0;
 opt.options.meshsize = 1000;
 opt.options.minmeshsize = 0;
-opt.options.curvaturesafety = 0.2;
-opt.options.segmentsperedge = 1;
+opt.options.curvaturesafety = v(2);
+opt.options.segmentsperedge = v(3);
 opt.options.meshsizefilename = '';
 opt.options.badellimit = 175;
 opt.options.optsteps2d = 3;
 opt.options.optsteps3d = 5;
 opt.options.opterrpow = 2;
-opt.options.grading = 0.3;
+opt.options.grading = v(4);
 opt.options.printmsg = 2;
 opt.geooptions.drawcsg = 1;
 opt.geooptions.detail = 0.001;
@@ -247,23 +284,22 @@ opt.stloptions.chartnumber = 1;
 opt.stloptions.charttrignumber = 1;
 opt.stloptions.chartnumberoffset = 0;
 opt.stloptions.atlasminh = 0.1;
-opt.stloptions.resthsurfcurvfac = 1;
+opt.stloptions.resthsurfcurvfac = v(5);
 opt.stloptions.resthsurfcurvenable = 0;
 opt.stloptions.resthatlasfac = 2;
 opt.stloptions.resthatlasenable = 1;
-opt.stloptions.resthchartdistfac = 1.5;
+opt.stloptions.resthchartdistfac = v(6);
 opt.stloptions.resthchartdistenable = 0;
-opt.stloptions.resthlinelengthfac = 0.5;
+opt.stloptions.resthlinelengthfac = v(7);
 opt.stloptions.resthlinelengthenable = 1;
-opt.stloptions.resthcloseedgefac = 2;
+opt.stloptions.resthcloseedgefac = v(8);
 opt.stloptions.resthcloseedgeenable = 1;
-opt.stloptions.resthedgeanglefac = 1;
+opt.stloptions.resthedgeanglefac = v(9);
 opt.stloptions.resthedgeangleenable = 0;
-opt.stloptions.resthsurfmeshcurvfac = 2;
+opt.stloptions.resthsurfmeshcurvfac = v(10);
 opt.stloptions.resthsurfmeshcurvenable = 0;
 opt.stloptions.recalchopt = 1;
 opt.visoptions.subdivisions = 1;
-
 
 function do_unit_test
 opt.meshoptions.fineness = 6;
