@@ -414,7 +414,7 @@ function [geo_code extra_code extra_param] = parse_geometry(geometry, field_oper
     eidors_msg('@@@ called with (field: "%s", element: "%s").', field_operator_string, element_operator_string, 4);
     
     % Validate that geometry is a non-empty structure.
-    if (~(isstruct(geometry)) || isempty(geometry))
+    if (~isstruct(geometry) || isempty(geometry))
         error('Parameter geometry must be a valid structure.');        
     else
         % Get number of geometries.
@@ -1027,9 +1027,9 @@ function geo_code = parse_geometry_elliptic_cylinder(elliptic_cylinder, operator
             
             if (dot(axis_a(:,i), axis_b(:,i)) ~= 0)
                 error('axis_a and axis_b have to be perpendicular for an elliptic cylinder.');
-            elseif (dot(axis_a(:,i), central_axis) ~= 0)
+            elseif (dot(axis_a(:,i), central_axis(:,i)) ~= 0)
                 error('axis_a and the central axis have to be perpendicular for an elliptic cylinder.');
-            elseif (dot(axis_b(:,i), central_axis) ~= 0)
+            elseif (dot(axis_b(:,i), central_axis(:,i)) ~= 0)
                 error('axis_b and the central axis have to be perpendicular for an elliptic cylinder.');
             end
             
@@ -1434,7 +1434,7 @@ function fmdl = read_vol_file(vol_fn, electrode_extra_param)
     fid = fopen(vol_fn, 'r');
 
     if (fid == -1)
-        dbquerror('Unable to open file %s for reading.', vol_fn);
+        error('Unable to open file %s for reading.', vol_fn);
     end
     
     % Read a first line in vol file.
