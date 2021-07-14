@@ -531,9 +531,15 @@ function out= model_breaths(dd,ii)
   for i=1:dd.n_breaths
      eie = dd.breaths(i,[1,3,2,1]);
      line(dd.tt(eie), dd.CV(eie), 'color',[0,0,0],'LineWidth',2);
+     if rem(i,3)==0
+         inspi = eie(3);
+         text(dd.tt(inspi), dd.CV(inspi)+1, num2str(i), ...
+              'HorizontalAlignment','center');
+     end
   end
   axis tight
   xlim(xlimits);
+%  ylim([45,60]) --- need to do outlier selection
 
   subplot(212);
   ls = linspace(0,1,10); ls = ls/sum(ls)/10;
