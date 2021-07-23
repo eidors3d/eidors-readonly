@@ -52,7 +52,6 @@ if nargin == 1 && ischar(varargin{1}) &&  exist(varargin{1},'file') % a path
    copyfile(varargin{1},'ng.opt');
    return
 end
-<<<<<<< .mine
 
 nargs = nargin;
 
@@ -64,19 +63,6 @@ if nargin >= 1 && ischar(varargin{1}) && ~any(varargin{1} == '.')
    nargs = nargs - 1;
 end
 
-=======
-
-nargs = nargin;
-
-str = {};
-% modify as per user input
-if nargin >= 1 && ischar(varargin{1})
-   str = varargin(1);
-   varargin(1) = [];
-   nargs = nargs - 1;
-end
-
->>>>>>> .r6117
 % get default options
 opt = default_opt(str{:});
 
