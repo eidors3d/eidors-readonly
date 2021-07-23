@@ -25,8 +25,8 @@ stem = strrep(stlfile,'.stl','');
 fid = fopen([stem '.geo'],'w');
 fprintf(fid,'Merge "%s";\n',stlfile);
 fprintf(fid,'Surface Loop(1) = {1};\n');
-fprintf(fid,'Volume(1) = {1};\n');
-fprintf(fid,'Physical Volume(''object'') = {1};\n');
+fprintf(fid,'Volume(2) = {1};\n');
+fprintf(fid,'Physical Volume(3) = {2};\n');
 fprintf(fid,'Mesh.Algorithm3D=4;\n'); %1=delaunay (tetgen) and 4=frontal (netgen)
 fprintf(fid,'Mesh.OptimizeNetgen=1;\n');
 fclose(fid);
