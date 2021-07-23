@@ -119,7 +119,7 @@ function use = nodes_in_bounding_box(M2,M1,th)
 function use = nodes_near_node(nodes,node,th)
    maxlim = node + th;
    minlim = node - th;
-   use = true(length(nodes),1);
+   use = true(size(nodes,1),1);
    for i = 1:size(nodes,2);
       use = use & nodes(:,i) < maxlim(i) & nodes(:,i) > minlim(i);
    end
