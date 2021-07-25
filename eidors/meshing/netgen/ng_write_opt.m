@@ -123,7 +123,10 @@ for i = 1:nargin/2
        ysp= linspace(val(2) - radius, val(2) + radius, npts);
        zsp= linspace(val(3) - radius, val(3) + radius, npts);
        [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
-       s_idx = (xsp.^2 + ysp.^2 + zsp.^2) < radius^2; s_idx = s_idx(:);
+       s_idx = ((xsp-val(1)).^2 + ...
+                (ysp-val(2)).^2 + ...
+                (zsp-val(3)).^2) < radius^2;
+       s_idx = s_idx(:);
        val = [xsp(s_idx),ysp(s_idx),zsp(s_idx), maxh+0*xsp(s_idx)];
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
