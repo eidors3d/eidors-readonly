@@ -35,6 +35,8 @@ function opt = ng_write_opt(varargin)
 %  ng_write_opt('MSZPOINTS', [list of x,y,z,maxh])
 %   or
 %  ng_write_opt('MSZBRICK', [xmin, xmax, ymin, ymax, zmin, zmax, maxh])
+%   or
+%  ng_write_opt('MSZSPHERE', [xctr, yctr, zctr, radius, maxh])
 %
 %  See also CALL_NETGEN
 
@@ -57,7 +59,8 @@ nargs = nargin;
 
 str = {};
 % modify as per user input
-if nargin >= 1 && ischar(varargin{1}) && ~any(varargin{1} == '.')
+if nargs >= 1 && ischar(varargin{1}) && ~any(varargin{1} == '.')  ...
+              && isempty(findstr(varargin{1},'MSZ'))
    str = varargin(1);
    varargin(1) = [];
    nargs = nargs - 1;
@@ -109,6 +112,19 @@ for i = 1:nargin/2
        zsp= linspace(val(5),val(6), zpts);
        [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
        val = [xsp(:),ysp(:),zsp(:), maxh+0*xsp(:)];
+       tmpname = write_tmp_mszfile( val );
+       opt.options.meshsizefilename = tmpname;
+   case 'MSZSPHERE'
+%  ng_write_opt('MSZSPHERE', [xctr, yctr, zctr, radius, maxh])
+       maxh = val(5);
+       radius = val(4);
+       npts= floor(2*radius/maxh)+1;
+       xsp= linspace(val(1) - radius, val(1) + radius, npts);
+       ysp= linspace(val(2) - radius, val(2) + radius, npts);
+       zsp= linspace(val(3) - radius, val(3) + radius, npts);
+       [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
+       s_idx = (xsp.^2 + ysp.^2 + zsp.^2) < radius^2; s_idx = s_idx(:);
+       val = [xsp(s_idx),ysp(s_idx),zsp(s_idx), maxh+0*xsp(s_idx)];
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    otherwise
@@ -199,6 +215,9 @@ switch str
     case 'very_fine'
         % fineness 5
         v = [6, 5.0, 3.0, 0.1, 3.00, 5.0, 3.00, 5.0, 3.00, 5.0];
+    otherwise % use moderate
+        % this is called if some other ng_write_opt is used, like MSZBRICK
+        v = [6, 2.0, 1.0, 0.3, 1.00, 1.5, 0.50, 2.0, 1.00, 2.0];
 end
 
 opt.dirname = '.';
