@@ -7,6 +7,7 @@ function params = eval_GREIT_fig_merit(imgs, xyzr_pt)
 %  params(3,:) = Resolution
 %  params(4,:) = Shape Deformation
 %  params(5,:) = Ringing
+%  params(6,:) = Image Amplitude in ROI (1/4 ampl)
 %
 %  imgs:    a sequence of eidors images of single point targets
 %  xyzr_pt: [x;y;z;radius] of each images point
@@ -24,6 +25,7 @@ N_imgs = size(imgs,3);
 for i= 1:N_imgs
    [xmean,ymean,equiv_circ,qmi,img] = calc_cofg(imgs(:,:,i),map,x,y);
    params(1,i) = calc_amplitude( img );
+   params(6,i) = calc_amplitude( img, qmi );
    params(2,i) = calc_posn_error( qmi, xmean, ymean, xyzr_pt(1:2,i) );
    params(3,i) = calc_resolution( qmi, map );
    params(4,i) = calc_shape_deform( qmi, equiv_circ );
@@ -46,8 +48,12 @@ end
 
 
 
-function ampl = calc_amplitude(img)
-   ampl = sum(img(:));
+function ampl = calc_amplitude(img,qmi)
+   if nargin == 1 
+       ampl = sum(img,'all');
+   else 
+       ampl = sum(img.*qmi,'all');
+   end
 
 function pe   = calc_posn_error(qmi, xmean, ymean, xy)
    % This definition allows + and - PE, but can also give zero in unexpected places
