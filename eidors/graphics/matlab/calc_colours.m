@@ -59,7 +59,7 @@ function [colours,scl_data]= calc_colours(img, set_value, do_colourbar)
 %           colour limit. values more different from ref_level are cropped.
 %           if not specified or clim==[] => no limit
 %   'cmap_type'  Specify special colours (Default 'blue_red')
-%           'blue_red':          default Blue/Red eidors colourmpa
+%           'blue_red':          default Blue/Red eidors colourmap
 %           'jet':               matlab jet colourmap
 %           'jetair':            scaled jet colours
 %           'blue_yellow':       Blue/Yellow colours
