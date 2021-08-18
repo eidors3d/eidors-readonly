@@ -65,6 +65,8 @@ function ver = version_check
             warning(['EIDORS REQUIRES AT LEAST OCTAVE V3.8.0\n' ...
                 'Several functions may not work with your version']);
         end
+        % EIDORS does this a lot, so we remove the warning
+        warning('off','Octave:load-file-in-path') 
     else
         if ver.ver < 7.006
             warning(['EIDORS REQUIRES AT LEAST MATLAB V7.6.\n' ...

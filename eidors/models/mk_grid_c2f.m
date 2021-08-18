@@ -507,7 +507,7 @@ function [fmdl, rmdl, opt, felem_idx] = crop_models(fmdl0,rmdl0,opt, relem_idx)
    
    fface_idx = sum(fmdl0.elem2face(felem_idx,:),1)>0;
    fmdl.elem2face = fmdl0.elem2face(felem_idx,fface_idx);
-   felem_idx_map = felem_idx;
+   felem_idx_map = zeros(size(felem_idx));
    felem_idx_map(felem_idx) = 1:nnz(felem_idx);
    felem_idx_map = [0; felem_idx_map];
    fmdl.face2elem = fmdl0.face2elem(fface_idx,:);
