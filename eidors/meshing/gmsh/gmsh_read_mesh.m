@@ -118,7 +118,7 @@ function n_rows = parse_rows(tline, gmshformat)
    n_rows = sscanf(tline,'%d');
    switch floor(gmshformat)
      case 2; n_rows = n_rows(1);
-     case 4; n_rows = n_rows(2)
+     case 4; n_rows = n_rows(2);
      otherwise; error('cant parse gmsh file of this format');
    end
 end
