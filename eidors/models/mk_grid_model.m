@@ -144,7 +144,7 @@ function cmdl= mk_2d_grid(xvec, yvec);
    cmdl.coarse2fine = sparse(1:e,params,1,e,max(params));
 
 
-function cmdl= mk_3d_grid(xvec, yvec, zvec);
+function cmdl= mk_3d_grid(xvec, yvec, zvec)
    xlen = length(xvec);
    ylen = length(yvec);
    zlen = length(zvec);
@@ -162,15 +162,18 @@ function cmdl= mk_3d_grid(xvec, yvec, zvec);
                  k+ac;  k+ac+1;k+up+1; k+up+ac; ...
                  k+ac+1;k+up+1;k+up+ac;k+up+ac+1];
    elem_frac= reshape(elem_frac, 4,[])';
-
-   row_frac =  [];
+   sz_elem_frac = size(elem_frac);
+   row_frac =  zeros(sz_elem_frac .* [ylen-1,1]);
    for j=0:ylen-2
-      row_frac=  [row_frac; elem_frac + ac*j];
+      idx = (1:sz_elem_frac(1)) + j*sz_elem_frac(1);
+      row_frac(idx,:)=  elem_frac + ac*j;
    end
-
-   cmdl.elems=  [];
+   
+   sz_row_frac = size(row_frac);
+   cmdl.elems=  zeros(sz_row_frac .* [zlen-1,1]);
    for k=0:zlen-2
-      cmdl.elems=  [cmdl.elems; row_frac + up*k];
+      idx = (1:sz_row_frac(1)) + k*sz_row_frac(1);
+      cmdl.elems(idx,:) =  row_frac + up*k;
    end
 
    cmdl.boundary = find_boundary( cmdl.elems);
