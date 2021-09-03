@@ -75,7 +75,7 @@ vh = [];
 if size(levels,2) == 5
    vh = levels(:,4:5);
    levels = levels(:,1:3);
-elseif size(levels)== [1,1]
+elseif numel(levels)== 1 && isnumeric(levels)
    if size(img(1).fwd_model.nodes,2) == 2 % Can't do horiz slices for 2D model
       eidors_msg('Can''t do horizontal slices for 2D model. Showing 2D slice');
       levels= [Inf,Inf,0];
@@ -92,6 +92,10 @@ if do_calc_slices
    rimg= calc_slices( img, levels(:,1:3) );
 else
    rimg= img;
+   if isstruct(levels)
+       img = levels;
+       levels = [];
+   end
 end
 % Eventualy we need to add a filter control to do this -aa'19
 %% This is replaced with calc_slices.filter
