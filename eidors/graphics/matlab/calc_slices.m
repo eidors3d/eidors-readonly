@@ -135,8 +135,10 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np)
       fwd_model.mdl_slice_mapper.npx  = np;
       fwd_model.mdl_slice_mapper.npy  = np;
       fwd_model.mdl_slice_mapper.level= level;
+   elseif ~isfield(fwd_model.mdl_slice_mapper,'level');
+      fwd_model.mdl_slice_mapper.level= level;
    end
-
+   
    nd_interp= mdl_slice_mapper( fwd_model, 'nodeinterp' );
    elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
    [sx,sy]= size(elem_ptr);
