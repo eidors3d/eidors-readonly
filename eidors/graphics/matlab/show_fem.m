@@ -416,9 +416,15 @@ if size(elem_data,2)>1
    warning('backtrace',q.state);
 %    eidors_msg('warning: show_fem only shows first image',1);
 end
-hh= repaint_inho(elem_data(:,1), 'use_global' , ...
-      mdl.nodes, mdl.elems, ...
-      opt.transparency_thresh, img); 
+if 0
+    hh= repaint_inho(elem_data(:,1), 'use_global' , ...
+        mdl.nodes, mdl.elems, ...
+        opt.transparency_thresh, img);
+else
+    hh = paint_inho(elem_data(:,1),mdl.nodes, mdl.elems, ...
+      opt.transparency_thresh, img);
+end
+
 try;
     set(hh,'FaceAlpha',mdl.show_fem.alpha_inhomogeneities);
 end
@@ -634,6 +640,28 @@ function ee= get_boundary( mdl )
        ee = find_boundary( mdl.elems );
    end
 
+function hh = paint_inho(data, nodes, elems, thresh, img)
+    if isempty(thresh)
+        thresh = 1/4;
+    end
+    [colours,scl_data] = calc_colours( data, img, 0);
+    ii = find(abs(scl_data) > thresh & not(isnan(data))); % NaNs are always transparent
+
+    fc = 'flat';
+    if numel(data) == size(nodes,1)
+        ii = all(ismember(elems, ii),2);
+        fc = 'interp';
+    else
+        colours = colours(ii,:);
+        colours = kron(colours,ones(4,1));
+    end
+    idx = [1 2 3; 1 2 4; 1 3 4; 2 3 4]';
+    faces = reshape(elems(ii,idx)',3,[])';
+        
+    hh = patch('Faces',faces,'Vertices',nodes,'facecolor',fc,...
+        'facevertexcdata',colours, 'EdgeColor','none','CDataMapping','direct');
+   
+   
 % Function copied from dev/n_polydorides/
 function hh_=repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);
 %function repaint_inho(mat,mat_ref,vtx,simp, thresh);
@@ -667,9 +695,14 @@ end
 % looks best if eidors_colours.greylev < 0
 [colours,scl_data] = calc_colours( mat, clr_def, 0);
 ii=find( abs(scl_data) > thresh);
+colours= permute(colours(ii,:,:),[2,1,3]);
+if size(scl_data,1) == size(vtx,1)
+    ii = find(all(ismember(simp, ii),2));
+    
+end
 this_x = simp(ii,:);
 
-colours= permute(colours(ii,:,:),[2,1,3]);
+
 ELEM= vtx';
 
 Xs=   zeros(3,length(ii));
@@ -711,6 +744,7 @@ function do_unit_test
    clf
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
+   rng(0)
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
    subplot(4,4,1); show_fem(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
