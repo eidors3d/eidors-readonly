@@ -4,6 +4,10 @@ function hh = show_fem_enhanced(mdl, options)
 % mdl is an EIDORS3D 'model' or 'image' structure
 % hh = handle to the plotted model
 %
+% SHOW_FEM('refresh') repaints the figure in current axis orientation 
+%   (only works if options.edge.significant.viewpoint_dependent.callback 
+%   is true)
+%
 % options may be specified by a list (for compatibility purposes)
 %
 % options specifies a set of options
@@ -70,8 +74,12 @@ switch nargin
     case 0
         error('Insufficient parameters for show_fem');
     case 1
-        if ischar(mdl) && strcmp(mdl,'UNIT_TEST'); 
+        if ischar(mdl) && strcmp(mdl,'UNIT_TEST')
             do_unit_test; 
+            return; 
+        end
+        if ischar(mdl) && strcmp(mdl,'refresh')
+            refresh_current_axis; 
             return; 
         end
         if (isstruct(mdl) && isfield(mdl, 'show_fem'))
@@ -358,9 +366,16 @@ function hh = draw_fem(img, mdl, opts)
     end
     
     if ~isempty(img)
-        if (size(mdl.elems, 2) == 4)
-            triangle_color = calc_colours(mdl.element2sub_element*...
-                                get_img_data(img), img);
+        if (size(mdl.elems, 2) == 4) 
+            img_data = get_img_data(img);
+            if size(img_data,1) == size(mdl.elems,1)
+                triangle_color = calc_colours(mdl.element2sub_element*...
+                                    img_data, img);
+            elseif size(img_data,1) == size(mdl.nodes,1)
+                triangle_color = calc_colours(img_data, img);
+            else
+                error('wrong size of data');
+            end
 
             factor = 3/8;
             
@@ -386,8 +401,13 @@ function hh = draw_fem(img, mdl, opts)
             triangle_alpha = alpha_map3(triangle_color);
             
             % Restore transparency for boundary elements;
-            alpha_idx =  triangle_alpha(mdl.boundary_to_sub_element_idx, :) < 0.5;
-            triangle_alpha(mdl.boundary_to_sub_element_idx(alpha_idx), :) = 0.5;
+            if size(img_data,1) == size(mdl.elems,1)
+                alpha_idx =  triangle_alpha(mdl.boundary_to_sub_element_idx, :) < 0.5;
+                triangle_alpha(mdl.boundary_to_sub_element_idx(alpha_idx), :) = 0.5;
+            else
+                alpha_idx = triangle_alpha(mdl.boundary_node_idx, :) < 0.5;
+                triangle_alpha(mdl.boundary_node_idx(alpha_idx), :) = 0.5;
+            end
         else
             triangle_color = calc_colours(img);
         end
@@ -520,13 +540,15 @@ function hh = draw_triangles(faces, vertices, color_data, alpha_data, ...
         face_color = 'flat';      
     end
     
+    alpha_data_mapping = 'none';
     if (size(alpha_data, 1) == 1)
         alpha_data = ones(size(faces, 1), 1)*alpha_data;
         face_color = 'flat';
     elseif (size(alpha_data, 1) == size(faces, 1))
         face_alpha = 'flat';
     elseif (size(alpha_data, 1) == size(vertices, 1))
-        face_alpha = 'interp';          
+        face_alpha = 'interp';  
+        alpha_data_mapping = 'scaled';  % why is this needed??
     else
         eidors_msg('warning: alpha data and mesh do not match. Showing opaque', 1);
         alpha_data = 1;
@@ -534,7 +556,7 @@ function hh = draw_triangles(faces, vertices, color_data, alpha_data, ...
     end
 
     hh = patch('Faces', faces, 'Vertices', vertices, ...
-               'AlphaDataMapping', 'none', ...
+               'AlphaDataMapping', alpha_data_mapping, ...
                'CDataMapping', 'direct', ...
                'FaceVertexCData', color_data, ...
                'FaceVertexAlphaData', alpha_data, ...
@@ -622,7 +644,11 @@ function mdl = find_sub_elements(mdl)
         mdl.boundary(sorted_ic(diff(sorted_ic) == 0), :) = [];
         boundary_other_node(sorted_ic(diff(sorted_ic) == 0), :) = [];
         mdl.boundary_to_sub_element_idx(sorted_ic(diff(sorted_ic) == 0)) = [];
-      
+
+        % in case we get vertex data we need the boundary nodes
+        mdl.boundary_node_idx  = (unique(mdl.boundary(:)));
+        
+        
         if (size(mdl.boundary, 2) == 3)
             % Compute normal vectors.
             Node1 = mdl.nodes(mdl.boundary(:, 1), :);
@@ -698,45 +724,45 @@ function do_unit_test
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
    img.elem_data= 3*sin(linspace(-2,2,num_elems(img))');
-   subplot(3,4,1); show_fem(img.fwd_model,[0,0,1]) 
+   subplot(3,4,1); show_fem_enhanced(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
 
 if ~ver.isoctave 
    imgn = rmfield(img,'elem_data');
    imgn.node_data= 3*sin(linspace(-5,5,num_nodes(img))');
-   subplot(3,4,9); show_fem(imgn) 
+   subplot(3,4,9); show_fem_enhanced(imgn) 
    title('interpolated node colours');
 end
 
    img2(1) = img; img2(2) = img;
-   subplot(3,4,2); show_fem(img,[1]);
+   subplot(3,4,2); show_fem_enhanced(img,[1]);
    title('colours with legend');
-   subplot(3,4,3); show_fem(img2,[0,1]);
+   subplot(3,4,3); show_fem_enhanced(img2,[0,1]);
    title('colours with legend');
    img.calc_colours.mapped_colour = 0; % USE RGB colours
-   subplot(3,4,4); show_fem(img,[0,1,1]);
+   subplot(3,4,4); show_fem_enhanced(img,[0,1,1]);
    title('RGB colours');
-   subplot(3,4,4); show_fem(img);
+   subplot(3,4,4); show_fem_enhanced(img);
    title('RGB colours');
 
    img.elem_data = [1:10];
-   subplot(3,4,12);show_fem(img); %Should show grey
+   subplot(3,4,12);show_fem_enhanced(img); %Should show grey
    title('error -> show grey');
 
 if ~ver.isoctave
    imgn.calc_colours.mapped_colour = 0; % USE RGB colours
-   subplot(3,4,10);show_fem(imgn,[0,1]) 
+   subplot(3,4,10);show_fem_enhanced(imgn,[0,1]) 
    title('interpolated node colours');
 
 
-   subplot(3,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
+   subplot(3,4,11);hh=show_fem_enhanced(imgn); set(hh,'EdgeColor',[0,0,1]);
    title('with edge colours');
 
 end
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2]));
    img3.elem_data= randn(828,1);                       
-   subplot(3,4,5); show_fem(img3.fwd_model) 
-   subplot(3,4,6); show_fem(img3,[1])
-   subplot(3,4,7); show_fem(img3,[1,1])
-   subplot(3,4,8); show_fem(img3,[1,1,1])
+   subplot(3,4,5); show_fem_enhanced(img3.fwd_model) 
+   subplot(3,4,6); show_fem_enhanced(img3,[1])
+   subplot(3,4,7); show_fem_enhanced(img3,[1,1])
+   subplot(3,4,8); show_fem_enhanced(img3,[1,1,1])
