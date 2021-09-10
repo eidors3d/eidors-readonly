@@ -653,9 +653,14 @@ function hh = paint_inho(data, nodes, elems, thresh, img)
         fc = 'interp';
     else
         colours = colours(ii,:);
-        colours = kron(colours,ones(4,1));
     end
-    idx = [1 2 3; 1 2 4; 1 3 4; 2 3 4]';
+    switch size(elems,2)
+        case 3
+            idx = [1 2 3];
+        case 4
+            idx = [1 2 3; 1 2 4; 1 3 4; 2 3 4]';
+            colours = kron(colours,ones(4,1));
+    end
     faces = reshape(elems(ii,idx)',3,[])';
         
     hh = patch('Faces',faces,'Vertices',nodes,'facecolor',fc,...
