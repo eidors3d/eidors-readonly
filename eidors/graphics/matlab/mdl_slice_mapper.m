@@ -225,11 +225,12 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
     nn=  size(ELEM,1); %Simplex vertices
     ll=  length(endr);
     vol=zeros(ll,nn);
+    xendr = x(endr); yendr = y(endr);
     for i=1:nn
        i1= i; i2= rem(i,nn)+1; i3= rem(i+1,nn)+1;
-       x1= xyz(i1,1)-x(endr); y1= xyz(i1,2)-y(endr); z1= xyz(i1,3);
-       x2= xyz(i2,1)-x(endr); y2= xyz(i2,2)-y(endr); z2= xyz(i2,3);
-       x3= xyz(i3,1)-x(endr); y3= xyz(i3,2)-y(endr); z3= xyz(i3,3);
+       x1= xyz(i1,1)-xendr; y1= xyz(i1,2)-yendr; z1= xyz(i1,3);
+       x2= xyz(i2,1)-xendr; y2= xyz(i2,2)-yendr; z2= xyz(i2,3);
+       x3= xyz(i3,1)-xendr; y3= xyz(i3,2)-yendr; z3= xyz(i3,3);
        vol(:,i)= x1.*y2.*z3 - x1.*y3.*z2 - x2.*y1.*z3 + ...
                  x3.*y1.*z2 + x2.*y3.*z1 - x3.*y2.*z1;
     end
