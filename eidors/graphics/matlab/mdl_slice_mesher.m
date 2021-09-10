@@ -231,8 +231,9 @@ try
       nmdl.electrode(i).nodes = find(electrode_node == i);
    end
 end
-
-out.uels = uels;
+out.elem_map = false(size(mdl.elems,1),1);
+out.elem_map(uels) = true;
+out.node_map = n2n;
 out.els  = els;
 out.nn   = nn;
 
@@ -245,30 +246,27 @@ end
 
 img_data = get_img_data(img);
 if size(img_data,1) == num_nodes(img.fwd_model)
-    nimg.node_data = (img_data' * n2n)';
+    nimg.node_data = n2n' * img_data;
     nimg = rmfield(nimg, 'elem_data');
 else
-    nimg.elem_data = (img_data' * f2c)';
+    nimg.elem_data = f2c' * img_data;
 end
 try
    nimg.calc_colours = img.calc_colours;
 end
 
 
-function out = draw_patch(in, nmdl, elem_data, varargin)
+function out = draw_patch(in, nmdl, img_data, varargin)
 
-uels = in.uels;
+
 els  = in.els;
 nn   = in.nn;
 nodes = nmdl.nodes;
-
-img.elem_data = elem_data;
+uels = find(in.elem_map);
 
 out.Vertices = nodes;
 out.Faces    = NaN(length(uels),4);
-ed = zeros(length(uels),1);
 
-% show_fem(nimg);
 for i = 1:length(uels)
     idx = els == uels(i);
     id = find(idx);
@@ -280,18 +278,27 @@ for i = 1:length(uels)
             id(2:3) = id([3 2]);
         end
     end
-%     patch(nodes(nn(id),1),nodes(nn(id),2),nodes(nn(id),3),img.elem_data(uels(i)));
-    out.Faces(i,1:length(id)) = nn(id);
-    ed(i) = img.elem_data(uels(i));
+    out.Faces(i,1:length(id)) = nn(id);   
 end
-[out.FaceVertexCData scl_data] = calc_colours(ed,varargin{:});
+switch length(img_data)
+    case size(in.elem_map,1)
+        data = img_data(uels);
+        out.FaceColor = 'flat';
+    case size(in.node_map,1)
+        data = in.node_map' * img_data ;
+        out.FaceColor = 'interp';
+    otherwise
+        error('wrong size of data');
+end
+[out.FaceVertexCData, scl_data] = calc_colours(data,varargin{:});
 try
    out.FaceVertexAlphaData = double(abs(scl_data) > varargin{1}.calc_colours.transparency_thresh);
    out.FaceAlpha = 'flat';
 end
-out.FaceColor = 'flat';
+
 out.CDataMapping = 'direct';
 % colormap(calc_colours('colourmap'));
+
 
 
 function res = intersection_test(A,B,C,D)
