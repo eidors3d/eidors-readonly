@@ -28,13 +28,12 @@ function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 % See also: SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, CROP_MODEL,
 %           CALC_COLOURS. PATCH
 
-% (C) 2012-2015 Bartlomiej Grychtol. 
+% (C) 2012-2021 Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
 % $Id$
 
 % TODO: 
 %  1. More intuitive cut plane specification
-%  2. Support node_data
 
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
@@ -60,8 +59,8 @@ end
 opt.fstr      = 'mdl_slice_mesher';
 opt.log_level = 4;
 
-[nmdl f2c p_struct] = eidors_cache(@do_mdl_slice_mesher,{fmdl, level},opt);
-nimg = build_image(nmdl, f2c, img);
+[nmdl, f2c, n2n, p_struct] = eidors_cache(@do_mdl_slice_mesher,{fmdl, level},opt);
+nimg = build_image(nmdl, f2c, n2n, img);
 
 switch nargout
    case 2
@@ -93,7 +92,7 @@ function fmdl = extrude_3d_if_reqd( fmdl );
                  ee(:,[1,2,3,2]) + oE*[1,0,0,1];
                  ee(:,[1,2,3,3]) + oE*[1,1,0,1]];
 
-function [nmdl f2c out] = do_mdl_slice_mesher(fmdl,level)
+function [nmdl, f2c, n2n, out] = do_mdl_slice_mesher(fmdl,level)
 
 mdl = fmdl;
 opt.edge2elem = true;
@@ -123,6 +122,9 @@ t = -nodedist(edges(idx,1))./dist;
 % new nodes along the edges
 nodes = mdl.nodes(edges(idx,1),:) + ...
     repmat(t,1,3).*(mdl.nodes(edges(idx,2),:) - mdl.nodes(edges(idx,1),:));
+
+n2n = sparse(edges(idx,:),uint32((1:length(t))' * ones(1,2)),[1-t,t],size(mdl.nodes,1),size(nodes,1));
+
 % nn indexes the just-created nodes, els indexes elements
 if any(idx)
     [nn els] = find(edge2elem(idx,:));
@@ -133,9 +135,10 @@ els_edge = els;
 
 electrode_node = e_edges(idx);
 %% crossed nodes
-idx = nodeval == 0;
+idx = find(nodeval == 0);
 ln = length(nodes); %store the size
 nodes = [nodes; mdl.nodes(idx,:)]; % add the crossed nodes to the new model
+n2n = [n2n, sparse(idx,(1:length(idx)),1,size(mdl.nodes,1),length(idx))];
 electrode_node = [electrode_node; e_nodes(idx)];
 % nnn indexes mdl.nodes(idx), eee indexes mdl.elems
 [nnn eee] = find(mdl.node2elem(idx,:));
@@ -234,12 +237,19 @@ out.els  = els;
 out.nn   = nn;
 
 
-function nimg = build_image(nmdl, f2c, img)
+function nimg = build_image(nmdl, f2c, n2n, img)
 nimg = mk_image(nmdl,1);
 if isempty(nimg.elem_data) % plane doesn't cut model
     return
 end
-nimg.elem_data = (get_img_data(img)' * f2c)';
+
+img_data = get_img_data(img);
+if size(img_data,1) == num_nodes(img.fwd_model)
+    nimg.node_data = (img_data' * n2n)';
+    nimg = rmfield(nimg, 'elem_data');
+else
+    nimg.elem_data = (img_data' * f2c)';
+end
 try
    nimg.calc_colours = img.calc_colours;
 end
