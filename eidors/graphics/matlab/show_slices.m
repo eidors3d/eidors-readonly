@@ -21,6 +21,7 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.levels (same as above);
 %   img.show_slices.img_cols = number of columns in image
 %   img.show_slices.sep = number of pixels between the individual images
+%   img.show_slices.do_colourbar = draw a colourbar (via calc_colours)
 %   img.calc_colours.npoints = pixel width/height to map to
 %   img.get_img_data.frame_select = which frames of image to display
 %   img.show_slices.axes_msm = use mdl_slice_mapper for x,y axes
@@ -41,7 +42,7 @@ function out_img= show_slices( img, levels )
 %   rimg = calc_slices(img,levels); 
 %   rimg = calc_colours(rimg,img); image(rimg);
 %
-% See also: CALC_SLICES, MK_MOSAIC
+% See also: CALC_SLICES, MK_MOSAIC, CALC_COLOURS
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -131,6 +132,12 @@ else
    msm = img.fwd_model.mdl_slice_mapper;
    image(msm.x_pts, msm.y_pts, out_img);
    set(gca,'Ydir','normal');
+end
+
+do_colourbar = false;
+try do_colourbar = img.show_slices.do_colourbar; end
+if do_colourbar
+    calc_colours( r_img, img, 1);
 end
 
 % Do a contour plot?
