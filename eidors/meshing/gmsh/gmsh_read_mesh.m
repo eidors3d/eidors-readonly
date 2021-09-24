@@ -47,8 +47,8 @@ while 1
 end
 
 % look up nodes for each of phys_names
-if ~isempty(phys_names)
-    assert(~isempty(entities), 'expected $Entities section (GMSH format 4.1)');
+if ~isempty(phys_names) & (gmshformat >= 4.0)
+    assert(~isempty(entities), 'expected $Entities section (GMSH format 4)');
     for i = 1:length(phys_names)
         phys_tag = phys_names(i).tag;
         dim = phys_names(i).dim;
@@ -58,7 +58,7 @@ if ~isempty(phys_names)
         phys_names(i).nodes = cat(1,elements(tmpelements).simp);
         for j = tmpelements(:)'
             assert(length(elements(j).phys_tag) > 0, ...
-                'GMSH format v4.1 mesh volume elements can only have one $PhysicalName when imported into EIDORS');
+                'GMSH format v4 mesh volume elements can only have one $PhysicalName when imported into EIDORS');
             elements(j).phys_tag = phys_tag;
         end
     end
@@ -181,15 +181,12 @@ function elements = parse_entities( fid, gmshformat )
     switch floor(gmshformat)
       case 2; warning('ignoring $Entities$ for GMSH v2 file');
       case 4;
-          if(gmshformat == 4.0) % skip $Entities for v4.0
-              return
-          end
-          elements = parse_v4_1_entities(fid);
+          elements = parse_v4_entities(fid, gmshformat);
       otherwise error('cant parse this file type');
     end
  end
 
-function entities = parse_v4_1_entities(fid)
+function entities = parse_v4_entities(fid, gmshformat)
 % http://gmsh.info/doc/texinfo/gmsh.html#MSH-file-format
 % $Entities
 %  numPoints(size_t) numCurves(size_t)
@@ -375,7 +372,25 @@ function do_unit_test
    [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(tmpnam);
     unit_test_cmp('v2 vtx ',vtx(2:3,:),[1,0;-1,0])
     unit_test_cmp('v2 simp',simp(2:3,:),[2,4,15; 14,17,19]);
-    
+
+   selfdir = fileparts(which('gmsh_read_mesh'));
+   vers = {'2.2', '4.0', '4.1'};
+   for ver = vers(:)'
+       ver = ver{1};
+       [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = ...
+           gmsh_read_mesh( fullfile(selfdir, ['box-' ver '.msh']) );
+       unit_test_cmp(['2d v' ver ' vtx '],vtx,[0,0;1,0;1,1;0,1;0.5,0.5])
+       unit_test_cmp(['2d v' ver ' simp'],simp,[2,5,1;1,5,4;3,5,2;,4,5,3]);
+       unit_test_cmp(['2d v' ver ' phys'],{phys_names(:).name},{'elec#1','elec#2','main'});
+
+       [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = ...
+           gmsh_read_mesh( fullfile(selfdir, ['cube-' ver '.msh']) );
+       unit_test_cmp(['3d v' ver ' vtx '],vtx([1,2,13,end],:),[0,0,1;0,0,0;,0.5,0.5,0;0.5,0.5,1])
+       unit_test_cmp(['3d v' ver ' simp'],simp([1,2,23,end],:), ...
+           [10,11,12,13;9,12,14,11;12,14,10,7;13,10,11,6]);
+       unit_test_cmp(['3d v' ver ' phys'],{phys_names(:).name},{'elec#1','elec#2','main'});
+   end
+
 end
 
 % Example of gmsh v4 file % TODO - this has changed slightly in 4.1
