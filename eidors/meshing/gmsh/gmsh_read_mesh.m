@@ -16,7 +16,7 @@ function [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names,entities] = gmsh_read_mesh(f
 %              .name  = name (string)
 %              .tag   = physical tag
 %              .nodes = N-x-dim array of indices into vtx
-% 
+%
 % This mostly works on GMSH v2. A very basic GMSH v4 reader is now
 % included.
 
@@ -47,19 +47,29 @@ while 1
 end
 
 % look up nodes for each of phys_names
-if ~isempty(phys_names) & (gmshformat >= 4.0)
-    assert(~isempty(entities), 'expected $Entities section (GMSH format 4)');
-    for i = 1:length(phys_names)
-        phys_tag = phys_names(i).tag;
-        dim = phys_names(i).dim;
-        tmpentities = find(arrayfun(@(x) any(x.phys_tag == phys_tag), entities));
-        tags = cat(1,entities(tmpentities).entity_tag);
-        tmpelements = find(arrayfun(@(x) and(any(x.entity_tag == tags), (x.dim == dim)), elements));
-        phys_names(i).nodes = cat(1,elements(tmpelements).simp);
-        for j = tmpelements(:)'
-            assert(length(elements(j).phys_tag) > 0, ...
-                'GMSH format v4 mesh volume elements can only have one $PhysicalName when imported into EIDORS');
-            elements(j).phys_tag = phys_tag;
+if ~isempty(phys_names)
+    if (gmshformat >= 4.0)
+        assert(~isempty(entities), 'expected $Entities section (GMSH format 4)');
+        for i = 1:length(phys_names)
+            phys_tag = phys_names(i).tag;
+            dim = phys_names(i).dim;
+            tmpentities = find(arrayfun(@(x) any(x.phys_tag == phys_tag), entities));
+            tags = cat(1,entities(tmpentities).entity_tag);
+            tmpelements = find(arrayfun(@(x) and(any(x.entity_tag == tags), (x.dim == dim)), elements));
+            phys_names(i).nodes = cat(1,elements(tmpelements).simp);
+            for j = tmpelements(:)'
+                assert(length(elements(j).phys_tag) > 0, ...
+                    'GMSH format v4 mesh volume elements can only have one $PhysicalName when imported into EIDORS');
+                elements(j).phys_tag = phys_tag;
+            end
+        end
+    else % GMSH 2.0 doesn't have Entities
+        assert(isempty(entities), 'unexpected $Entities section (GMSH format 2)');
+        for i = 1:length(phys_names)
+            dim = phys_names(i).dim;
+            tag = phys_names(i).tag;
+            tmpelements = find(arrayfun(@(x) and(any(x.phys_tag == tag), (x.dim == dim)), elements));
+            phys_names(i).nodes = cat(1,elements(tmpelements).simp);
         end
     end
 end
@@ -69,7 +79,7 @@ bc = [];
 mat_ind = [];
 
 % Select 2d vs 3d model by checking if Z is all the same
-if length( unique( nodes(:,4) ) ) > 1 
+if length( unique( nodes(:,4) ) ) > 1
     vtx = nodes(:,2:4);
     % Type 2: 3-node triangle
     tri = find(arrayfun(@(x)x.type==2,elements));
@@ -77,13 +87,13 @@ if length( unique( nodes(:,4) ) ) > 1
     tet = find(arrayfun(@(x)x.type==4,elements));
     simp = cat(1,elements(tet).simp);
     srf = cat(1,elements(tri).simp);
-    mat_ind = parse_mat_ind(elements(tet), gmshformat);
+    mat_ind = cat(1,elements(tet).phys_tag);
 else
     vtx = nodes(:,2:3);
     tri = find(arrayfun(@(x)x.type==2,elements));
     simp = cat(1,elements(tri).simp);
     srf = [];
-    mat_ind = parse_mat_ind(elements(tri), gmshformat);
+    mat_ind = cat(1,elements(tri).phys_tag);
 end
 
 elemtags = cat(1,elements.phys_tag);
@@ -97,7 +107,7 @@ function mat = get_lines_with_nodes( fid, gmshformat )
     % Version 2 Line Format:
     % node-number x-coord y-coord z-coord
     % Version 4 Line Format: (not always like this)
-    % node-number 
+    % node-number
     % x-coord y-coord z-coord
 	case 2; mat= fscanf(fid,'%f',[4,n_rows])';
 	case 4;
@@ -288,7 +298,7 @@ function elements = parse_v4_elements(fid,tline,gmshformat)
     n_elems = bl(2);
     e_block = 0;
     tline = fgetl(fid);
-    while ~strcmp(tline, '$EndElements')  
+    while ~strcmp(tline, '$EndElements')
         bl = sscanf(tline, '%d')'; % Get the line info
         if e_block == 0
             n_blocks = n_blocks - 1;
@@ -311,7 +321,7 @@ function elements = parse_v4_elements(fid,tline,gmshformat)
             elements(bl(1)).simp = bl(2:end);
         end
         tline = fgetl(fid);
-    end   
+    end
     tline = fgetl(fid); % get the EndElements
     assert(n_elems == 0, 'missing Elements from GMSH 4 file');
     assert(n_blocks == 0, 'missing Element/blocks from GMSH 4 file');
@@ -324,13 +334,12 @@ elements(n_rows).simp = [];
 elements(n_rows).phys_tag = [];
 elements(n_rows).geom_tag = [];
 elements(n_rows).type = [];
+elements(n_rows).dim = [];
 
 for i = 1:n_rows
     tline = fgetl(fid);
     n = sscanf(tline, '%d')';
-%     nsz = size(elements,2)+1;
     elements(i).simp = n(n(3) + 4:end);
-    % 
     elements(i).type = n(2);
     if n(3) > 0 % get tags if they exist
         % By default, first tag is number of parent physical entity
@@ -340,19 +349,12 @@ for i = 1:n_rows
         tags = n(4:3+n(3));
         if length(tags) >= 1
             elements(i).phys_tag = tags(1);
+            elements(i).dim = length(elements(i).simp) - 1;
             if length(tags) >= 2
                 elements(i).geom_tag = tags(2);
             end
         end
     end
-end
-end
-
-function mat_ind = parse_mat_ind(tet_elements, gmshformat)
-switch floor(gmshformat)
-    case 2; mat_ind= cat(1,tet_elements.geom_tag);
-    case 4; mat_ind= cat(1,tet_elements.phys_tag);
-    otherwise; error('cant parse gmsh file of this format');
 end
 end
 
