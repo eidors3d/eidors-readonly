@@ -14,11 +14,11 @@ function [fwd_mdl, mat_indices]= ...
 %  z_contact:         vector or scalar electrode contact impedance
 %
 %  fwd_mdl:           eidors format fwd_model
-%  mat_indices:       cell array of material indices from eidors 
+%  mat_indices:       cell array of element indices, per material
 
 % Gmsh mesher for EIDORS was based on Netgen interface.
 % (C) 2009 Bartosz Sawicki. License: GPL version 2 or version 3
-% Modified by James Snyder & Bartlomiej Grychtol
+% Modified by James Snyder, Bartlomiej Grychtol, Alistair Boyle
 
 if isempty(name); 
    name = ['fwd_mdl based on ', vol_filename];
@@ -41,12 +41,15 @@ end
 [srf,vtx,fc,bc,simp,edg,mat_ind,phys_names] = gmsh_read_mesh(vol_filename);
 fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
                              stim_pattern, eprefix, z_contact, fc,phys_names);
-mat_indices= mk_mat_indices( mat_ind);
+[mat_indices,mat_names] = mk_mat_indices( mat_ind, phys_names);
 if isempty(srf)
    fwd_mdl.boundary = find_boundary(fwd_mdl);
 end
 
 fwd_mdl.mat_idx = mat_indices;
+if length(mat_names) > 0
+    fwd_mdl.mat_names = mat_names;
+end
 
 % build fwd_model structure
 function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
@@ -76,7 +79,7 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
 
 % Output cell array of indices into each material type
 %   array order is sorted by length of material type
-function mat_indices= mk_mat_indices( mat_ind);
+function [mat_indices,mat_names]= mk_mat_indices(mat_ind,phys_names);
     % find length of mat_indices 
     % test example: mat_ind=[10 12 14 14 12 12 14 12];
     sort_mi= sort(mat_ind(:));
@@ -88,6 +91,18 @@ function mat_indices= mk_mat_indices( mat_ind);
     for i= 1:l_idxs;
         mat_idx_i= sort_mi(find_mi(idxs(i)));
         mat_indices{i}= find(mat_ind == mat_idx_i);
+    end
+    mat_names = {};
+    if length(phys_names) > 0
+        phys_dims = max(cat(1,phys_names(:).dim));
+        dim = max(phys_dims);
+        mat_names = cell(1, l_idxs);
+        for i = 1:l_idxs
+            tag = idxs(i);
+            idx = find(arrayfun(@(x) and((x.tag == tag), (x.dim == dim)), phys_names));
+            assert(length(idx) == 1, 'missing physical name for tag');
+            mat_names{i} = phys_names(idx).name;
+        end
     end
 
 % Assumes that electrodes are numbered starting at 1, with prefix provided
