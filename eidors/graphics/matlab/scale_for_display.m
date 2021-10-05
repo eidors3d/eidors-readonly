@@ -57,13 +57,13 @@ function [elem_data,ref_lev,max_scale] = scale_for_display( elem_data, pp)
 
    elem_data = elem_data - ref_lev;
 
-   max_scale = max(abs(elem_data(:))) + eps;
-
    switch component;
       case 'real'; elem_data = real(elem_data);
       case 'imag'; elem_data = imag(elem_data);
       otherwise;   error('specified component not real or imag');
    end
+   
+   max_scale = max(abs(elem_data(:))) + eps;
 
    % Crop output to the colour limit
    if ~isempty(clim)
