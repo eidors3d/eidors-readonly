@@ -2,7 +2,26 @@ Plan for 3.11
  - Speed up / clean up _higher_order code
  - Fix _higher_order to handle faces-type electrodes
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
-
+ - Refactor fmdl.mdl_slice_mesher.level.rotate/centre
+	- central function to handle levels:
+		- scalar
+		- 1 x 3
+		- N x 3
+		- struct('rotate','center', 'n')
+	- affected functions:
+		calc_slices
+		mdl_slice_mapper
+		mdl_slice_mesher
+		show_slices
+		show_slices_move
+		show_3d_slices
+		show_current
+		mk_pixel_slice
+		mk_grid_model
+		mk_voxel_volume
+		calc_image_SNR
+ - merge meshes speed-up/refactor (Bartek)
+ 
 Plan for 3.9.10
  - fix direction in emphasize_electrode_text
  + Add internal nodes functions
