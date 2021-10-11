@@ -110,7 +110,7 @@ hh = draw_all(img, mdl, opts);
 if (opts.edge.significant.viewpoint_dependent.callback)
     if ~exist('OCTAVE_VERSION'); %octave's not compativble (4.4.1)
     h3d = rotate3d;
-    set(gca, 'UserData', struct('name', 'show_fem_data', 'img', img, 'mdl', mdl, 'opts', opts));
+    set(gca, 'UserData', struct('name', 'show_fem_data', 'img', img, 'mdl', mdl, 'opts', opts, 'handles', hh));
     set(h3d, 'ActionPostCallback' , @refresh_current_axis)
     end
 end
@@ -258,8 +258,8 @@ if (all(isfield(UserData, {'name', 'img', 'mdl', 'opts'})) && ...
     if (az ~= UserData.opts.viewpoint.az || el ~= UserData.opts.viewpoint.el)
         UserData.opts.viewpoint.az = az;
         UserData.opts.viewpoint.el = el;
-        cla;
-        draw_all(UserData.img, UserData.mdl, UserData.opts);
+        delete(UserData.handles);
+        UserData.handles = draw_all(UserData.img, UserData.mdl, UserData.opts);
         set(gca, 'UserData', UserData);
     end
 end
@@ -270,12 +270,14 @@ function hh = draw_all(img, mdl, opts)
 
     % Number elements if necessary.
     if (opts.element.number.show)
-        draw_numbers(interp_mesh(mdl), opts.element.number);
+        h= draw_numbers(interp_mesh(mdl), opts.element.number);
+        hh = [hh; h];
     end
 
     % Number nodes if necessary.
     if (opts.node.number.show)
-        draw_numbers(mdl.nodes, opts.node.number);
+        h = draw_numbers(mdl.nodes, opts.node.number);
+        hh = [hh; h];
     end
 
     % Number electrodes if necessary.
@@ -467,12 +469,14 @@ function hh = draw_fem(img, mdl, opts)
 
     % Draw edges if necessary
     if (~isempty(edge_edges))
-        draw_edges(edge_edges, mdl.nodes, edge_width, edge_color);
+        h = draw_edges(edge_edges, mdl.nodes, edge_width, edge_color);
+        hh = [hh; h];
     end
                   
     % Draw markers if necessary.
     if (~isempty(marker_position))
-        draw_markers(marker_position, marker_color, 9);
+        h = draw_markers(marker_position, marker_color, 9);
+        hh = [hh; h];
     end
 
     if opts.colorbar.show && ~isempty( img )
@@ -481,8 +485,8 @@ function hh = draw_fem(img, mdl, opts)
 %       set(gca,'position',psave); %%% Reset axes after colourbar and move
     end
     
-function draw_numbers(positions, opts)
-    text(positions(:,1), positions(:,2), positions(:,3), ...
+function hh = draw_numbers(positions, opts)
+    hh = text(positions(:,1), positions(:,2), positions(:,3), ...
         arrayfun(@(x){int2str(x)}, 1:size(positions, 1)), ...
         'HorizontalAlignment', 'center', ...
         'VerticalAlignment',   'middle', ...
@@ -506,7 +510,8 @@ function hh = draw_markers(points, colour, marker_size)
         
 function hh = draw_edges(edges, vertices, width_data, color_data)
     [unique_width_color_data, unused, width_color_idx] = ... 
-                                   unique([width_data color_data], 'rows');                            
+                                   unique([width_data color_data], 'rows'); 
+    hh = [];
     for i = 1:size(unique_width_color_data, 1)
         if (unique_width_color_data(i, 1) > 0)
             edge_idx = (width_color_idx == i);
@@ -517,10 +522,11 @@ function hh = draw_edges(edges, vertices, width_data, color_data)
                                            vertices(edges(edge_idx, 2), :);
             points_list(3:3:3*size(edges(edge_idx, :), 1), :) = ...
                                        nan(size(edges(edge_idx, :), 1), 3);
-            hh = line(points_list(:, 1), points_list(:, 2), ...
+            h = line(points_list(:, 1), points_list(:, 2), ...
                       points_list(:, 3), 'LineWidth', ...
                       unique_width_color_data(i, 1), 'LineStyle', '-', ...
                       'Color', unique_width_color_data(i, 2:end));
+            hh = [hh; h];
         end
     end
 
