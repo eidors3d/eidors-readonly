@@ -60,7 +60,7 @@ nargs = nargin;
 str = {};
 % modify as per user input
 if nargs >= 1 && ischar(varargin{1}) && ~any(varargin{1} == '.')  ...
-              && isempty(findstr(varargin{1},'MSZ'))
+              && isempty(strfind(varargin{1},'MSZ'))
    str = varargin(1);
    varargin(1) = [];
    nargs = nargs - 1;
@@ -180,7 +180,9 @@ fclose(fid);
 % recurses over fields and prints to file
 function write_field(fid,s,str)
 if isstruct(s)
-   if ~isempty(str)
+   if isempty(str)
+      str = '';
+   else
       str = [str '.'];
    end
    flds = fieldnames(s);
