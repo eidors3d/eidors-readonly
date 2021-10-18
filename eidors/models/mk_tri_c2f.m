@@ -229,7 +229,7 @@ function c2f = do_mk_tri_c2f(fmdl,rmdl,opt)
    c2f = c2f + bsxfun(@times, sparse(rtri_in_ftri), get_elem_volume(rmdl))';
    
    % normalize to fine volume
-   vol = get_elem_volume(fmdl);
+   vol = get_elem_volume(fmdl,-inf);
    c2f = bsxfun(@rdivide,c2f,vol);
    
    % count identical triangles just once
