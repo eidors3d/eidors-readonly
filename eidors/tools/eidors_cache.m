@@ -556,18 +556,18 @@ function bytes = cache_ng_opt_bytes
       bytes = []; return
    end
    fid = fopen('ng.opt','rb');
-   bytes = uint8(fread(fid,[1,inf],'uint8'));
+   bytes = char(fread(fid,[1,inf],'uint8'));
    fclose(fid);
 
 % replace meshsizefilename with contents
    mszstr = 'options.meshsizefilename  ';
-   ff = findstr(bytes,mszstr);
+   ff = strfind(bytes,mszstr);
    if isempty(ff); return; end
    if length(ff)>1 
       eidors_msg('Unexpected bug. Check ng.opt writer',1);
    end
    bytescut(1) = ff(1)+length(mszstr);
-   ff = findstr(bytes(bytescut(1):end),'.msz');
+   ff = strfind(bytes(bytescut(1):end),'.msz');
    if length(ff)==0;
       bytes = []; return % empty meshsizefilename. That's OK.
    end
@@ -575,10 +575,10 @@ function bytes = cache_ng_opt_bytes
    mszfile = bytes(bytescut(1):bytescut(2));
    fid = fopen(char(mszfile),'rb');
    if fid>0
-       bytes2= uint8(fread(fid,[1,inf],'uint8'));
+       bytes2= char(fread(fid,[1,inf],'uint8'));
        fclose(fid);
    else
-       bytes2 = [];
+       bytes2 = '';
        eidors_msg('Warning. no MSZ file %s',mszfile,1);
    end
    bytes = [bytes(1:bytescut(1)-1), ...
