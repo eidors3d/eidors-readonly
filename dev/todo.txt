@@ -2,6 +2,12 @@ Plan for 3.11
  - Speed up / clean up _higher_order code
  - Fix _higher_order to handle faces-type electrodes
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
+ - MAYBE?? precalculate line 77 of mdl_slice_mapper => interp_mesh 
+ - new function: calc_volumes which calculates elems => volumes or nodes => volumes
+ - new function low level: interp_points(img, xyz_points) use point_in_tet
+ - refactor the point_to_tet part of mk_tet_c2f
+ - Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
+
  - Refactor fmdl.mdl_slice_mesher.level.rotate/centre
 	- central function to handle levels:
 		- scalar
@@ -22,7 +28,8 @@ Plan for 3.11
 		calc_image_SNR
  - merge meshes speed-up/refactor (Bartek)
  
-Plan for 3.9.10
+
+Plan for 3.10
  - fix direction in emphasize_electrode_text
  + Add internal nodes functions
  + Add direct control of electrode surf
