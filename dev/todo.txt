@@ -7,6 +7,8 @@ Plan for 3.11
  - new function low level: interp_points(img, xyz_points) use point_in_tet
  - refactor the point_to_tet part of mk_tet_c2f
  - Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
+ - test netgen 6.2 for linux and windows
+ - include netgen 6.2 in the windows binary if it works
 
  - Refactor fmdl.mdl_slice_mesher.level.rotate/centre
 	- central function to handle levels:
