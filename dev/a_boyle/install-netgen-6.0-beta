@@ -41,7 +41,7 @@ set -x
 # install dependencies
 # liboce is for OpenCASCADE support (IGES/STEP CAD file formats)
 [ "x$(grep DISTRIB_ID /etc/lsb-release | sed 's/.*=//')" != "xUbuntu" ] || \
-   sudo apt install libxmu-dev mesa-common-dev libglu1-mesa-dev libx11-dev python-dev python3.6-dev \
+   sudo apt install libxmu-dev mesa-common-dev libglu1-mesa-dev libx11-dev python-dev \
       liboce-foundation-dev liboce-foundation11 liboce-modeling-dev liboce-modeling11 liboce-ocaf-dev \
       liboce-ocaf-lite-dev liboce-ocaf-lite11 liboce-ocaf11 liboce-visualization-dev liboce-visualization11
 
