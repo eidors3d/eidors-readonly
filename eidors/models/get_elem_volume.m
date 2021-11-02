@@ -5,7 +5,7 @@ function VOL = get_elem_volume( fwd_model, map_node )
 % If the model has a 'coarse2fine' element, then the
 % returned VOL applies to the coarse matrix (unless map_node <0)
 %
-% if map_node < 0, do not apply coarse2fine (if it exists)
+% if map_node < 0 or map_node=='no_c2f', do not apply coarse2fine (if it exists)
 %
 % if abs(map_node) == 1, then calculated volumes are the volume fraction for each node
 % BUGS: can't currently apply coarse2fine on map_node.
@@ -34,6 +34,7 @@ switch fwd_model.type
 end
 
 if nargin==1; map_node= 0; end
+if ischar(map_node) && strcmp(map_node,'no_c2f'); map_node=-inf; end
 
 % calculate element volume and surface area
 NODE = fwd_model.nodes';
