@@ -102,19 +102,19 @@ function img = fill_in_data(img,elem_data,params)
         else
             img.(params).elem_data = elem_data;
         end
-
-     case size(img.fwd_model.coarse2fine,2)
-        if strcmp(params,no_params);
-            img.elem_data = elem_data;
-        else
-            img.(params).elem_data = elem_data;
-        end
-
-     case num_nodes( img )
+          
+      case num_nodes( img )
         if strcmp(params,no_params);
             img.node_data = elem_data;
         else
             img.(params).node_data = elem_data;
+        end
+        
+      case size(img.fwd_model.coarse2fine,2)
+        if strcmp(params,no_params);
+            img.elem_data = elem_data;
+        else
+            img.(params).elem_data = elem_data;
         end
 
      otherwise
