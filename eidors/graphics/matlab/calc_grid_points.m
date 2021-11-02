@@ -8,7 +8,6 @@ function val = calc_grid_points(img, xpts, ypts, zpts)
 
 %TODO:
 % - also output a c2f matrix
-% - consider caching
 % - consider adding support for leveling the model first
 
 % (C) 2021 Bartek Grychtol and Andy Adler. 
@@ -24,18 +23,21 @@ end
 fmdl = img.fwd_model;
 data = get_img_data(img); 
 
+
 [fmdl, use_elem] = crop_model(fmdl, xpts, ypts, zpts);
 [x,y,z]= ndgrid( xpts, ypts, zpts);
 pts = [x(:),y(:),z(:)];
 point2tet = point_in_tet(fmdl, pts, eps);
-pts_out = ~any(point2tet,2);
-   
+
 if isfield(img, 'elem_data')
     val =  point2tet * data(use_elem);
     val = val ./ sum(point2tet,2);
 elseif isfield(img, 'node_data')
-    point2node = calc_point_node_interpolation(fmdl, pts, point2tet);
+    copt.fstr = 'calc_grid_points';
+    copt.cache_obj = {fmdl.nodes, fmdl.elems, pts};
+    point2node = eidors_cache(@calc_point_node_interpolation, {fmdl, pts, point2tet}, copt);
     val =  point2node * data;
+    pts_out = ~any(point2tet,2);
     val(pts_out) = NaN;
 end
 
@@ -43,8 +45,9 @@ end
 val = reshape(val, size(x));
 return
 
+
 %-------------------------------------------------------------------------%
-% Crop parts of the model outside the grid
+% Calculate node interpolation matrix
 function p2n = calc_point_node_interpolation(fmdl, pts, point2tet)
     [pts_idx,els_idx] = find(point2tet);
     
