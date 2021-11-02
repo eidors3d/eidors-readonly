@@ -37,6 +37,8 @@ function opt = ng_write_opt(varargin)
 %  ng_write_opt('MSZBRICK', [xmin, xmax, ymin, ymax, zmin, zmax, maxh])
 %   or
 %  ng_write_opt('MSZSPHERE', [xctr, yctr, zctr, radius, maxh])
+%  ng_write_opt('MSZCYLINDER', [x1, y1, z1, x2, y2, z2, radius, maxh])
+%     where (x1,y1,z1) and (x2,y2,z2) are the limits on the axis
 %
 %  See also CALL_NETGEN
 
@@ -130,10 +132,28 @@ for i = 1:nargin/2
        val = [xsp(s_idx),ysp(s_idx),zsp(s_idx), maxh+0*xsp(s_idx)];
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
+   case 'MSZCYLINDER'
+       tmpname = write_tmp_mszfile( ...
+                msz_cylinder(val) );
+       opt.options.meshsizefilename = tmpname;
    otherwise
        eval(sprintf('opt.%s = val;',varargin{idx}));
    end
 end
+
+function val = msz_cylinder(val)
+    % [x1, y1, z1, x2, y2, z2, radius, maxh])
+    lenh= norm(val(1:3) - val(4:6))/2;
+    maxh = val(5);
+    radius = val(4);
+    nptr= floor(2*radius/maxh)+1;
+    nptz= floor(len/maxh)+1;
+    xsp= linspace(-radius, +radius, nptr);
+    ysp= linspace(-radius, +radius, nptr);
+    zsp= linspace(-lenh  , +lenh  , nptz);
+% TODO: rotate
+%       refactor out other fns
+%       write tests
 
 function fname = write_tmp_mszfile( mszpoints )
    % From Documentation: Syntax is
