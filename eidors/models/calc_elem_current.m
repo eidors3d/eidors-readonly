@@ -13,7 +13,6 @@ function elemcur = calc_elem_current( img, vv )
 
 if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
-dims = size(img.fwd_model.nodes,2);
 
 if nargin==1; % We need to calculate
    if isfield(img,'elem_data')
@@ -28,24 +27,30 @@ if nargin==1; % We need to calculate
    end
 end 
 
-Nel = size(img.fwd_model.elems,1);
-elemcur = zeros(Nel,dims);
-% Calc field as I = sigma E
-%V1 = V0 + Ex*x1 + Ey*y1   [ 1 x1 y1 ] [ V0 ]
-%V2 = V0 + Ex*x2 + Ey*y2 = [ 1 x2 y2 ]*[ Ex ]
-%V3 = V0 + Ex*x3 + Ey*y    [ 1 x3 y3 ] [ Ey ]
-oo = ones(dims+1,1);
-for i=1:Nel
-  idx = img.fwd_model.elems(i,:);
-  nod = img.fwd_model.nodes(idx,:);
-  if dims ==2
-     VE  = ([oo, nod])\fix_dim(vv(idx));
-  else
-     VE  = ([oo, nod])\vv(idx);
-  end
-  elemcur(i,:) = img.elem_data(i,1)*VE(2:end)';
-%  elemcur(i+1,:) = (reshape(img.elem_data(i,1,:,:),dims,dims)*VE(2:end))';
-end
+copt.fstr = 'calc_elem_current';
+elemcur = eidors_cache(@do_calc_elem_current, {img, vv}, copt);
+
+
+function elemcur = do_calc_elem_current(img, vv)
+    dims = size(img.fwd_model.nodes,2);
+    Nel = size(img.fwd_model.elems,1);
+    elemcur = zeros(Nel,dims);
+    % Calc field as I = sigma E
+    %V1 = V0 + Ex*x1 + Ey*y1   [ 1 x1 y1 ] [ V0 ]
+    %V2 = V0 + Ex*x2 + Ey*y2 = [ 1 x2 y2 ]*[ Ex ]
+    %V3 = V0 + Ex*x3 + Ey*y    [ 1 x3 y3 ] [ Ey ]
+    oo = ones(dims+1,1);
+    for i=1:Nel
+      idx = img.fwd_model.elems(i,:);
+      nod = img.fwd_model.nodes(idx,:);
+      if dims ==2
+         VE  = ([oo, nod])\fix_dim(vv(idx));
+      else
+         VE  = ([oo, nod])\vv(idx);
+      end
+      elemcur(i,:) = img.elem_data(i,1)*VE(2:end)';
+    %  elemcur(i+1,:) = (reshape(img.elem_data(i,1,:,:),dims,dims)*VE(2:end))';
+    end
 
 % In case it is the wrong vector shape
 function vv = fix_dim(vv)
