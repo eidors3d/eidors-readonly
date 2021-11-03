@@ -18,7 +18,8 @@ function [out, out2] = level_model_slice(varargin)
 %	XYZ	 : NODES transformed such that level is a slice at z=0.
 %
 % MDL = LEVEL_MODEL_SLICE(MDL,__) 
-% Modifies the nodes of an EIDORS fwd_model structure.
+% Modifies the nodes of an EIDORS fwd_model structure MDL. Can be used in
+% place of NODES with every other syntax.
 %
 % N = LEVEL_MODEL_SLICE(LEVEL) returns the number of slices defined in LEVEL.
 %
