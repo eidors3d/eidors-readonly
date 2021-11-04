@@ -30,8 +30,8 @@ pts = [x(:),y(:),z(:)];
 point2tet = point_in_tet(fmdl, pts, eps);
 
 if isfield(img, 'elem_data')
-    val =  point2tet * data(use_elem);
-    val = val ./ sum(point2tet,2);
+    val =  point2tet * data(use_elem,:);
+    val = bsxfun(@rdivide,val,sum(point2tet,2));
 elseif isfield(img, 'node_data')
     copt.fstr = 'calc_grid_points';
     copt.cache_obj = {fmdl.nodes, fmdl.elems, pts};
@@ -42,7 +42,7 @@ elseif isfield(img, 'node_data')
 end
 
 
-val = reshape(val, size(x));
+val = reshape(val, [size(x) size(data,2)]);
 return
 
 
