@@ -1,7 +1,7 @@
 function val = img_point_mapper(img, pts, maptype )
 %IMG_POINT_MAPPER - image values at points
 % V = IMG_POINT_MAPPER(IMG, P, MAPTYPE ) returns the matrix of values at
-% points P (N x 3). 
+% points P (N x 3) in EIDORS image IMG.
 %   IMG     - EIDORS image structure
 %   P       - a list of points (N x 3)
 %   MAPTYPE - specifies the value returned for each point:
@@ -47,5 +47,5 @@ switch maptype
         map = builtin('sparse', repelem((1:n_pts)',1,4), fmdl.elems(id,:), bc, n_pts, size(fmdl.nodes,1));
         val = map * data;
     otherwise
-        error('Maptype must be ''elem'', ''node'', or ''nodeinterp''.')
+        error('maptype must be ''elem'', ''node'', or ''nodeinterp''.')
 end
