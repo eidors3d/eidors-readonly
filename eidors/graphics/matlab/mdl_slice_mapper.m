@@ -12,7 +12,9 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %   fmdl.mdl_slice_mapper.y_pts - vector of points in vertical
 %     x_pts starts at the left, and y_pts starts at the top, this means
 %     that y_pts normally would run from max to min
-%
+%    or
+%   fmdl.mdl_slice_mapper.resolution - number of points per unit
+%   
 %   fmdl.mdl_slice_mapper.level = Vector [1x3] of intercepts
 %          of the slice on the x, y, z axis. To specify a z=2 plane
 %          parallel to the x,y: use levels= [inf,inf,2]
@@ -25,6 +27,8 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %    for 'node' map is FEM vertex nearest the point
 %    for 'nodeinterp' map a npx x npy x (Nd+1) matrix such that for each point i,j
 %       the nearby nodes are weighted with the corresponding element in the map(i,j).
+%    for 'get_points' map contains the x an y vectors of points used for
+%       for mapping as {x, y}. No mapping is performed.
 
 % (C) 2006 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -41,6 +45,8 @@ switch maptype
    case 'nodeinterp';
       copt.fstr = 'nodeinterp';
       map = eidors_cache(@mdl_nodeinterp_mapper,fmdl,copt);
+    case 'get_points';
+      map = get_points(fmdl);  
    otherwise;
       error('expecting maptype = elem or node');
 end
@@ -254,7 +260,8 @@ function NODE= level_model( fwd_model )
    end
 
    if     isfield(fwd_model.mdl_slice_mapper,'level')
-       NODE = level_model_level(vtx, fwd_model.mdl_slice_mapper.level);
+       NODE = level_model_slice(vtx, fwd_model.mdl_slice_mapper.level)';
+%        NODE = level_model_level(vtx, fwd_model.mdl_slice_mapper.level);
    elseif isfield(fwd_model.mdl_slice_mapper,'centre')
        rotate = fwd_model.mdl_slice_mapper.rotate;
        centre = fwd_model.mdl_slice_mapper.centre;
@@ -301,8 +308,25 @@ function NODE = ctr_norm_model(vtx, rotate, centre);
    [nn, dims] = size(vtx);
    NODE = rotate * (vtx' - centre'*ones(1,nn));
 
+   
+function pts = get_points(fwd_model);
+   NODE = level_model( fwd_model );
+   if isfield(fwd_model.mdl_slice_mapper,'model_2d') && ...
+           fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
+       NODE(3,:) = [];
+   end
+   ELEM= fwd_model.elems';
+   if size(NODE,1) ==2 %2D
+      [x,y] = grid_the_space( fwd_model, 'only_get_points');
+   else
+      fmdl3 = fwd_model; fmdl3.nodes = NODE'; 
+      [x,y] = grid_the_space( fmdl3 , 'only_get_points');
+   end
+   pts = {x, y};
+  
+   
 % Create matrices x y which grid the space of NODE
-function  [x,y] = grid_the_space( fmdl);
+function  [x,y] = grid_the_space( fmdl, flag);
 
   xspace = []; yspace = [];
   try 
@@ -311,8 +335,6 @@ function  [x,y] = grid_the_space( fmdl);
   end
 
   if isempty(xspace)
-     npx  = fmdl.mdl_slice_mapper.npx;
-     npy  = fmdl.mdl_slice_mapper.npy;
 
      xmin = min(fmdl.nodes(:,1));    xmax = max(fmdl.nodes(:,1));
      xmean= mean([xmin,xmax]); xrange= xmax-xmin;
@@ -320,17 +342,31 @@ function  [x,y] = grid_the_space( fmdl);
      ymin = min(fmdl.nodes(:,2));    ymax = max(fmdl.nodes(:,2));
      ymean= mean([ymin,ymax]); yrange= ymax-ymin;
 
-     range= max([xrange, yrange]);
-     xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
-     yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
+    
+     npx = []; npy = [];
+     if all(isfield(fmdl.mdl_slice_mapper,{'npx','npy'}))
+         npx  = fmdl.mdl_slice_mapper.npx;
+         npy  = fmdl.mdl_slice_mapper.npy;
+         range= max([xrange, yrange]); 
+         % for backward compatibility
+         xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
+         yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
+     else
+         res = 1;
+         try
+             res =  fmdl.mdl_slice_mapper.resolution;
+         end
+         npx = ceil(xrange/res);
+         npy = ceil(yrange/res);
+         xspace = linspace( xmean - xrange*0.5, xmean + xrange*0.5, npx );
+         yspace = linspace( ymean + yrange*0.5, ymean - yrange*0.5, npy );
+     end
   end
-%   if size(xspace,2) == 1
-      [x,y]=meshgrid( xspace, yspace );
-%   else
-%       x= xspace;
-%       y= yspace;
-%   end
-%   [x,y]=meshgrid( xspace, yspace );
+  if nargin > 1 && ischar(flag) && strcmp(flag, 'only_get_points')
+      x = xspace; y = yspace;
+      return
+  end
+  [x,y]=meshgrid( xspace, yspace );
 
 function do_unit_test
 % 2D NUMBER OF POINTS

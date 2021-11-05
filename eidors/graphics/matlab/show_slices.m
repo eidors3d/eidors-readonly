@@ -90,7 +90,7 @@ elseif numel(levels)== 1 && isnumeric(levels)
 end
 
 if do_calc_slices
-   rimg= calc_slices( img, levels(:,1:3) );
+   rimg= calc_slices( img, levels );
 else
    rimg= img;
    if isstruct(levels)
@@ -126,13 +126,14 @@ if ~axes_msm
    image(out_img);
    axis image
    axis off
-   axis equal
-   axis tight
 else
-   msm = img.fwd_model.mdl_slice_mapper;
+   pts = mdl_slice_mapper(img.fwd_model,'get_points');
+   msm.x_pts = pts{1}; msm.y_pts = pts{2};
    image(msm.x_pts, msm.y_pts, out_img);
    set(gca,'Ydir','normal');
 end
+axis equal
+axis tight
 
 do_colourbar = false;
 try do_colourbar = img.show_slices.do_colourbar; end
