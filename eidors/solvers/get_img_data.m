@@ -22,7 +22,7 @@ if ~strcmp( img(1).type, 'image' );
     return;
 end
 
-if ~isfield(img,'elem_data')
+if ~isfield(img,'elem_data') && ~isfield(img,'node_data')
    img = data_mapper(img);
 end
 
