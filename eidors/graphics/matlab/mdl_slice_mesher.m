@@ -101,7 +101,7 @@ mdl = fix_model(mdl,opt);
 edges = mdl.edges;
 edge2elem = mdl.edge2elem;
 tmp = mdl; 
-tmp.nodes = level_model( tmp, level )';
+tmp = level_model_slice( tmp, level )';
 [nodeval nodedist] = nodes_above_or_below(tmp,0);
 % find which edges are on electrodes
 e_nodes = zeros(length(mdl.nodes),1);
@@ -333,57 +333,6 @@ dist(abs(dist) < tol) = 0;
 nodeval = sign(dist);
 
 
-
-
-% Level model: usage
-%   NODE= level_model( fwd_model, level );
-%
-% Level is a 1x3 vector specifying the x,y,z axis intercepts
-% NODE describes the vertices in this coord space
-
-function NODE= level_model( fwd_model, level )
-
-   vtx= fwd_model.nodes;
-   [nn, dims] = size(vtx);
-   if dims ==2 % 2D case
-       NODE= vtx';
-       return;
-   end
-
-   % Infinities tend to cause issues -> replace with realmax
-   % Don't need to worry about the sign of the inf
-   level( isinf(level) | isnan(level) ) = realmax;
-   level( level==0 ) =     1e-10; %eps;
-
-   % Step 1: Choose a centre point in the plane
-   %  Weight the point by it's inv axis coords
-   invlev= 1./level;
-   ctr= invlev / sum( invlev.^2 );
-
-   % Step 2: Choose basis vectors in the plane
-   %  First is the axis furthest from ctr
-   [jnk, s_ax]= sort( - abs(level - ctr) );
-   v1= [0,0,0]; v1(s_ax(1))= level(s_ax(1));
-   v1= v1 - ctr;
-   v1= v1 / norm(v1);
-
-   % Step 3: Get off-plane vector, by cross product
-   v2= [0,0,0]; v2(s_ax(2))= level(s_ax(2));
-   v2= v2 - ctr;
-   v2= v2 / norm(v2);
-   v3= cross(v1,v2);
-
-   % Step 4: Get orthonormal basis. Replace v2
-   v2= cross(v1,v3);
-
-   % Step 5: Get bases to point in 'positive directions'
-   v1= v1 * (1-2*(sum(v1)<0));
-   v2= v2 * (1-2*(sum(v2)<0));
-   v3= v3 * (1-2*(sum(v3)<0));
-
-   NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
-
-   
 function do_unit_test
     imdl = mk_common_model('n3r2',[16,2]);
     img = mk_image(imdl.fwd_model,1);
@@ -424,6 +373,7 @@ function do_unit_test
     mdl_slice_mesher(img, [inf inf 2]);
     mdl_slice_mesher(img, [inf inf 2.5]);
     mdl_slice_mesher(img, [inf inf 1.3]);
+    mdl_slice_mesher(img, struct('centre',[-.5,-.5,2],'normal_angle',[1 1 .2]))
     axis equal
     axis tight
     view(3)
