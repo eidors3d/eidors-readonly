@@ -368,7 +368,10 @@ opt.stloptions.recalchopt = 1;
 opt.visoptions.subdivisions = 1;
 
 function do_unit_test
-unit_test_MSZ; return
+   test_main_options()
+   unit_test_MSZ()
+
+function test_main_options()
 opt.meshoptions.fineness = 6;
 ng_write_opt(opt);
 fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
@@ -385,8 +388,6 @@ opt = ng_write_opt('meshoptions.fineness',4,'meshoptions.firststep','bbb');
 fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
 unit_test_cmp('firststep=bbb',isempty( ...
     strfind(str, 'meshoptions.firststep  bbb')), 1);
-
-unit_test_MSZ()
 
 function unit_test_MSZ
    shape_str =  ...
