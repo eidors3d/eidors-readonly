@@ -112,8 +112,8 @@ for i = 1:nargin/2
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    case 'MSZCYLINDER'
-       tmpname = write_tmp_mszfile( ...
-                msz_cylinder(val) );
+       val = msz_cylinder(val);
+       tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    otherwise
        eval(sprintf('opt.%s = val;',varargin{idx}));
@@ -149,17 +149,26 @@ function val = msz_sphere(val)
 
 function val = msz_cylinder(val)
     % [x1, y1, z1, x2, y2, z2, radius, maxh])
-    lenh= norm(val(1:3) - val(4:6))/2;
-    maxh = val(5);
-    radius = val(4);
+    len2= norm(val(1:3) - val(4:6))/2;
+    ctr =     (val(1:3) + val(4:6))/2;
+    maxh = val(8);
+    radius = val(7);
     nptr= floor(2*radius/maxh)+1;
-    nptz= floor(len/maxh)+1;
+    nptz= floor(2*len2/maxh)+1;
     xsp= linspace(-radius, +radius, nptr);
     ysp= linspace(-radius, +radius, nptr);
-    zsp= linspace(-lenh  , +lenh  , nptz);
-% TODO: rotate
-%       refactor out other fns
-%       write tests
+    zsp= linspace(-len2  , +len2  , nptz);
+    [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
+    s_idx = (xsp.^2 + ysp.^2) < radius^2;
+    xsp = xsp(s_idx(:));
+    ysp = ysp(s_idx(:));
+    zsp = zsp(s_idx(:));
+% Rotate: 
+% https://math.stackexchange.com/questions/180418/calculate-rotation-matrix-to-align-vector-a-to-vector-b-in-3d/897677#897677
+    ab = [0;0;2*len2] + [val(4:6)-val(1:3)]';
+    R=2*ab*ab'/(ab'*ab) - eye(3);
+    val = [xsp,ysp,zsp]*R + ctr;
+    val(:,4) = maxh;
 
 function fname = write_tmp_mszfile( mszpoints )
    % From Documentation: Syntax is
@@ -395,11 +404,13 @@ function unit_test_MSZ
            ng_write_opt('MSZSPHERE',[5,5,5,4,1]);
        case 6; n_exp = 106;
            ng_write_opt('MSZBRICK',[5,5,5,9,9,9,1]);
+       case 7; n_exp = 660;
+           ng_write_opt('MSZCYLINDER',[5,5,5,8,8,8,5,1]);
          
        otherwise; break
        end
        eidors_cache clear
        fmdl = ng_mk_gen_models(shape_str,[],[],'');
        unit_test_cmp('opt:', num_nodes(fmdl), n_exp)
-       show_fem(fmdl); disp(num_nodes(fmdl))
+%      show_fem(fmdl); disp(num_nodes(fmdl))
    end
