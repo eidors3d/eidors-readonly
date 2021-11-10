@@ -16,17 +16,15 @@ function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 % 
 % Inputs:
 %   MDL3D  - an EIDORS fwd_model or img struct with elem_data
-%   LEVEL  - Vector [1x3] of intercepts
-%          of the slice on the x, y, z axis. To specify a z=2 plane
-%          parallel to the x,y: use levels= [inf,inf,2]
+%   LEVEL  - any single-slice specification accepted by LEVEL_MODEL_SLICE
 %
 % To control the transparency use transparency_tresh (see CALC_COLOURS for
 % details), e.g.:
 %    img2d.calc_colours.transparency_thresh = -1; (no transperency)
 %    calc_colours('transparency_thresh', 0.25); (some transparency)
 %
-% See also: SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, CROP_MODEL,
-%           CALC_COLOURS. PATCH
+% See also: LEVEL_MODEL_SLICE, SHOW_FEM, MDL_SLICE_MAPPER, SHOW_3D_SLICES, 
+%           CROP_MODEL, CALC_COLOURS, PATCH
 
 % (C) 2012-2021 Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3
