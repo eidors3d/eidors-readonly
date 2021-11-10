@@ -104,32 +104,11 @@ for i = 1:nargin/2
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    case 'MSZBRICK'
-    %  ng_write_opt('MSZBRICK', [xmin, xmax, ymin, ymax, zmin, zmax, maxh])
-       maxh = val(7);
-       xpts= floor(abs(diff(val(1:2))/maxh))+1;
-       ypts= floor(abs(diff(val(3:4))/maxh))+1;
-       zpts= floor(abs(diff(val(5:6))/maxh))+1;
-       xsp= linspace(val(1),val(2), xpts);
-       ysp= linspace(val(3),val(4), ypts);
-       zsp= linspace(val(5),val(6), zpts);
-       [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
-       val = [xsp(:),ysp(:),zsp(:), maxh+0*xsp(:)];
+       val = msz_brick(val)
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    case 'MSZSPHERE'
-%  ng_write_opt('MSZSPHERE', [xctr, yctr, zctr, radius, maxh])
-       maxh = val(5);
-       radius = val(4);
-       npts= floor(2*radius/maxh)+1;
-       xsp= linspace(val(1) - radius, val(1) + radius, npts);
-       ysp= linspace(val(2) - radius, val(2) + radius, npts);
-       zsp= linspace(val(3) - radius, val(3) + radius, npts);
-       [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
-       s_idx = ((xsp-val(1)).^2 + ...
-                (ysp-val(2)).^2 + ...
-                (zsp-val(3)).^2) < radius^2;
-       s_idx = s_idx(:);
-       val = [xsp(s_idx),ysp(s_idx),zsp(s_idx), maxh+0*xsp(s_idx)];
+       val = msz_sphere(val);
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    case 'MSZCYLINDER'
@@ -140,6 +119,33 @@ for i = 1:nargin/2
        eval(sprintf('opt.%s = val;',varargin{idx}));
    end
 end
+
+function val = msz_brick(val)
+%  ng_write_opt('MSZBRICK', [xmin, xmax, ymin, ymax, zmin, zmax, maxh])
+    maxh = val(7);
+    xpts= floor(abs(diff(val(1:2))/maxh))+1;
+    ypts= floor(abs(diff(val(3:4))/maxh))+1;
+    zpts= floor(abs(diff(val(5:6))/maxh))+1;
+    xsp= linspace(val(1),val(2), xpts);
+    ysp= linspace(val(3),val(4), ypts);
+    zsp= linspace(val(5),val(6), zpts);
+    [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
+    val = [xsp(:),ysp(:),zsp(:), maxh+0*xsp(:)];
+
+function val = msz_sphere(val)
+%  ng_write_opt('MSZSPHERE', [xctr, yctr, zctr, radius, maxh])
+    maxh = val(5);
+    radius = val(4);
+    npts= floor(2*radius/maxh)+1;
+    xsp= linspace(val(1) - radius, val(1) + radius, npts);
+    ysp= linspace(val(2) - radius, val(2) + radius, npts);
+    zsp= linspace(val(3) - radius, val(3) + radius, npts);
+    [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
+    s_idx = ((xsp-val(1)).^2 + ...
+             (ysp-val(2)).^2 + ...
+             (zsp-val(3)).^2) < radius^2;
+    s_idx = s_idx(:);
+    val = [xsp(s_idx),ysp(s_idx),zsp(s_idx), maxh+0*xsp(s_idx)];
 
 function val = msz_cylinder(val)
     % [x1, y1, z1, x2, y2, z2, radius, maxh])
