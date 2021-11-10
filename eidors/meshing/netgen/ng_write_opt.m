@@ -165,9 +165,11 @@ function fname = write_tmp_mszfile( mszpoints )
    fname = strrep(fname,'\','/'); % needs unix-style path on windows
    fid=fopen(fname,'w');
    fprintf(fid,'%d\n',n_pts_elecs);
-   for i = 1:size(mszpoints,1)
-      fprintf(fid,'%10f %10f %10f %10f\n', mszpoints(i,:));
-   end
+%  for i = 1:size(mszpoints,1)
+%     fprintf(fid,'%10f %10f %10f %10f\n', mszpoints(i,:));
+%  end
+%  vectorize to speed up
+   fprintf(fid,'%10f %10f %10f %10f\n', mszpoints');
    fprintf(fid,'0\n'); % lines
    fclose(fid); % ptsfn
 
@@ -351,6 +353,7 @@ opt.stloptions.recalchopt = 1;
 opt.visoptions.subdivisions = 1;
 
 function do_unit_test
+unit_test_MSZ; return
 opt.meshoptions.fineness = 6;
 ng_write_opt(opt);
 fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
@@ -367,3 +370,30 @@ opt = ng_write_opt('meshoptions.fineness',4,'meshoptions.firststep','bbb');
 fid = fopen('ng.opt','r'); str= fread(fid,[1,inf],'uint8=>char'); fclose(fid);
 unit_test_cmp('firststep=bbb',isempty( ...
     strfind(str, 'meshoptions.firststep  bbb')), 1);
+
+unit_test_MSZ()
+
+function unit_test_MSZ
+   shape_str =  ...
+     'solid mainobj = orthobrick(-9,-9,-9;9,9,9);';
+   i=0; while(true); i=i+1; switch i
+       case 1; n_exp = 8;
+           ng_write_opt('very_coarse');
+       case 2; n_exp = 22;
+           ng_write_opt('fine');
+       case 3; n_exp = 59;
+           ng_write_opt('very_fine');
+       case 4; n_exp = 8;
+           ng_write_opt('moderate');
+       case 5; n_exp = 746;
+           ng_write_opt('MSZSPHERE',[5,5,5,4,1]);
+       case 6; n_exp = 106;
+           ng_write_opt('MSZBRICK',[5,5,5,9,9,9,1]);
+         
+       otherwise; break
+       end
+       eidors_cache clear
+       fmdl = ng_mk_gen_models(shape_str,[],[],'');
+       unit_test_cmp('opt:', num_nodes(fmdl), n_exp)
+       show_fem(fmdl); disp(num_nodes(fmdl))
+   end
