@@ -349,7 +349,7 @@ if ~isfield(mdl,'electrode'); return; end
 
 ee= get_boundary( mdl );
 for e=1:length(mdl.electrode)
-    colour= electr_colour( e);
+    colour = get_elec_colour(mdl.electrode(e), e);
     elece = mdl.electrode(e);
     
     if isfield(elece,'pos') && ~isfield(mdl.electrode(e),'nodes')
@@ -623,7 +623,16 @@ function  mes= avg_electrode_posn( mdl )
       e_nodes=  mdl.electrode(i).nodes;
       mes(i,:)= mean( nodes(e_nodes,:) , 1 );
    end
-
+   
+function colour = get_elec_colour(elec_struct, elec_num)
+    try
+        colour = elec_struct.colour;
+    catch
+        colour = electr_colour(elec_num);
+    end
+   
+   
+   
 function colour= electr_colour( e);
     if e==1;
        colour = [0,.7,0]; % light green electrode #1
