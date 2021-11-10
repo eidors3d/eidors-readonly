@@ -104,7 +104,7 @@ for i = 1:nargin/2
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    case 'MSZBRICK'
-       val = msz_brick(val)
+       val = msz_brick(val);
        tmpname = write_tmp_mszfile( val );
        opt.options.meshsizefilename = tmpname;
    case 'MSZSPHERE'
