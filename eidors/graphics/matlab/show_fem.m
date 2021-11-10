@@ -297,6 +297,7 @@ for e=1:length(mdl.electrode)
         vy= (mdl.nodes(elec_nodes,2) - ctr_y);
         vz= (mdl.nodes(elec_nodes,3) - ctr_z);
     end
+    if isempty(vx), continue, end
     
     % sort nodes around the model (to avoid crossed lines)
     % TODO: figure out what to do in different directions
