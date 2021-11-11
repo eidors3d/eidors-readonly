@@ -93,8 +93,8 @@ end
 % 2. Add extruded electrodes
 for i = 1:length(elecs)
    try
-      N = grow_neighbourhood(mdl,elecs(i));
-      [mdl E1{i} E2{i} V{i}] = add_electrodes(mdl,N,elecs(i));
+      [N, fc] = grow_neighbourhood(mdl,elecs(i));
+      [mdl E1{i} E2{i} V{i}] = add_electrodes(mdl,N,fc, elecs(i));
    catch e
       eidors_msg('Failed to add electrode #%d',i,1);
       rethrow(e);
@@ -277,20 +277,22 @@ end
 
 % Returns a joint surface mesh and the list of nodes on the side of the
 % electrode
-function [joint EL1 EL2 V] = add_electrodes(mdl,N,elecs)
+function [joint EL1 EL2 V] = add_electrodes(mdl,N,fc,elecs)
 
 
-fc = find_face_under_elec(mdl,elecs.pos);
+% fc = find_face_under_elec(mdl,elecs.pos);
 % N indexes the boundary, need index into faces
 % fcs = find(mdl.boundary_face);
 % fcs = fcs(N);
 fcs = N;
+used_nodes = unique(mdl.faces(fcs,:));
+node_map = zeros(size(mdl.nodes,1),1);
+node_map(used_nodes) = 1:numel(used_nodes);
 
 jnk.type = 'fwd_model';
-jnk.elems = mdl.boundary(N,:);
-jnk.nodes = mdl.nodes;
+jnk.elems = node_map(mdl.boundary(N,:));
+jnk.nodes = mdl.nodes(used_nodes,:);
 jnk.boundary = jnk.elems;
-img = mk_image(jnk,1);
 if do_debug
    show_fem(jnk);
    hold on
@@ -299,116 +301,84 @@ if do_debug
    hold off
 end
 
+flat = level_model_slice(jnk,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
+elec_pts = level_model_slice(elecs.points,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
+elec_nodes = level_model_slice(elecs.nodes,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
+% now, the points are almost z = 0, so we can work in 2D
+warning off 'MATLAB:triangulation:PtsNotInTriWarnId'
+TR = triangulation(double(flat.elems), flat.nodes(:,1:2));
+warning on 'MATLAB:triangulation:PtsNotInTriWarnId'
 
-%nodes used
-[nn,I, J] = unique(mdl.faces(fcs,:));
-outer = true(size(nn));
-for i = 1:length(nn)
-   if sum(J==i) == sum(mdl.boundary(:) == nn(i))
-      outer(i) = false;
-   end
-end
-% we want to keep the ones on the outside
-keep = false(size(mdl.nodes,1),1);
-keep(nn) = outer;
-keep = keep(jnk.elems);
-
-% this will not catch the situation where the element reaches from boundary
-% to boundary and the electrode is in the middle (small electrode, big
-% element). Fortunately, in these cases the edge will be there twice
-edges = reshape(jnk.elems(:,[1 2 2 3 3 1])',2,[])';
-if size(keep,2) == 1; keep = shiftdim(keep,1); end
-keep = reshape(keep(:,[1 2 2 3 3 1])',2,[])';
-rm = sum(keep,2)<2;
-edges(rm,:) = [];
-
-% detect and remove double entries
-rm = ismember(edges,edges(:,[2 1]),'rows');
-edges(rm,:) = [];
+edges = TR.freeBoundary;
 
 % project all nodes of the faces in N onto the plane of the electrode
-nodes = unique(mdl.faces(fcs,:));
-PN = project_nodes_on_elec(mdl,elecs,nodes);
+PN = flat.nodes(:,1:2);
 
-% electrode coordinate system
-[u v s] = get_face_basis(mdl,fc);
-% u = mdl.normals(fc,:); % unit normal
-% % vertical vector on the plane of that surface triangle
-% v = [0 0 1] - dot([0 0 1],u) *u; v = v/norm(v);
-% s = cross(u,v); s= s/norm(s);
-
-% mark nodes that are too close to elecs.points for removal
-rm = false(length(PN),1);
-for i = 1:length(PN)
-   D = repmat(PN(i,:),length(elecs.points),1) - elecs.points;
-   D = sqrt(sum(D.^2,2));
-   if any(D < 2*elecs.maxh)
-      rm(i) = true;
-   end
-end
+% for every electrode point, find closest node
+neighbour = TR.nearestNeighbor(elec_pts(:,1:2));
+D = sqrt(sum((flat.nodes(neighbour,1:2) - elec_pts(:,1:2)).^2,2));
+rm = unique(neighbour(D < 2 * elecs.maxh));
 
 % we can only delete if it's not part of the boundary
 b = unique(edges(:));
-rm = find(rm);
-rm(ismember(nodes(rm),b)) = [];
+rm(ismember(rm,b)) = [];
 
 % remove and remap
 PN(rm,:) = [];
-nodes(rm) = [];
+used_nodes(rm) = [];
 
-points = [PN; elecs.points];
-np = size(points,1);
-x = dot(points,repmat(v,np,1),2);
-y = dot(points,repmat(s,np,1),2);
+n = size(flat.nodes,1);
+nodelist = 1:n;
+nodelist(rm) = [];
+map = zeros(n,1);
+map(nodelist) = 1:numel(nodelist);
+edges = map(edges); 
 
-map(nodes) = 1:length(nodes);
-edges = map(edges); %
+points = [PN; elec_pts(:,1:2)];
 
 % constrained Delaunay triangulation in 2D
-f = length(PN) +(1:2);
-C = [];
-for i= 0:length(elecs.points)-2
-   C = [C; i+f];
-end
-D = DelaunayTri([x y],[edges; C]);
+f = length(PN) + (1:2);
+C = bsxfun(@plus, (0:length(elecs.points)-2)', f);
+[wtxt, wid] = lastwarn;
+lastwarn('','');
+warning off 'MATLAB:DelaunayTri:ConsConsSplitWarnId';
+D = DelaunayTri(points,[edges; C]);
 els = D.Triangulation(D.inOutStatus,:);
-
-
-% project all electrode points on all triangles, using the normal of the central elem
+[txt, id] = lastwarn;
+if strcmp(id,'MATLAB:DelaunayTri:ConsConsSplitWarnId')
+    if do_debug
+        keyboard
+    else
+        error(txt); % no point continuing
+    end
+else
+    lastwarn(wtxt,wid); % restore 
+end
+warning on 'MATLAB:DelaunayTri:ConsConsSplitWarnId';
+% project all electrode points on the faces below them, using the normal of
+% the central face
 Ne = mdl.normals(fc,:);
+FN = TR.pointLocation(elec_nodes(:,1:2)); % face num under each electrode point
+FC = fcs(FN); % same, in original numbering
 for j = 1:length(elecs.nodes)
    Pe = elecs.nodes(j,:);
-   for i = 1:length(fcs)
-      Nf = mdl.normals(fcs(i),:);
-      Cf = mdl.face_centre(fcs(i),:);
-      % the plane is (X - Cf).Nf = 0
-      % the line is X = Pe + tNe (through Pe perpendicular to the main elec
-      % face
-      % We want X that satisfies both.
-      % (Pe +tNe -  Cf).Nf = 0
-      % (Pe - Cf).Nf + tNe.Nf = 0
-      % t = (Cf-Pe).Nf / (Ne.Nf) 
-      % X = Pe + Ne * (Cf-Pe).Nf / (Ne.Nf) 
-      X = Pe + Ne * dot(Cf-Pe,Nf) / dot(Ne,Nf) ;
-      if point_in_triangle(X, mdl.faces(fcs(i),:), mdl.nodes)
-         Proj(j,:) = X;
-         FC(j) = fcs(i);
-         break;
-      end
-   end
+   Nf = mdl.normals(fcs(FN(j)),:);
+   Cf = mdl.face_centre(fcs(FN(j)),:);
+   Proj(j,:) = Pe + Ne * dot(Cf-Pe,Nf) / dot(Ne,Nf) ;
 end
+
 
 % this is just output
 EL1 = Proj(1:length(elecs.points),:);
 
 % remove any nodes inside the electrode
-ln = length(nodes);
+ln = length(used_nodes);
 % IN = inpolygon(x(1:ln),y(1:ln),x(ln+1:end),y(ln+1:end));
 % nodes(IN) = [];
 
 add = elecs.maxh;
 
-nn = mdl.nodes(nodes,:);% + add * repmat(IN,1,3) .* repmat(Ne,ln,1);
+nn = mdl.nodes(used_nodes,:);% + add * repmat(IN,1,3) .* repmat(Ne,ln,1);
 le = length(elecs.nodes);
 ne = Proj + add * repmat(Ne,le,1);
 
@@ -420,7 +390,7 @@ V = add*Ne;
 % IN = [IN; ones(le,1)];
 el_c = D.incenters;
 el_c(~D.inOutStatus,:) = [];
-e_el = inpolygon(el_c(:,1),el_c(:,2),x(ln+1:end),y(ln+1:end));
+e_el = inpolygon(el_c(:,1),el_c(:,2),points(ln+1:end,1),points(ln+1:end,2));
 els(e_el,:) = []; % els(e_el,:) + (els(e_el,:)>ln ) .* le;
 
 % add connecting elements
@@ -456,14 +426,20 @@ opt.normals = true;
 opt.face_centre = true;
 joint = fix_model(joint,opt);
 
+
 function PN = project_nodes_on_elec(mdl,elecs,nodes)
 fc = find_face_under_elec(mdl,elecs.pos);
 Ne = mdl.normals(fc,:);
 Pe = elecs.pos;
-for i = 1:length(nodes)
-   P = mdl.nodes(nodes(i),:);
-   PN(i,:) = P + dot(Pe - P, Ne) * Ne;
-end
+% for i = 1:length(nodes)
+%    P = mdl.nodes(nodes(i),:);
+%    PN(i,:) = P + dot(Pe - P, Ne) * Ne;
+% end
+N = mdl.nodes(nodes,:);
+% PN = N + sum((Pe-N) .* Ne,2) .* Ne;
+PN = N + bsxfun(@times,sum(bsxfun(@times,bsxfun(@minus,Pe,N), Ne),2), Ne);
+
+
 
 % OUTPUT:
 %  elecs(i).pos   = [x,y,z]
@@ -672,7 +648,7 @@ if isempty(pos)
    keyboard
 end
 
-function out = grow_neighbourhood(mdl, varargin)
+function [out, fc] = grow_neighbourhood(mdl, varargin)
 use_elec = false;
 if length(varargin) == 1
    use_elec = true;
