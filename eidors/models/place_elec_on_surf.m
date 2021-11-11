@@ -566,11 +566,23 @@ delete('ng.opt');
 
 function [u v s] = get_face_basis(mdl, fc)
    u = mdl.normals(fc,:); % unit normal
+
+   % project each coordinate axis on the plane
+   I = eye(3);
+   for i = 1:3
+       proj(:,i) = I(:,i) - (dot(I(:,i),u')) * u';
+   end
+   norm_proj = vecnorm(proj);
+   min_norm = min(norm_proj);
+   
    % vertical vector on the plane of that surface triangle
-   v = [0 0 1] - dot([0 0 1],u) *u;
-   if norm(v) == 0
-      % the element is horizontal
-      v = [0 1 0] - dot([0 1 0],u)*u;
+   if norm_proj(3) ~= min_norm
+      v = [0 0 1] - dot([0 0 1],u) *u;
+   else
+      % the element is essentially horizontal
+%       v = [0 1 0] - dot([0 1 0],u)*u;
+%TODO: need to expose an option to decide which it should be
+      v = [1 0 0] - dot([1 0 0],u)*u;
    end
    v = v/norm(v);
    s = cross(u,v); s= s/norm(s);
