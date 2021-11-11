@@ -681,18 +681,16 @@ dd = sqrt(sum( (dv - repmat(dot(dv,nl,2),1,3) .* nl).^2,2));
 dim = size(bb,2);
 first = true; % at first iteration, add all neighbours
 if use_elec
-   PN = project_nodes_on_elec(mdl,elecs,1:length(mdl.nodes));
-   emin = min(elecs.points);
-   emax = max(elecs.points);
-   rng = emax-emin;
-   emin = emin - 0.1*rng;
-   emax = emax + 0.1*rng;
-   toofar = false(size(mdl.boundary,1),1);
-   
-   for i = 1:3
-      nodes = reshape(PN(mdl.boundary,i),[],3);
-      toofar =  toofar |  sum(nodes > emax(i),2) == 3 | sum(nodes < emin(i),2) == 3;
-   end
+%    PN = project_nodes_on_elec(mdl,elecs,1:length(mdl.nodes));
+   PN = level_model_slice(mdl.nodes,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
+   elec_nodes = level_model_slice(elecs.nodes,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
+   elec_nodes = elec_nodes(:,1:2);
+   PN = PN(:,1:2);
+   ctr = mean(elec_nodes);
+   TR = triangulation(elecs.elems, bsxfun(@plus, ctr, 1.1 * bsxfun(@minus,elec_nodes,ctr)));
+   idx = TR.pointLocation(PN);
+   outside = isnan(idx); 
+   toofar = all(outside(mdl.boundary),2);
 end
 while any(todo)
    id = find(todo,1,'first');
