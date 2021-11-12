@@ -1,4 +1,5 @@
 Plan for 3.11
+ - Fix phase delay in meas_pattern
  - Speed up / clean up _higher_order code
  - Fix _higher_order to handle faces-type electrodes
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
