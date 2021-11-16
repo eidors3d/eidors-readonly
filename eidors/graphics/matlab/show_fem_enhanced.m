@@ -431,7 +431,7 @@ function hh = draw_fem(img, mdl, opts)
                     triangle_color(...
                         mdl.electrode(i).(electrode_field), :) = ...
                         ones(numel(mdl.electrode(i).(electrode_field)), ...
-                        1)*electr_colour(i, size(triangle_color, 2));
+                        1)*electr_colour(mdl.electrode(i),i, size(triangle_color, 2));
 
                     triangle_alpha(mdl.electrode(i).(electrode_field), ...
                                                                     :) = 1;
@@ -439,14 +439,14 @@ function hh = draw_fem(img, mdl, opts)
                     boundary_edges = [mdl.electrode(i).boundary_inner_edges;
                                       mdl.electrode(i).boundary_outer_edges];
                     edge_color(boundary_edges, :) = 0.5*ones(size(...
-                        boundary_edges, 1), 1)*electr_colour(i, 3);
+                        boundary_edges, 1), 1)*electr_colour(mdl.electrode(i), i, 3);
                     edge_width(mdl.electrode(i).boundary_outer_edges) = 1;
                 else
 
                     edge_width(mdl.electrode(i).(electrode_field), :) = 3;
                     edge_color(mdl.electrode(i).(electrode_field), :) = ...
                         ones(numel(mdl.electrode(i).(electrode_field)), ...
-                        1)*electr_colour(i, 3);
+                        1)*electr_colour(mdl.electrode(i),i, 3);
                 end
             else
                 if (isfield(mdl.electrode(i), 'nodes'))
@@ -457,7 +457,7 @@ function hh = draw_fem(img, mdl, opts)
                                                mdl.electrode(i).pos, 1)*...
                                   eye(size(marker_position(end, :), 2), 3);
                 end
-                marker_color(end + 1, :) = electr_colour(i, 3);
+                marker_color(end + 1, :) = electr_colour(mdl.electrode(i), i, 3);
             end
         end
     end
@@ -570,16 +570,19 @@ function hh = draw_triangles(faces, vertices, color_data, alpha_data, ...
                'EdgeColor', edge_color, 'FaceLighting', 'flat', ...
                'LineWidth', edge_width);
 
-function colour = electr_colour(e, colormap_width)
-    switch (e)
-        case 1
-            desired_colour = [0 .7 0]; % light green electrode #1
-        case 2
-            desired_colour = [0 .5 0]; % mid-green electrode #2
-        otherwise
-            desired_colour = [0 .3 0]; % dark green
+function colour = electr_colour(elec, e, colormap_width)
+    if isfield(elec, 'colour')
+        desired_colour = elec.colour;
+    else
+        switch (e)
+            case 1
+                desired_colour = [0 .7 0]; % light green electrode #1
+            case 2
+                desired_colour = [0 .5 0]; % mid-green electrode #2
+            otherwise
+                desired_colour = [0 .3 0]; % dark green
+        end
     end
-
     switch(colormap_width)
         case 1
             map = colormap;

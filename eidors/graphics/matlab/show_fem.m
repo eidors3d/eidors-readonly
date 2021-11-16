@@ -243,7 +243,7 @@ for e=1:length(mdl.electrode)
        continue;
     end
         
-    ecolour = electr_colour( e );
+    ecolour = get_elec_colour( elece, e );
     if numel(vx) == 1
        % Point Electrode Models: put a circle around the node
        line(vx+ctr_x,vy+ctr_y,  ...
@@ -303,7 +303,7 @@ for e=1:length(mdl.electrode)
     % TODO: figure out what to do in different directions
     [jnk,idx] = sort(unwrap(atan2( vy, vx )));
     
-    ecolour = electr_colour( e );
+    ecolour = get_elec_colour(mdl.electrode(e), e );
     if numel(vx) == 1
        % Point Electrode Models: put a circle around the node
        line(S*vx(idx)+ctr_x,S*vy(idx)+ctr_y, S*vz(idx)+ctr_z,  ...
@@ -760,9 +760,11 @@ end
 % TESTS:
 function do_unit_test
    clf
+if ~exist('OCTAVE_VERSION')
+   rng(0);
+end
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
-   rng(0)
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
    subplot(4,4,1); show_fem(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
