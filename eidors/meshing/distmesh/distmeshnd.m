@@ -134,4 +134,9 @@ if ~distmesh_do_graphics
 end
 
 % final delaunayn just to make sure triangularization returned is good
-t=delaunayn(p);
+t=delaunayn(p); % New code - AA
+pmid=zeros(size(t,1),dim);
+for ii=1:dim+1
+  pmid=pmid+p(t(:,ii),:)/(dim+1);
+end
+t=t(feval(fdist,pmid,varargin{:})<geps,:); %BUGFIX -geps to geps
