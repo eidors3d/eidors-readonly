@@ -1,10 +1,10 @@
 
 %% 1. create the body
 xy = [0 0;  1 0; 1 1; 0 1];
-fmdl = ng_mk_2d_model({xy, 0.02}, [4 -.5],[0.05 200]);
-show_fem(fmdl)
+mdl = ng_mk_2d_model({xy, 0.02}, [4 -.5],[0.05 200]);
+show_fem(mdl)
 SSMM = [1 2 1 2;];
-fmdl.stimulation = stim_meas_list(SSMM,4);
+mdl.stimulation = stim_meas_list(SSMM,4);
 
 %% 2. create the object
 obj_radius = 0.05;
