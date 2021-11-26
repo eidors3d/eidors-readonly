@@ -156,10 +156,8 @@ function  FFdata = assemble_elements(d1,d0,p);
        M3(2:end,:,:)= reshape(p.NODE(:,p.ELEM),d0,d1,[]);
        [I,D] = vectorize_4x4inv(M3);
        Is = I ./ sqrt(dfact*abs(D));
-       for j=1:p.n_elem;
-         idx= d0*(j-1)+1 : d0*j;
-         FFdata(idx,1:d1)= Is(:,2:d1,j)';
-       end %for j=1:ELEMs 
+       Is = permute(Is(:,2:d1,:),[2,3,1]);
+       FFdata = reshape(Is,[],d1);
    end
 
 function [I,D] = vectorize_4x4inv(M)
