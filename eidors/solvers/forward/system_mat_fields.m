@@ -85,6 +85,9 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    if isfield(fmdl,'system_mat_fields')
       pp.cem_boundary = [pp.cem_boundary;
           fmdl.system_mat_fields.CEM_boundary];
+      pp.cem_boundary = unique(pp.cem_boundary, ...
+          'rows','stable');
+          % TODO, how does this get duplicated
    end
    for i= 1:pp.n_elec
       eleci = fmdl.electrode(i);
@@ -335,7 +338,7 @@ function do_unit_test
    fmdl.electrode(3).nodes = []; % no longer a node elec
    fmdl.electrode(3).faces = [1,2;2,3;3,1];
    FC = system_mat_fields( fmdl);
-spy(FC)
+%spy(FC)
 %for i=129:148; disp([i,find(FC(i,:))]); end
 %full(FC(129:end,1:3))  
 
@@ -353,8 +356,6 @@ spy(FC)
         4*2 + 2*3;
    d2= num_nodes(fmdl)+num_elecs(fmdl);
    unit_test_cmp('sys_mat-b2cCEM-1', size(FC),[d1,d2]);
-disp([size(FC),d1,d2])
-   % Check this!!!! why are internal nodes doubled!!
    unit_test_cmp('sys_mat-b2cCEM-3', FC(129:136,42:45), ...
              -13.967473716321374*kron(eye(4),[1;1]),1e-12)
    unit_test_cmp('sys_mat-ctrCEM-4', FC([137:138,141:142],end), ...
