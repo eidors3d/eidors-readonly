@@ -69,13 +69,11 @@ FC= FF*CC;
 
 % Add parts for complete electrode model
 function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
-             compl_elec_mdl(fwd_model,pp)
+             compl_elec_mdl(fmdl,pp)
    d0= pp.n_dims;
    FFdata= zeros(0,d0);
-   FFd_block= sqrtm( ( ones(d0) + eye(d0) )/6/(d0-1) ); % 6 in 2D, 12 in 3D 
    FFiidx= zeros(0,d0);
    FFjidx= zeros(0,d0);
-   FFi_block= ones(d0,1)*(1:d0);
    CCdata= zeros(0,d0);
    CCiidx= zeros(0,d0);
    CCjidx= zeros(0,d0);
@@ -83,45 +81,68 @@ function [FFdata,FFiidx,FFjidx, CCdata,CCiidx,CCjidx] = ...
    sidx= d0*pp.n_elem;
    cidx= (d0+1)*pp.n_elem;
    i_cem = 0; % Index into electrodes that are CEM (but not pt)
-   cem_boundary = pp.boundary;
-   if isfield(fwd_model,'system_mat_fields')
-      cem_boundary = [cem_boundary;fwd_model.system_mat_fields.CEM_boundary];
+   pp.cem_boundary = pp.boundary;
+   if isfield(fmdl,'system_mat_fields')
+      pp.cem_boundary = [pp.cem_boundary;
+          fmdl.system_mat_fields.CEM_boundary];
    end
    for i= 1:pp.n_elec
-      eleci = fwd_model.electrode(i);
+      eleci = fmdl.electrode(i);
       % contact impedance zc is in [Ohm.m] for 2D or [Ohm.m^2] for 3D
       zc=  eleci.z_contact;
-      if isfield(eleci,'faces')  && ~isempty(eleci.faces)
-         if ~isempty(eleci.nodes)
-            eidors_msg('Warning: electrode %d has both faces and nodes',i);
-         end
-         bdy_nds= eleci.faces;
-         [~, bdy_area] = find_electrode_bdy( ...
-             bdy_nds, fwd_model.nodes,[]);
-      else
-         [bdy_idx, bdy_area] = find_electrode_bdy( ...
-             cem_boundary, fwd_model.nodes, eleci.nodes );
-             % bdy_area is in [m] for 2D or [m^2] for 3D
+      [i_cem, sidx, cidx, blk]= compl_elec_mdl_i( ...
+         eleci, zc, i_cem, sidx, cidx, fmdl, pp);
+      FFdata= [FFdata;blk.FFdata];
+      FFiidx= [FFiidx;blk.FFiidx];
+      FFjidx= [FFjidx;blk.FFjidx];
+      CCdata= [CCdata;blk.CCdata];
+      CCiidx= [CCiidx;blk.CCiidx];
+      CCjidx= [CCjidx;blk.CCjidx];
+   end
 
-         % For pt elec model, bdy_idx = [], so this doesn't run
-         if isempty(bdy_idx); continue; end % no action for pt elecs
+function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
+       eleci, zc, i_cem, sidx, cidx, fmdl, pp);
+   d0= pp.n_dims;
+   FFd_block= sqrtm( ( ones(d0) + eye(d0) )/6/(d0-1) ); % 6 in 2D, 12 in 3D 
+   FFi_block= ones(d0,1)*(1:d0);
+   blk.FFdata= zeros(0,d0);
+   blk.FFiidx= zeros(0,d0);
+   blk.FFjidx= zeros(0,d0);
+   blk.CCdata= zeros(0,d0);
+   blk.CCiidx= zeros(0,d0);
+   blk.CCjidx= zeros(0,d0);
 
-         bdy_nds= cem_boundary(bdy_idx,:);
+
+   if isfield(eleci,'faces')  && ~isempty(eleci.faces)
+      if ~isempty(eleci.nodes)
+         eidors_msg('Warning: electrode %d has both faces and nodes',i);
       end
-      i_cem = i_cem + 1;
-         % 3D: [m^2]/[Ohm.m^2] = [S]
-         % 2D: [m]  /[Ohm.m]   = [S]
-      for j= 1:size(bdy_nds,1);
-         FFdata= [FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
-         FFiidx= [FFiidx; FFi_block' + sidx];
-         FFjidx= [FFjidx; FFi_block  + cidx];
+      bdy_nds= eleci.faces;
+      [~, bdy_area] = find_electrode_bdy( ...
+          bdy_nds, fmdl.nodes,[]);
+   else
+      [bdy_idx, bdy_area] = find_electrode_bdy( ...
+        pp.cem_boundary, fmdl.nodes, eleci.nodes);
+          % bdy_area is in [m] for 2D or [m^2] for 3D
 
-         CCiidx= [CCiidx; FFi_block(1:2,:) + cidx];
-         CCjidx= [CCjidx; bdy_nds(j,:) ; (pp.n_node+i_cem)*ones(1,d0)];
-         CCdata= [CCdata; [1;-1]*ones(1,d0)];
-         sidx = sidx + d0;
-         cidx = cidx + d0;
-      end
+      % For pt elec model, bdy_idx = [], so this doesn't run
+      if isempty(bdy_idx); return; end % no action for pt elecs
+
+      bdy_nds= pp.cem_boundary(bdy_idx,:);
+   end
+   i_cem = i_cem + 1;
+      % 3D: [m^2]/[Ohm.m^2] = [S]
+      % 2D: [m]  /[Ohm.m]   = [S]
+   for j= 1:size(bdy_nds,1);
+      blk.FFdata= [blk.FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
+      blk.FFiidx= [blk.FFiidx; FFi_block' + sidx];
+      blk.FFjidx= [blk.FFjidx; FFi_block  + cidx];
+
+      blk.CCiidx= [blk.CCiidx; FFi_block(1:2,:) + cidx];
+      blk.CCjidx= [blk.CCjidx; bdy_nds(j,:) ; (pp.n_node+i_cem)*ones(1,d0)];
+      blk.CCdata= [blk.CCdata; [1;-1]*ones(1,d0)];
+      sidx = sidx + d0;
+      cidx = cidx + d0;
    end
 
 
