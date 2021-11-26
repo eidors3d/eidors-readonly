@@ -145,13 +145,22 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
 function  FFdata = assemble_elements(d1,d0,p);
    FFdata= zeros(d0*p.n_elem,d1);
    dfact = (d0-1)*d0;
-   for j=1:p.n_elem;
-     a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
-     idx= d0*(j-1)+1 : d0*j;
-     FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
-   end %for j=1:ELEMs 
+   if d0==2 
+       for j=1:p.n_elem;
+         a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
+         idx= d0*(j-1)+1 : d0*j;
+         FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
+       end %for j=1:ELEMs 
+   else
+       for j=1:p.n_elem;
+         M=  [ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ];
+         [I,D] = vectorize_4x4inv(M);
+         idx= d0*(j-1)+1 : d0*j;
+         FFdata(idx,1:d1)= I(2:d1,:)/ sqrt(dfact*abs(D));
+       end %for j=1:ELEMs 
+   end
 
-function [I,M] = vectorize_4x4inv(M)
+function [I,D] = vectorize_4x4inv(M)
 % Adapted from the Mesa3D implementation of
 % gluInvertMatrix(const double m[16], double invOut[16])
 % Available in Mesa3D (License in MIT)
@@ -272,11 +281,12 @@ function [I,M] = vectorize_4x4inv(M)
        M(3,1,:).*I(1,3,:) + ...
        M(4,1,:).*I(1,4,:);
 
-   if (abs(D) < eps) 
+   if any(abs(D) < eps) 
       warning('Determinant close to zero');
    end
 
-   I = I./D;
+   D = 1./D;
+   I = I.*D;
 
 
 function do_unit_test
