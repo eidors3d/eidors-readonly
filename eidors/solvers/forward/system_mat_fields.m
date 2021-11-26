@@ -42,13 +42,7 @@ function FC= calc_system_mat_fields( fwd_model )
 
    FFjidx= floor([0:d0*e-1]'/d0)*d1*ones(1,d1) + ones(d0*e,1)*(1:d1);
    FFiidx= [1:d0*e]'*ones(1,d1);
-   FFdata= zeros(d0*e,d1);
-   dfact = (d0-1)*d0;
-   for j=1:e
-     a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
-     idx= d0*(j-1)+1 : d0*j;
-     FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
-   end %for j=1:ELEMs 
+   FFdata = assemble_elements(d1,d0,p);
 
 if 0 % Not complete electrode model
    FF= sparse(FFiidx,FFjidx,FFdata);
@@ -148,6 +142,14 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
       cidx = cidx + d0;
    end
 
+function  FFdata = assemble_elements(d1,d0,p);
+   FFdata= zeros(d0*p.n_elem,d1);
+   dfact = (d0-1)*d0;
+   for j=1:p.n_elem;
+     a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
+     idx= d0*(j-1)+1 : d0*j;
+     FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
+   end %for j=1:ELEMs 
 
 function [I,M] = vectorize_4x4inv(M)
 % Adapted from the Mesa3D implementation of
@@ -270,12 +272,36 @@ function [I,M] = vectorize_4x4inv(M)
        M(3,1,:).*I(1,3,:) + ...
        M(4,1,:).*I(1,4,:);
 
-   if (D == 0) 
+   if (abs(D) < eps) 
+      warning('Determinant close to zero');
    end
 
    I = I./D;
 
+
 function do_unit_test
+%  do_unit_test_2d_test
+   do_unit_test_3d_test
+
+function do_unit_test_3d_test
+   imdl= mk_common_model('n3r2',[16,2]); 
+   fmdl= imdl.fwd_model;
+   FC = system_mat_fields( fmdl );
+   SZ(2) = num_nodes(fmdl) + num_elecs(fmdl);
+   SZ(1) = 3*(num_elems(fmdl) + num_elecs(fmdl)*2);
+     % Two faces per electrode
+   unit_test_cmp('sys_mat3d', size(FC), SZ);
+
+   E14 = [...
+   0.329216512695190  -0.329216512695190  0                   0;
+   0.032424996343701  -0.032424996343701 -0.506252451622855   0.506252451622855;
+  -0.098764953808557                   0  0.098764953808557                   0;
+   0.329216512695190  -0.329216512695190  0                   0];
+   unit_test_cmp('sys_mat3dx1', FC(1:4,[1,33,64,65]), E14,1e-14);
+   
+
+function do_unit_test_2d_test
+
    imdl=  mk_common_model('a2c2',16);
    FC = system_mat_fields( imdl.fwd_model);
    unit_test_cmp('sys_mat1', size(FC), [128,41]);
