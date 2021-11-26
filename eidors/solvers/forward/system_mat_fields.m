@@ -152,11 +152,13 @@ function  FFdata = assemble_elements(d1,d0,p);
          FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
        end %for j=1:ELEMs 
    else
+       M3 = ones(d1,d1,p.n_elem);
+       M3(2:end,:,:)= reshape(p.NODE(:,p.ELEM),d0,d1,[]);
+       [I,D] = vectorize_4x4inv(M3);
+       Is = I ./ sqrt(dfact*abs(D));
        for j=1:p.n_elem;
-         M=  [ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ];
-         [I,D] = vectorize_4x4inv(M);
          idx= d0*(j-1)+1 : d0*j;
-         FFdata(idx,1:d1)= I(2:d1,:)/ sqrt(dfact*abs(D));
+         FFdata(idx,1:d1)= Is(:,2:d1,j)';
        end %for j=1:ELEMs 
    end
 
