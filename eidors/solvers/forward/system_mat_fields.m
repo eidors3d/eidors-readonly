@@ -143,21 +143,33 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
    end
 
 function  FFdata = assemble_elements(d1,d0,p);
-   FFdata= zeros(d0*p.n_elem,d1);
    dfact = (d0-1)*d0;
-   if d0==2 
+   if 1 % OLD CODE
+       FFdata= zeros(d0*p.n_elem,d1);
        for j=1:p.n_elem;
          a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
          idx= d0*(j-1)+1 : d0*j;
          FFdata(idx,1:d1)= a(2:d1,:)/ sqrt(dfact*abs(det(a)));
        end %for j=1:ELEMs 
+   end
+   M3 = ones(d1,d1,p.n_elem);
+   M3(2:end,:,:)= reshape(p.NODE(:,p.ELEM),d0,d1,[]);
+   if d0==2
+       [I,D] = vectorize_3x3inv(M3);
    else
-       M3 = ones(d1,d1,p.n_elem);
-       M3(2:end,:,:)= reshape(p.NODE(:,p.ELEM),d0,d1,[]);
        [I,D] = vectorize_4x4inv(M3);
-       Is = I ./ sqrt(dfact*abs(D));
-       Is = permute(Is(:,2:d1,:),[2,3,1]);
-       FFdata = reshape(Is,[],d1);
+   end
+   Is = I ./ sqrt(dfact*abs(D));
+   Is = permute(Is(:,2:d1,:),[2,3,1]);
+   FFdata2= reshape(Is,[],d1);
+
+% Not vectorized yet, this is a placeholder
+function [I,D] = vectorize_3x3inv(M)
+   e = size(M,3);
+   I= zeros(size(M)); D = zeros(1,1,e);
+   for i=1:e
+      I(:,:,i) = inv(M(:,:,i));
+      D(1,1,i) = det(I(:,:,i));
    end
 
 function [I,D] = vectorize_4x4inv(M)
@@ -290,7 +302,7 @@ function [I,D] = vectorize_4x4inv(M)
 
 
 function do_unit_test
-%  do_unit_test_2d_test
+   do_unit_test_2d_test
    do_unit_test_3d_test
 
 function do_unit_test_3d_test
