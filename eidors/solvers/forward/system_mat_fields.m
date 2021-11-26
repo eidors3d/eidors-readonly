@@ -144,7 +144,7 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
 
 function  FFdata = assemble_elements(d1,d0,p);
    dfact = (d0-1)*d0;
-   if 1 % OLD CODE
+   if 0 % OLD CODE
        FFdata= zeros(d0*p.n_elem,d1);
        for j=1:p.n_elem;
          a=  inv([ ones(d1,1), p.NODE( :, p.ELEM(:,j) )' ]);
@@ -161,7 +161,7 @@ function  FFdata = assemble_elements(d1,d0,p);
    end
    Is = I ./ sqrt(dfact*abs(D));
    Is = permute(Is(:,2:d1,:),[2,3,1]);
-   FFdata2= reshape(Is,[],d1);
+   FFdata= reshape(Is,[],d1);
 
 % Not vectorized yet, this is a placeholder
 function [I,D] = vectorize_3x3inv(M)
