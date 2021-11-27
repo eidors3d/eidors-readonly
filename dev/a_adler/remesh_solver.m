@@ -58,21 +58,22 @@ function pp = segment_model(img);
 
    [~,pp.idx,~] = intersect(pp.extr,pp.cont);
 
-% TODO: Cache on base model
+% TODO: There are more efficient ways of
+%  caching base model.
 function [vA,Ab,bAb,B] = base_block(img,pp);
    nbe = ~pp.base_elems;
    img.elem_data(nbe,:) = [];  
    img.fwd_model.elems(nbe,:) = [];  
    E = calc_system_mat(img); E=E.E;
-   [vA,Ab,bAb,B] = base_block_calc(E,pp);
-
-
-function [vA,Ab,bAb,B] = base_block_calc(E,pp);
 
    A = E(pp.base,pp.base);
    B = E(pp.base,pp.cont);
    iA= pp.QQ(pp.base,:);
+   [vA,Ab,bAb] = eidors_cache( ...
+       @base_block_calc, {A,B,iA});
 
+
+function [vA,Ab,bAb]= base_block_calc(A,B,iA);
    vA = left_divide(A,iA);
    Ab = left_divide(A,B);
    bAb= B'*Ab;
