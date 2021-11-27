@@ -21,6 +21,19 @@ v([pp.base;pp.extr],:) = [vO; vI];
 
 data = pack_output(img,v);
 
+% find which nodes are in contact
+function pp= base_n_contact(img,pp);
+   fmdl = img.fwd_model;
+   base= fmdl.remesh_solver.base_nodes(:);
+   elems = fmdl.elems;
+   gone = ismember(elems, base);
+   pp.base_elems = all(gone,2);
+   % Eliminate elems only connected to base
+   elems(pp.base_elems,:) = [];
+   pp.contact_nodes = intersect(elems(:), base);
+   pp.base_nodes = setxor(base,pp.contact_nodes);
+   
+
 % base nodes (with ground), without, contact
 function pp = segment_model(img);
    fmdl = img.fwd_model;
@@ -28,19 +41,20 @@ function pp = segment_model(img);
    pp= fwd_model_parameters(fmdl);
 
    Nnode= num_nodes(img);
-   base_nodes= params.base_nodes(:);
+   pp= base_n_contact(img,pp);
+
    base_elecs= params.base_elecs(:);
    extr_elecs= params.extr_elecs(:);
-   pp.baseg= [base_nodes; Nnode + base_elecs];
+   pp.baseg= [pp.base_nodes; Nnode + base_elecs];
 
    pp.base = pp.baseg;
    pp.base(pp.base == fmdl.gnd_node) = [];
 
-   pp.cont = fmdl.remesh_solver.contact_nodes(:);
+   pp.cont = pp.contact_nodes(:);
 
    pp.extr= [(1:num_nodes(img))';
               Nnode + extr_elecs];
-   pp.extr(base_nodes) = [];
+   pp.extr(pp.base_nodes) = [];
 
    [~,pp.idx,~] = intersect(pp.extr,pp.cont);
 
@@ -118,8 +132,7 @@ fmdl.stimulation = stim_meas_list([1,2,3,4;1,3,3,5],5);
 img = mk_image(fmdl,1);
 img.fwd_solve.get_all_nodes = true;
 subplot(121);show_fem(img,[0,0,2.012]);
-img.fwd_model.remesh_solver.base_nodes = 13:num_nodes(fmdl);
-img.fwd_model.remesh_solver.contact_nodes = 5:12;
+img.fwd_model.remesh_solver.base_nodes = 5:num_nodes(fmdl);
 img.fwd_model.remesh_solver.base_elecs = 1:4;
 img.fwd_model.remesh_solver.extr_elecs = 5;
 vn=remesh_solver(img);
