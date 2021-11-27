@@ -60,8 +60,15 @@ function pp = segment_model(img);
 
 % TODO: Cache on base model
 function [vA,Ab,bAb,B] = base_block(img,pp);
-
+   nbe = ~pp.base_elems;
+   img.elem_data(nbe,:) = [];  
+   img.fwd_model.elems(nbe,:) = [];  
    E = calc_system_mat(img); E=E.E;
+   [vA,Ab,bAb,B] = base_block_calc(E,pp);
+
+
+function [vA,Ab,bAb,B] = base_block_calc(E,pp);
+
    A = E(pp.base,pp.base);
    B = E(pp.base,pp.cont);
    iA= pp.QQ(pp.base,:);
