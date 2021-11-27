@@ -154,6 +154,11 @@ function  FFdata = assemble_elements(d1,d0,p);
    end
    M3 = ones(d1,d1,p.n_elem);
    M3(2:end,:,:)= reshape(p.NODE(:,p.ELEM),d0,d1,[]);
+% To stabilize inverse, remove average
+% This is a multiple of row1 = 1
+% This affects row one only
+   M3(2:end,:,:) = M3(2:end,:,:) - ...
+              mean(M3(2:end,:,:),2);
    switch d1
       case 3; [I,D] = vectorize_3x3inv(M3);
       case 4; [I,D] = vectorize_4x4inv(M3);
@@ -187,11 +192,15 @@ function [I,D] = vectorize_4x4inv(M)
 % Available in Mesa3D (License in MIT)
 %
 % positions of 1 removed in rev6202
-   I = zeros(size(M));
+
+
+% Precalculate pieces to speed up
    M21 = M(2,1,:); M31 = M(3,1,:); M41 = M(4,1,:);
    M22 = M(2,2,:); M32 = M(3,2,:); M42 = M(4,2,:);
    M23 = M(2,3,:); M33 = M(3,3,:); M43 = M(4,3,:);
    M24 = M(2,4,:); M34 = M(3,4,:); M44 = M(4,4,:);
+
+   I = zeros(size(M));
    I(1,1,:)= M22.*M33.*M44 - ...
              M22.*M43.*M34 - ...
              M23.*M32.*M44 + ...
@@ -317,17 +326,24 @@ function [I,D] = vectorize_4x4inv(M)
 
 
 function do_unit_test
+   
+   do_unit_test_vectorized_inv
+   do_unit_test_2d_test
+   do_unit_test_3d_test
+
+function do_unit_test_vectorized_inv
    M=reshape((1:16).^(0.5),4,4); M(1,:) = 1;
+   M(2:end,:,:) = M(2:end,:,:) - ...
+             mean(M(2:end,:,:),2);
    [I,D] = vectorize_4x4inv(M);
-   unit_test_cmp('vectorize_4x4inv',I,inv(M),1e-06);
-   unit_test_cmp('vectorize_4x4inv',D,det(M),1e-06);
+   iM = inv(M);
+   unit_test_cmp('vectorize_4x4inv', ...
+       I(:,2:end) ,iM(:,2:end),1e-09);
+   unit_test_cmp('vectorize_4x4inv',D,det(M),1e-12);
    M=reshape((1:9).^(0.5),3,3); M(1,:) = 1;
    [I,D] = vectorize_3x3inv(M);
    unit_test_cmp('vectorize_3x3inv',I,inv(M),1e-12);
    unit_test_cmp('vectorize_3x3inv',D,det(M),1e-12);
-   
-   do_unit_test_2d_test
-   do_unit_test_3d_test
 
 function do_unit_test_3d_test
    imdl= mk_common_model('n3r2',[16,2]); 
