@@ -56,25 +56,33 @@ function [vA,Ab,bAb,B] = base_block(img,pp);
    Ab = left_divide(A,B);
    bAb= B'*Ab;
 
-function E = inner_sys_mat_old(img,pp);
-   E = calc_system_mat(img); E=E.E;
 
-function E = inner_sys_mat(img,pp);
+% TODO: Calcs full matrix
+function D = inner_sys_mat_old(img,pp);
    E = calc_system_mat(img); E=E.E;
-
+   D = E(pp.extr,pp.extr);
 
 
 % TODO: Avoid calculating full system mat
+function D = inner_sys_mat(img,pp);
+   gone= all( ~ismember( ...
+        img.fwd_model.elems,pp.extr),2);
+   img.elem_data(gone,:) = [];
+   img.fwd_model.elems(gone,:) = [];
+   E = calc_system_mat(img); E=E.E;
+   D = E(pp.extr,pp.extr);
+
+
 function [vD,Db]= extr_block(img,bAb,B,pp);
-   E = inner_sys_mat(img,pp);
+   DmA = inner_sys_mat(img,pp);
+   ii = pp.idx;
 
    iD= pp.QQ(pp.extr,:);
-   DmA = E(pp.extr,pp.extr);
-   DmA(pp.idx,pp.idx)= DmA(pp.idx,pp.idx) - bAb;
+   DmA(ii,ii)= DmA(ii,ii) - bAb;
    vD = left_divide(DmA,iD);
 
    Bx= zeros(size(vD,1),size(B,1));
-   Bx(pp.idx,:) = B';
+   Bx(ii,:) = B';
    Db = left_divide(DmA,Bx);
 
 function data = pack_output(img,v)
