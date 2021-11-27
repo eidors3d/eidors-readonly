@@ -1,6 +1,7 @@
 function data =nov26_remesh_solver(img)
 % img.fwd_model 
 %    .remesh_solver.base_nodes= list
+%    .remesh_solver.contact_nodes = list
 %    .remesh_solver.base_elecs= list
 %       CEM electrodes attached to the base
 
@@ -8,45 +9,62 @@ function data =nov26_remesh_solver(img)
 
 if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test;return;end
 
-[vA,Ab,bAb,B,base,extr] = base_block(img);
-[vD,Db]       = extr_block(img,extr,bAb,B);
-save outo
+[vA,Ab,bAb,B,base] = base_block(img);
+[vD,Db,idx,extr]   = extr_block(img,bAb,B);
 
 vI = vD - Db*vA;
-vO = vA - Ab*vI;
-v([base(:);extr(:)],:) = [vO; vI];
+vO = vA - Ab*vI(idx,:);
+v([base;extr],:) = [vO; vI];
 
 data = pack_output(img,v);
 
-
-function [vA,Ab,bAb,B,base,extr] = base_block(img);
+% base nodes (with ground), without, contact
+function [base,baseg,cont] = segment(img);
    fmdl = img.fwd_model;
-   pp= fwd_model_parameters(fmdl);
-   E = calc_system_mat(img);       E=E.E;
-
    Nnode= num_nodes(img);
-   base = [fmdl.remesh_solver.base_nodes(:);
+   baseg= [fmdl.remesh_solver.base_nodes(:);
      Nnode+fmdl.remesh_solver.base_elecs(:)];
-   extr = 1:size(E,1); extr(base) = [];
+
+   base = baseg;
    base(base == fmdl.gnd_node) = [];
 
+   cont = fmdl.remesh_solver.contact_nodes(:);
+
+% TODO: Cache on base model
+function [vA,Ab,bAb,B,base] = base_block(img);
+   fmdl = img.fwd_model;
+   pp= fwd_model_parameters(fmdl);
+
+   [base,baseg,cont] = segment(img);
+
+   E = calc_system_mat(img);       E=E.E;
    A = E(base,base);
-   B = E(base,extr);
+   B = E(base,cont);
    iA= pp.QQ(base,:);
 
    vA = left_divide(A,iA);
    Ab = left_divide(A,B);
    bAb= B'*Ab;
 
-function [vD,Db] = extr_block(img,extr,bAb,B);
-   pp= fwd_model_parameters(img.fwd_model);
+
+% TODO: Avoid calculating full system mat
+function [vD,Db,idx,extr] = extr_block(img,bAb,B);
+   fmdl = img.fwd_model;
+   pp= fwd_model_parameters(fmdl);
+
    E = calc_system_mat(img);       E=E.E;
 
+   [base,baseg,cont] = segment(img);
+   extr = (1:size(E,1))'; extr(baseg) = [];
+   [~,idx,~] = intersect(extr,cont);
+
    iD= pp.QQ(extr,:);
-   D = E(extr,extr);
-   DmA= D - bAb;
+   DmA = E(extr,extr);
+   DmA(idx,idx)= DmA(idx,idx) - bAb;
    vD = left_divide(DmA,iD);
-   Db = left_divide(DmA,B');
+   Bx= zeros(size(vD,1),size(B,1));
+   Bx(idx,:) = B';
+   Db = left_divide(DmA,Bx);
 
 function data = pack_output(img,v)
    fmdl = img.fwd_model;
@@ -81,6 +99,7 @@ img = mk_image(fmdl,1);
 img.fwd_solve.get_all_nodes = true;
 subplot(121);show_fem(img,[0,0,2.012]);
 img.fwd_model.remesh_solver.base_nodes = 13:num_nodes(fmdl);
+img.fwd_model.remesh_solver.contact_nodes = 5:12;
 img.fwd_model.remesh_solver.base_elecs = 1:4;
 vn=remesh_solver(img);
 vf=fwd_solve(img);
