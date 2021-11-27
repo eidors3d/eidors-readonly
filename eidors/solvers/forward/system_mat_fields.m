@@ -154,23 +154,32 @@ function  FFdata = assemble_elements(d1,d0,p);
    end
    M3 = ones(d1,d1,p.n_elem);
    M3(2:end,:,:)= reshape(p.NODE(:,p.ELEM),d0,d1,[]);
-   if d0==2
-       [I,D] = vectorize_3x3inv(M3);
-   else
-       [I,D] = vectorize_4x4inv(M3);
+   switch d1
+      case 3; [I,D] = vectorize_3x3inv(M3);
+      case 4; [I,D] = vectorize_4x4inv(M3);
+      otherwise;
+         error('problem dimension not understood')
    end
-   Is = I ./ sqrt(dfact*abs(D));
+   Is = I .* sqrt(abs(D)/dfact);
    Is = permute(Is(:,2:d1,:),[2,3,1]);
    FFdata= reshape(Is,[],d1);
 
 % Not vectorized yet, this is a placeholder
 function [I,D] = vectorize_3x3inv(M)
-   e = size(M,3);
-   I= zeros(size(M)); D = zeros(1,1,e);
-   for i=1:e
-      I(:,:,i) = inv(M(:,:,i));
-      D(1,1,i) = det(I(:,:,i));
+   a= M(1,1,:); b= M(1,2,:); c= M(1,3,:);
+   d= M(2,1,:); e= M(2,2,:); f= M(2,3,:);
+   g= M(3,1,:); h= M(3,2,:); i= M(3,3,:);
+
+   D= a.*(e.*i-f.*h) - b.*(d.*i-f.*g) + c.*(d.*h-e.*g);
+   if any(abs(D) < eps) 
+      warning('Determinant close to zero');
    end
+
+   I= (1./D).* ...
+      [e.*i - f.*h, c.*h - b.*i, b.*f - c.*e;
+       f.*g - d.*i, a.*i - c.*g, c.*d - a.*f;
+       d.*h - e.*g, b.*g - a.*h, a.*e - b.*d];
+   
 
 function [I,D] = vectorize_4x4inv(M)
 % Adapted from the Mesa3D implementation of
@@ -304,11 +313,19 @@ function [I,D] = vectorize_4x4inv(M)
       warning('Determinant close to zero');
    end
 
-   D = 1./D;
-   I = I.*D;
+   I = I.*(1./D);
 
 
 function do_unit_test
+   M=reshape((1:16).^(0.5),4,4); M(1,:) = 1;
+   [I,D] = vectorize_4x4inv(M);
+   unit_test_cmp('vectorize_4x4inv',I,inv(M),1e-06);
+   unit_test_cmp('vectorize_4x4inv',D,det(M),1e-06);
+   M=reshape((1:9).^(0.5),3,3); M(1,:) = 1;
+   [I,D] = vectorize_3x3inv(M);
+   unit_test_cmp('vectorize_3x3inv',I,inv(M),1e-12);
+   unit_test_cmp('vectorize_3x3inv',D,det(M),1e-12);
+   
    do_unit_test_2d_test
    do_unit_test_3d_test
 
