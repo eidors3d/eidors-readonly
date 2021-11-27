@@ -1,4 +1,4 @@
-function data =nov26_remesh_solver(img)
+function data =remesh_solver(img)
 % img.fwd_model 
 %    .remesh_solver.base_nodes= list
 %    .remesh_solver.contact_nodes = list
@@ -9,38 +9,38 @@ function data =nov26_remesh_solver(img)
 
 if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test;return;end
 
-[vA,Ab,bAb,B,base] = base_block(img);
-[vD,Db,idx,extr]   = extr_block(img,bAb,B);
+pp = segment_model(img);
+[vA,Ab,bAb,B]    = base_block(img,pp);
+[vD,Db,pp] = extr_block(img,bAb,B,pp);
 
 vI = vD - Db*vA;
-vO = vA - Ab*vI(idx,:);
-v([base;extr],:) = [vO; vI];
+vO = vA - Ab*vI(pp.idx,:);
+v([pp.base;pp.extr],:) = [vO; vI];
 
 data = pack_output(img,v);
 
 % base nodes (with ground), without, contact
-function [base,baseg,cont] = segment(img);
-   fmdl = img.fwd_model;
-   Nnode= num_nodes(img);
-   baseg= [fmdl.remesh_solver.base_nodes(:);
-     Nnode+fmdl.remesh_solver.base_elecs(:)];
-
-   base = baseg;
-   base(base == fmdl.gnd_node) = [];
-
-   cont = fmdl.remesh_solver.contact_nodes(:);
-
-% TODO: Cache on base model
-function [vA,Ab,bAb,B,base] = base_block(img);
+function pp = segment_model(img);
    fmdl = img.fwd_model;
    pp= fwd_model_parameters(fmdl);
 
-   [base,baseg,cont] = segment(img);
+   Nnode= num_nodes(img);
+   pp.baseg= [ ...
+           fmdl.remesh_solver.base_nodes(:);
+     Nnode+fmdl.remesh_solver.base_elecs(:)];
 
-   E = calc_system_mat(img);       E=E.E;
-   A = E(base,base);
-   B = E(base,cont);
-   iA= pp.QQ(base,:);
+   pp.base = pp.baseg;
+   pp.base(pp.base == fmdl.gnd_node) = [];
+
+   pp.cont = fmdl.remesh_solver.contact_nodes(:);
+
+% TODO: Cache on base model
+function [vA,Ab,bAb,B] = base_block(img,pp);
+
+   E = calc_system_mat(img); E=E.E;
+   A = E(pp.base,pp.base);
+   B = E(pp.base,pp.cont);
+   iA= pp.QQ(pp.base,:);
 
    vA = left_divide(A,iA);
    Ab = left_divide(A,B);
@@ -48,22 +48,20 @@ function [vA,Ab,bAb,B,base] = base_block(img);
 
 
 % TODO: Avoid calculating full system mat
-function [vD,Db,idx,extr] = extr_block(img,bAb,B);
-   fmdl = img.fwd_model;
-   pp= fwd_model_parameters(fmdl);
+function [vD,Db,pp]= extr_block(img,bAb,B,pp);
+   E = calc_system_mat(img); E=E.E;
 
-   E = calc_system_mat(img);       E=E.E;
+   pp.extr = (1:size(E,1))';
+   pp.extr(pp.baseg) = [];
+   [~,pp.idx,~] = intersect(pp.extr,pp.cont);
 
-   [base,baseg,cont] = segment(img);
-   extr = (1:size(E,1))'; extr(baseg) = [];
-   [~,idx,~] = intersect(extr,cont);
-
-   iD= pp.QQ(extr,:);
-   DmA = E(extr,extr);
-   DmA(idx,idx)= DmA(idx,idx) - bAb;
+   iD= pp.QQ(pp.extr,:);
+   DmA = E(pp.extr,pp.extr);
+   DmA(pp.idx,pp.idx)= DmA(pp.idx,pp.idx) - bAb;
    vD = left_divide(DmA,iD);
+
    Bx= zeros(size(vD,1),size(B,1));
-   Bx(idx,:) = B';
+   Bx(pp.idx,:) = B';
    Db = left_divide(DmA,Bx);
 
 function data = pack_output(img,v)
@@ -88,12 +86,13 @@ function data = pack_output(img,v)
 
 
 function do_unit_test
-fmdl= mk_common_model('a2C2',4); fmdl=fmdl.fwd_model;
+fmdl= mk_common_model('a2C2',4);
+fmdl=fmdl.fwd_model;
 fmdl.elems(1:4,:) = [];
+fmdl.gnd_node = 15;
 fmdl = remove_unused_nodes(fmdl);
 fmdl.electrode(5) = struct('nodes',1:3,'z_contact',1e-3);
 fmdl.boundary = find_boundary(fmdl);
-fmdl.gnd_node = 15;
 fmdl.stimulation = stim_meas_list([1,2,3,4;1,3,3,5],5);
 img = mk_image(fmdl,1);
 img.fwd_solve.get_all_nodes = true;
