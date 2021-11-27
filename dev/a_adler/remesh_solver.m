@@ -46,14 +46,17 @@ function [vA,Ab,bAb,B] = base_block(img,pp);
    Ab = left_divide(A,B);
    bAb= B'*Ab;
 
-
-% TODO: Avoid calculating full system mat
-function [vD,Db,pp]= extr_block(img,bAb,B,pp);
+function [E,pp] = inner_sys_mat(img,pp);
    E = calc_system_mat(img); E=E.E;
 
    pp.extr = (1:size(E,1))';
    pp.extr(pp.baseg) = [];
    [~,pp.idx,~] = intersect(pp.extr,pp.cont);
+
+
+% TODO: Avoid calculating full system mat
+function [vD,Db,pp]= extr_block(img,bAb,B,pp);
+   [E,pp] = inner_sys_mat(img,pp);
 
    iD= pp.QQ(pp.extr,:);
    DmA = E(pp.extr,pp.extr);
