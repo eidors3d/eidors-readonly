@@ -10,6 +10,7 @@ if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test;return;end
 
 [vA,Ab,bAb,B,base,extr] = base_block(img);
 [vD,Db]       = extr_block(img,extr,bAb,B);
+save outo
 
 vI = vD - Db*vA;
 vO = vA - Ab*vI;
