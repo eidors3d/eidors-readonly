@@ -35,7 +35,7 @@ function print_convert(filename, varargin)
 %
 % See also IMWRITE
  
-% (C) Andy Adler and Bartlomiej Grychtol 2010-2013. License: GPL v2 or v3.
+% (C) Andy Adler and Bartlomiej Grychtol 2010-2021. License: GPL v2 or v3.
 % $Id$
 %
 %  Compatibility with pre-3.7 features:
