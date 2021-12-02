@@ -53,8 +53,6 @@ if ischar(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
 pp = parse_options(filename, varargin{:});
 
-tmpnam = [tempname,'.png'];
-
 old_ihc = get(pp.figno, 'InvertHardcopy');
 old_col = get(pp.figno, 'Color');
 set(pp.figno,'InvertHardCopy','off'); 
@@ -62,15 +60,12 @@ set(pp.figno,'Color','w');
 
 set(pp.figno,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
 %%% The -dpng driver is broken in R2014a on linux (and maybe others);
-print(pp.figno,'-dpng',pp.resolution,tmpnam);
+im = print(pp.figno,'-RGBImage',pp.resolution);
 set(pp.figno,'PaperPosition',pp.page);
  
 set(pp.figno,'InvertHardCopy',old_ihc); % 
 set(pp.figno,'Color',old_col);
  
-im = imread(tmpnam,'png');
-delete(tmpnam);
-
 im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
 try
