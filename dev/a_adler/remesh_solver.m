@@ -107,11 +107,15 @@ function [vD,Db]= extr_block(img,bAb,B,pp);
 
    iD= pp.QQ(pp.extr,:);
    DmA(ii,ii)= DmA(ii,ii) - bAb;
-%  vD = left_divide(DmA,iD);
 
-%  Bx= zeros(size(vD,1),size(B,1));
-%  Bx(ii,:) = B';
-%  Db = left_divide(DmA,Bx);
+   switch 2;
+      case 1;
+   vD = left_divide(DmA,iD);
+
+   Bx= sparse(size(vD,1),size(B,1));
+   Bx(ii,:) = B';
+   Db = left_divide(DmA,Bx);
+      case 2;
    iD_Bx = iD;
    LiD = size(iD,2);
    LBx = size(B,1);
@@ -119,6 +123,11 @@ function [vD,Db]= extr_block(img,bAb,B,pp);
    vD_Db = left_divide(DmA, iD_Bx);
    vD = vD_Db(:,1:LiD);
    Db = vD_Db(:,LiD+1:end);
+      case 3;
+   DmAi = inv(DmA);      
+   vD = DmAi * iD;
+   Db = DmAi(:,ii)*B';
+      end
    
 
 function data = pack_output(img,v)
