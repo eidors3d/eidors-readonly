@@ -73,9 +73,15 @@ function [vA,Ab,bAb,B] = base_block(img,pp);
        @base_block_calc, {A,B,iA});
 
 
+
 function [vA,Ab,bAb]= base_block_calc(A,B,iA);
-   vA = left_divide(A,iA);
-   Ab = left_divide(A,B);
+%  vA = left_divide(A,iA);
+%  Ab = left_divide(A,B);
+% Solve once so LU only needs to be done once
+   vA_Ab = left_divide(A,[iA,B]);
+   LiA = size(iA,2);
+   vA = vA_Ab(:,1:LiA);
+   Ab = vA_Ab(:,LiA+1:end);
    bAb= B'*Ab;
 
 
@@ -101,11 +107,19 @@ function [vD,Db]= extr_block(img,bAb,B,pp);
 
    iD= pp.QQ(pp.extr,:);
    DmA(ii,ii)= DmA(ii,ii) - bAb;
-   vD = left_divide(DmA,iD);
+%  vD = left_divide(DmA,iD);
 
-   Bx= zeros(size(vD,1),size(B,1));
-   Bx(ii,:) = B';
-   Db = left_divide(DmA,Bx);
+%  Bx= zeros(size(vD,1),size(B,1));
+%  Bx(ii,:) = B';
+%  Db = left_divide(DmA,Bx);
+   iD_Bx = iD;
+   LiD = size(iD,2);
+   LBx = size(B,1);
+   iD_Bx(ii,LiD+(1:LBx)) = B';
+   vD_Db = left_divide(DmA, iD_Bx);
+   vD = vD_Db(:,1:LiD);
+   Db = vD_Db(:,LiD+1:end);
+   
 
 function data = pack_output(img,v)
    fmdl = img.fwd_model;
