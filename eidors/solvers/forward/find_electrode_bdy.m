@@ -68,11 +68,8 @@ end
 %
 % Any nodes left will be treated as point electrodes
 function [ffb,unused] = find_bdy_idx( bdy, elec_nodes);
-   bdy_els = zeros(size(bdy,1),1);
    elec_nodes = unique(elec_nodes);
-   for nd= elec_nodes(:)'
-      bdy_els = bdy_els + any(bdy==nd,2);
-   end
+   bdy_els = sum(ismember(bdy,elec_nodes),2);
    ffb = find(bdy_els == size(bdy,2));
 
 %  find if all nodes are used
