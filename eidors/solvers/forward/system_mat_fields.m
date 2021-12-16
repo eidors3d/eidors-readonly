@@ -135,7 +135,7 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
 %       blk.FFdata= [blk.FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
 %       blk.FFiidx= [blk.FFiidx; FFi_block' + sidx];
 %       blk.FFjidx= [blk.FFjidx; FFi_block  + cidx];
-
+% 
 %       blk.CCiidx= [blk.CCiidx; FFi_block(1:2,:) + cidx];
 %       blk.CCjidx= [blk.CCjidx; bdy_nds(j,:) ; (pp.n_node+i_cem)*ones(1,d0)];
 %       blk.CCdata= [blk.CCdata; [1;-1]*ones(1,d0)];
@@ -152,6 +152,8 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
    blk.CCjidx(1:2:end,:) = bdy_nds;
    blk.CCdata = ones(2*N, d0);
    blk.CCdata(2:2:end,:) = -1;
+   sidx = sidx + N*d0;
+   cidx = cidx + N*d0;
    
 
 function  FFdata = assemble_elements(d1,d0,p);
