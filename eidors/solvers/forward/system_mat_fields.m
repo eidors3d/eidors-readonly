@@ -130,17 +130,29 @@ function [i_cem, sidx, cidx, blk]=compl_elec_mdl_i( ...
    i_cem = i_cem + 1;
       % 3D: [m^2]/[Ohm.m^2] = [S]
       % 2D: [m]  /[Ohm.m]   = [S]
-   for j= 1:size(bdy_nds,1);
-      blk.FFdata= [blk.FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
-      blk.FFiidx= [blk.FFiidx; FFi_block' + sidx];
-      blk.FFjidx= [blk.FFjidx; FFi_block  + cidx];
 
-      blk.CCiidx= [blk.CCiidx; FFi_block(1:2,:) + cidx];
-      blk.CCjidx= [blk.CCjidx; bdy_nds(j,:) ; (pp.n_node+i_cem)*ones(1,d0)];
-      blk.CCdata= [blk.CCdata; [1;-1]*ones(1,d0)];
-      sidx = sidx + d0;
-      cidx = cidx + d0;
-   end
+%    for j= 1:size(bdy_nds,1);
+%       blk.FFdata= [blk.FFdata; FFd_block * sqrt(bdy_area(j)/zc)];
+%       blk.FFiidx= [blk.FFiidx; FFi_block' + sidx];
+%       blk.FFjidx= [blk.FFjidx; FFi_block  + cidx];
+
+%       blk.CCiidx= [blk.CCiidx; FFi_block(1:2,:) + cidx];
+%       blk.CCjidx= [blk.CCjidx; bdy_nds(j,:) ; (pp.n_node+i_cem)*ones(1,d0)];
+%       blk.CCdata= [blk.CCdata; [1;-1]*ones(1,d0)];
+%       sidx = sidx + d0;
+%       cidx = cidx + d0;
+%    end
+
+   N = size(bdy_nds,1);
+   blk.FFdata = kron(sqrt(bdy_area(:)/zc), FFd_block);
+   blk.FFiidx = repmat(FFi_block',N,1) + kron(d0*(0:(N-1))',ones(d0)) + sidx;
+   blk.FFjidx = repmat(FFi_block ,N,1) + kron(d0*(0:(N-1))',ones(d0)) + cidx;
+   blk.CCiidx = repmat(FFi_block(1:2,:),N,1) + kron(d0*(0:(N-1))',ones(2,d0)) + cidx;
+   blk.CCjidx = (pp.n_node+i_cem) * ones(2*N,d0);
+   blk.CCjidx(1:2:end,:) = bdy_nds;
+   blk.CCdata = ones(2*N, d0);
+   blk.CCdata(2:2:end,:) = -1;
+   
 
 function  FFdata = assemble_elements(d1,d0,p);
    dfact = (d0-1)*d0;
