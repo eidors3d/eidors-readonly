@@ -11,6 +11,7 @@ function hh=show_fem( mdl, options)
 %   options(2) => show numbering on electrodes (fontsize can be controlled by
 %      the fractional part, ie [0,1.012] => 12pt font)
 %   options(3) => number elements (==1) or nodes (==2);
+%      fontsize can be controlled as above
 %
 % for detailed control of colours, use
 %    img.calc_colours."parameter" = value
@@ -50,11 +51,21 @@ end
 
 if opts.show_elem_numbering
    xyzc= interp_mesh(mdl);
-   placenumbers(xyzc, 7, [0,0,0],'none');
+   if opts.show_elem_numbering == 1
+       fontsize = 7;
+   else
+       fontsize = 1000*(opts.show_elem_numbering - 1);
+   end
+   placenumbers(xyzc, fontsize, [0,0,0],'none');
 end
 if opts.show_node_numbering
    xyzc= mdl.nodes;
-   placenumbers(xyzc, 7, [0.0,0,0.5],[1,1,1]);
+   if opts.show_node_numbering == 1
+       fontsize = 7;
+   else
+       fontsize = 1000*(opts.show_node_numbering - 1);
+   end
+   placenumbers(xyzc, fontsize, [0.0,0,0.5],[1,1,1]);
 end
 
 if nargout == 0; clear hh; end
@@ -122,11 +133,11 @@ function [img,mdl,opts] = proc_params( mdl, options );
 
        opts.do_colourbar=      optionstr(1);
        opts.number_electrodes= optionstr(2);
-       switch optionstr(3)
-          case 1; opts.show_elem_numbering = 1;
-          case 2; opts.show_node_numbering = 1;
-          case 3; opts.show_elem_numbering = 1;
-                  opts.show_node_numbering = 1;
+       switch floor(optionstr(3))
+          case 1; opts.show_elem_numbering = 1 + rem(optionstr(3),1);
+          case 2; opts.show_node_numbering = 1 + rem(optionstr(3),1);
+          case 3; opts.show_elem_numbering = 1 + rem(optionstr(3),1);
+                  opts.show_node_numbering = 1 + rem(optionstr(3),1);
        end
    end
 
