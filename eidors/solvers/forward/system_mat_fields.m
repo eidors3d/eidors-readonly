@@ -39,6 +39,9 @@ function FC= calc_system_mat_fields( fwd_model )
    d1= p.n_dims+1;
    e= p.n_elem;
    n= p.n_node;
+   if length(unique(fwd_model.elems(:)))~=n
+       warning('EIDORS:unused_nodes','Number of nodes inconsistent with Elements. Consider using "remove_unused_nodes"');
+   end
 
    FFjidx= floor([0:d0*e-1]'/d0)*d1*ones(1,d1) + ones(d0*e,1)*(1:d1);
    FFiidx= [1:d0*e]'*ones(1,d1);
