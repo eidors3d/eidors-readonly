@@ -10,6 +10,8 @@ Plan for 3.11
  - Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
  - test netgen 6.2 for linux and windows
  - include netgen 6.2 in the windows binary if it works
+ - fix print_convert - accept command line options (and not just op)
+ - fix print_convert - put stuff on clipboard in windows
 
  - Refactor fmdl.mdl_slice_mesher.level.rotate/centre
 	- central function to handle levels:

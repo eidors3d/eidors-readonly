@@ -69,7 +69,7 @@ set(pp.figno,'Color',old_col);
 im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
 try
-   imwrite(im,filename,pp.imwrite_opts{:});
+   imwrite(im,pp.filename,pp.imwrite_opts{:});
 catch e
    eidors_msg(['Call to IMWRITE failed.'...
                'Probably opt.imwrite_opts is incorrect for %s files.'],...
@@ -77,6 +77,21 @@ catch e
    disp('opt.imwrite_opts:');
    disp(pp.imwrite_opts);
    rethrow(e);
+end
+
+% put onto clipboard
+if pp.clip
+   if isunix()
+      cmd = sprintf(['xclip -selection ' ... 
+          'clipboard -t image/%s -i %s'], ...
+            pp.fmt, pp.filename);
+      [status] = system(cmd) 
+      if status ~=0
+          warning 'calling xclip to clipboard failed';
+      end
+   else
+      warning 'windows code not yet available';
+   end
 end
 
 function im = crop_image(im,pp)
@@ -154,6 +169,13 @@ function fmt = parse_format(filename)
 function pp = parse_options(filename,varargin)
    
    pp.fmt = parse_format(filename);
+   if strcmp(filename, ['{clipboard}.',pp.fmt])
+      pp.clip = true;
+      pp.filename = [tempname(),'.',pp.fmt]; 
+   else
+      pp.clip = false;
+      pp.filename = filename;
+   end
 
    pp.page = get(gcf,'PaperPosition');
    pp.posn = pp.page;
