@@ -192,7 +192,7 @@ function meas = mk_meas_pat(v, elec, ring );
    if v.balance_meas
       meas= meas - sum(v.m_factor)/ (v.tn_elec-1);
    elseif v.trig_meas
-      meas= trig_pat( 1:v.tn_elec, v.tn_elec)';
+      meas= trig_pat( 0:v.tn_elec-2, v.tn_elec)';
       return;
    end
 
@@ -414,6 +414,14 @@ function trig_tests;
    stim = mk_stim_patterns(8,1,'{trigccss}',[0,1],{},2);
    test = 2*[cos(t),cos(2*t),cos(3*t), cos(4*t), sin(t),sin(2*t),sin(3*t)];
    unit_test_cmp('trig: t2',[stim(:).stim_pattern], test, 1e-10);
+
+   stim = mk_stim_patterns(8,1,'{trigccss}','{trig}',{},2);
+   mp1 = stim(1).meas_pattern;
+   mp2 = stim(2).meas_pattern;
+   unit_test_cmp('trig: m1',mp1,mp2,1e-15);
+   test = [cos(t),sin(t),cos(2*t),sin(2*t), ...
+       cos(3*t),sin(3*t),cos(4*t)];
+   unit_test_cmp('trig: m2',mp1',test,1e-15);
 
 function do_unit_test
    trig_tests;
