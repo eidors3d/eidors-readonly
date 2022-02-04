@@ -85,7 +85,7 @@ if pp.clip
       cmd = sprintf(['xclip -selection ' ... 
           'clipboard -t image/%s -i %s'], ...
             pp.fmt, pp.filename);
-      [status] = system(cmd) 
+      [status] = system(cmd);
       if status ~=0
           warning 'calling xclip to clipboard failed';
       end
@@ -253,7 +253,7 @@ function pp = parse_options(filename,varargin)
      end
      if isfield(opt,'vert_space');
         if opt.vert_space >= pp.vert_cut;
-           warrning('Option vert_space must be smaller than vert_cut. Ingoring');
+           warning('Option vert_space must be smaller than vert_cut. Ingoring');
         else
            pp.vert_space = opt.vert_space;
         end
