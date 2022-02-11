@@ -361,7 +361,6 @@ function [vv,curr,volt,auxdata] = draeger_get_readdata( fname );
    end
    d= fread(fid,inf,'float',0,'ieee-le');
    fclose(fid);
-pause
 
    if rem( length(d), 256) ~=0
       eidors_msg('File length strange - cropping file',0);
