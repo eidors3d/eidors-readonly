@@ -6,8 +6,10 @@ function img = eidors_readimg( fname, format )
 % Currently the list of supported file formats is:
 %    - MCEIT (Goettingen / Viasys) "igt" file format 
 %        format = "IGT" or "MCEIT"
-%    - DIXTAL (Goettingen / Viasys) "img" file format 
+%    - DIXTAL  "img" file format 
 %        format = "DIXTAL-IMG"
+%    - DRAEGER  "bin" file format 
+%        format = "DRAEGER-BIN"
 %    - NATIVE "e3d" file format
 %        format = "e3d" or "NATIVE"
 %
@@ -43,6 +45,8 @@ switch fmt
         img = mceit_readimg( fname );
     case {'dixtal-img'}
         img = read_dixtal_img( fname, 1, [] ); % Guess that FS=50
+    case {'bin','draeger-bin'}
+        img = read_draeger_bin( fname );
     case {'e3d','native'}
         img = native_readimg( fname );
     otherwise
@@ -66,6 +70,26 @@ img = igt2img(igt);
 
 img.name = ['Read from ' fname];
 
+%%
+function img = read_draeger_bin( fname );
+    fid=fopen(fname,'rb');
+    getarray=fread(fid, [1 inf],'int8');
+    frame_length=length(getarray)/4358;
+    fclose(fid);
+
+    img=zeros(1024,frame_length);     
+    fid=fopen(fullname_get,'rb');
+    for i=1:frame_length
+        time_stamp=fread(fid, [1 2],'float32');  %read time stamp
+        dummy=fread(fid, [1],'float32');   %read dummy
+        img(:,i)=fread(fid, [1 1024],'float32');%read pixel values for each frame
+        int_value=fread(fid, [1 2],'int32');  %read MinMax, Event Marker,
+        EventText=fread(fid,[1 30],'int8');
+        int_Time=fread(fid, [1 ],'int32'); %Timing Error
+        Medibus=fread(fid, [1 52],'float32'); %ventilator data
+        
+    end
+    fclose(fid);
 
 %%
 function img = native_readimg( fname )
