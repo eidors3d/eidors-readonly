@@ -77,19 +77,25 @@ function img = read_draeger_bin( fname );
     frame_length=length(getarray)/4358;
     fclose(fid);
 
-    img=zeros(1024,frame_length);     
-    fid=fopen(fullname_get,'rb');
+    fmdl = mk_grid_model([],linspace(+1,-1,33),linspace(+1,-1,33));
+    fmdl = rmfield(fmdl,'mdl_slice_mapper'); % set axis to match Draeger format 
+
+    ed=zeros(1024,frame_length);     
+    fid=fopen(fname,'rb');
+    aux = struct([]);
     for i=1:frame_length
         time_stamp=fread(fid, [1 2],'float32');  %read time stamp
         dummy=fread(fid, [1],'float32');   %read dummy
-        img(:,i)=fread(fid, [1 1024],'float32');%read pixel values for each frame
-        int_value=fread(fid, [1 2],'int32');  %read MinMax, Event Marker,
-        EventText=fread(fid,[1 30],'int8');
-        int_Time=fread(fid, [1 ],'int32'); %Timing Error
-        Medibus=fread(fid, [1 52],'float32'); %ventilator data
+        ed(:,i)=fread(fid, [1 1024],'float32');%read pixel values for each frame
+        aux(i).int_value=fread(fid, [1 2],'int32');  %read MinMax, Event Marker,
+        aux(i).EventText=fread(fid,[1 30],'int8');
+        aux(i).int_Time=fread(fid, [1 ],'int32'); %Timing Error
+        aux(i).Medibus=fread(fid, [1 52],'float32'); %ventilator data
         
     end
     fclose(fid);
+    img = mk_image(fmdl,ed);
+    img.aux = aux;
 
 %%
 function img = native_readimg( fname )
