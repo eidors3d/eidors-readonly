@@ -23,8 +23,8 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     distr         - distribution of training points:
 %         0 -> original (as per GREITv1)
 %         1 -> random, centre-heavy 
-%         2 -> random, uniform (default)
-%         3 -> fixed, uniform (debug)
+%         2 -> random, uniform
+%         3 -> fixed, uniform (default)
 %     target_size - size of simulated targets as proportion of mesh radius
 %         (default: 0.02). Can be specified as [min_size max_size] for 
 %         random variation
