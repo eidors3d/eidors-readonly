@@ -1,4 +1,6 @@
 Plan for 3.11
+ - mk_grid_model => Warn if length(vector)==1
+ - debug "Interpolation failed for point ..." in mk_c2f_circ_mapping
  - Fix phase delay in meas_pattern
  - Speed up / clean up _higher_order code
  - Fix _higher_order to handle faces-type electrodes
