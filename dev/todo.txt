@@ -1,5 +1,6 @@
 Plan for 3.11
  - Fix print_convert to set PaperPositionMode property of figures is 'auto' instead of 'manual'. 
+ - Warn if GREIT3D_distribution has zvec outside image and opt.distr = []
  - Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
  - mk_grid_model => Warn if length(vector)==1
  - debug "Interpolation failed for point ..." in mk_c2f_circ_mapping
