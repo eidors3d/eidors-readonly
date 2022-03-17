@@ -18,14 +18,7 @@ function memb_frac = elem_select( fmdl, select_fcn )
 %
 % Example:
 %   img = mk_image(mk_common_model('b2d1c',8));
-%   select_fcn = inline('(x-0.2).^2+(y-0.5).^2<0.2^2','x','y','z');
-%   memb_frac = elem_select( img.fwd_model, select_fcn)
-%   img.elem_data = 1 + memb_frac*0.1;
-%   show_fem(img);
-%
-% Example
-%   img = mk_image(mk_common_model('b2d1c',8));
-%   select_fcn = '(x-0.2).^2+(y-0.5).^2<0.2^2';
+%   select_fcn = @(x,y,z) (x-0.2).^2+(y-0.5).^2<0.2^2
 %   memb_frac = elem_select( img.fwd_model, select_fcn)
 %   img.elem_data = 1 + memb_frac*0.1;
 %   show_fem(img);
