@@ -17,7 +17,7 @@ function out = mono2stim(mat, stim)
 % See also MK_STIM_PATTERNS, STIM_MEAS_LIST, FWD_SOLVE, CALC_JACOBIAN
 
 % (C) 2022 Bartek Grychtol. License: GPL version 2 or 3
-% $ Id: $
+% $Id$
     
     if nargin==1 && ischar(mat) && strcmp(mat, 'UNIT_TEST')
         do_unit_test; return
