@@ -57,7 +57,6 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 %     show_NF_chosen - Show the NF value chosen
 %
 % NOTE
-%   currently extra_noise is not supported
 %   currently weighting matrix must be scalar
 %               
 % Examples
@@ -164,7 +163,7 @@ if ~isempty(opt.noise_figure) || ~isempty(opt.image_SNR)
     if  log_level > 1
        log_level = eidors_msg( 'log_level', 1); % suppress messages
     end
-    [weight, NF] = fminsearch(f, weight,fms_opts);
+    [weight, NF] = bounded_search(f, weight,fms_opts);
     eidors_msg(['mk_GREIT_model: Optimal solution gives ', NoisPerfName, '=' ... 
         num2str(NF+target) ' with weight=' num2str(weight)],1);
     assert((sqrt(NF) / target) < 0.01, ...
@@ -191,6 +190,30 @@ if isfield(opt,'show_NF_chosen') && opt.show_NF_chosen
    imdl.show_NF_chosen = NF; 
    eidors_msg(['NF = ', num2str(NF), ' weight = ', num2str(weight)],1);
 end
+
+% Here we search for a good NF to match
+function [weight, NF] = bounded_search(f, weight,fms_opts);
+    % Use bounded search, but widen if necessary
+    weight = inf;
+    uplim = 2; dnlim = -2;
+    while (1)
+        [weight, NF] = fminbnd(@(x) f(10^x), ...
+             dnlim,uplim,fms_opts);
+        % Check if need to widen boundary
+        if     norm(weight - uplim)<0.1
+           uplim = uplim + 2;
+        elseif norm(weight - dnlim)<0.1
+           dnlim = dnlim - 2;
+        else
+           weight = 10^weight;
+           break
+        end
+    end
+
+
+    % original search
+    return
+    [weight, NF] = fminsearch(f, weight,fms_opts);
 
 function out = to_optimise(vh,vi,xy,radius,weight, opt, imdl, ...
     target,vi_NF)
@@ -380,9 +403,6 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
     if isempty(opt.noise_figure) && isempty(opt.image_SNR) && isempty(weight)
         error('EIDORS:WrongInput', ...
             'The weight parameter must be specified if opt.noise_figure or opt.image_SNR are empty or absent');
-    end
-    if isfield(opt,'extra_noise')
-      error('mk_GREIT_model: doesn''t currently support extra_noise');
     end
     if ~isfield(opt, 'target_size')
         opt.target_size = 0.05;
