@@ -19,6 +19,8 @@ function [RM, PJt, M] = calc_GREIT_RM(vh,vi, xyc, radius, weight, options)
 %   options.imgsz  = [xsz ysz] size of the reconstructed image in pixels
 %   options.noise_covar [optional]
 %      covariance matrix of data noise
+%      - use to specify electrode errors
+%      - use to add movement (Jm * Jm')
 %   options.desired_solution_fn
 %      specify a function to calculate the desired image. 
 %      It must have the signature:
@@ -65,7 +67,7 @@ function [RM, M] = calc_RM(PJt, Y, noiselev, opt)
    N_meas = size(Y,1);
 
    % This implements RM = D*Y'/(J*Sx*J + Sn);
-   Sn = speye(N_meas) .* opt.noise_covar; % Noise covariance
+   Sn = speye(N_meas) * opt.noise_covar; % Noise covariance
 %    PJt= D*Y';
    M  = (Y*Y' + noiselev^2*Sn);
    RM =  left_divide(M',PJt')';    %PJt/M;
