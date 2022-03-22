@@ -1,4 +1,5 @@
 Plan for 3.11
+ - New included data based on the JXBrunner data set
  - Fix print_convert to set PaperPositionMode property of figures is 'auto' instead of 'manual'. 
  - Warn if GREIT3D_distribution has zvec outside image and opt.distr = []
  - Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
