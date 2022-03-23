@@ -6,9 +6,10 @@ function img= inv_solve_TV_pdipm( inv_model, data1, data2)
 % inv_model  => inverse model struct
 % data1      => differential data at earlier time
 % data2      => differential data at later time
-% Parameters
-%   alpha1
-%   alpha2
+% Parameters (see primaldual_tvrecon_lsearch for description)
+%   alpha1 (imdl.inv_solve_TV_pdipm.alpha1)
+%   alpha2 (set with imdl.hyperparameter.value)
+%   beta   (imdl.inv_solve_TV_pdipm.beta)
 %   want_dual_variable  (set to 1 if you want access to dual)
 % Termination parameters
 %  max_iters =  inv_model.parameters.max_iteration (default 10)
