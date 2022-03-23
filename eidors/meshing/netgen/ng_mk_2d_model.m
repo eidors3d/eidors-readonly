@@ -60,6 +60,9 @@ function mdl = ng_mk_2d_model(varargin)
 % mdl = ng_mk_2d_model({xy, 0.25 + 0.5*xy, 0.1}, [5, 0],[0.2,10;0 20; 0 20; 0 20; 0 20]);
 % mdl = ng_mk_2d_model({xy, 0.1 + 0.25*xy, 0.4 + 0.5*xy, 0.1}, {[5, -0.25], [], [4]},...
 %     [0.2,10;0 20; 0 20; 0 20; 0 20; 0 20; 0 20; 0.2 20; 0 20]);
+% th = linspace(2*pi,0,101)';th(1) = [];
+% xy = [sin(th),cos(th)];
+% mdl = ng_mk_2d_model({xy,0.2});
 
 
 % (C) 2012-2013 Bartlomiej Grychtol, (C) 2013 Alistair Boyle, License: GPL version 2 or version 3
