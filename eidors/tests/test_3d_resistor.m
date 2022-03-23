@@ -1,5 +1,6 @@
 % Create 3D model of a Rectangular resistor
 % $Id$
+function test_3d_resistor
 
 ll=5*1; % length
 ww=1*2; % width
