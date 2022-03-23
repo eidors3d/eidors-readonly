@@ -20,6 +20,8 @@ function [fwd_mdl]= ...
 % (C) 2006 Andy Adler. (C) 2013 Alistair Boyle. License: GPL version 2 or version 3
 % $Id$
 
+if nargin==1 && strcmp(ng_vol_filename,'UNIT_TEST'); do_unit_test; return; end
+
 if isempty(name);
    name = ['MDL from', ng_vol_filename];
 end
@@ -34,7 +36,7 @@ if isempty(vtx);
    error('EIDORS: ng_mk_fwd_model: Netgen meshing failed. Stopping');
 end
 if nargin>=6
-    N_elec = max(size(centres));
+    N_elec = size(centres,1);
     [srf,vtx,fc,bc,simp,edg,mat_ind] = feval(postprocmesh,...
         srf,vtx,fc,bc,simp,edg,mat_ind, N_elec);
 end
@@ -117,3 +119,10 @@ function gnd_node=    find_centre_node(vtx);
   d = sum( vtx.^2, 2);
   [jnk,gnd_node] = min(d);
   gnd_node= gnd_node(1);
+
+function do_unit_test
+  % Test we can make one electrode
+  fmdl = ng_mk_cyl_models(1,[],[]);
+  unit_test_cmp('No elecs',num_elecs(fmdl),0);
+  fmdl = ng_mk_cyl_models(1,[0,0.5;10,0.2],[0.1]);
+  unit_test_cmp('Two elecs',num_elecs(fmdl),2);
