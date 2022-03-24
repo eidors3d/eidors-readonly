@@ -1,4 +1,5 @@
 Plan for 3.11
+ - Fix prior_gaussian_HPF: not yet able to generate 3D models
  - Fixup warnings for sparse
  - New included data based on the JXBrunner data set
  - Fix print_convert to set PaperPositionMode property of figures is 'auto' instead of 'manual'. 
