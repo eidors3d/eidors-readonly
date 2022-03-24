@@ -1,4 +1,4 @@
-function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, value );
+function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, UNUSED );
 % SIMULATE_MOVEMENT simulate small conductivity perturbations
 % [vh,vi,xyzr, c2f]= simulate_movement( img, xyzr );
 %
@@ -18,9 +18,6 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, value );
 %  
 %   img = eidors image object (with img.fwd_model FEM model).
 %
-%   value = the conductivity perturbation of the target (either scalar, or
-%           vector)
-%
 % OUTPUT:
 %   vh - homogeneous measurements M x 1
 %   vi - target simulations       M x n_points
@@ -39,6 +36,12 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, value );
 % (C) 2009 Andy Adler. Licensed under GPL v2 or v3
 % $Id$
 
+   if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
+
+   if nargin>=3; 
+      warning('change parameter unused');
+   end
+
    if size(xyzr) == [1,1]
       path = linspace(0,1,xyzr); phi = 2*pi*path;
       meanodes= mean(    img.fwd_model.nodes  );
@@ -49,6 +52,10 @@ function [vh,vi,xyzr,c2f]= simulate_movement( img, xyzr, value );
 
       xyzr = [0.9*path.*sin(phi);0.9*path.*cos(phi);0*path; 0.05 + 0*path];
    end
+   
+   [vh,vi,xyzr,c2f]= eidors_cache( @do_simulate_movement, {img, xyzr});
+
+function [vh,vi,xyzr,c2f]= do_simulate_movement( img, xyzr);
 
    Nt = size(xyzr,2);
    [c2f failed] = mk_c2f_circ_mapping( img.fwd_model, xyzr);
@@ -93,3 +100,14 @@ function J= move_jacobian_postprocess( J, img, Nt)
 
 % QUESTON: the accuracy of J will depend on how well we interpolate the
 % mesh. How important is this?
+
+function do_unit_test
+   imdl = mk_common_model('a2c0',8);
+   img = mk_image(imdl,1); vh=fwd_solve(img);
+   img.elem_data(1)= 1.001;vi=fwd_solve(img);
+   sig = vi.meas - vh.meas;
+   [wh,wi] = simulate_movement(img,[0.05;0.05;0.01]);
+   sigw= wi - wh;
+   ratio = sigw\sig; 
+   unit_test_cmp('Ratio ', ratio,.0995,1e-5);
+   unit_test_cmp('Ratio ', sig*ratio, sigw,1e-3);
