@@ -11,7 +11,7 @@ function vv = add_noise( SNR, v1, v2, options)
 %
 % In many cases, the same noise is desired for each sample. It is easiest to reset
 % the pseudorandom number seeds, using
-%  rnd('default'); v1 = add_noise ...
+%  rng('default'); v1 = add_noise ...
 
 % (C) 2010 Andy Adler. License: GPL v2 or v3. $Id$
 
