@@ -14,6 +14,11 @@ function meas_icov = meas_icov_rm_elecs( imdl, elec_list)
 %
 % meas_icov_rm_elecs can also accept a fwd_model parameter
 % 
+% meas_icov_rm_elecs returns the inverse noise covariance matrix, with 
+% zeros at positions corresponding to the removed electrodes. Set 
+% exponent = -1 and a large SNR to get the noise covariance matrix, with 
+% large values at those positions instead. 
+%
 % Reference Accounting for erroneous electrode data in EIT
 % A. Adler Physiological Measurement, 25(1):227-238, 2004. 
 
