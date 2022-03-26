@@ -34,31 +34,23 @@ mdl_3d = eidors_obj('fwd_model', params);
 
 disp('STEP 1A: simultion 3D - homogeneous');
 % create homogeneous image + simulate data
-cond= ones( size(mdl_3d.elems,1) ,1);
-homg_img= eidors_obj('image', 'homogeneous image', ...
-                     'elem_data', cond, ...
-                     'fwd_model', mdl_3d );
+homg_img= mk_image(mdl_3d, 1);
 homg_data=fwd_solve( homg_img);
 
 disp('STEP 1B: simultion 3D - inhomogeneous');
 
 % create inhomogeneous image + simulate data
+inh_img = homg_img;
 inhv= [38,50,51,66,67,83];
 for inhlev= (e_levels(1)-1)*3 + [-3:2];
-     cond(256*inhlev+inhv) =2;
-%    cond(64*inhlev+[5,9,10,17,18,26]) =2;
+    inh_img.elem_data(256*inhlev+inhv) =2;
 end
-
-inh_img= eidors_obj('image', 'inhomogeneous image', ...
-                     'elem_data', cond, ...
-                     'fwd_model', mdl_3d );
 inh_data=fwd_solve( inh_img);
-show_fem( inh_img);
-disp([inh_img.name, '. Press a key']); pause;
+subplot(221);show_fem( inh_img);
 
-% Add 10% noise
+% Add noise SNR=20
 sig= std( inh_data.meas - homg_data.meas );
-inh_data.meas= inh_data.meas + 0.10 * sig* randn( size(inh_data.meas) );
+inh_data = add_noise(20, inh_data, homg_data);
 
 % 
 % Step 2: Reconstruction in 2D
@@ -77,21 +69,17 @@ inv2d.solve=       'inv_solve_diff_GN_one_step';
 %inv2d.hyperparameter.noise_figure= 2;
 %inv2d.hyperparameter.tgt_elems= 1:4;
  inv2d.hyperparameter.value = 1e-1;
- inv2d.RtR_prior= 'prior_laplace';
-%inv2d.RtR_prior= 'prior_gaussian_HPF';
+ %inv2d.RtR_prior= 'prior_TV';
+%inv2d.R_prior = 'prior_TV';
+ inv2d.RtR_prior= 'prior_gaussian_HPF';
 inv2d.jacobian_bkgnd.value= 1;
 inv2d.reconst_type= 'difference';
 inv2d.fwd_model= mdl_2d_2;
 inv2d= eidors_obj('inv_model', inv2d);
 
-img2= inv_solve( inv2d, inh_data, homg_data);
+img2= inv_solve( inv2d, homg_data, inh_data);
 img2.name= '2D inverse solution';
-if ~exist('OCTAVE_VERSION')
-   show_fem(img2);
-else
-   show_slices(img2);
-end
-disp([img2.name, '. Press a key']); pause;
+subplot(223);   show_slices(img2);
 
 % 
 % Step 2: Reconstruction in 3D (using np_2003 code) and point
@@ -116,17 +104,16 @@ inv3d.name=  'EIT inverse: 3D';
 inv3d.solve= @inv_solve_diff_GN_one_step;
 inv3d.hyperparameter.value = 1e-2;
 inv3d.jacobian_bkgnd.value= 1;
-inv3d.RtR_prior= 'prior_laplace';
+%inv3d.RtR_prior= 'prior_TV';
+inv3d.R_prior = 'prior_TV';
 inv3d.reconst_type= 'difference';
 inv3d.fwd_model= fm3d;
 inv3d= eidors_obj('inv_model', inv3d);
 
- img3= inv_solve( inv3d, inh_data, homg_data);
+ img3= inv_solve( inv3d, homg_data, inh_data);
  img3.name= '3D inverse solution';
 
-if ~exist('OCTAVE_VERSION')
-   show_fem(img3);
-else
-   show_slices(img3, [-.35:.2:.4]'*[inf,inf,1])
-end
+subplot(122)
+level(:,3) = [-.35:.2:.4]'; level(:,1:2) = Inf;
+show_slices(img3, level);
 
