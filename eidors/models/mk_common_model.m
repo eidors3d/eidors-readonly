@@ -485,6 +485,13 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    fmdl.system_mat= @system_mat_1st_order;
    fmdl.normalize_measurements = 0;
 
+   fmdl.demo_targ_elems.A = [390;391;393;396;
+     402;478;479;480;484;486;664;665;666;667;
+     668;670;671;672;676;677;678;755;760;761];
+   fmdl.demo_targ_elems.B = [318;319;321;324;
+     330;439;440;441;445;447;592;593;594;595;
+     596;598;599;600;604;605;606;716;721;722];
+
    for i=1:length(zc)
        electrodes(i).z_contact= zc(i);
        electrodes(i).nodes=     unique( elec(i,:) );
@@ -505,6 +512,7 @@ function inv_mdl = mk_n3r2_model( n_elec, options );
    inv_mdl.reconst_type= 'difference';
    inv_mdl.jacobian_bkgnd.value= 1;
    inv_mdl.fwd_model= fmdl;
+  
 
 
 function inv3d= mk_b3r1_model( n_elec, options )
