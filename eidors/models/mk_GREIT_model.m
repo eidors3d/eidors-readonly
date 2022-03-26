@@ -84,9 +84,9 @@ function [imdl, weight]= mk_GREIT_model( fmdl, radius, weight, options )
 % (C) 2010 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
-citeme(mfilename);
-
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+
+citeme(mfilename);
 
 if nargin < 4, options = [];end
 [imdl,fmdl,imgs] = parse_fmdl(fmdl);
@@ -478,9 +478,31 @@ function [imdl,fmdl,imgs] = parse_fmdl(fmdl);
     
 
 function do_unit_test
+   do_very_basic_test
+   do_performance_test; 
+   do_basic_tests
+
+
+function do_very_basic_test
+    img = mk_image(mk_common_model('a3cr',[16,1]));
+    img.elem_data(5+64*6) = 1.2; vi=fwd_solve(img);
+    img.elem_data(:)   = 1;   vh=fwd_solve(img);
+    opt.noise_figure = 1;
+    imdl = mk_GREIT_model(img,0.2,[],opt);
+    imgr = inv_solve(imdl,vh,vi);
+
+    imgs = calc_slices(imgr);
+    imgs(isnan(imgs)) = 0;
+    sig = sum(imgs,1);
+    posn = linspace(-1,1,32)*sig(:) / sum(sig) 
+    unit_test_cmp('Reconst xpos',posn,0.19852208,1e-7);
+    sig = sum(imgs,2);
+    posn = linspace(-1,1,32)*sig(:) / sum(sig);
+    unit_test_cmp('Reconst xpos',posn, -0.2336663, 1e-7);
+
+function do_basic_tests
 
 sidx= 1; subplot(4,4,sidx);
- do_performance_test; 
 
 % Create a 3D elliptical cylinder with 16 circular electrodes 
 fmdl_1= ng_mk_ellip_models([1,1.2,0.8],[16,0.5],[0.1]); %show_fem(fmdl);
