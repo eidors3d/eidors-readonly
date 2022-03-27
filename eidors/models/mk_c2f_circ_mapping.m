@@ -1,9 +1,12 @@
 function [mapping failed] = mk_c2f_circ_mapping( mdl, xyzr );
 % MK_C2F_CIRC_MAPPING: create a mapping matrix from circles/spheres to FEM
-% mapping= mk_c2f_circ_mapping( mdl, xyzr );
+% [mapping, failed]= mk_c2f_circ_mapping( mdl, xyzr );
 %
 % Mapping approximates elem_data_fine from elem_data_coase
 %   elem_data_model = Mapping * elem_data_circles
+% mapping(i,j) == NaN if xyzr(i) is outside j 
+% failed(i) == 1 for any mapping (i) outside j
+% 
 %
 % mdl is coarse fwd_model
 % xyzr is the 3xN matrix (2D) or 4xN matrix (3D) of
@@ -248,7 +251,10 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
        for i=1:Nc
            progress_msg(i,Nc);
            good = ~too_far(:,i);
-           if ~any(good), continue, end %point outside the mesh
+           if ~any(good); % outside the mesh
+               failed(i) = true;
+               continue
+           end
            tmp.elems = mdl.elems(good,:);
            n_interp = n_interp_min-1;
            log_level = eidors_msg('log_level',1);
@@ -260,10 +266,11 @@ function [mapping failed] = contained_elems_3d( mdl, xyr );
            eidors_msg('log_level', log_level);
            if (sum(mapping(good,i)) == 0)
                failed(i) = true;
-               eidors_msg(['mk_c2f_circ_mapping: Interpolation failed for point ' num2str(i)]);
+               eidors_msg(['mk_c2f_circ_mapping: Interpolation failed for point ' num2str(i)],3);
            end
        end
-       progress_msg(Inf);
+       progress_msg(sprintf( ...
+        ': Outside=%d/%d', sum(failed),Nc),Inf);
    end
    
    
@@ -289,7 +296,19 @@ function frac= contained_elem_pts(m_pts, xyr);
                          'fwd_model.interp_mesh.n_interp']);
      end
 
+function do_outside_test()
+   fmdl= ng_mk_ellip_models([1,1.2,0.8,.1],[16,0.5],0.05);
+   maxn = max(fmdl.nodes); minn = min(fmdl.nodes);
+   lsx = linspace(minn(1),maxn(1),31);
+   lsy = linspace(minn(2),maxn(2),21);
+   [x,y] = meshgrid(lsx,lsy); zz = 0*x(:);
+   xyzr= [x(:), y(:), zz+0.5, zz+0.1]';
+   [map,fail] = mk_c2f_circ_mapping(fmdl,xyzr);
+   unit_test_cmp('Outside#:',sum(fail),96);
+   unit_test_cmp('Outside Fail:',fail, any(isnan(map),1));
+
 function do_unit_test
+   do_outside_test()
    fmdl = ng_mk_cyl_models([0,1,.1],[16,1],.03);
    vol = get_elem_volume(fmdl)';
    xyr = ones(3,1)*linspace(-.5,.5,7);
