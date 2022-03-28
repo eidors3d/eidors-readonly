@@ -42,6 +42,8 @@ function iterate_over_files
 
 function parse_config 
   global pp; pp=struct();
+  pp.analyze_breaths = true;
+  pp.analyze_beats   = true;
   pp.callfns = cell(0,0); 
   pp.rotate  = 0;
   pp.slices  = 4;
@@ -101,6 +103,8 @@ function CONFIG(varargin)
   v2str = varargin{2};
   v2num = str2num(v2str);
   switch cmd
+    case 'analyze_breaths';    pp.analyze_breaths=v2num;
+    case 'analyze_beats';      pp.analyze_beats=v2num;
     case 'rotate';             pp.rotate= v2num;
     case 'min_insp_length';    pp.min_insp_length=   v2num;
     case 'min_expi_length';    pp.min_expi_length=   v2num;
@@ -204,6 +208,11 @@ function dd = filtfile(dd,fname);
 function dd = loadfile(fname);
   global pp;
   in = load(fname);
+  if ~isfield(in,'data'); % Not iBex Files
+     dd.lD = 0;
+     fprintf(' ... ignoring (not iBeX file)\n');
+     return
+  end
   SCALE = 1;
   dd.ZR = SCALE*in.data.measurement.ZeroRef;
   dd.CV = SCALE*in.data.measurement.CompositValue(:)';
@@ -215,11 +224,17 @@ function dd = loadfile(fname);
      return
   end
 
+  
   dd.tt = (0:dd.lD-1)/dd.FR;
-  dd.breaths = find_frc(dd);
-  dd.n_breaths = size(dd.breaths,1);
-  dd.beats = find_beats(dd); 
-  dd.n_beats = size(dd.beats,1);
+  if pp.analyze_breaths
+    dd.breaths = find_frc(dd);
+    dd.n_breaths = size(dd.breaths,1);
+  end
+
+  if pp.analyze_beats
+    dd.beats = find_beats(dd); 
+    dd.n_beats = size(dd.beats,1);
+  end
 
   ls = linspace(0,1,10);
   ls = [ls,-fliplr(ls)];
