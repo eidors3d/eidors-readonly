@@ -52,6 +52,7 @@ function parse_config
   pp.FRC_search_window = 0.2; % search 100ms for FRC
   pp.FRC_relative_match = 0.2; % match start/end FRC
   pp.min_heart_peak_separation = 0.2; % (seconds) horse min heart beat separation
+  pp.FB_cutoff = 0.5; % filter breaths
 
   pp.flow_window = 10:50;
   pp.colourbar = 'colourbar.png';
@@ -110,6 +111,7 @@ function CONFIG(varargin)
     case 'min_expi_length';    pp.min_expi_length=   v2num;
     case 'FRC_search_window';  pp.FRC_search_window= v2num;
     case 'FRC_relative_match'; pp.FRC_relative_match= v2num;
+    case 'FB_cutoff';          pp.FB_cutoff = v2num;
     case 'slices'           ;  pp.slices= v2num;
     case 'color_map'        ;  pp.color_map = v2str;
     case 'LP_filter'        ;  pp.LP_filter = v2num; 
@@ -1067,8 +1069,7 @@ function breaths= find_frc( data );
    % Cut off freq
    % each point is frate/2/len Hz
    % want to cut a 0.25Hz = L *frate/2/len; L=CUTOFF *2*len/frate
-   Fcutoff = 0.25;
-   L = round( Fcutoff * 2*2*lseq/data.FR ); % TODO why is there 2*2? 
+   L = round( pp.FB_cutoff * 2*2*lseq/data.FR ); % TODO why is there 2*2? 
    Fseq([1+L+1:end-L])=0; %HPF
    Fseq([1,2,end])=0;     %LPF
    seq1= ifft(Fseq);

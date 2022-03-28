@@ -18,12 +18,15 @@ DO Max_ExpiFlow_Image
 %DO show_beats
 %DO show_perfusion
 %DO show_max_pixel
+CONFIG analyze_breaths true
+CONFIG analyze_beats   false
 
 CONFIG rotate 180
-CONFIG min_insp_length 0.2 % seconds
-CONFIG min_expi_length 0.5 % seconds
-CONFIG FRC_relative_match 0.2 % match start/end FRC
+CONFIG min_insp_length 0.1 % seconds
+CONFIG min_expi_length 0.1 % seconds
+CONFIG FRC_relative_match 0.5 % match start/end FRC
 CONFIG FRC_search_window  0.3  % search 100ms for FRC
+CONFIG FB_cutoff 0.5
 CONFIG slices 4
 CONFIG LP_filter 4.0 % LP filter cut-off frequency [HZ] ... seems unused
 CONFIG model_breaths_ncos 4
