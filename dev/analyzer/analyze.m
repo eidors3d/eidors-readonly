@@ -926,7 +926,7 @@ function out= InspiratoryDelayImage(dd,ii)
 function out= ExpiratoryDelayImage(dd,ii)
   global pp;
   if ischar(dd) && strcmp(dd,'TITLE');
-     out = '<a title="Average of Inspiratory Delay over breaths">Insp &Delta;t Image</a>';
+     out = '<a title="Average of Expiratory Delay over breaths">Expi &Delta;t Image</a>';
      return
   end
   if ischar(dd) && strcmp(dd,'REQBREATHS?');
