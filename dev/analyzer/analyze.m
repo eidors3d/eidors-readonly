@@ -790,6 +790,33 @@ function [MIF,MEF] = MaxFlow_calc(dd);
   MIF= mean(MIF,3);
   MEF= mean(MEF,3);
 
+% Inspi, Expi delay
+function [DIF,DEF] = VentDelay_calc(dd);
+  DIF = [];
+  DEF = [];
+  for i=1:dd.n_breaths
+    eie = dd.breaths(i,[1,2,3]);
+    ROI = dd.ZR(:,:,eie(2)) - 0.5*( ...
+          dd.ZR(:,:,eie(1)) + dd.ZR(:,:,eie(3)));
+    ROI = ROI > max(ROI(:))/5;
+
+    Vol = dd.FR * dd.ZR(:,:,eie(1):eie(2));
+    VgT = Vol - Vol(:,:,1);
+    VgT = VgT ./ VgT(:,:,end);
+    VgT = sum(VgT > 0.5,3);
+    DIF(:,:,i) = VgT;
+
+    Vol = dd.FR * dd.ZR(:,:,eie(3):-1:eie(2));
+    VgT = Vol - Vol(:,:,1);
+    VgT = VgT ./ VgT(:,:,end);
+    VgT = sum(VgT > 0.5,3);
+    DEF(:,:,i) = VgT;
+  end
+  DIF= mean(DIF,3); 
+  DIF= (DIF - min(DIF(ROI))).*ROI;
+  DEF= mean(DEF,3);
+  DEF= (DEF - min(DEF(ROI))).*ROI;
+
 function IM = my_image(IM)
   global pp;
   switch pp.rotate
@@ -870,6 +897,54 @@ function out= Max_ExpiFlow_Image(dd,ii)
      '<a href="%s"><img width="200" src="%s">' ...
      '</a><p><img src="%s"></center>'], ...
      max(MEF(:)), fout, fout, pp.colourbar);
+  print_convert(fout);
+
+function out= InspiratoryDelayImage(dd,ii)
+  global pp;
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = '<a title="Average of Inspiratory Delay over breaths">Insp &Delta;t Image</a>';
+     return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  [IDI,~] = VentDelay_calc(dd);
+  IDI(dd.ZR(:,:,1)==0) = NaN;
+  mycolormap;
+  my_image(IDI*250/max(IDI(:))+5);
+  
+  fout = sprintf('IDI_image%03d.png',ii);
+  out = sprintf(['<center>max &Delta;t=%1.3f<br>' ...
+     '<a href="%s"><img width="200" src="%s">' ...
+     '</a><p><img src="%s"></center>'], ...
+     max(IDI(:)), fout, fout, pp.colourbar);
+  print_convert(fout);
+
+function out= ExpiratoryDelayImage(dd,ii)
+  global pp;
+  if ischar(dd) && strcmp(dd,'TITLE');
+     out = '<a title="Average of Inspiratory Delay over breaths">Insp &Delta;t Image</a>';
+     return
+  end
+  if ischar(dd) && strcmp(dd,'REQBREATHS?');
+     out = true; return
+  end
+  if ischar(dd) && strcmp(dd,'REQBEATS?');
+     out = false; return
+  end
+  [~,EDI] = VentDelay_calc(dd);
+  EDI(dd.ZR(:,:,1)==0) = NaN;
+  mycolormap;
+  my_image(EDI*250/max(EDI(:))+5);
+  
+  fout = sprintf('EDI_image%03d.png',ii);
+  out = sprintf(['<center>max &Delta;t=%1.3f<br>' ...
+     '<a href="%s"><img width="200" src="%s">' ...
+     '</a><p><img src="%s"></center>'], ...
+     max(EDI(:)), fout, fout, pp.colourbar);
   print_convert(fout);
 
 %DO flow_volume_slices
