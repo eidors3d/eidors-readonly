@@ -114,6 +114,7 @@ while 1
 
   % 7. Bring outside points back to the boundary
   d=feval(fdist,p,varargin{:}); ix=d>0;
+  ix(1:size(fix,1))= 0; % EDIT - Don't move fixed points
   gradd=zeros(sum(ix),dim);
   for ii=1:dim
     a=zeros(1,dim);
