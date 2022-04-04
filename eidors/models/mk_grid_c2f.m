@@ -941,9 +941,9 @@ function[fmdl,rmdl] = center_scale_models(fmdl,rmdl, opt)
     if ~isfield(opt, 'save_memory')
        opt.save_memory = 0;
     end
-    eidors_msg('@@ node2tet  tolerance = %g', opt.tol_node2tet,2);
-    eidors_msg('@@ edge2edge tolerance = %g', opt.tol_edge2edge,2);
-    eidors_msg('@@ edge2tri  tolerance = %g', opt.tol_edge2tri,2);
+    eidors_msg('@@ node2tet  tolerance = %g', opt.tol_node2tet,3);
+    eidors_msg('@@ edge2edge tolerance = %g', opt.tol_edge2edge,3);
+    eidors_msg('@@ edge2tri  tolerance = %g', opt.tol_edge2tri,3);
 
 %-------------------------------------------------------------------------%
 % fprintf wrapper to use eidors log_level
