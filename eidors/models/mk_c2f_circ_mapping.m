@@ -288,8 +288,6 @@ function frac= contained_elem_pts(m_pts, xyr);
      inpts = inr < xyr(4)^2;
 
      frac= mean( inpts ,3);
-%    FIXME: Octave doesn't like to mean on logical
-%    frac= mean( int8( inpts ) ,3);
      if sum(inpts(:))==0
          % TODO: This message is outdated
          eidors_msg(['mk_c2f_circ_mapping: Interpolation failed: increase ', ...
