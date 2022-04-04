@@ -1,4 +1,5 @@
 Plan for 3.11
+ - Test why fwd solver not more efficient with large stim patterns
  - Fix prior_gaussian_HPF: not yet able to generate 3D models
  - Fixup warnings for sparse
  - New included data based on the JXBrunner data set
@@ -17,11 +18,13 @@ Plan for 3.11
  - refactor the point_to_tet part of mk_tet_c2f
  - Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
  - test netgen 6.2 for linux and windows
- - include netgen 6.2 in the windows binary if it works
+ + DON'T include netgen 6.2. KEEP OLD since smaller and don't need python
  - fix print_convert - accept command line options (and not just op)
  - fix print_convert - put stuff on clipboard in windows
+ - fix print_convert for new matlab versions. Figure out when distorted image
+ - bugs in ng_mk_geometric models?
 
- - Refactor fmdl.mdl_slice_mesher.level.rotate/centre
+ + Refactor fmdl.mdl_slice_mesher.level.rotate/centre
 	- central function to handle levels:
 		- scalar
 		- 1 x 3
