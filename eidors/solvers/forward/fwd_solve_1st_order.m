@@ -347,9 +347,10 @@ function do_unit_test
    % bad stim patterns (flow through ground node)
    img.fwd_model.stimulation(1).stim_pattern(2) = 0;
    vh = fwd_solve_1st_order(img);
-   lastw = lastwarn;
-   unit_test_cmp('gnd_node warning', lastw, ...
-    'current flowing through ground node. Check stimulation pattern');
+   last_msg = eidors_msg('last_msg');
+   last_msg = last_msg(end-68:end);
+   unit_test_cmp('gnd_node warning', last_msg, ...
+    ' of current is flowing through ground node. Check stimulation pattern');
 
 
    %2D resistor

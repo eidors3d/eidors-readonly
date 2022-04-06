@@ -23,6 +23,8 @@ function log_level= eidors_msg( message, varargin )
 %  EIDORS_MSG('log_level','reset','all') resets all custom log-level
 %     settings to default
 %
+%  EIDORS_MSG('last_msg') return last message
+%
 %  Meanings of levels:
 %     0 => keep quiet (no messages should be level=0)
 %     1 => important messages
@@ -54,10 +56,17 @@ function log_level= eidors_msg( message, varargin )
 % License: GPL version 2 or version 3
 % $Id$
 
+persistent last_msg
+
 if ischar(message) && strcmp(message,'UNIT_TEST'); do_unit_test; return; end
 
 if ischar(message) && strcmp(message, 'log_level')
    log_level = process_log_level(varargin{:});
+   return;
+end
+
+if ischar(message) && strcmp(message, 'last_msg')
+   log_level = last_msg;
    return;
 end
 
@@ -118,6 +127,7 @@ if length(message)>1 % single characters are just for progress
           message = sprintf('%s%s', file , msg_extra);
       end
    end
+   last_msg = message;
    string= [sprintf('%c',' ' * ones(1,level-1)), ...
             'EIDORS:[',message,']\n'];
        
