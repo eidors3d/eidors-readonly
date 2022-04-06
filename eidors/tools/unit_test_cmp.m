@@ -60,12 +60,13 @@ tolstr='';
          if isnan(a) == isnan(b);
              a(isnan(a))=0; b(isnan(b))=0;
          end;
-         if all(abs(double(a) - double(b)) <= tol);
+         rel_err = full(max(abs(a(:)-b(:))));
+         if rel_err <= tol;
             ok='OK';
          end;
 
-         if abs(tol)>0
-            tolstr= sprintf('(%1.3f x tol)', full(max(abs(a(:)-b(:))/tol))); 
+         if abs(rel_err)>0
+            tolstr= sprintf('(%1.3f x tol)', rel_err/tol); 
          end
       end
    else

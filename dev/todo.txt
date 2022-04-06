@@ -5,6 +5,7 @@ EIDORS:[calc_slices: pass 18/19 =  94.7% (t=  1.51s)]
 ERROR = (Error using eidors_default>get_default (line 106)
    + emphasize_electrode_text => Fixed direction via view
    + fwd_model_1st_order => Check ground node warning
+   + calc_slices => fix unit_test to have clean use of tol
  - fix direction in emphasize_electrode_text
  - Add 3D for prior_gaussian_HPF
  - Test why fwd solver not more efficient with large stim patterns
