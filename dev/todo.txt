@@ -1,4 +1,11 @@
 Plan for 3.11
+ - Failing tests:
+   - [GREIT3D_distribution: pass 2/4 =  50.0%
+EIDORS:[calc_slices: pass 18/19 =  94.7% (t=  1.51s)]
+ERROR = (Error using eidors_default>get_default (line 106)
+   + emphasize_electrode_text => Fixed direction via view
+ - fix direction in emphasize_electrode_text
+ - Add 3D for prior_gaussian_HPF
  - Test why fwd solver not more efficient with large stim patterns
  - Fix prior_gaussian_HPF: not yet able to generate 3D models
  - Fixup warnings for sparse
