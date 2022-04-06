@@ -30,7 +30,8 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %    for 'get_points' map contains the x an y vectors of points used for
 %       for mapping as {x, y}. No mapping is performed.
 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% (C) 2006-2022 Andy Adler and Bartek Grychtol. 
+% License: GPL version 2 or version 3
 % $Id$
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
@@ -66,15 +67,19 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
       [x,y] = grid_the_space( fmdl3 );
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
-
-
+   
 function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
-   NODE = level_model( fwd_model );
-   [x,y] = grid_the_space( fwd_model);
-   ndims = size(NODE,1);
-   tic
+   ver = eidors_obj('interpreter_version');
+   if ~ver.isoctave
+     ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
+     return
+   end
    elem_ptr = mdl_elem_mapper(fwd_model);
-   fwd_model.nodes = NODE';   
+   NODE = level_model( fwd_model );
+   fwd_model.nodes = NODE';
+   [x,y] = grid_the_space( fwd_model);
+
+   ndims = size(NODE,1);
    if  ndims == 2;  NODEz = []; else; NODEz= 0; end
    ninterp_ptr = zeros(length(x(:)),ndims+1); % reshape later
 
@@ -84,41 +89,36 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
      ninterp_ptr(i,:) = ( int_fcn *[1;x(i);y(i);NODEz] )';
    end
    ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
-   toc
-   return
-   tic
-   if ndims == 2
-     [el, bc] = tsearchn(fwd_model.nodes, fwd_model.elems, [x(:), y(:)]);
-     bc(isnan(el),:) = 0;
-     test = reshape(bc,size(x,1), size(x,2), ndims + 1);
-   end
-   toc
-   unit_test_cmp('new v old', test, ninterp_ptr, prod(size(test))*eps);
+
+function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
+   NODE = level_model( fwd_model );
+   [x,y] = grid_the_space( fwd_model);
+   ndims = size(NODE,1);
+   pts = [x(:),y(:)];
+   if size(NODE,1) == 3, pts(:,3) = 0; end
    
+   TR = triangulation(fwd_model.elems, NODE');
+   [el, bc] =   TR.pointLocation(pts);
+   bc(isnan(el),:) = 0;
+   ninterp_ptr = reshape(bc,size(x,1), size(x,2), ndims + 1);
    
 function node_ptr = mdl_node_mapper(fwd_model);
    NODE = level_model( fwd_model );
    [x,y] = grid_the_space( fwd_model);
 
-   % dsearchn is very slow in Octave
-%    tic
-%    node_ptr= node_mapper_dsearchn( NODE, fwd_model.elems', x, y);
-%    fprintf('dearchn : %f seconds\n', toc);
-%    
    ver = eidors_obj('interpreter_version');
    if ~ver.isoctave
-%        tic
        node_ptr = node_mapper_triangulation( NODE, fwd_model.elems', x, y);
-%        fprintf('triangulation : %f seconds\n', toc);
    else
-%        tic
-       node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
-%        fprintf('original : %f seconds\n', toc);
-%    unit_test_cmp('dsearchn', np_dsearch, node_ptr);
-%    if ~ver.isoctave
-%        unit_test_cmp('triangulation', np_dsearch, node_ptr);
+       ndims = size(NODE,1);
+       if ndims == 2
+         % old code
+         node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
+       else
+         node_ptr= node_mapper_dsearchn( NODE, fwd_model.elems', x, y);
+       end
    end
-
+   
 % in 3D this is somewhat faster in matlab. Perfomance in octave varies with size
 function node_ptr = node_mapper_dsearchn( NODE, ELEM, x, y)
    if size(NODE,1) == 2
@@ -141,7 +141,9 @@ function node_ptr = node_mapper_triangulation( NODE, ELEM, x, y)
     end
     id = TR.pointLocation(pts);
     in = ~isnan(id);
+    node_ptr = zeros(size(in));
     node_ptr(in) = TR.nearestNeighbor(pts(in,:));
+    node_ptr = reshape(node_ptr, size(x));
     
 
    
@@ -183,7 +185,21 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
 % EPTR is matrix npx x npy with a pointer to the
 % element which contains it.
 function EPTR= img_mapper2(NODE, ELEM, x, y );
-  %tic
+  ver = eidors_obj('interpreter_version');
+  if ver.isoctave
+    id = tsearch(NODE(1,:),NODE(2,:), ELEM', x(:),y(:));
+  else 
+    TR = triangulation(ELEM',NODE');
+    id = TR.pointLocation([x(:), y(:)]);
+  end
+  id(isnan(id)) = 0;
+  EPTR = reshape(id,size(x));
+
+% Search through each element and find the points which
+% are in that element
+% EPTR is matrix npx x npy with a pointer to the
+% element which contains it.
+function EPTR= img_mapper2_old(NODE, ELEM, x, y );
   [npy,npx] = size(x);
   v_yx= [-y(:),x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
@@ -208,22 +224,6 @@ function EPTR= img_mapper2(NODE, ELEM, x, y );
     endr( abs( (abs(sum(a))-aa) ./ sum(a)) >1e-8)=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
-  %toc
- % tic
-  ver = eidors_obj('interpreter_version');
-  if ver.isoctave
-    id = tsearch(NODE(1,:),NODE(2,:), ELEM', x(:),y(:));
-  else 
-    TR = triangulation(ELEM',NODE');
-    id = TR.pointLocation([x(:), y(:)]);
-  end
-  id(isnan(id)) = 0;
-  test = reshape(id,size(x));
-%  toc
-  isequal(test, EPTR);
-  EPTR = test;
-  
-
   
   
 % 2D mapper of points to elements. First, we assume that
@@ -274,7 +274,25 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 % so that the imaging plane is on the z-axis. Then we iterate
 % through elements to find the containing each pixel
 function EPTR= img_mapper3(NODE, ELEM, x, y );
-  tic
+
+  ver = eidors_obj('interpreter_version');
+  if ver.isoctave
+      img2d = mdl_3d_to_2d(NODE, ELEM);  
+      id = tsearch(img2d.fwd_model.nodes(:,1),img2d.fwd_model.nodes(:,2), ...
+                   img2d.fwd_model.elems, x(:),y(:));
+    %  id = tsearchn(NODE(:,use_nodes)', map(ELEM(:,use_elem))', [x(:),y(:),zeros(numel(x),1)]);
+      in = ~isnan(id);
+      id(in) = img2d.elem_data(id(in));
+      id(~in) = 0;
+  else
+      TR = triangulation(ELEM', NODE');
+      pts = [x(:),y(:)]; pts(:,3) = 0;
+      id = pointLocation(TR, pts);
+      id(isnan(id)) = 0;
+  end 
+  EPTR = reshape(id,size(x));
+
+function EPTR= img_mapper3_old(NODE, ELEM, x, y );
   [npy,npx] = size(x);
 
   EPTR=zeros(npy,npx);
@@ -316,28 +334,7 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
     endr( sum(abs(vol),2) - VOL >1e-8 )=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
-  toc
-  tic
-  ver = eidors_obj('interpreter_version');
-  if ver.isoctave
-      img2d = mdl_3d_to_2d(NODE, ELEM);  
-      id = tsearch(img2d.fwd_model.nodes(:,1),img2d.fwd_model.nodes(:,2), ...
-                   img2d.fwd_model.elems, x(:),y(:));
-    %  id = tsearchn(NODE(:,use_nodes)', map(ELEM(:,use_elem))', [x(:),y(:),zeros(numel(x),1)]);
-      in = ~isnan(id);
-      id(in) = img2d.elem_data(id(in));
-      id(~in) = 0;
-  else
-      TR = triangulation(ELEM', NODE');
-      pts = [x(:),y(:)]; pts(:,3) = 0;
-      id = pointLocation(TR, pts);
-      id(isnan(id)) = 0;
-  end 
-  test = reshape(id,size(x));
-  toc
-  isequal(test, EPTR)
-  EPTR = test;  
-
+  
 function [NODE, ELEM, use_nodes, use_elem] = limit_3dmodel_to_slice(NODE,ELEM)
     use_elem = 1:size(ELEM,2);
     z = reshape(NODE(3,ELEM),size(ELEM));
