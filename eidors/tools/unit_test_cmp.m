@@ -1,4 +1,4 @@
-function unit_test_cmp(txt,a,b,tol)
+function res = unit_test_cmp(txt,a,b,tol)
 % UNIT_TEST_CMP: compare matrices in eidors output
 % unit_test_cmp(txt,a,b,tol)
 % if tol = -negative it is an expected fail
@@ -80,6 +80,10 @@ tolstr='';
    fprintf('%4s %s\n', ok, tolstr);
    if strcmp(ok(1:2),'OK'); npass= npass+1; end
    ntotal= ntotal+1;
+   
+   if nargout>0
+       res = strcmp(ok(1:2),'OK');
+   end
 
 function do_unit_test
    unit_test_cmp('Expect OK'  ,3,3);
