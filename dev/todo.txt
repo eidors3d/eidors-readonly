@@ -22,7 +22,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
  - MAYBE?? precalculate line 77 of mdl_slice_mapper => interp_mesh 
  - new function: calc_volumes which calculates elems => volumes or nodes => volumes
- - new function low level: interp_points(img, xyz_points) use point_in_tet
+ - DONE?? (img_point_mapper) new function low level: interp_points(img, xyz_points) use point_in_tet 
  - refactor the point_to_tet part of mk_tet_c2f
  - Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
  - test netgen 6.2 for linux and windows
