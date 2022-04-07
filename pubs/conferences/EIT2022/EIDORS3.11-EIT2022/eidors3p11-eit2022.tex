@@ -1,0 +1,277 @@
+\documentclass[10pt,letterpaper]{article}
+% ========================== DO NOT MODIFY =================================== %
+\usepackage[letterpaper,left=2.0cm,top=2.0cm,right=2.0cm,bottom=2.0cm]{geometry} 
+\usepackage{amssymb,amsmath} % If amsmath is required
+\usepackage[implicit=false]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+%\usepackage[USenglish]{babel} -- gives errors on many systems
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{authblk}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage[small,compact]{titlesec}
+\usepackage{xcolor}
+\usepackage[printwatermark]{xwatermark}
+% Fix titlesec for the 2.10.1 version in ubuntu 16.04
+%  https://bugs.launchpad.net/ubuntu/+source/texlive-extra/+bug/1574052
+\makeatletter
+\@ifpackagelater{titlesec}{2016/03/21}{%
+ % Package titlesec is on version 2.10.2 or higher, nothing to do %
+}{%
+ % Check if package titlesec is on version 2.10.1 %
+ \@ifpackagelater{titlesec}{2016/03/15}{%
+  % Package titlesec on version 2.10.1, patch accordingly %
+  \usepackage{etoolbox}%
+  \makeatletter
+  \patchcmd{\ttlh@hang}{\parindent\z@}{\parindent\z@\leavevmode}{}{}%
+  \patchcmd{\ttlh@hang}{\noindent}{}{}{}%
+  \makeatother
+ }{%
+  % Package titlsecon is on version 2.10.0 or lower, nothing to do %
+ }%
+}
+\makeatother
+\titlespacing*{\section}{0pt}{5pt}{5pt}  % If you need different spacing
+
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[small,bf,tableposition=top,figureposition=bottom,skip=2pt]{caption}
+
+
+% limit space between floats and text
+\setlength{\textfloatsep}{10pt plus 1.0pt minus 2.0pt}
+% shrink the list environments
+\setlist{noitemsep}
+\setlist{nolistsep}
+
+% Shrink the bibliography
+  \let\oldthebibliography=\thebibliography
+  \let\endoldthebibliography=\endthebibliography
+  \renewenvironment{thebibliography}[1]{%
+    \begin{oldthebibliography}{#1}%
+      \setlength{\parskip}{0ex}%
+      \setlength{\itemsep}{0ex}%
+  }%
+  {%
+    \end{oldthebibliography}%
+  }
+
+% Format of the front matter
+\renewcommand{\Affilfont}{\small}
+\setlength{\affilsep}{1ex}
+\renewcommand\Authands{, }
+\setlength{\droptitle}{-1.634cm}
+\makeatletter
+\renewcommand\AB@affilsepx{\quad\protect\Affilfont} % put affiliations into one line
+\makeatother
+% ============================================================================ %
+
+
+
+
+%------------------------------- FRONT MATTER -------------------------------- %
+\title{EIDORS Version 3.11%
+\vspace{-2ex}} %remove vertical space
+\author{Andy~Adler, Bartek Grychtol}
+\affil{Carleton University, Ottawa, Canada}
+\date{}
+%----------------------------------------------------------------------------- %
+
+
+
+\begin{document}
+\maketitle
+\vspace{-1.5cm}
+\thispagestyle{empty}
+
+%\newwatermark[allpages,color=red!50,angle=45,scale=3,xpos=0,ypos=0]{DRAFT}
+
+\noindent {\bf Abstract:}
+This paper announces the release of version 3.11 of the
+EIDORS software suite. We review its new features, and 
+discusses its growth and use.
+
+\section{Introduction}
+We proudly announce the release of EIDORS version 3.10,
+for the 20th Int.\ Conf.\ on Biomedical Applications of EIT,
+in July 2019.
+The software is available at \href{www.eidors.org}{eidors.org}\, and licensed under the GNU GPLv2 or GPLv3. Archived versions are now available on Zenodo
+\cite{eidors3p10,
+      eidors3p9p1,
+      eidors3p9,
+      eidors3p8}.
+
+
+EIDORS provides free software algorithms for forward modelling
+and inverse solutions
+of Electrical Impedance and (to some extent) Diffusion-based Optical Tomography, in
+medical, industrial and geophysical settings.
+EIDORS also aims to share data and promote
+collaboration amongst its users.
+
+\section{New Features}
+Release 3.11 of EIDORS builds upon a strong foundation in reconstruction
+algorithms, adding and improving a number of aspects.
+\begin{itemize}
+\item Modelling and management of internal electrodes.
+
+\item New electrode specifications on electrode faces (in addition to nodes)
+
+\item Improved FEM utility methods (mesh merging, removal, faster boundary calculations)
+
+\item Improved support for GNU Octave
+
+\item Improved support for GREIT reconstructions in 3D \cite{grychtol2019}
+
+\item Support for caching to disk
+
+\item Improved graphics and visualization functions
+
+\item Improved support for geophysical FEM models
+
+\item Updated utilities for device file formats 
+      (new datafile\_utility) and integration with
+      SenTec ibeX software.
+
+\item Expanded shape library with new species shapes
+
+\item (As always) bug fixes 
+\end{itemize}
+
+\section{Growth}
+EIDORS-related citations continue to grow. Current citation results are
+shown in table~\ref{tbl:cite}.
+%
+The EIDORS code-base is growing
+(fig.~\ref{fig:loc})
+ with significant effort being applied to
+improving test coverage, refining performance and implementing new features.
+ In 2012, a {\tt dev} (development) staging area was created for
+contributions in progress.
+
+\begin{table}[H]
+  \footnotesize
+\centering
+%From: http://amath.colorado.edu/documentation/LaTeX/reference/tables/ex1.html
+\caption{\label{tbl:cite} EIDORS Citations
+ (June 2019, scholar.google.com).
+}
+\begin{tabular}{r@{\hspace{1mm}}lcr}
+  \toprule
+  & Paper & Date & \hspace{-2mm}Citations \\
+  %{@{\extracolsep{\fill}}@{}|c|ccc|r|}
+  \midrule
+  \cite{vauhkonen2001} & A MATLAB package for the EIDORS project \ldots\hspace{-5mm}  
+    & 2001 & 255 \\
+  \cite{polydorides2002phd} & Image reconstruction algorithms for \ldots
+    & 2002 & 150 \\
+  \cite{polydorides2002matlab} & A Matlab toolkit for three-dimensional \ldots
+    & 2002 & 417 \\
+  \cite{adler2005} & EIDORS: Towards a community-based \ldots
+    & 2005 & 17 \\
+  \cite{adler2006} & Uses and abuses of {EIDORS}: An extensible \ldots
+    & 2006 & 519 \\
+  \cite{adler2008} & Simple FEMs aren't as good as we thought \ldots
+    & 2008 &  20 \\
+  \cite{adler2015} & EIDORS version 3.8
+    & 2015 & 4 \\
+  \cite{adler2017} & EIDORS version 3.9
+    & 2017 & 6 \\
+  \bottomrule
+\end{tabular}
+\vspace{-1em}
+\end{table}
+
+\begin{figure}[H]
+  \vspace{-2.5mm}
+\centering
+% trim=left botm right top
+ \includegraphics[width=.99\columnwidth]{fig_loc.pdf}
+\caption{\label{fig:loc}%
+%graph and table combo chart, including line for test code.
+  Lines of Code (LoC) in Matlab files in the EIDORS code-base vs.\ time; Total
+   (red), EIDORS (i.e.\ release branch, brown), Tutorials (green), development code (blue).
+   Releases are indicated by gray bars (The 3.10 release is
+   at the right).
+}
+\end{figure}
+
+\section{Discussion}
+The structure of EIDORS has been relatively stable due, in part, to some early design choices:
+a modular framework and data structure,
+cross-platform support, integration of meshing,
+tutorials, and the contributed data repository.
+These aspects, along with an open source code-base, have enabled EIDORS to
+maintain research relevance.
+Version 3.10 (hopefully) continues the tradition.
+
+
+
+\footnotesize
+\begin{thebibliography}{99}
+\bibitem{eidors3p10}
+   Adler A, ``EIDORS version 3.10'',
+   \href{http://dx.doi.org/10.5281/zenodo.3247168}{DOI:10.5281/zenodo.3247168},
+    2019.
+\bibitem{eidors3p9p1}
+   Adler A {\em et al}, ``EIDORS version 3.9.1'',
+   \href{http://dx.doi.org/10.5281/zenodo.1257670}{DOI:10.5281/zenodo.1257670},
+    2018.
+\bibitem{eidors3p9}
+   Adler A {\em et al}, ``EIDORS v3.9'',
+   \href{http://dx.doi.org/10.5281/zenodo.583266}{DOI:10.5281/zenodo.583266},
+    2017.
+\bibitem{eidors3p8}
+   Adler A {\em et al}, ``EIDORS v3.8'',
+   \href{http://dx.doi.org/10.5281/zenodo.17559}{DOI:10.5281/zenodo.17559},
+    2015.
+
+\bibitem{grychtol2019}
+   Grychtol B {\em et al}
+   https://iopscience.iop.org/article/10.1088/1361-6579/ab291d   
+   {\em Physiol Meas}, 2019.
+
+
+
+\bibitem{vauhkonen2001}
+   Vauhkonen M, Lionheart WRB {\em  et al},
+   {\em  Physiol Meas}, 22:107--111, 2001.
+\bibitem{polydorides2002phd}
+   Polydorides N,
+%{\em Image Reconstruction Algorithms for Soft-Field Tomography},
+ {\em Ph.D. thesis}, U Manchester, UK, 2002.
+\bibitem{polydorides2002matlab}
+   Polydorides N, Lionheart WRB,
+   {\em Meas Sci Tech}, 13:1871--1883, 2002.
+\bibitem{adler2005}
+Adler A, Lionheart WRB,
+%"EIDORS: Towards a community-based extensible software base for EIT." 6th Conference on Biomedical Applications of Electrical Impedance Tomography, London, UK. 2005.
+{\em Proc EIT2005}, London, UK, 2005.
+%
+\bibitem{adler2006}
+Adler A, Lionheart WRB,
+{\em Physiol Meas} 27:S25--S42, 2006.
+
+\bibitem{adler2008}
+Adler A, Borsic A {\em et al},
+%Simple FEMs aren't as good as we \ldots
+{\em Proc EIT2008}, Hannover, NH, USA, 2008.
+\bibitem{adler2015}
+Adler A {\em et al}, %Alistair Boyle, Michael G Crabb, Hervé Gagnon, Bartłomiej Grychtol, Nolwenn Lesparre, William R.B. Lionheart,
+\href{https://zenodo.org/record/17752}{\em Proc EIT2015}, p.19, 
+ Neuchâtel, Switzerland, 2015.
+
+\bibitem{adler2017}
+Adler A {\em et al}, % Andy Adler, Alistair Boyle, Fabian Braun, Michael G. Crabb, Bartłomiej Grychtol, William R. B. Lionheart, Henry F. J. Tregidgo, Rebecca Yerworth
+\href{https://zenodo.org/record/557093}{\em Proc EIT2017}, p.63, 
+Dartmouth, NH, USA,  2017.
+\end{thebibliography}
+
+
+
+\end{document}
+

@@ -11,18 +11,12 @@ for ver in `seq 1 $LASTREV`; do
    GITVER=`(cd $REPO && git svn find-rev r$ver)`;
    (cd $REPO && git checkout $GITVER && git clean -d -x -f);
    DATE=`(cd $REPO && git show -s --format=%ct $GITVER) | perl -pe'chomp'`;
-   find $REPO -type f -name \*.m -print0 | xargs -0 perl \
-       -e  'BEGIN{my $lines = 0};' \
-       -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
-       -e  'END{printf"  %d,",$lines;}' >> $OUTF ; # all (/)
-   find $REPO/htdocs -path $REPO/htdocs/doc -prune -o -type f -name \*.m -print0 | xargs -0 perl \
-       -e  'BEGIN{my $lines = 0};' \
-       -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
-       -e  'END{printf"  %d,",$lines;}' >> $OUTF ; # htdocs
-   find $REPO/dev -type f -name \*.m -print0 | xargs -0 perl \
-       -e  'BEGIN{my $lines = 0};' \
-       -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
-       -e  'END{printf"  %d,",$lines;}' >> $OUTF ; # dev
+   for PTH in $REPO $REPO/htdocs $REPO/dev ; do
+       find $PTH -type f -name \*.m -print0 2>/dev/null | xargs -0 perl \
+           -e  'BEGIN{my $lines = 0};' \
+           -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
+           -e  'END{printf"  %d,",$lines;}' >> $OUTF ; 
+   done
    echo "  $ver,    $DATE; " >> $OUTF;
 done
 echo "];" >> $OUTF
