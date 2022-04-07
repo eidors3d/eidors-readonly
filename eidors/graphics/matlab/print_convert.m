@@ -90,7 +90,11 @@ if pp.clip
           warning 'calling xclip to clipboard failed';
       end
    else
-      warning 'windows code not yet available';
+      cmd = 'Powershell -command Set-Clipboard -Path ';
+      status = system([cmd pp.filename]);
+      if status ~=0
+        warning 'Powershell Set-Clipboard failed';
+      end
    end
 end
 
