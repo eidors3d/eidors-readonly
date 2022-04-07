@@ -174,15 +174,15 @@ function  FFdata = assemble_elements(d1,d0,p);
 % To stabilize inverse, remove average
 % This is a multiple of row1 = 1
 % This affects row one only
-   M3(2:end,:,:) = M3(2:end,:,:) - ...
-              mean(M3(2:end,:,:),2);
+   M3(2:end,:,:) = bsxfun(@minus, M3(2:end,:,:), ...
+              mean(M3(2:end,:,:),2));
    switch d1
       case 3; [I,D] = vectorize_3x3inv(M3);
       case 4; [I,D] = vectorize_4x4inv(M3);
       otherwise;
          error('problem dimension not understood')
    end
-   Is = I .* sqrt(abs(D)/dfact);
+   Is = bsxfun(@times, I, sqrt(abs(D)/dfact));
    Is = permute(Is(:,2:d1,:),[2,3,1]);
    FFdata= reshape(Is,[],d1);
 
@@ -338,10 +338,11 @@ function [I,D] = vectorize_4x4inv(M)
       warning('Determinant close to zero');
    end
 
-   I = [I11, I12, I13, I14;
+   I = bsxfun(@times,...
+       [I11, I12, I13, I14;
         I22, I22, I23, I24;
         I32, I32, I33, I34;
-        I42, I42, I43, I44].*(1./D);
+        I42, I42, I43, I44], (1./D));
 
 
 function do_unit_test
