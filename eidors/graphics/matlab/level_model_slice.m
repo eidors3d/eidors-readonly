@@ -1,4 +1,4 @@
-function [out, out2] = level_model_slice(varargin)
+function [out, out2, out3] = level_model_slice(varargin)
 %LEVEL_MODEL_SLICE - level 3D points for slicing at z=0
 % 
 % XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL)
@@ -42,7 +42,7 @@ if nargin==1 && isstr(varargin{1}) && strcmp(varargin{1}, 'UNIT_TEST')
   do_unit_test; return
 end
 
-if nargout == 1
+if nargout == 1 || nargout == 3
 	if nargin == 1
         % N = LEVEL_MODEL_SLICE(LEVEL) returns the number of slices defined in LEVEL
         out = get_number_of_slices(varargin{1});
@@ -60,6 +60,10 @@ if nargout == 1
         else
             % (nodes - C) * M' + SHIFT
             out = bsxfun(@plus, bsxfun(@minus, varargin{1}, C ) * M', SHIFT);
+        end
+        if nargout == 3
+            out2 = C;
+            out3 = M;
         end
         
 	end
@@ -217,9 +221,9 @@ function [C, M] = matrix_from_struct(level, sn)
   cross_AB = cross(A,B);
   if norm(cross_AB) == 0 % parallel vectors
     if A(3) > 0
-      M = eye(3);
+      M = R*eye(3);
     elseif A(3) < 0
-      M = diag([1,-1,-1]);
+      M = R*diag([1,-1,-1]);
     end
     return
   end
