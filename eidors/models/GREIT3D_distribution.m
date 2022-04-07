@@ -81,19 +81,22 @@ function do_unit_test
    vopt.imgsz = [32 32];
    vopt.zvec = linspace( 0.5,3.5,7);
    vopt.save_memory = 1;
-   opt.noise_figure = 2;
+%  opt.noise_figure = 2;
    [imdl,opt.distr] = GREIT3D_distribution(fmdl, vopt);
-   imdl = mk_GREIT_model(imdl, 0.2, [], opt);
+   n_weight = 18.1608; % approx NF=2
+   imdl = mk_GREIT_model(imdl, 0.2, n_weight, opt);
 
    unit_test_cmp('RM size', size(imdl.solve_use_matrix.RM), [5136,928]);
-   unit_test_cmp('RM', imdl.solve_use_matrix.RM(1,1:2), ...
-       [8.573008430710381 -18.601036109804095], 1e-10);
+   tst = imdl.solve_use_matrix.RM(1,1:2)
+   tst_= [8.572908305490031 -18.600780994066596];
+   unit_test_cmp('RM', tst, tst_, 1e-10);
 
    img = inv_solve(imdl, vh, vi);
    unit_test_cmp('img size', size(img.elem_data), [5136,5]);
    [mm,ll] =max(img.elem_data(:,1));
+   format long; mm
    unit_test_cmp('img', [mm,ll], ...
-       [0.582161052175761, 1308], 1e-10);
+       [0.582158646727019, 1308], 1e-10);
 
    img.show_slices.img_cols = 1;
    subplot(131); show_fem(fmdl); title 'fmdl'

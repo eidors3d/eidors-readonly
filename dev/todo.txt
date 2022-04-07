@@ -1,7 +1,6 @@
 Plan for 3.11
  - Failing tests:
-   - [GREIT3D_distribution: pass 2/4 =  50.0%
-EIDORS:[calc_slices: pass 18/19 =  94.7% (t=  1.51s)]
+   + [GREIT3D_distribution: => Fix to use weight rather than NF
 ERROR = (Error using eidors_default>get_default (line 106)
    + emphasize_electrode_text => Fixed direction via view
    + fwd_model_1st_order => Check ground node warning
