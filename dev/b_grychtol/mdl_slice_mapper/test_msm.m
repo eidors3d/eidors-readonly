@@ -42,7 +42,11 @@ function fmdl = mdl_2d(N)
     fmdl.mdl_slice_mapper.npy = N;
 
 function fmdl = mdl_3d(N)
+    rotx = @(x) [1 0 0; 0 cos(x) -sin(x); 0 sin(x) cos(x)];
+    rotz = @(x) [cos(x) -sin(x) 0; sin(x) cos(x) 0; 0 0 1];
     imdl = mk_common_model('f3t5r',[16,1]); fmdl = imdl.fwd_model;
+    a = deg2rad(5);
+    fmdl.nodes = fmdl.nodes*rotx(a)*rotz(a);
     fmdl.mdl_slice_mapper.npx = N;
     fmdl.mdl_slice_mapper.npy = N;
     fmdl.mdl_slice_mapper.level = [inf inf 1.58];
