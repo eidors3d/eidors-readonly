@@ -398,7 +398,7 @@ for e=1:length(mdl.electrode)
         ee= get_boundary( mdl );
         paint_electrodes(sels,ee,mdl.nodes,colour,number_electrodes);
         
-        el_nodes= mdl.nodes(unique(mdl.boundary(sels,:)),:);
+        el_nodes= mdl.nodes(unique(ee(sels,:)),:);
         number_elecs_3d(number_electrodes, e, mdl, el_nodes );
     end
 end
