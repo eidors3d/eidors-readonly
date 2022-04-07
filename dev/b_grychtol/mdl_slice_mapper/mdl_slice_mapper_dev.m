@@ -83,10 +83,9 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    if  ndims == 2;  NODEz = []; else; NODEz= 0; end
    ninterp_ptr = zeros(length(x(:)),ndims+1); % reshape later
 
-   for i= find( elem_ptr(:)>0 )'; % look for all x,y inside elements
+   for i= find( elem_ptr(:)>0 )' % look for all x,y inside elements
      nodes_i = fwd_model.elems(elem_ptr(i),:);
-     int_fcn = inv( [ones(1,ndims+1);NODE(:,nodes_i)] );
-     ninterp_ptr(i,:) = ( int_fcn *[1;x(i);y(i);NODEz] )';
+     ninterp_ptr(i,:) = ( [ones(1,ndims+1);NODE(:,nodes_i)] \ [1;x(i);y(i);NODEz] )';
    end
    ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
 
@@ -174,8 +173,8 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
   for i= 1: npy
      for j= 1: npx
         dist2 = (NODEx-x(i,j)).^2 + (NODEy-y(i,j)).^2 + NODEz2;
-        ff = find(dist2 == min(dist2));
-        NPTR(i,j) = ff(1);
+        [~, ff] = min(dist2);
+        NPTR(i,j) = ff;
      end
   end
   NPTR(~in)= 0; % outside
@@ -384,7 +383,6 @@ function pts = get_points(fwd_model);
            fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
        NODE(3,:) = [];
    end
-   ELEM= fwd_model.elems';
    if size(NODE,1) ==2 %2D
       [x,y] = grid_the_space( fwd_model, 'only_get_points');
    else

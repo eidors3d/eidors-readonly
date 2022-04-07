@@ -1,4 +1,4 @@
-function test_msm
+function test_msm(N)
 
 test = localfunctions;
 index = @(x,y) x(y);
@@ -10,8 +10,13 @@ eidors_cache off node_ptr
 eidors_cache off nodeinterp
 
 fh = {@mdl_slice_mapper, @mdl_slice_mapper_dev};
+if nargin == 0
+    N = 200;
+end
 
-N = 200;
+% populate the cache
+mdl = eidors_cache(@mdl_2d,N);
+mdl = eidors_cache(@mdl_3d,N);
 
 for i = 1:numel(test)
     for j = 1:2
@@ -44,31 +49,37 @@ function fmdl = mdl_3d(N)
 
     
 function [ptr, time] = test_elem_2d(fh, N)
+mdl = eidors_cache(@mdl_2d, N);
 tic
-ptr = feval(fh, mdl_2d(N), 'elem');
+ptr = feval(fh, mdl, 'elem');
 time = toc;
 
 function [ptr, time] = test_elem_3d(fh, N)
+mdl = eidors_cache(@mdl_3d, N);
 tic
-ptr = feval(fh, mdl_3d(N), 'elem');
+ptr = feval(fh, mdl, 'elem');
 time = toc;
 
 function [ptr, time] = test_node_2d(fh, N)
+mdl = eidors_cache(@mdl_2d, N);
 tic
-ptr = feval(fh, mdl_2d(N), 'node');
+ptr = feval(fh, mdl, 'node');
 time = toc;
 
 function [ptr, time] = test_node_3d(fh, N)
+mdl = eidors_cache(@mdl_3d, N);
 tic
-ptr = feval(fh, mdl_3d(N), 'node');
+ptr = feval(fh, mdl, 'node');
 time = toc;
 
 function [ptr, time] = test_nodeinterp_2d(fh, N)
+mdl = eidors_cache(@mdl_2d,N);
 tic
-ptr = feval(fh, mdl_2d(N), 'nodeinterp');
+ptr = feval(fh, mdl, 'nodeinterp');
 time = toc;
 
 function [ptr, time] = test_nodeinterp_3d(fh, N)
+mdl = eidors_cache(@mdl_3d, N);
 tic
-ptr = feval(fh, mdl_3d(N), 'nodeinterp');
+ptr = feval(fh, mdl, 'nodeinterp');
 time = toc;
