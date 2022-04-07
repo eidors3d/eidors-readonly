@@ -1,10 +1,10 @@
 function hh = show_fem_enhanced(mdl, options)
-% SHOW_FEM: show the EIDORS3D finite element model
+% SHOW_FEM_ENHANCED: show the EIDORS3D finite element model
 % hh = show_fem(mdl, options)
 % mdl is an EIDORS3D 'model' or 'image' structure
 % hh = handle to the plotted model
 %
-% SHOW_FEM('refresh') repaints the figure in current axis orientation 
+% SHOW_FEM_ENHANCED('refresh') repaints the figure in current axis orientation 
 %   (only works if options.edge.significant.viewpoint_dependent.callback 
 %   is true)
 %
