@@ -70,7 +70,7 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
    
 function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    ver = eidors_obj('interpreter_version');
-   if ~ver.isoctave
+   if ~ver.isoctave && ver.ver >= 9.004 % pointLocation was slow before
      ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
      return
    end
@@ -275,7 +275,7 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 function EPTR= img_mapper3(NODE, ELEM, x, y );
 
   ver = eidors_obj('interpreter_version');
-  if ver.isoctave
+  if ver.isoctave 
       img2d = mdl_3d_to_2d(NODE, ELEM);  
       id = tsearch(img2d.fwd_model.nodes(:,1),img2d.fwd_model.nodes(:,2), ...
                    img2d.fwd_model.elems, x(:),y(:));
@@ -284,10 +284,14 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
       id(in) = img2d.elem_data(id(in));
       id(~in) = 0;
   else
+      if ver.ver <  9.004 % pointLocation was slow before
+          EPTR = img_mapper3_old(NODE, ELEM, x, y);
+          return
+      end
       TR = triangulation(ELEM', NODE');
       pts = [x(:),y(:)]; pts(:,3) = 0;
       id = pointLocation(TR, pts);
-      id(isnan(id)) = 0;
+      id(isnan(id)) = 0;     
   end 
   EPTR = reshape(id,size(x));
 
