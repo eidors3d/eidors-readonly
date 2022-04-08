@@ -105,7 +105,7 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    progress_msg(sprintf('Found %d',size(intpts3,1)),Inf);
 
    progress_msg('Find c_nodes in f_tets...',pmopt);
-   rnode2ftet = get_nodes_in_tets(fmdl,rmdl.nodes, opt);
+   rnode2ftet = point_in_tet(fmdl,rmdl.nodes, opt, true);
    progress_msg(sprintf('Found %d', nnz(rnode2ftet)), Inf);
    
    
@@ -114,7 +114,7 @@ function c2f = do_mk_tet_c2f(fmdl,rmdl,opt)
    progress_msg(sprintf('Found %d',nnz(rtet_in_ftet)), Inf);
    
    progress_msg('Find f_nodes in c_tets...',pmopt);
-   fnode2rtet = get_nodes_in_tets(rmdl,fmdl.nodes, opt);
+   fnode2rtet = point_in_tet(rmdl,fmdl.nodes, opt, true);
    progress_msg(sprintf('Found %d', nnz(fnode2rtet)), Inf);
 
    progress_msg('Find f_elems in c_elems...',pmopt)
@@ -405,29 +405,6 @@ function [intpts, tri2edge, tri2intpt, edge2intpt] = edge2face_intersections(fmd
    tri2intpt = sparse(T,I,ones(size(I)),size(fmdl.faces,1),size(I,1));
    edge2intpt  = sparse(E,I,ones(size(I)),size(rmdl.edges,1),size(I,1));    
    
-%-------------------------------------------------------------------------%
-% Assign each rmdl node to the tet it is in (nodes on tet faces are counted
-% mutltiple times)  
-function rnode2tet = get_nodes_in_tets(fmdl,nodes, opt)
-    
-   [A,b] = tet_to_inequal(fmdl.nodes,fmdl.elems);
-   progress_msg(.01);
-   % This is split to decrease the memory footprint
-   rnode2tet = (bsxfun(@minus, A(1:4:end,:)*nodes',b(1:4:end)) <= opt.tol_node2tet)';
-   progress_msg(.21);
-   for i = 2:4
-      rnode2tet = rnode2tet & (bsxfun(@minus, A(i:4:end,:)*nodes',b(i:4:end)) <= opt.tol_node2tet)';
-      progress_msg(.21 + (i-1)*.23);
-   end
-
-   % exclude coinciding nodes
-   ex= bsxfun(@eq,nodes(:,1),fmdl.nodes(:,1)') & ...
-       bsxfun(@eq,nodes(:,2),fmdl.nodes(:,2)') & ...
-       bsxfun(@eq,nodes(:,3),fmdl.nodes(:,3)');
-   progress_msg(.94);
-   rnode2tet(any(ex,2),:) = 0;
-   rnode2tet = sparse(rnode2tet);
-   progress_msg(Inf);
 
 %-------------------------------------------------------------------------%
 % Prepare model
@@ -582,6 +559,8 @@ function do_case_test
    eidors_msg('log_level',ll);
 
 function do_small_test
+   ll = eidors_msg('log_level');
+   eidors_msg('log_level',1);
    fmdl = ng_mk_cyl_models([1 .5],[],[]);
    show_fem(fmdl)
    v = -.5:.1:.5;
@@ -594,9 +573,12 @@ function do_small_test
    tc2f = c2f * rmdl.coarse2fine;
    vc2f = mk_grid_c2f(fmdl,rmdl);
    unit_test_cmp('mk_tet_c2f v mk_grid_c2f', tc2f,vc2f, 1e-15);
+   eidors_msg('log_level',ll);
 
 
 function do_realistic_test
+   ll = eidors_msg('log_level');
+   eidors_msg('log_level',1);
    fmdl= ng_mk_cyl_models([2,2,.1],[16,1],[.1,0,.025]);
    xvec = [-1.5 -.5:.2:.5 1.5];
    yvec = [-1.6 -1:.2:1 1.6];
@@ -621,6 +603,7 @@ function do_realistic_test
    c2f_n = mk_approx_c2f(fmdl,rmdl);
    t = toc;
    fprintf('Approximate: t=%f s\n',t);
+   eidors_msg('log_level',ll);
 
  function show_test(vox,tet, pts)
     show_fem(vox);

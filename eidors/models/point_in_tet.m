@@ -1,18 +1,23 @@
-function point2tet = point_in_tet(fmdl,points, epsilon)
+function point2tet = point_in_tet(fmdl,points, epsilon, exclude_nodes)
 %POINT_IN_TET test for points contained in elements
-
+%
+%
 % (C) 2015 Bartlomiej Grychtol
 % License: GPL version 2 or 3
 % $Id$
 
-copt.fstr = 'point_in_tet';
-copt.cache_obj = {fmdl.nodes, fmdl.elems, points, epsilon};
+if nargin < 4
+    exclude_nodes = false;
+end
 
-point2tet = eidors_cache(@do_point_in_tet,{fmdl, points, epsilon}, copt);
+copt.fstr = 'point_in_tet';
+copt.cache_obj = {fmdl.nodes, fmdl.elems, points, epsilon, exclude_nodes};
+
+point2tet = eidors_cache(@do_point_in_tet,{fmdl, points, epsilon, exclude_nodes}, copt);
 
 end
 
-function point2tet = do_point_in_tet(fmdl, points, epsilon)
+function point2tet = do_point_in_tet(fmdl, points, epsilon, exclude_nodes)
    ver = eidors_obj('interpreter_version');
    if ~ver.isoctave 
        warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
@@ -56,7 +61,8 @@ function point2tet = do_point_in_tet(fmdl, points, epsilon)
                point2tet = [point2tet; builtin('sparse',reshape(all(reshape(p2t',4,[])),[],length(idx))')];
            end
        end
-       
+       progress_msg(Inf);
+   end
        % exclude coinciding nodes
        %    ex= bsxfun(@eq,points(:,1),fmdl.nodes(:,1)') & ...
        %        bsxfun(@eq,points(:,2),fmdl.nodes(:,2)') & ...
@@ -64,8 +70,10 @@ function point2tet = do_point_in_tet(fmdl, points, epsilon)
        %    progress_msg(.94);
        %    point2tet(any(ex,2),:) = 0;
        
+   if exclude_nodes    
        ex = ismember(points, fmdl.nodes, 'rows');
        point2tet(ex,:) = 0;
-       progress_msg(Inf);
    end
+       
+
 end
