@@ -6,7 +6,9 @@ function print_convert(filename, varargin)
 %  OPT is either a string specifying dpi in the format '-r150' or a struct
 %  with (some of) these fields:
 %   opt.resolution   = 150;              % 150 dpi (default: 125)
-%   opt.pagesize     = [width, height];  % whatever matlab's current units
+%   opt.pagesize     = [width, height];  % in current PageUnits or 'auto'
+%                                        % to match the size on the screen
+%                                        % (default: [8, 6] inches)
 %   opt.jpeg_quality = 85;               % jpeg quality (default: 85)
 %   opt.imwrite_opts = {'BitDepth',8};   % options to IMWRITE (default: '')
 %   opt.horz_cut     = 50;               % remove horizontal gaps larger
@@ -56,13 +58,13 @@ pp = parse_options(filename, varargin{:});
 % change properties
 pp = set_prop(pp,'InvertHardCopy','off');
 pp = set_prop(pp,'Color','w');
-pp = set_prop(pp,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
+pp = set_pagesize(pp);
 
 % print to array
 im = print(pp.figno,'-RGBImage',pp.resolution);
 
 %restore properties
-set(pp.figno, pp.old)
+set(pp.figno, pp.old{:})
 
 im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
@@ -79,13 +81,39 @@ end
 
 % place file in clipboard
 if pp.clip
-   copy2cliboard(pp)
+   copy2clipboard(pp)
 end
 
-function pp = set_prop(pp, varargin)
-    for i = 1:2:numel(varargin)
-        pp.old.(varargin{i}) =  get(pp.figno, varargin{i});
+function pp = set_pagesize(pp)
+if ~isfield(pp, 'pagesize') % no user definition
+    pos = [0.25 0.25 8 6]; % Matlab's default before R2016a
+    if isfield(pp, 'aspect_ratio') % old interface
+        pos(4) = pos(3) * pp.aspect_ratio;
     end
+    pp = set_prop(pp,   'PaperUnits','inches',...
+                        'PaperPositionMode','manual', ...
+                        'PaperPosition', pos);
+elseif ischar(pp.pagesize)
+    switch pp.pagesize
+        case 'auto'
+            pp = set_prop(pp, 'PaperPositionMode', 'auto');
+        otherwise
+            warning('Page size %s not understood', pp.pagesize);
+    end
+else
+    pos = [0 0 pp.pagesize];
+    pp = set_prop(pp,   'PaperPositionMode','manual', ...
+                        'PaperPosition', pos);
+end    
+
+function pp = set_prop(pp, varargin)
+    if ~isfield(pp, 'old') || isempty(pp.old), pp.old = {}; end
+    prop = {};
+    for i = 1:2:numel(varargin)
+        prop(1, end+1) = varargin(i);
+        prop{2, end  } = get(pp.figno, varargin{i});
+    end
+    pp.old = [fliplr(prop), pp.old]; % store in reverse order to revert correctly
     set(pp.figno, varargin{:})
         
 
@@ -189,7 +217,6 @@ function pp = parse_options(filename,varargin)
       pp.filename = filename;
    end
 
-   pp.posn = get(gcf,'PaperPosition');
    pp.jpeg_quality = 85; % default jpeg quality
    pp.imwrite_opts = {}; % initial
    pp.horz_cut = 50;
@@ -212,7 +239,7 @@ function pp = parse_options(filename,varargin)
       return; 
    end
    if nargin>=3
-      pp.posn(4) = pp.posn(3)*varargin{2};  
+      pp.aspect_ratio = varargin{2};  
    end
  
    opt = varargin{1};
@@ -228,7 +255,6 @@ function pp = parse_options(filename,varargin)
    elseif isstruct(opt)
      if isfield(opt,'figno');
         pp.figno = opt.figno;
-        pp.posn =  get(pp.figno,'PaperPosition');
      end
      if isfield(opt,'supersampling_factor')
         pp.factor = opt.supersampling_factor;
@@ -239,7 +265,7 @@ function pp = parse_options(filename,varargin)
          pp.resolution = sprintf('-r%d',125 * pp.factor);
      end
      if isfield(opt,'pagesize');
-         pp.posn(3:4) = opt.pagesize;
+         pp.pagesize = opt.pagesize;
      end
      % TODO, this code can copy from opt to pp
      if isfield(opt,'jpeg_quality')
@@ -270,7 +296,7 @@ function pp = parse_options(filename,varargin)
      end
      if isfield(opt,'horz_space');
         if opt.horz_space >= pp.horz_cut;
-           warrning('Option vert_space must be smaller than vert_cut. Ingoring');
+           warning('Option vert_space must be smaller than vert_cut. Ingoring');
         else
            pp.horz_space = opt.horz_space;
         end
