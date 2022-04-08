@@ -11,7 +11,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
  - Fix prior_gaussian_HPF: not yet able to generate 3D models
  - Fixup warnings for sparse
  - New included data based on the JXBrunner data set
- + Fix print_convert to deal with PaperPositionMode behaviour change
+ + Fix print_convert to deal with PaperPositionMode behaviour change 
  - Warn if GREIT3D_distribution has zvec outside image and opt.distr = []
  - Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
  - mk_grid_model => Warn if length(vector)==1
@@ -29,8 +29,8 @@ ERROR = (Error using eidors_default>get_default (line 106)
  - test netgen 6.2 for linux and windows
  + DON'T include netgen 6.2. KEEP OLD since smaller and don't need python
  - fix print_convert - accept command line options (and not just op)
- - fix print_convert - put stuff on clipboard in windows
- - fix print_convert for new matlab versions. Figure out when distorted image
+ + fix print_convert - put stuff on clipboard in windows
+ + fix print_convert for new matlab versions. Figure out when distorted image
  - bugs in ng_mk_geometric models?
 
  + Refactor fmdl.mdl_slice_mesher.level.rotate/centre
