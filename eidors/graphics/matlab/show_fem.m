@@ -686,10 +686,12 @@ function hh = paint_inho(data, nodes, elems, thresh, img)
             
     end
     faces = reshape(elems(ii,idx)',3,[])';
-        
-    hh = patch('Faces',faces,'Vertices',nodes,'facecolor',fc,...
-        'facevertexcdata',colours, 'EdgeColor','none','CDataMapping','direct');
-   
+    
+    hh = NaN;
+    if ~isempty(faces) % octave cannot draw pathes without faces
+        hh = patch('Faces',faces,'Vertices',nodes,'facecolor',fc,...
+            'facevertexcdata',colours, 'EdgeColor','none','CDataMapping','direct');
+   end
    
 % Function copied from dev/n_polydorides/
 function hh_=repaint_inho(mat,mat_ref,vtx,simp, thresh, clr_def);
