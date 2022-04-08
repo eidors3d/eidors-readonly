@@ -53,19 +53,17 @@ if ischar(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
 pp = parse_options(filename, varargin{:});
 
-old_ihc = get(pp.figno, 'InvertHardcopy');
-old_col = get(pp.figno, 'Color');
-set(pp.figno,'InvertHardCopy','off'); 
-set(pp.figno,'Color','w');
+% change properties
+pp = set_prop(pp,'InvertHardCopy','off');
+pp = set_prop(pp,'Color','w');
+pp = set_prop(pp,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
 
-set(pp.figno,'PaperPosition',pp.posn); % I wish matlab had unwind protect - like octave does!
-%%% The -dpng driver is broken in R2014a on linux (and maybe others);
+% print to array
 im = print(pp.figno,'-RGBImage',pp.resolution);
-set(pp.figno,'PaperPosition',pp.page);
- 
-set(pp.figno,'InvertHardCopy',old_ihc); % 
-set(pp.figno,'Color',old_col);
- 
+
+%restore properties
+set(pp.figno, pp.old)
+
 im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
 try
@@ -79,8 +77,19 @@ catch e
    rethrow(e);
 end
 
-% put onto clipboard
+% place file in clipboard
 if pp.clip
+   copy2cliboard(pp)
+end
+
+function pp = set_prop(pp, varargin)
+    for i = 1:2:numel(varargin)
+        pp.old.(varargin{i}) =  get(pp.figno, varargin{i});
+    end
+    set(pp.figno, varargin{:})
+        
+
+function copy2clipboard(pp)
    if isunix()
       cmd = sprintf(['xclip -selection ' ... 
           'clipboard -t image/%s -i %s'], ...
@@ -96,7 +105,6 @@ if pp.clip
         warning 'Powershell Set-Clipboard failed';
       end
    end
-end
 
 function im = crop_image(im,pp)
    tu = pp.crop_slack(1);
@@ -181,8 +189,7 @@ function pp = parse_options(filename,varargin)
       pp.filename = filename;
    end
 
-   pp.page = get(gcf,'PaperPosition');
-   pp.posn = pp.page;
+   pp.posn = get(gcf,'PaperPosition');
    pp.jpeg_quality = 85; % default jpeg quality
    pp.imwrite_opts = {}; % initial
    pp.horz_cut = 50;
@@ -221,8 +228,7 @@ function pp = parse_options(filename,varargin)
    elseif isstruct(opt)
      if isfield(opt,'figno');
         pp.figno = opt.figno;
-        pp.page = get(pp.figno,'PaperPosition');
-        pp.posn = pp.page;
+        pp.posn =  get(pp.figno,'PaperPosition');
      end
      if isfield(opt,'supersampling_factor')
         pp.factor = opt.supersampling_factor;
