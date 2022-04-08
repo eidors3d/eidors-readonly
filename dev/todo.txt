@@ -48,9 +48,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
 		show_3d_slices
 		show_current
 		mk_pixel_slice
-		mk_grid_model
-		mk_voxel_volume
-		calc_image_SNR
+		calc_image_SNR - assumes level is a 3 element vector, difficult
  - merge meshes speed-up/refactor (Bartek)
  
 
