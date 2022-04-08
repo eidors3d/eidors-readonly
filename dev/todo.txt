@@ -25,7 +25,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
  - DONE?? (img_point_mapper) new function low level: interp_points(img, xyz_points) use point_in_tet 
  - support c2f in img_point_mapper
  + refactor the point_to_tet part of mk_tet_c2f
- - Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
+ + Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
  - test netgen 6.2 for linux and windows
  + DON'T include netgen 6.2. KEEP OLD since smaller and don't need python
  - fix print_convert - accept command line options (and not just op)
