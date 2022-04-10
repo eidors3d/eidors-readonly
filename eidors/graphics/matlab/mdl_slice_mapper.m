@@ -30,7 +30,8 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %    for 'get_points' map contains the x an y vectors of points used for
 %       for mapping as {x, y}. No mapping is performed.
 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% (C) 2006-2022 Andy Adler and Bartek Grychtol. 
+% License: GPL version 2 or version 3
 % $Id$
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
@@ -66,9 +67,13 @@ function elem_ptr = mdl_elem_mapper(fwd_model);
       [x,y] = grid_the_space( fmdl3 );
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
-
-
+   
 function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
+   ver = eidors_obj('interpreter_version');
+   if ~ver.isoctave && ver.ver >= 9.004 % pointLocation was slow before
+     ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
+     return
+   end
    elem_ptr = mdl_elem_mapper(fwd_model);
    NODE = level_model( fwd_model );
    fwd_model.nodes = NODE';
@@ -78,20 +83,69 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
    if  ndims == 2;  NODEz = []; else; NODEz= 0; end
    ninterp_ptr = zeros(length(x(:)),ndims+1); % reshape later
 
-   for i= find( elem_ptr(:)>0 )'; % look for all x,y inside elements
+   for i= find( elem_ptr(:)>0 )' % look for all x,y inside elements
      nodes_i = fwd_model.elems(elem_ptr(i),:);
-     int_fcn = inv( [ones(1,ndims+1);NODE(:,nodes_i)] );
-     ninterp_ptr(i,:) = ( int_fcn *[1;x(i);y(i);NODEz] )';
+     ninterp_ptr(i,:) = ( [ones(1,ndims+1);NODE(:,nodes_i)] \ [1;x(i);y(i);NODEz] )';
    end
    ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
 
+function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
+   NODE = level_model( fwd_model );
+   [x,y] = grid_the_space( fwd_model);
+   ndims = size(NODE,1);
+   pts = [x(:),y(:)];
+   if size(NODE,1) == 3, pts(:,3) = 0; end
+   
+   TR = triangulation(fwd_model.elems, NODE');
+   [el, bc] =   TR.pointLocation(pts);
+   bc(isnan(el),:) = 0;
+   ninterp_ptr = reshape(bc,size(x,1), size(x,2), ndims + 1);
+   
 function node_ptr = mdl_node_mapper(fwd_model);
    NODE = level_model( fwd_model );
    [x,y] = grid_the_space( fwd_model);
-   node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
 
+   ver = eidors_obj('interpreter_version');
+   if ~ver.isoctave
+       node_ptr = node_mapper_triangulation( NODE, fwd_model.elems', x, y);
+   else
+       ndims = size(NODE,1);
+       if ndims == 2
+         % old code
+         node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
+       else
+         node_ptr= node_mapper_dsearchn( NODE, fwd_model.elems', x, y);
+       end
+   end
+   
+% in 3D this is somewhat faster in matlab. Perfomance in octave varies with size
+function node_ptr = node_mapper_dsearchn( NODE, ELEM, x, y)
+   if size(NODE,1) == 2
+      node_ptr = dsearchn(NODE', ELEM', [x(:),y(:)], 0);
+   else
+      pts = [x(:),y(:)];
+      pts(:,3) = 0;
+      [NODE, ELEM, use_nodes] = limit_3dmodel_to_slice(NODE,ELEM);
+      node_ptr = dsearchn(NODE', ELEM', pts , 0);
+      in = node_ptr>0;
+      node_ptr(in) = use_nodes(node_ptr(in));
+   end
+   node_ptr = reshape(node_ptr, size(x));
+   
+function node_ptr = node_mapper_triangulation( NODE, ELEM, x, y)
+    TR = triangulation(ELEM',NODE');
+    pts = [x(:), y(:)];
+    if size(NODE,1) == 3
+        pts(:,3) = 0;
+    end
+    id = TR.pointLocation(pts);
+    in = ~isnan(id);
+    node_ptr = zeros(size(in));
+    node_ptr(in) = TR.nearestNeighbor(pts(in,:));
+    node_ptr = reshape(node_ptr, size(x));
+    
 
-
+   
 % Search through each element and find the points which
 % are in that element
 % NPTR is matrix npx x npy with a pointer to the
@@ -119,8 +173,8 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
   for i= 1: npy
      for j= 1: npx
         dist2 = (NODEx-x(i,j)).^2 + (NODEy-y(i,j)).^2 + NODEz2;
-        ff = find(dist2 == min(dist2));
-        NPTR(i,j) = ff(1);
+        [~, ff] = min(dist2);
+        NPTR(i,j) = ff;
      end
   end
   NPTR(~in)= 0; % outside
@@ -130,6 +184,21 @@ function NPTR= node_mapper( NODE, ELEM, bdy, x, y);
 % EPTR is matrix npx x npy with a pointer to the
 % element which contains it.
 function EPTR= img_mapper2(NODE, ELEM, x, y );
+  ver = eidors_obj('interpreter_version');
+  if ver.isoctave
+    id = tsearch(NODE(1,:),NODE(2,:), ELEM', x(:),y(:));
+  else 
+    TR = triangulation(ELEM',NODE');
+    id = TR.pointLocation([x(:), y(:)]);
+  end
+  id(isnan(id)) = 0;
+  EPTR = reshape(id,size(x));
+
+% Search through each element and find the points which
+% are in that element
+% EPTR is matrix npx x npy with a pointer to the
+% element which contains it.
+function EPTR= img_mapper2_old(NODE, ELEM, x, y );
   [npy,npx] = size(x);
   v_yx= [-y(:),x(:)];
   turn= [0 -1 1;1 0 -1;-1 1 0];
@@ -154,7 +223,8 @@ function EPTR= img_mapper2(NODE, ELEM, x, y );
     endr( abs( (abs(sum(a))-aa) ./ sum(a)) >1e-8)=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
-
+  
+  
 % 2D mapper of points to elements. First, we assume that
 % The vertex geometry (NODE) has been rotated and translated
 % so that the imaging plane is on the z-axis. Then we iterate
@@ -203,6 +273,29 @@ function EPTR= img_mapper2a(NODE, ELEM, npx, npy );
 % so that the imaging plane is on the z-axis. Then we iterate
 % through elements to find the containing each pixel
 function EPTR= img_mapper3(NODE, ELEM, x, y );
+
+  ver = eidors_obj('interpreter_version');
+  if ver.isoctave 
+      img2d = mdl_3d_to_2d(NODE, ELEM);  
+      id = tsearch(img2d.fwd_model.nodes(:,1),img2d.fwd_model.nodes(:,2), ...
+                   img2d.fwd_model.elems, x(:),y(:));
+    %  id = tsearchn(NODE(:,use_nodes)', map(ELEM(:,use_elem))', [x(:),y(:),zeros(numel(x),1)]);
+      in = ~isnan(id);
+      id(in) = img2d.elem_data(id(in));
+      id(~in) = 0;
+  else
+      if ver.ver <  9.004 % pointLocation was slow before
+          EPTR = img_mapper3_old(NODE, ELEM, x, y);
+          return
+      end
+      TR = triangulation(ELEM', NODE');
+      pts = [x(:),y(:)]; pts(:,3) = 0;
+      id = pointLocation(TR, pts);
+      id(isnan(id)) = 0;     
+  end 
+  EPTR = reshape(id,size(x));
+
+function EPTR= img_mapper3_old(NODE, ELEM, x, y );
   [npy,npx] = size(x);
 
   EPTR=zeros(npy,npx);
@@ -244,8 +337,27 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
     endr( sum(abs(vol),2) - VOL >1e-8 )=[];
     EPTR(endr)= j;
   end %for j=1:ELEM
-
-
+  
+function [NODE, ELEM, use_nodes, use_elem] = limit_3dmodel_to_slice(NODE,ELEM)
+    use_elem = 1:size(ELEM,2);
+    z = reshape(NODE(3,ELEM),size(ELEM));
+    use_elem(min(z)>0 | max(z)<0) = [];
+    use_nodes = unique(ELEM(:,use_elem));
+    map = zeros(size(NODE,2),1); map(use_nodes) = 1:numel(use_nodes);
+    NODE = NODE(:,use_nodes);
+    ELEM = map(ELEM(:,use_elem));
+  
+% function to be used on a leveled model (slice at z=0)  
+function [img2d, use_nodes] = mdl_3d_to_2d(NODE, ELEM)  
+  [NODE, ELEM, use_nodes, use_elem] = limit_3dmodel_to_slice(NODE,ELEM);
+  fmdl.nodes = NODE';
+  fmdl.elems = ELEM';
+  fmdl.type = 'fwd_model';
+  img.fwd_model = fmdl;
+  img.elem_data = use_elem;
+  img.type = 'image';
+  img2d = mdl_slice_mesher(img,[inf inf 0]);
+  
 % Level model: usage
 %   NODE= level_model( fwd_model, level );
 %
@@ -261,53 +373,13 @@ function NODE= level_model( fwd_model )
 
    if     isfield(fwd_model.mdl_slice_mapper,'level')
        NODE = level_model_slice(vtx, fwd_model.mdl_slice_mapper.level)';
-%        NODE = level_model_level(vtx, fwd_model.mdl_slice_mapper.level);
    elseif isfield(fwd_model.mdl_slice_mapper,'centre')
+       % just in case somebody was using that interface
        rotate = fwd_model.mdl_slice_mapper.rotate;
        centre = fwd_model.mdl_slice_mapper.centre;
-       NODE = ctr_norm_model(vtx, rotate, centre);
+       NODE = level_model_slice(vtx, struct('centre', centre,'rotation_matrix',rotate))';       
    else   error('mdl_slice_mapper: no field level or centre provided');
    end
-   
-function NODE = level_model_level(vtx, level)   
-   [nn, dims] = size(vtx);
-   % Infinities tend to cause issues -> replace with realmax
-   % Don't need to worry about the sign of the inf
-   level( isinf(level) | isnan(level) ) = realmax;
-   level( level==0 ) =     1e-10; %eps;
-
-   % Step 1: Choose a centre point in the plane
-   %  Weight the point by it's inv axis coords
-   invlev= 1./level;
-   ctr= invlev / sum( invlev.^2 );
-
-   % Step 2: Choose basis vectors in the plane
-   %  First is the axis furthest from ctr
-   [jnk, s_ax]= sort( - abs(level - ctr) );
-   v1= [0,0,0]; v1(s_ax(1))= level(s_ax(1));
-   v1= v1 - ctr;
-   v1= v1 / norm(v1);
-
-   % Step 3: Get off-plane vector, by cross product
-   v2= [0,0,0]; v2(s_ax(2))= level(s_ax(2));
-   v2= v2 - ctr;
-   v2= v2 / norm(v2);
-   v3= cross(v1,v2);
-
-   % Step 4: Get orthonormal basis. Replace v2
-   v2= cross(v1,v3);
-
-   % Step 5: Get bases to point in 'positive directions'
-   v1= v1 * (1-2*(sum(v1)<0));
-   v2= v2 * (1-2*(sum(v2)<0));
-   v3= v3 * (1-2*(sum(v3)<0));
-
-   NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
-   
-function NODE = ctr_norm_model(vtx, rotate, centre);
-   [nn, dims] = size(vtx);
-   NODE = rotate * (vtx' - centre'*ones(1,nn));
-
    
 function pts = get_points(fwd_model);
    NODE = level_model( fwd_model );
@@ -315,7 +387,6 @@ function pts = get_points(fwd_model);
            fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
        NODE(3,:) = [];
    end
-   ELEM= fwd_model.elems';
    if size(NODE,1) ==2 %2D
       [x,y] = grid_the_space( fwd_model, 'only_get_points');
    else
