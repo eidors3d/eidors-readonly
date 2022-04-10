@@ -55,16 +55,17 @@ if ischar(filename) && strcmp(filename,'UNIT_TEST'); do_unit_test; return; end
 
 pp = parse_options(filename, varargin{:});
 
-% change properties
+
+% change properties 
 pp = set_prop(pp,'InvertHardCopy','off');
 pp = set_prop(pp,'Color','w');
 pp = set_pagesize(pp);
 
+% revert changed properties at exit 
+cleanupObj = onCleanup(@() set(pp.figno, pp.old{:})); % current state of pp.old only!
+
 % print to array
 im = print(pp.figno,'-RGBImage',pp.resolution);
-
-%restore properties
-set(pp.figno, pp.old{:})
 
 im = bitmap_downsize(im, pp.factor);
 im = crop_image(im,pp);
@@ -107,7 +108,6 @@ else
 end    
 
 function pp = set_prop(pp, varargin)
-    if ~isfield(pp, 'old') || isempty(pp.old), pp.old = {}; end
     prop = {};
     for i = 1:2:numel(varargin)
         prop(1, end+1) = varargin(i);
@@ -231,7 +231,7 @@ function pp = parse_options(filename,varargin)
    else
       pp.figno = get(gcf,'Number');
    end
-   
+   pp.old = {};
    
  
 % Old options
