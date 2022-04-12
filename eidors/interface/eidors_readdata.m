@@ -251,7 +251,7 @@ function df= is_eit_file_a_draeger_file( fname );
    fid= fopen(fname,'rb');
    d= fread(fid,[1 80],'uchar');
    fclose(fid);
-   ff = findstr(d, '---Draeger EIT-Software');
+   ff = strfind(char(d), '---Draeger EIT-Software');
    if ff;
       df = 1;
       eidors_msg('Draeger format: %s', d(ff(1)+(0:30)),4);
@@ -284,11 +284,11 @@ function df = is_eit_file_a_carefusion_file( fname )
    df = 0;
    if d(1:2) ~= [255,254]; return; end
    if d(4:2:end) ~= 0; return; end
-   str= setstr(d(3:2:end));
+   str= char(d(3:2:end));
    tests1= '<?xml version="1.0" ?>';
    tests2= '<EIT_File>';
-   if ~any(findstr(str,tests1)); return; end
-   if ~any(findstr(str,tests2)); return; end
+   if ~any(strfind(str,tests1)); return; end
+   if ~any(strfind(str,tests2)); return; end
    
    df= 1;
    return
@@ -296,7 +296,7 @@ function df = is_eit_file_a_carefusion_file( fname )
 function [vv, auxdata, auxtime] = carefusion_eit_readdata( fname );
    fid= fopen(fname,'rb');
    d= fread(fid,[1 180],'uchar');
-   str= setstr(d(3:2:end));
+   str= char(d(3:2:end));
    outv = regexp(str,'<Header>(\d+) bytes</Header>','tokens');
    if length(outv) ~=1; 
       error('format problem reading carefusion eit files');
@@ -773,7 +773,7 @@ function [cur_data,no_cur_data] = UCT_calibration_file( fname );
    version = fread(fid, 1, 'int32');
 %  comments = fread(fid, 2048, 'char'); MATLAB CHANGED CHAR to 2 bytes
    comments = fread(fid, 2048, 'uint8');
-   comments = setstr(comments');
+   comments = char(comments');
    no_of_layers = fread(fid, 1, 'int32');
    uppa_dac = fread(fid, 1, 'float64');
    lowa_dac = fread(fid, 1, 'float64');
@@ -985,9 +985,9 @@ function [vv, evtlist, elecImps, tStampsAbs, tStampsRel, n_elec, amp, skip, extr
 
          fseek(fid,424,'bof');
          x = fread(fid, 2, 'int16', 'ieee-le');
-         extra.filename = str2mat(fread(fid, 100, 'int16', 'ieee-le')');
-         extra.conditions = str2mat(fread(fid, 300, 'int16', 'ieee-le')');
-         extra.comments = str2mat(fread(fid, 600, 'int16', 'ieee-le')');
+         extra.filename = fread(fid,[1,100], 'int16=>char', 'ieee-le');
+         extra.conditions = fread(fid,[1,300], 'int16=>char', 'ieee-le');
+         extra.comments = fread(fid,[1,600], 'int16=>char', 'ieee-le');
 
          %fseek(fid,2428,'bof');
          extra.frame_rate = fread(fid, 1, 'float', 'ieee-le');
