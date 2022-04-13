@@ -11,14 +11,16 @@ function print_convert(filename, varargin)
 %                                        % (default: [8, 6] inches)
 %   opt.jpeg_quality = 85;               % jpeg quality (default: 85)
 %   opt.imwrite_opts = {'BitDepth',8};   % options to IMWRITE (default: '')
-%   opt.horz_cut     = 50;               % remove horizontal gaps larger
-%                                        % than 50 pixels (default: 0)
+%   opt.horz_cut     = 20;               % remove horizontal gaps larger
+%                                        % than 50 pixels (default: 20)
 %   opt.horz_space   = 10;               % replace the removed horizontal
 %                                        % gaps with 10 px of background
-%   opt.vert_cut     = 50;               % remove vertical gaps larger
-%                                        % than 50 pixels (default: 0)
+%                                        % (default: 10)
+%   opt.vert_cut     = 20;               % remove vertical gaps larger
+%                                        % than 50 pixels (default: 20)
 %   opt.vert_space   = 10;               % replace the removed vertical
 %                                        % gaps with 10 px of background
+%                                        % (default: 10)
 %   opt.supersampling_factor = 2;        % anti-aliasing (default: 1 for
 %                                        % images, 2 for graphs). Higher is
 %                                        % smoother.
@@ -219,9 +221,9 @@ function pp = parse_options(filename,varargin)
 
    pp.jpeg_quality = 85; % default jpeg quality
    pp.imwrite_opts = {}; % initial
-   pp.horz_cut = 50;
+   pp.horz_cut = 20;
    pp.horz_space = 10;
-   pp.vert_cut = 50;
+   pp.vert_cut = 20;
    pp.vert_space = 10;
    pp.factor = default_factor;
    pp.resolution = sprintf('-r%d',125 * pp.factor);
@@ -235,10 +237,11 @@ function pp = parse_options(filename,varargin)
    
  
 % Old options
-   if nargin< 2;   
+   if nargin == 1   
       return; 
    end
    if nargin>=3
+      %print_convert('outname.png','-density 150', 0.5)
       pp.aspect_ratio = varargin{2};  
    end
  
