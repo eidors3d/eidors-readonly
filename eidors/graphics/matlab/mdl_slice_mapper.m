@@ -103,6 +103,7 @@ function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
    
 function node_ptr = mdl_node_mapper(fwd_model);
    NODE = level_model( fwd_model );
+   fwd_model.nodes = NODE';
    [x,y] = grid_the_space( fwd_model);
 
    ver = eidors_obj('interpreter_version');
@@ -341,7 +342,8 @@ function EPTR= img_mapper3_old(NODE, ELEM, x, y );
 function [NODE, ELEM, use_nodes, use_elem] = limit_3dmodel_to_slice(NODE,ELEM)
     use_elem = 1:size(ELEM,2);
     z = reshape(NODE(3,ELEM),size(ELEM));
-    use_elem(min(z)>0 | max(z)<0) = [];
+    rng = max(z(:)) - min(z(:));
+    use_elem(min(z)>0.01*rng | max(z)<-0.01*rng) = [];
     use_nodes = unique(ELEM(:,use_elem));
     map = zeros(size(NODE,2),1); map(use_nodes) = 1:numel(use_nodes);
     NODE = NODE(:,use_nodes);
@@ -419,10 +421,11 @@ function  [x,y] = grid_the_space( fmdl, flag);
      if all(isfield(fmdl.mdl_slice_mapper,{'npx','npy'}))
          npx  = fmdl.mdl_slice_mapper.npx;
          npy  = fmdl.mdl_slice_mapper.npy;
-         range= max([xrange, yrange]); 
-         % for backward compatibility
-         xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
-         yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
+% This code broke UNIT TESTS for v3.10
+%         range= max([xrange, yrange]); 
+%         % for backward compatibility 
+%         xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
+%         yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
      else
          res = 1;
          try
@@ -430,8 +433,16 @@ function  [x,y] = grid_the_space( fmdl, flag);
          end
          npx = ceil(xrange/res);
          npy = ceil(yrange/res);
-         xspace = linspace( xmean - xrange*0.5, xmean + xrange*0.5, npx );
-         yspace = linspace( ymean + yrange*0.5, ymean - yrange*0.5, npy );
+     end
+     if 1
+       xdiv = xrange/npx; ydiv = yrange/npy;
+       xspace = linspace( xmean - xrange/2 - xdiv/2, xmean + xrange*0.5 + xdiv/2, npx + 2);
+       yspace = linspace( ymean + yrange/2 + ydiv/2, ymean - yrange*0.5 - ydiv/2, npy + 2);
+       xspace = xspace(2:end-1);
+       yspace = yspace(2:end-1);
+     else
+       xspace = linspace( xmean - xrange/2 , xmean + xrange*0.5 , npx);
+       yspace = linspace( ymean + yrange/2 , ymean - yrange*0.5 , npy);
      end
   end
   if nargin > 1 && ischar(flag) && strcmp(flag, 'only_get_points')
@@ -443,82 +454,147 @@ function  [x,y] = grid_the_space( fmdl, flag);
 function do_unit_test
 % 2D NUMBER OF POINTS
    imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
+   fmdl.nodes = 1e-15 * round(1e15*fmdl.nodes);
    fmdl.mdl_slice_mapper.level = [inf,inf,0];
    fmdl.mdl_slice_mapper.npx = 5;
    fmdl.mdl_slice_mapper.npy = 5;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   unit_test_cmp('eptr01',eptr,[ 0  0 51  0  0; 0 34 26 30  0;
-                 62 35  4 29 55; 0 36 32 31  0; 0  0 59  0  0]);
+   
+   si = @(x,y) sub2ind([5,5],x, y);
+   % points lie on nodes and edges, we allow any associated element
+   els = {si(2,2), [25,34];
+          si(2,4), [27,30];
+          si(3,3), [1,2,3,4];
+          si(4,2), [33,36];
+          si(4,4), [28,31];
+          };
+   
+   tst = eptr == [    0   37   38   39    0
+                     46   25    5   27   42
+                     47    8    1    6   41
+                     48   33    7   28   40
+                      0   45   44   43    0];
+                      
+   for i = 1:size(els,1)
+    tst(els{i,1}) = ismember(eptr(els{i,1}), els{i,2});
+   end
+   unit_test_cmp('eptr01',tst,true(5,5));
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   unit_test_cmp('nptr01',nptr,[ 0  0 28  0  0; 0 14  7 17  0;
-                 40 13  1  9 32; 0 23 11 20  0; 0  0 36  0  0]);
+   test = [   0   27   28   29    0
+             41    6    7    8   31
+             40   13    1    9   32
+             39   12   11   10   33
+              0   37   36   35    0];
+   unit_test_cmp('nptr01',nptr,test);
 
    nint = mdl_slice_mapper(fmdl,'nodeinterp');
-   unit_test_cmp('nint01a',nint(2:4,2:4,1),[ 0.8284, 1, 0.8284;1,1,1; 0.8284, 1, 0.8284], 1e-3);
+   unit_test_cmp('nint01a',nint(2:4,2:4,1),[ 0.2627, 0.6909, 0.2627; 
+                                             0.6906, 1,      0.6906;
+                                             0.2627, 0.6909, 0.2627], 1e-3);
 
-   fmdl.mdl_slice_mapper.npx = 5;
-   fmdl.mdl_slice_mapper.npy = 3;
+   fmdl.mdl_slice_mapper.npx = 6;
+   fmdl.mdl_slice_mapper.npy = 4;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   unit_test_cmp('eptr02',eptr,[  0  0 51 0  0;62 35  4 29 55; 0 0 59 0 0]);
+   res = [  0   49   38   38   52    0
+           62   23    9   10   20   55
+           63   24   14   13   19   54
+            0   60   44   44   57    0];
+   unit_test_cmp('eptr02',eptr,res);
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   unit_test_cmp('nptr02',nptr,[ 0 0 28 0 0; 40 13 1 9 32; 0 0 36 0 0 ]);
+   res = [  0   27   15   16   29    0
+           25    6    2    3    8   18
+           24   12    5    4   10   19
+            0   37   22   21   35    0];
+   unit_test_cmp('nptr02',nptr,res);
 
 % DIRECT POINT TESTS
    imdl = mk_common_model('a2c2',8); fmdl = imdl.fwd_model;
    fmdl.mdl_slice_mapper.level = [inf,inf,0];
-   fmdl.mdl_slice_mapper.x_pts = linspace(-1,1,5);
+   fmdl.mdl_slice_mapper.x_pts = linspace(-.95,.95,4);
    fmdl.mdl_slice_mapper.y_pts = [0,0.5];
    eptr = mdl_slice_mapper(fmdl,'elem');
-   unit_test_cmp('eptr03',eptr,[ 62 35 4 29 55; 0 34 26 30 0]);
+   unit_test_cmp('eptr03',eptr,[ 47 8 6 41; 0 25 27 0]);
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   unit_test_cmp('nptr03',nptr,[ 40 13 1 9 32; 0 14 7 17 0]);
+   unit_test_cmp('nptr03',nptr,[ 40 13 9 32; 0 6 8 0]);
 
 % 3D NPOINTS
    imdl = mk_common_model('n3r2',[16,2]); fmdl = imdl.fwd_model;
-   fmdl.mdl_slice_mapper.level = [inf,inf,1];
+   fmdl.mdl_slice_mapper.level = [inf,inf,1]; % co-planar with faces
    fmdl.mdl_slice_mapper.npx = 4;
    fmdl.mdl_slice_mapper.npy = 4;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   test = zeros(4); test(2:3,2:3) = [512 228;524 533];
-   unit_test_cmp('eptr04',eptr, test);
+   si = @(x,y) sub2ind([4,4],x, y);
+   % points lie on nodes and edges, we allow any associated element
+   els = {si(1,2), [ 42,317];
+          si(1,3), [ 30,305];
+          si(2,1), [ 66,341];
+          si(2,2), [243,518];
+          si(2,3), [231,506];
+          si(2,4), [  6,281];
+          si(3,1), [ 78,353];
+          si(3,2), [252,527];
+          si(3,3), [264,539];
+          si(3,4), [138,413];
+          si(4,2), [102,377];
+          si(4,3), [114,389];};
+   tst = eptr == zeros(4); 
+   for i = 1:size(els,1)
+    tst(els{i,1}) = ismember(eptr(els{i,1}), els{i,2});
+   end
+   unit_test_cmp('eptr04',tst, true(4));
    nptr = mdl_slice_mapper(fmdl,'node');
-   test = zeros(4); test(2:3,2:3) = [116 113;118 121];
+   test = [   0   101    99     0
+            103   116   113    97
+            105   118   121   111
+              0   107   109     0];
    unit_test_cmp('nptr04',nptr, test);
 
-   fmdl.mdl_slice_mapper.level = [inf,0,inf];
-   eptr = mdl_slice_mapper(fmdl,'elem');
-   test = zeros(4); test(1:4,2:3) = [ 792 777; 791 776; 515 500; 239 224];
+   fmdl.mdl_slice_mapper.level = [inf,0.01,inf];
+   eptr = mdl_slice_mapper(fmdl,'elem'); 
+   test = [621   792   777   555
+           345   516   501   279
+           343   515   499   277
+            69   240   225     3];
    unit_test_cmp('eptr05',eptr,test);
 
    nptr = mdl_slice_mapper(fmdl,'node');
-   test = zeros(4); test(1:2,:) = [ 80, 124, 122, 64; 17, 61, 59, 1];
+   test = [230   250   248   222
+           167   187   185   159
+           104   124   122    96
+            41    61    59    33];
    unit_test_cmp('nptr05',nptr,test);
 
    nint = mdl_slice_mapper(fmdl,'nodeinterp');
-   unit_test_cmp('nint05a',nint(2:3,2:3,1),[0,1;0,1],1e-3);
+   unit_test_cmp('nint05a',nint(2:3,2:3,4),[.1250,.1250;.8225,.8225],1e-3);
    
 % Centre and Rotate
    fmdl.mdl_slice_mapper = rmfield(fmdl.mdl_slice_mapper,'level');
-   fmdl.mdl_slice_mapper.centre = [0,0,1];
+   fmdl.mdl_slice_mapper.centre = [0,0,0.9];
    fmdl.mdl_slice_mapper.rotate = eye(3);
    fmdl.mdl_slice_mapper.npx = 4;
    fmdl.mdl_slice_mapper.npy = 4;
    eptr = mdl_slice_mapper(fmdl,'elem');
-   test = zeros(4); test(2:3,2:3) = [512 503;524 533];
+   test = [  0    42    30     0
+            66   243   229     6
+            78   250   264   138
+             0   102   114     0];
    unit_test_cmp('eptr06',eptr, test);
 
 % SLOW
    imdl = mk_common_model('d3cr',[16,3]); fmdl = imdl.fwd_model;
+   fmdl.nodes = 1e-15*round(1e15*fmdl.nodes);
    fmdl.mdl_slice_mapper.level = [inf,inf,1];
    fmdl.mdl_slice_mapper.npx = 64;
    fmdl.mdl_slice_mapper.npy = 64;
    t = cputime;
    eptr = mdl_slice_mapper(fmdl,'elem');
    txt = sprintf('eptr10 (t=%5.3fs)',cputime - t);
-   test = [0,122872,122872; 0,122809,122809; 0,122809,122749];
+   test = [122809   122872   122872
+           122873   122809   122749
+           122873   122749   122749];
    unit_test_cmp(txt,eptr(10:12,10:12),test);  
    
 
