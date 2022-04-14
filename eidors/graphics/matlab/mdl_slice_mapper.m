@@ -353,6 +353,7 @@ function [img2d, use_nodes] = mdl_3d_to_2d(NODE, ELEM)
   fmdl.nodes = NODE';
   fmdl.elems = ELEM';
   fmdl.type = 'fwd_model';
+  fmdl.mdl_slice_mesher.interp_elems = false;
   img.fwd_model = fmdl;
   img.elem_data = use_elem;
   img.type = 'image';

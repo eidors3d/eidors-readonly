@@ -18,6 +18,11 @@ function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 %   MDL3D  - an EIDORS fwd_model or img struct with elem_data
 %   LEVEL  - any single-slice specification accepted by LEVEL_MODEL_SLICE
 %
+% Additional options can be specified as fields of MDL3D.mdl_slice_mesher
+% or MDL3D.fwd_model.mdl_slice_mesher:
+%       .interp_elems (defualt: true) : average element values for faces
+%                                       co-planar with LEVEL
+%
 % To control the transparency use transparency_tresh (see CALC_COLOURS for
 % details), e.g.:
 %    img2d.calc_colours.transparency_thresh = -1; (no transperency)
@@ -50,7 +55,10 @@ switch fmdl.type
        img = mk_image(fmdl,1);
     otherwise; error('Unknown object type');
 end
-opt.cache_obj = {fmdl.nodes, fmdl.elems, level};
+
+fmdl.mdl_slice_mesher = parse_opt(fmdl);
+
+opt.cache_obj = {fmdl.nodes, fmdl.elems, fmdl.mdl_slice_mesher, level};
 if isfield(fmdl,'electrode');
     opt.cache_obj(end+1) = {fmdl.electrode};
 end
@@ -74,6 +82,18 @@ switch nargout
       calc_colours('cmap_type',cmap_type);
       clear nimg;
 end
+
+
+function opt = parse_opt(fmdl)
+opt.interp_elems = true;
+
+if isfield(fmdl,'mdl_slice_mesher')
+    flds = fieldnames(fmdl.mdl_slice_mesher);
+    for i = 1:numel(flds)
+        opt.(flds{i}) = fmdl.mdl_slice_mesher.(flds{i});
+    end
+end
+
 
 % This is a start  of a function to extrude_3d_if_reqd, so that
 %   we can show 3d shapes. Currently not working
@@ -206,21 +226,24 @@ for i = 1:length(uels)
 end
 % deal with double elements (from shared faces)
 nmdl.elems = sort(nmdl.elems,2);
-[nmdl.elems idx] = sortrows(nmdl.elems);
+[nmdl.elems, idx] = sortrows(nmdl.elems);
 f2c = f2c(:,idx);
-[nmdl.elems n idx] = unique(nmdl.elems, 'rows');
-[x y] = find(f2c);
-% put all source elements that contribute to destination element on one
-% column
-f2c = sparse(x,idx,1);
-% ensure correct number of columns (happens when the last source element
-% doesn't contribute 
-if size(f2c,1) < n_el_data
-   f2c(n_el_data,end) = 0;
+[nmdl.elems, n, idx] = unique(nmdl.elems, 'rows');
+if ~fmdl.mdl_slice_mesher.interp_elems
+    f2c = f2c(:,n);
+else
+    [x y] = find(f2c);
+    % put all source elements that contribute to destination element on one
+    % column
+    f2c = sparse(x,idx,1);
+    % ensure correct number of columns (happens when the last source element
+    % doesn't contribute 
+    if size(f2c,1) < n_el_data
+       f2c(n_el_data,end) = 0;
+    end
+    n_src_els = sum(f2c,1);
+    f2c = f2c * spdiag(1./n_src_els);
 end
-n_src_els = sum(f2c,1);
-f2c = f2c * spdiag(1./n_src_els);
-
 
 % add electrodes
 try
