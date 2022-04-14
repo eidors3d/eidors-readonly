@@ -119,7 +119,8 @@ mdl = fix_model(mdl,opt);
 edges = mdl.edges;
 edge2elem = mdl.edge2elem;
 tmp = mdl; 
-tmp = level_model_slice( tmp, level )';
+nodes = level_model_slice( tmp, level, 1 );
+tmp.nodes = nodes{1};
 [nodeval nodedist] = nodes_above_or_below(tmp,0);
 % find which edges are on electrodes
 e_nodes = zeros(length(mdl.nodes),1);

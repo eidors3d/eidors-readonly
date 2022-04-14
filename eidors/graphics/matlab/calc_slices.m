@@ -14,7 +14,6 @@ function rimg = calc_slices( img, levels );
 %   img.calc_slices.filter % Filter to be applied to images
 %      Example:    img.calc_slices.filter = ones(3)/9
 %   img.calc_slices.scale  % Scaling to apply to images
-%   img.calc_slices.levels % an alternative way to specify levels
 %   img.get_img_data.frame_select = which frames of image to display
 %
 % rimg= np x np x I x L where np is 128 by default
@@ -25,33 +24,41 @@ function rimg = calc_slices( img, levels );
 %        see help of mdl_slice_mapper for more options
 %
 
-% (C) 2006 Andy Adler. License: GPL version 2 or version 3
+% (C) 2006-2022 Andy Adler and Bartek Grychtol. 
+% License: GPL version 2 or version 3
 % $Id$
 
 if ischar(img) && strcmp(img,'UNIT_TEST'); do_unit_test; return; end
 
 np = calc_colours('npoints');
-try   np = img(1).calc_colours.npoints;
+try np = img(1).calc_colours.npoints; end
+
+if nargin < 2, levels = []; end
+
+if isfield(img, 'calc_slices') && isfield(img.calc_slices, 'levels')
+    warning('EIDORS:CALC_SLICES:DeprecatedInterface', ...
+        ['Ingoring deprecated img.calc_slices.levels definition. '...
+        'Use img.fwd_model.mdl_slice_mapper.level instead. '...
+        'See help level_model_slice for valid inputs.'])
+    img.calc_slices = rmfield(img.calc_slices, 'levels');
 end
 
-if nargin < 2
-    try 
-        levels = img.calc_slices.levels; 
-    catch
-        levels = [];
-    end
-end
+
 
 img = data_mapper(img);
 
 % Assume all fwd_models are same dimension (all 3D or 2D no mixed dims)
 if mdl_dim(img(1))==2 
-   if nargin>1 && ~isempty(levels);
-       if ~all(levels(1,:) == [inf,inf,0])
-          warning('specified levels ignored for 2D FEM');
-       end
-   end
-   levels= [Inf,Inf,0];
+    if nargin>1
+        eidors_msg('Specified levels ignored for 2D FEM', 4);
+    end
+    if isfield(img(1).fwd_model,'mdl_slice_mapper') && isfield(img(1).fwd_model.mdl_slice_mapper, 'level')
+        eidors_msg('mdl_slice_mapper.level definition ignored for 2D FEM',4); 
+        for i = 1:numel(img)
+            img(i).fwd_model.mdl_slice_mapper = rmfield(img(i).fwd_model.mdl_slice_mapper,'level');
+        end
+    end
+    levels= [Inf,Inf,0];
 elseif mdl_dim(img(1))==3 && isempty(levels)
    levels = [Inf Inf mean(img.fwd_model.nodes(:,3))];
    eidors_msg('calc_slices: no levels specified, assuming an xy plane',2);
@@ -66,38 +73,40 @@ end
 function rimg = calc_this_slice( img, levels, np)
     % If scalar levels then we just create that many cut planes on z-dimension
     fwd_model = img.fwd_model;
-    if size(levels)== [1,1]
-       zmax= max(fwd_model.nodes(:,3));
-       zmin= min(fwd_model.nodes(:,3));
-       levels = linspace(zmin,zmax, levels+2);
-       levels = levels(2:end-1)'*[Inf,Inf,1];
+    
+    if ~isfield(fwd_model,'mdl_slice_mapper')
+        fwd_model.mdl_slice_mapper.npx  = np;
+        fwd_model.mdl_slice_mapper.npy  = np;
+        fwd_model.mdl_slice_mapper.level= levels;
+        % grid model sets mdl_slice_mapper.np* but not level
+    elseif ~isfield(fwd_model.mdl_slice_mapper,'level')
+        fwd_model.mdl_slice_mapper.level= levels;
     end
-    num_levs= size(levels,1);
-    if isfield(img,'elem_data')
-       [elem_data, n_images] = get_img_data(img);
-
-       clear rimg;
-       for lev_no = fliplr(1:num_levs)
-           % start at max so memory is allocated once
-          level= levels( lev_no, 1:3 );
-          rimg(:,:,:,lev_no) = calc_image_elems( elem_data, level, fwd_model, np);
-       end
-    elseif isfield(img,'node_data')
-       [node_data, n_images] = get_img_data(img);
-%      node_data= [img.node_data];
-%      if size(node_data,1)==1; node_data=node_data';end
-%      n_images= size(node_data,2);
-       clear rimg;
-
-       for lev_no = fliplr(1:num_levs)
-          level= levels( lev_no, 1:3 );
-          rimg(:,:,:,lev_no) = ...
-             calc_image_nodes( node_data, level, fwd_model, np);
-       end
-    else
+    
+    nodes = {fwd_model.nodes};
+    if size(fwd_model.nodes,2)==3 && size(fwd_model.elems,2) > 3 
+        nodes = level_model_slice(fwd_model, levels);
+        
+        % we'll level by replacing nodes. Disable.
+        lvl = struct('rotation_matrix',eye(3), 'centre', zeros(3,1));
+        fwd_model.mdl_slice_mapper.level = lvl;
+    end
+    
+    [data, n_images] = get_img_data(img);
+    
+    if ~any(isfield(img, {'elem_data', 'node_data'}))
        error('img does not have a data field');
     end
-
+    
+    for lev_no = fliplr(1:numel(nodes))
+        fwd_model.nodes = nodes{lev_no};
+        if isfield(img,'elem_data')
+          rimg(:,:,:,lev_no) = calc_image_elems( data, fwd_model);
+        elseif isfield(img,'node_data')
+          rimg(:,:,:,lev_no) = calc_image_nodes( data, fwd_model);
+        end
+    end
+    
     % FILTER IMAGE
     try   
         filt = img.calc_slices.filter; 
@@ -115,12 +124,8 @@ function rimg = calc_this_slice( img, levels, np)
 
 % Calculate an image by mapping it onto the node_ptr matrix
 % This makes a blocky image to nearest node -> no longer used
-function rimg= calc_image_nearestnodes( node_data, level, fwd_model, np);
-   if ~isfield(fwd_model,'mdl_slice_mapper');
-      fwd_model.mdl_slice_mapper.npx  = np;
-      fwd_model.mdl_slice_mapper.npy  = np;
-      fwd_model.mdl_slice_mapper.level= level;
-   end
+function rimg= calc_image_nearestnodes( node_data, fwd_model)
+
    node_ptr = mdl_slice_mapper( fwd_model, 'node' );
 
    backgnd= NaN;
@@ -129,16 +134,8 @@ function rimg= calc_image_nearestnodes( node_data, level, fwd_model, np);
    rimg= reshape( rval(node_ptr+1,:), [size(node_ptr), n_images]);
 
 % Calculate an image by interpolating it onto the elem_ptr matrix
-function rimg= calc_image_nodes( node_data, level, fwd_model, np)
+function rimg= calc_image_nodes( node_data, fwd_model)
 
-   if ~isfield(fwd_model,'mdl_slice_mapper');
-      fwd_model.mdl_slice_mapper.npx  = np;
-      fwd_model.mdl_slice_mapper.npy  = np;
-      fwd_model.mdl_slice_mapper.level= level;
-   elseif ~isfield(fwd_model.mdl_slice_mapper,'level');
-      fwd_model.mdl_slice_mapper.level= level;
-   end
-   
    nd_interp= mdl_slice_mapper( fwd_model, 'nodeinterp' );
    elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
    [sx,sy]= size(elem_ptr);
@@ -157,17 +154,9 @@ function rimg= calc_image_nodes( node_data, level, fwd_model, np)
 
 
 % Calculate an image by mapping it onto the elem_ptr matrix
-function rimg= calc_image_elems( elem_data, level, fwd_model, np)
+function rimg= calc_image_elems( elem_data, fwd_model)
 
-   if ~isfield(fwd_model,'mdl_slice_mapper');
-      fwd_model.mdl_slice_mapper.npx  = np;
-      fwd_model.mdl_slice_mapper.npy  = np;
-      fwd_model.mdl_slice_mapper.level= level;
-      % grid model sets mdl_slice_mapper.np* but not level
-   elseif ~isfield(fwd_model.mdl_slice_mapper,'level');
-      fwd_model.mdl_slice_mapper.level= level;
-   end
-   elem_ptr = mdl_slice_mapper( fwd_model, 'elem' );
+   elem_ptr = mdl_slice_mapper( fwd_model, 'elem');
 
    backgnd= NaN;
    n_images= size(elem_data,2);
@@ -276,14 +265,12 @@ function do_unit_test
 
    img.fwd_model.mdl_slice_mapper.npx = 22;
    img.fwd_model.mdl_slice_mapper.npy = 32;
-   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    imc = calc_slices(img);
    unit_test_cmp('size e  3', size(imc), [32,22]);
 
    img.fwd_model = rmfield(img.fwd_model,'mdl_slice_mapper');
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-150,150,20);
    img.fwd_model.mdl_slice_mapper.y_pts =-linspace(-150,150,23);
-   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    imc = calc_slices(img);
    unit_test_cmp('size e  4', size(imc), [23,20]);
 
@@ -304,6 +291,5 @@ function do_unit_test
 
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-150,150,20);
    img.fwd_model.mdl_slice_mapper.y_pts =-linspace(-150,150,23);
-   img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    imc = calc_slices(img);
    unit_test_cmp('size n  2', size(imc), [23,20]);

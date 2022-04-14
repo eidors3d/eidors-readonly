@@ -16,10 +16,11 @@ function [out, out2, out3] = level_model_slice(varargin)
 %         [0,0,1].         
 %		.rotation_matrix (3 x 3)
 %		An error is thrown if both normal_angle and rotation_matrix are present.
-%   SN	 : slice number to use if level defines multiple slices (default: 1).
-%	XYZ	 : NODES transformed such that level is a slice at z=0.
+%   SN	 : slice number to use if level defines multiple slices (default: all).
+%	XYZ	 : Cell array (one per level) of NODES transformed such that level is
+%     a slice at z=0.
 %
-% MDL = LEVEL_MODEL_SLICE(MDL,__) 
+% XYZ = LEVEL_MODEL_SLICE(MDL,__) 
 % Modifies the nodes of an EIDORS fwd_model structure MDL. Can be used in
 % place of NODES with every other syntax.
 %
@@ -34,11 +35,11 @@ function [out, out2, out3] = level_model_slice(varargin)
 % and M when LEVEL is scalar. Note that two outputs must always be requested for
 % this syntax. 
 
-% (C) 2006-2021 Andy Adler and Bartek Grychtol 
+% (C) 2006-2022 Andy Adler and Bartek Grychtol 
 % License: GPL version 2 or version 3
 % $Id$
 
-if nargin==1 && isstr(varargin{1}) && strcmp(varargin{1}, 'UNIT_TEST')
+if nargin==1 && ischar(varargin{1}) && strcmp(varargin{1}, 'UNIT_TEST')
   do_unit_test; return
 end
 
@@ -46,26 +47,28 @@ if nargout == 1 || nargout == 3
 	if nargin == 1
         % N = LEVEL_MODEL_SLICE(LEVEL) returns the number of slices defined in LEVEL
         out = get_number_of_slices(varargin{1});
-	else
-		% XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL)
-		% XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL, SN)
-        [C, M] = matrix_from_level(varargin{:});
-        SHIFT = [C(1), C(2), C(3)] * M';
-        SHIFT(3) = 0;
-        if isstruct(varargin{1})
+    else
+        % XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL)
+        % XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL, SN)
+        n_slices = get_number_of_slices(varargin{2});
+        if nargin == 2 && n_slices > 1 
+            for i = n_slices:-1:1
+                [out(i,1), C(i,:), M] = level_model_slice(varargin{1},varargin{2}, i);
+            end
+        else % nargin==3
+            [C, M] = matrix_from_level(varargin{:});
+            SHIFT = [C(1), C(2), C(3)] * M';
+            SHIFT(3) = 0;
             % accept fwd_model as input
-            out = varargin{1};
+            if isstruct(varargin{1}), varargin{1} = varargin{1}.nodes; end
+            
             % (nodes - C) * M' + SHIFT
-            out.nodes = bsxfun(@plus,bsxfun(@minus,out.nodes, C ) * M', SHIFT);
-        else
-            % (nodes - C) * M' + SHIFT
-            out = bsxfun(@plus, bsxfun(@minus, varargin{1}, C ) * M', SHIFT);
+            out = {bsxfun(@plus, bsxfun(@minus, varargin{1}, C ) * M', SHIFT)};
+            if nargout == 3
+                out2 = C;
+                out3 = M;
+            end
         end
-        if nargout == 3
-            out2 = C;
-            out3 = M;
-        end
-        
 	end
 elseif nargout == 2
 	if nargin < 3
@@ -179,7 +182,7 @@ function [C, M] = matrix_from_intercept(level, sn)
    v3= v3 * (1-2*(sum(v3)<0));
    
    C = ctr;
-   M = [v1;v2;v3];
+   M = R * [v1;v2;v3];
 %   NODE= [v1;v2;v3] * (vtx' - ctr'*ones(1,nn) );
   
     
@@ -190,7 +193,15 @@ function [C, M] = matrix_from_struct(level, sn)
   if ~isfield(level,'centre')
       error('Struct input ''level'' not understood.');
   end
-  C = level.centre(sn,:); C = C(:)'; % make row
+  ctr = level.centre;
+  if numel(ctr) == 3
+      C = ctr; % make row
+  elseif size(ctr,2) == 3 && size(ctr, 1) ~= 3
+      C = ctr(:,sn);
+  else
+      C = ctr(sn,:);
+  end
+  C = C(:)'; % make row
   
   if isfield(level, 'rotation_matrix')
       M = level.rotation_matrix;
@@ -298,3 +309,5 @@ function do_unit_test
   catch
     fprintf('TEST: %20s = %4s \n','Expect error', 'OK'); 
   end
+  imdl = mk_common_model('n3r2',[16,2]); fmdl = imdl.fwd_model;
+  nodes = level_model_slice(fmdl,[inf, inf, 1; inf, inf, 2],1);
