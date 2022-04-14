@@ -347,8 +347,8 @@ function a = signed_area(A,B,C)
 function [nodeval dist] = nodes_above_or_below(mdl,level)
 
 % Set a model-dependent tolerance
-tol = min(max(mdl.nodes) - min(mdl.nodes)) * 1e-10;
-
+tol = min(max(mdl.nodes) - min(mdl.nodes)) * 1e-5;
+tol = max(tol, eps);
 dist = mdl.nodes(:,3) - level;
 dist(abs(dist) < tol) = 0;
 nodeval = sign(dist);
