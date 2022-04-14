@@ -91,6 +91,7 @@ function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
 
 function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
    NODE = level_model( fwd_model );
+   fwd_model.nodes = NODE';
    [x,y] = grid_the_space( fwd_model);
    ndims = size(NODE,1);
    pts = [x(:),y(:)];
