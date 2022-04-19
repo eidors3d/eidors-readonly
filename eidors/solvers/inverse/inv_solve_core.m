@@ -270,7 +270,6 @@ inv_model.jacobian_bkgnd.value = 1;
 img = mk_image( inv_model );
 img.inv_model = inv_model; % stash the inverse model
 img = data_mapper(img); % move data from whatever 'params' to img.elem_data
-
 % insert the prior data
 img = init_elem_data(img, opt);
 
@@ -391,6 +390,7 @@ while 1
      break;
   end
 end
+img0 = strip_c2f_background(img0, opt);
 [img, opt] = strip_c2f_background(img, opt);
 % check we're returning the right size of data
 if isfield(inv_model, 'rec_model')
@@ -2412,6 +2412,7 @@ function pass=do_unit_test(solver)
          do_unit_test_rec1(solver);
          do_unit_test_rec2(solver);
          do_unit_test_rec_mv(solver);
+         do_unit_test_img0_bg();
          do_unit_test_diffseq(solver);
          do_unit_test_absseq(solver);
       case 'sub'
@@ -2767,6 +2768,38 @@ img.elem_data= 1./(10.^imgr.elem_data);
 %clf; show_pseudosection( fmdl, I*vi); title('measurement data');
 %clf; show_pseudosection( fmdl, I*vCG); title('reconstruction data');
 %clf; show_pseudosection( fmdl, (vCG-vi)/vi*100); title('data misfit');
+
+
+function do_unit_test_img0_bg()
+   stim = mk_stim_patterns(32,1, ...
+   [0,5],[0,5],{'meas_current'});
+   extra = {'ball',['solid ball = ' ...
+   'sphere(0.4,0,0.4; 0.1);']};
+   fmdl = ng_mk_cyl_models([1,1,0.1],...
+   [16,0.3,0.7],0.05,extra);
+   [~,fmdl] = elec_rearrange([16,2],...
+   'square',fmdl);
+   fmdl.stimulation = stim;
+   img= mk_image(fmdl,1);
+   vh=fwd_solve(img);
+   img.elem_data(fmdl.mat_idx{2}) = 2;
+   vi=fwd_solve(img);
+   cmdl = ng_mk_cyl_models([1,1,0.2],[],[]);
+   fmdl.coarse2fine = ...
+   mk_coarse_fine_mapping(fmdl,cmdl);
+   imdl1= select_imdl(fmdl,{'Basic GN dif'});
+   imdl1.rec_model = cmdl;
+   imdl1.hyperparameter.value = .0001;
+   imdl1.inv_solve_gn.max_iterations = 1;
+   imdl1.solve = @inv_solve_gn;
+   %imdl1.solve = @inv_solve_diff_GN_one_step;
+   imgr1 = inv_solve(imdl1, vh, vi);
+   % we don't know what the exact answer should be, but this could should not explode
+   % Error was due to not striping background from img0 in difference reconstructions:
+   %  Arrays have incompatible sizes for this operation.
+   %  Error in inv_solve_core (line 408)
+   %  img.elem_data = img.elem_data - img0.elem_data;
+
 
 % sequence of time series difference data
 function do_unit_test_diffseq(solver)
