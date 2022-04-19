@@ -2458,11 +2458,11 @@ function do_unit_test_diff()
    [imdl, vh, imgi, vi] = unit_test_imdl();
 
    imdl.reconst_type = 'absolute';
+   imdl.inv_solve_core.line_search_func = @ret1_func;
    img_abs = inv_solve(imdl,vi);
    imdl.reconst_type = 'difference';
    img_itr = inv_solve(imdl,vh,vi);
    imdl.inv_solve_core.max_iterations = 1; % see that we get the same as the GN 1-step difference soln
-   imdl.inv_solve_core.line_search_func = @ret1_func;
    img_it1 = inv_solve(imdl,vh,vi);
    imdl.solve = 'inv_solve_diff_GN_one_step';
    img_gn1 = inv_solve(imdl,vh,vi);
