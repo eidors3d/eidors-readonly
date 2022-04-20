@@ -31,6 +31,8 @@ function data = fwd_solve(fwd_model, img)
 % (C) 2005 Andy Adler. License: GPL version 2 or version 3
 % $Id$
 
+if ischar(fwd_model) && strcmp(fwd_model,'UNIT_TEST'); do_unit_test; return; end 
+
 if nargin == 1
    img= fwd_model;
 else
@@ -40,6 +42,7 @@ else
 end
 ws = warning('query','EIDORS:DeprecatedInterface');
 warning off EIDORS:DeprecatedInterface
+
 
 fwd_model= img.fwd_model;
 
@@ -123,4 +126,37 @@ if isfield(mdl,'electrode');
     mdl.n_elec = length(mdl.electrode);
 else
     mdl.n_elec = 0;
+end
+
+function do_unit_test
+img = mk_image(mk_common_model('a2c2',4));
+% TODO Try other solvers
+img.elem_data([1,5,9,10]) = 2;
+A = [1,-1,0,0]; a=A.';
+B = [0,0,1,-1]; b=B.';
+G = 2; 
+P = exp(0.1j);
+for solv = 1:4; switch solv
+    case 1; solver = 'fwd_solve_1st_order';
+    case 2; solver = 'fwd_solve_2p5d_1st_order';
+    case 3; solver = 'fwd_solve_higher_order';
+            img.fwd_model.system_mat = @system_mat_higher_order;
+            img.fwd_model.approx_type = 'tri3';
+    case 4; break;
+    end
+    for test = 1:4; switch test
+       case 1; str='reciprocity';
+               mPat = {A,B}; sPat = {b,a};
+       case 2; str='Gain';
+               mPat = {A,A*G}; sPat = {b,b/G};
+       case 3; str='Phase';
+               mPat = {A,A*P}; sPat = {b,b*P};
+       case 4; break
+       end
+       img.fwd_model.solve = solver;
+       img.fwd_model.stimulation  = struct( ...
+          'meas_pattern', mPat, 'stim_pattern', sPat );
+        vv= getfield(fwd_solve(img),'meas');
+        unit_test_cmp([solver,':',str],diff(vv),0,10*eps) 
+    end
 end

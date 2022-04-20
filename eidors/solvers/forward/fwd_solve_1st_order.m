@@ -207,7 +207,7 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
     for i=1:n_stim
         meas_pat= stim(i).meas_pattern;
         n_meas  = size(meas_pat,1);
-        v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
+        v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat.';
     end
 
 

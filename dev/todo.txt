@@ -1,5 +1,7 @@
 Plan for 3.12:
  - img_point_mapper that works in Octave
+ - Fix _higher_order to handle faces-type electrodes
+
 Plan for 3.11
  - Failing tests:
    + [GREIT3D_distribution: => Fix to use weight rather than NF
@@ -8,19 +10,17 @@ ERROR = (Error using eidors_default>get_default (line 106)
    + fwd_model_1st_order => Check ground node warning
    + calc_slices => fix unit_test to have clean use of tol
  + fix direction in emphasize_electrode_text
- - Add 3D for prior_gaussian_HPF
  - Test why fwd solver not more efficient with large stim patterns
- - Fix prior_gaussian_HPF: not yet able to generate 3D models
- - Make sparse overload smarter
+ - Add 3D for prior_gaussian_HPF
+ + Make sparse overload smarter
  - New included data based on the JXBrunner data set
  + Fix print_convert to deal with PaperPositionMode behaviour change 
  - Warn if GREIT3D_distribution has zvec outside image and opt.distr = []
  + Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
  - mk_grid_model => Warn if length(vector)==1
- - debug "Interpolation failed for point ..." in mk_c2f_circ_mapping
+ + debug "Interpolation failed for point ..." in mk_c2f_circ_mapping
  - Fix phase delay in meas_pattern
  - Speed up / clean up _higher_order code
- - Fix _higher_order to handle faces-type electrodes
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
  - DONE (calc_grid_points) new function: calc_volumes which calculates elems => volumes or nodes => volumes
  - DONE(img_point_mapper) new function low level: interp_points(img, xyz_points) use point_in_tet 
