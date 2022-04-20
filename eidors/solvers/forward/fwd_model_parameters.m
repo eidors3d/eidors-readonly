@@ -17,6 +17,7 @@ function param = fwd_model_parameters( fwd_model, opt )
 %   param.VOLUME     => Volume (or area) of each element
 %   param.normalize  => difference measurements normalized?
 %   param.N2E        => Node to electrode converter
+%   param.v2meas     => Convert node voltages to measurements
 %
 % If the stimulation patterns has a 'interior_sources' field,
 %   the node current QQ, is set to this value for this stimulation.
@@ -85,8 +86,8 @@ copt.cache_obj = {fwd_model.nodes,fwd_model.elems,fwd_model.electrode};
 copt.fstr = 'calculate_N2E';
 [N2E,cem_electrodes] = eidors_cache(@calculate_N2E,{fwd_model, bdy, n_elec, n}, copt);
 
+stim = fwd_model.stimulation;
 if p>0
-  stim = fwd_model.stimulation;
   [pp.QQ, pp.VV, pp.n_meas] = calc_QQ_fast(N2E, stim, p);
 end
 
@@ -99,6 +100,18 @@ pp.n_dims   = d-1;
 pp.N2E      = N2E;
 pp.boundary = bdy;
 pp.normalize = mdl_normalize(fwd_model);
+
+pp.v2meas   = get_v2meas(pp.n_elec, pp.n_stim, stim);
+
+function v2meas = get_v2meas(n_elec,n_stim,stim)
+    v2meas = sparse(n_elec*n_stim,0);
+    for i=1:n_stim
+        meas_pat= stim(i).meas_pattern;
+        n_meas  = size(meas_pat,1);
+        v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat.';
+    end
+    v2meas = v2meas'; % Conjugate transpose. For derivation
+                      % see Chapter 5 of Adler&Holder 2021
 
 
 % calculate element volume and surface area

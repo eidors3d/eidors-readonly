@@ -19,7 +19,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
  + Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
  - mk_grid_model => Warn if length(vector)==1
  + debug "Interpolation failed for point ..." in mk_c2f_circ_mapping
- - Fix phase delay in meas_pattern
+ + Fix phase delay in meas_pattern
  - Speed up / clean up _higher_order code
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
  - DONE (calc_grid_points) new function: calc_volumes which calculates elems => volumes or nodes => volumes

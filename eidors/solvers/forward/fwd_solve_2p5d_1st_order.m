@@ -82,8 +82,7 @@ else
 end
 % up to now, we've been dealing with voltages at the electrodes,
 % now we transform to dipole measurements v=(m+ - m-)
-v2meas = get_v2meas(pp.n_elec, pp.n_stim, img.fwd_model.stimulation);
-data.meas = v2meas' * v;
+data.meas = pp.v2meas * v;
 data.time= NaN; % unknown
 data.name= 'solved by fwd_solve_2p5d_1st_order';
 try; if img.fwd_solve.get_all_meas == 1
@@ -102,14 +101,6 @@ function v = potential_k(S, pp, gnd)
    vf_nodes(idx,:) = left_divide( S(idx,idx), 1/2*pp.QQ(idx,:));
    vf_elecs = pp.N2E(:,idx2) * vf_nodes(idx2,:); % electrode voltages, frequency domain
    v = vf_elecs(:); 
-
-function v2meas = get_v2meas(n_elec,n_stim,stim)
-    v2meas = sparse(n_elec*n_stim,0);
-    for i=1:n_stim
-        meas_pat= stim(i).meas_pattern;
-        n_meas  = size(meas_pat,1);
-        v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat';
-    end
 
 function do_unit_test
    ne = 16;

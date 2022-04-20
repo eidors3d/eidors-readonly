@@ -118,7 +118,8 @@ end
 %Get the measured voltages 
 vmeaselec=zeros(nmeass,1); idx=0;
 for ii=1:nstims
-    meas_pat=stimstruc(ii).meas_pattern; %Measurement patterns
+    % Use conj on meas_pat: see Chap 5 Adler&Holder 2021
+    meas_pat=conj(stimstruc(ii).meas_pattern); %Measurement patterns
     n_meas=size(meas_pat,1); %Number of measures
     vmeaselec(idx + (1:n_meas) ) = meas_pat*velec(:,ii); %Diff data
     idx=idx+n_meas; %Increase counter

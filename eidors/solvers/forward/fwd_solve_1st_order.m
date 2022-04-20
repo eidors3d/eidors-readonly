@@ -94,7 +94,7 @@ v_els= pp.N2E(:,idx) * v(idx,:);
 
 
 % create a data structure to return
-data.meas= meas_from_v_els(v_els, fwd_model.stimulation);
+data.meas= meas_from_v_els(v_els, pp);
 data.time= NaN; % unknown
 data.name= 'solved by fwd_solve_1st_order';
 try; if img.fwd_solve.get_all_meas == 1
@@ -168,7 +168,7 @@ function pp = set_gnd_node(fwd_model, pp);
       eidors_msg('Warning: no ground node found: choosing node %d',pp.gnd_node(1),1);
    end
 
-function vv = meas_from_v_els( v_els, stim)
+function vv = meas_from_v_els( v_els, pp)
    try
 % Was 1.82s
 %        % measured voltages from v
@@ -187,11 +187,7 @@ function vv = meas_from_v_els( v_els, stim)
 
        [n_elec,n_stim] = size(v_els);
 
-       copt.cache_obj = {stim};
-       copt.fstr = 'v2meas';
-       copt.log_level = 4;
-       v2meas = eidors_cache(@get_v2meas, {n_elec,n_stim,stim}, copt);
-       vv = v2meas' * v_els(:);
+       vv = pp.v2meas * v_els(:);
    catch err
       if strcmp(err.identifier, 'MATLAB:innerdim');
           error(['measurement pattern not compatible with number' ...
