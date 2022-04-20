@@ -104,8 +104,10 @@ function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(NODE, ELEM, x, y)
    ndims = size(NODE,1);
    pts = [x(:),y(:)];
    if size(NODE,1) == 3, pts(:,3) = 0; end
-   
+      
+   s = warning('off', 'MATLAB:triangulation:PtsNotInTriWarnId');
    TR = triangulation(ELEM', NODE');
+   warning(s.state, 'MATLAB:triangulation:PtsNotInTriWarnId');
    [el, bc] =   TR.pointLocation(pts);
    bc(isnan(el),:) = 0;
    ninterp_ptr = reshape(bc,size(x,1), size(x,2), ndims + 1);
@@ -141,7 +143,9 @@ function node_ptr = node_mapper_dsearchn( NODE, ELEM, x, y)
    node_ptr = reshape(node_ptr, size(x));
    
 function node_ptr = node_mapper_triangulation( NODE, ELEM, x, y)
-    TR = triangulation(ELEM',NODE');
+    s = warning('off', 'MATLAB:triangulation:PtsNotInTriWarnId');
+    TR = triangulation(ELEM', NODE');
+    warning(s.state, 'MATLAB:triangulation:PtsNotInTriWarnId');
     pts = [x(:), y(:)];
     if size(NODE,1) == 3
         pts(:,3) = 0;
@@ -196,7 +200,9 @@ function EPTR= img_mapper2(NODE, ELEM, x, y );
   if ver.isoctave
     id = tsearch(NODE(1,:),NODE(2,:), ELEM', x(:),y(:));
   else 
-    TR = triangulation(ELEM',NODE');
+    s = warning('off', 'MATLAB:triangulation:PtsNotInTriWarnId');
+    TR = triangulation(ELEM', NODE');
+    warning(s.state, 'MATLAB:triangulation:PtsNotInTriWarnId');
     id = TR.pointLocation([x(:), y(:)]);
   end
   id(isnan(id)) = 0;
@@ -296,7 +302,9 @@ function EPTR= img_mapper3(NODE, ELEM, x, y );
           EPTR = img_mapper3_old(NODE, ELEM, x, y);
           return
       end
+      s = warning('off', 'MATLAB:triangulation:PtsNotInTriWarnId');
       TR = triangulation(ELEM', NODE');
+      warning(s.state, 'MATLAB:triangulation:PtsNotInTriWarnId');
       pts = [x(:),y(:)]; pts(:,3) = 0;
       id = pointLocation(TR, pts);
       id(isnan(id)) = 0;     
@@ -386,8 +394,8 @@ function [NODE, ELEM] = level_model( fwd_model )
    if     isfield(fwd_model.mdl_slice_mapper,'level')
        N_slices = level_model_slice(fwd_model.mdl_slice_mapper.level);
        if N_slices > 1
-           warning(['Multiple slices defined on forward model. '...
-               'Using the first slice.'])
+           eidors_msg(['Multiple slices defined on forward model. '...
+               'Using the first slice.'], 2);
        end
        NODE = level_model_slice(vtx, fwd_model.mdl_slice_mapper.level, 1);
    elseif isfield(fwd_model.mdl_slice_mapper,'centre')

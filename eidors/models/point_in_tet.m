@@ -20,9 +20,9 @@ end
 function point2tet = do_point_in_tet(fmdl, points, epsilon, exclude_nodes)
    ver = eidors_obj('interpreter_version');
    if ~ver.isoctave 
-       warning('off','MATLAB:triangulation:PtsNotInTriWarnId')
+       s = warning('off','MATLAB:triangulation:PtsNotInTriWarnId');
        TR = triangulation(fmdl.elems, fmdl.nodes);
-       warning('on','MATLAB:triangulation:PtsNotInTriWarnId')
+       warning(s.state,'MATLAB:triangulation:PtsNotInTriWarnId')
        ID = pointLocation(TR, points);
        idx = ~isnan(ID);
        point2tet = builtin('sparse',find(idx),ID(idx),1,size(points,1),size(fmdl.elems,1));
