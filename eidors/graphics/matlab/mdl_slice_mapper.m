@@ -1,4 +1,4 @@
-function map = mdl_slice_mapper( fmdl, maptype );
+function map = mdl_slice_mapper( fmdl, maptype )
 % MDL_SLICE_MAPPER: map pixels to FEM elements or nodes
 %    map = mdl_slice_mapper( fmdl, maptype );
 %
@@ -15,10 +15,9 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %    or
 %   fmdl.mdl_slice_mapper.resolution - number of points per unit
 %   
-%   fmdl.mdl_slice_mapper.level = Vector [1x3] of intercepts
-%          of the slice on the x, y, z axis. To specify a z=2 plane
-%          parallel to the x,y: use levels= [inf,inf,2]
-%   OR
+%   fmdl.mdl_slice_mapper.level - any definition accepted by
+%          LEVEL_MODEL_SLICE for a single slice
+%   OR (deprecated)
 %   fmdl.mdl_slice_mapper.centre and .rotate
 %          are the centre point and rotation matrices around the point
 %
@@ -29,94 +28,101 @@ function map = mdl_slice_mapper( fmdl, maptype );
 %       the nearby nodes are weighted with the corresponding element in the map(i,j).
 %    for 'get_points' map contains the x an y vectors of points used for
 %       for mapping as {x, y}. No mapping is performed.
+%
+%
+% See also LEVEL_MODEL_SLICE
 
 % (C) 2006-2022 Andy Adler and Bartek Grychtol. 
 % License: GPL version 2 or version 3
 % $Id$
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
+
+if nargin < 3, lev_no = 1; end
+
 copt.log_level = 4;
+params = {fmdl, maptype};
+copt.cache_obj = {fmdl.nodes, fmdl.elems, fmdl.mdl_slice_mapper, maptype};
+copt.fstr = 'mdl_slice_mapper';
 switch maptype
-   case 'elem';
-      copt.fstr = 'elem_ptr';
-      map = eidors_cache(@mdl_elem_mapper,      fmdl,copt);
-   case 'node';
-      copt.fstr = 'node_ptr';
-      map = eidors_cache(@mdl_node_mapper,      fmdl,copt);
-   case 'nodeinterp';
-      copt.fstr = 'nodeinterp';
-      map = eidors_cache(@mdl_nodeinterp_mapper,fmdl,copt);
-    case 'get_points';
+   case {'elem', 'node', 'nodeinterp'}
+      map = eidors_cache(@do_mdl_slice_mapper,      params, copt);
+   case 'get_points'
       map = get_points(fmdl);  
-   otherwise;
+   otherwise
       error('expecting maptype = elem or node');
 end
 
-function elem_ptr = mdl_elem_mapper(fwd_model);
-   NODE = level_model( fwd_model );
-   if isfield(fwd_model.mdl_slice_mapper,'model_2d') && ...
-           fwd_model.mdl_slice_mapper.model_2d && size(NODE,1) == 3
-       NODE(3,:) = [];
-   end
-   ELEM= fwd_model.elems';
+function map = do_mdl_slice_mapper(fmdl, maptype)
+    if isfield(fmdl.mdl_slice_mapper,'model_2d') && ...
+               fmdl_model.mdl_slice_mapper.model_2d && ...
+               size(fmdl.nodes,2) == 3
+        fmdl.mdl_slice_mapper.nodes(:,3) = [];
+    end
+    [NODE, ELEM] = level_model( fmdl);
+    fmdl.nodes = NODE';
+    [x, y] = grid_the_space( fmdl);
+   
+    switch maptype
+       case 'elem'
+          map = mdl_elem_mapper(NODE, ELEM, x, y);
+       case 'node'
+          bnd = [];
+          try bnd = fmdl.boundary; end
+          map = mdl_node_mapper(NODE, ELEM, bnd, x, y);
+       case 'nodeinterp'
+          map = mdl_nodeinterp_mapper(NODE, ELEM, x, y);
+    end
+
+function elem_ptr = mdl_elem_mapper(NODE, ELEM, x, y)
    if size(NODE,1) ==2 %2D
-      [x,y] = grid_the_space( fwd_model);
       elem_ptr= img_mapper2( NODE, ELEM, x, y);
    else
-      fmdl3 = fwd_model; fmdl3.nodes = NODE'; 
-      [x,y] = grid_the_space( fmdl3 );
       elem_ptr= img_mapper3( NODE, ELEM, x, y);
    end
    
-function ninterp_ptr = mdl_nodeinterp_mapper(fwd_model);
+function ninterp_ptr = mdl_nodeinterp_mapper(NODE, ELEM, x, y)
    ver = eidors_obj('interpreter_version');
    if ~ver.isoctave && ver.ver >= 9.004 % pointLocation was slow before
-     ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
+     ninterp_ptr = mdl_nodeinterp_mapper_triangulation(NODE, ELEM, x, y);
      return
    end
-   elem_ptr = mdl_elem_mapper(fwd_model);
-   NODE = level_model( fwd_model );
-   fwd_model.nodes = NODE';
-   [x,y] = grid_the_space( fwd_model);
-
+   elem_ptr = mdl_elem_mapper(NODE, ELEM, x, y);
+   
    ndims = size(NODE,1);
    if  ndims == 2;  NODEz = []; else; NODEz= 0; end
    ninterp_ptr = zeros(length(x(:)),ndims+1); % reshape later
-
+   
+   elems = ELEM';
    for i= find( elem_ptr(:)>0 )' % look for all x,y inside elements
-     nodes_i = fwd_model.elems(elem_ptr(i),:);
+     nodes_i = elems(elem_ptr(i),:);
      ninterp_ptr(i,:) = ( [ones(1,ndims+1);NODE(:,nodes_i)] \ [1;x(i);y(i);NODEz] )';
    end
    ninterp_ptr = reshape( ninterp_ptr, size(x,1), size(x,2), ndims + 1);
 
-function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(fwd_model);
-   NODE = level_model( fwd_model );
-   fwd_model.nodes = NODE';
-   [x,y] = grid_the_space( fwd_model);
+function ninterp_ptr = mdl_nodeinterp_mapper_triangulation(NODE, ELEM, x, y)
    ndims = size(NODE,1);
    pts = [x(:),y(:)];
    if size(NODE,1) == 3, pts(:,3) = 0; end
    
-   TR = triangulation(fwd_model.elems, NODE');
+   TR = triangulation(ELEM', NODE');
    [el, bc] =   TR.pointLocation(pts);
    bc(isnan(el),:) = 0;
    ninterp_ptr = reshape(bc,size(x,1), size(x,2), ndims + 1);
    
-function node_ptr = mdl_node_mapper(fwd_model);
-   NODE = level_model( fwd_model );
-   fwd_model.nodes = NODE';
-   [x,y] = grid_the_space( fwd_model);
+function node_ptr = mdl_node_mapper(NODE, ELEM, bnd, x, y)
 
    ver = eidors_obj('interpreter_version');
    if ~ver.isoctave
-       node_ptr = node_mapper_triangulation( NODE, fwd_model.elems', x, y);
+       node_ptr = node_mapper_triangulation( NODE, ELEM, x, y);
    else
        ndims = size(NODE,1);
        if ndims == 2
          % old code
-         node_ptr= node_mapper( NODE, fwd_model.elems', fwd_model.boundary, x, y);
+         if isempty(bnd), bnd = find_boundary(ELEM'); end
+         node_ptr= node_mapper( NODE, ELEM, bnd, x, y);
        else
-         node_ptr= node_mapper_dsearchn( NODE, fwd_model.elems', x, y);
+         node_ptr= node_mapper_dsearchn( NODE, ELEM, x, y);
        end
    end
    
@@ -368,22 +374,39 @@ function [img2d, use_nodes] = mdl_3d_to_2d(NODE, ELEM)
 % Level is a 1x3 vector specifying the x,y,z axis intercepts
 % NODE describes the vertices in this coord space
 
-function NODE= level_model( fwd_model )
+function [NODE, ELEM] = level_model( fwd_model )
    vtx= fwd_model.nodes;
+   ELEM = fwd_model.elems';
+   
    if mdl_dim(fwd_model) ==2 % 2D case
        NODE= vtx';
        return;
    end
 
    if     isfield(fwd_model.mdl_slice_mapper,'level')
-       NODE = level_model_slice(vtx, fwd_model.mdl_slice_mapper.level)';
+       N_slices = level_model_slice(fwd_model.mdl_slice_mapper.level);
+       if N_slices > 1
+           warning(['Multiple slices defined on forward model. '...
+               'Using the first slice.'])
+       end
+       NODE = level_model_slice(vtx, fwd_model.mdl_slice_mapper.level, 1);
    elseif isfield(fwd_model.mdl_slice_mapper,'centre')
        % just in case somebody was using that interface
        rotate = fwd_model.mdl_slice_mapper.rotate;
        centre = fwd_model.mdl_slice_mapper.centre;
-       NODE = level_model_slice(vtx, struct('centre', centre,'rotation_matrix',rotate))';       
+       warning('EIDORS:MDL_SLICE_MAPPER:DeprecatedInterface',...
+            'Specifying mdl_slice_mapper.rotate and .centre is deprecated')
+       level = struct('centre', centre,'rotation_matrix',rotate);
+       N_slices = level_model_slice(level);
+       if N_slices > 1
+           warning(['Multiple slices defined on forward model. '...
+               'Using the first slice.'])
+       end
+       NODE = level_model_slice(vtx, level , 1);       
    else   error('mdl_slice_mapper: no field level or centre provided');
    end
+   
+   NODE = NODE{1}'; 
    
 function pts = get_points(fwd_model);
    NODE = level_model( fwd_model );
