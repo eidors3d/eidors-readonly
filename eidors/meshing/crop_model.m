@@ -66,22 +66,39 @@ function crop_graphics_model(axis_handle, fcn_handle);
    %k=kk( find( kk== min(kk) ));
 
    for k= kk(:)'
+      x= get(k,'XData');
+      y= get(k,'YData');
       try
-         x= get(k,'XData');
-         y= get(k,'YData');
-         z= get(k,'ZData');
+          z= get(k,'ZData');
+      catch
+          z= [];
+      end
+      try
          c= get(k,'CData');
+      catch
+         c= [];
       end
       idx= ~all( feval(fcn_handle,x,y,z) );
       if any(size(c)>[1,1])
-          set(k,'Xdata', x(:,idx), ...
-              'Ydata', y(:,idx), ...
-              'Zdata', z(:,idx), ...
-              'Cdata', c(:,idx));
+          if any(size(z)>[1,1])
+              set(k,'Xdata', x(:,idx), ...
+                  'Ydata', y(:,idx), ...
+                  'Zdata', z(:,idx), ...
+                  'Cdata', c(:,idx));
+          else
+              set(k,'Xdata', x(:,idx), ...
+                  'Ydata', y(:,idx), ...
+                  'Cdata', c(:,idx));
+          end
       else
-          set(k,'Xdata', x(:,idx), ...
-              'Ydata', y(:,idx), ...
-              'Zdata', z(:,idx));
+          if any(size(z)>[1,1])
+              set(k,'Xdata', x(:,idx), ...
+                  'Ydata', y(:,idx), ...
+                  'Zdata', z(:,idx));
+          else
+              set(k,'Xdata', x(:,idx), ...
+                  'Ydata', y(:,idx));
+          end
       end
       
    end
