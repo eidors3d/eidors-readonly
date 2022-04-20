@@ -87,14 +87,13 @@ function do_unit_test
    imdl = mk_GREIT_model(imdl, 0.2, n_weight, opt);
 
    unit_test_cmp('RM size', size(imdl.solve_use_matrix.RM), [5136,928]);
-   tst = imdl.solve_use_matrix.RM(1,1:2)
+   tst = imdl.solve_use_matrix.RM(1,1:2);
    tst_= [8.572908305490031 -18.600780994066596];
    unit_test_cmp('RM', tst, tst_, 1e-10);
 
    img = inv_solve(imdl, vh, vi);
    unit_test_cmp('img size', size(img.elem_data), [5136,5]);
    [mm,ll] =max(img.elem_data(:,1));
-   format long; mm
    unit_test_cmp('img', [mm,ll], ...
        [0.582158646727019, 1308], 1e-10);
 
