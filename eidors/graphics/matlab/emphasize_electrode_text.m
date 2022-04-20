@@ -18,7 +18,7 @@ bgcolour = [1,1,1];
 %tmp = inv(view);
  tmp = view;
 dirn = [0,0,1,0]*tmp; % move into view's z dir
-dirn = dirn(1:3) 
+dirn = dirn(1:3);
 dirn = -dirn(:)'/norm(dirn);
 
 if nargin==0;
@@ -42,13 +42,13 @@ function do_unit_test
   fmdl = getfield(mk_common_model('n3r2',[16,2]),'fwd_model');
   subplot(221);
   show_fem(fmdl,[0,1]); view(0,0); drawnow
-tmp=view
+
   emphasize_electrode_text();
   subplot(222);
   show_fem(fmdl,[0,1]); view(0,80); drawnow
-tmp=view
+
   emphasize_electrode_text();
   subplot(223);
   show_fem(fmdl,[0,1]); view(50,80); drawnow
-tmp=view
+
   emphasize_electrode_text();
