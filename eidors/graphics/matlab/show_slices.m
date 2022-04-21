@@ -251,15 +251,18 @@ function do_unit_test
    sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
    
    %16
+   sp=sp+1;subplot(4,5,sp); show_slices(img,levels(:,1:3),levels(:,4:5)) 
+   
+   %17
    m = calc_slices(img,levels(:,1:3));
    sp=sp+1;subplot(4,5,sp); show_slices(m) 
    
-   %17
+   %18
    img.elem_data = img.elem_data(:,1);
    img.show_slices.contour_levels = true;
    sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
-   %18
+   %19
    img.fwd_model.mdl_slice_mapper = struct('level',[inf,inf,1], ...
      'x_pts', linspace(-1,1,50), 'y_pts',linspace(-2,2,100));
    img.show_slices.axes_msm = true;
