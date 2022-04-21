@@ -86,9 +86,11 @@ copt.cache_obj = {fwd_model.nodes,fwd_model.elems,fwd_model.electrode};
 copt.fstr = 'calculate_N2E';
 [N2E,cem_electrodes] = eidors_cache(@calculate_N2E,{fwd_model, bdy, n_elec, n}, copt);
 
-stim = fwd_model.stimulation;
 if p>0
+  stim = fwd_model.stimulation;
   [pp.QQ, pp.VV, pp.n_meas] = calc_QQ_fast(N2E, stim, p);
+
+  pp.v2meas   = get_v2meas(pp.n_elec, pp.n_stim, stim);
 end
 
 % pack into a parameter return list
@@ -100,8 +102,6 @@ pp.n_dims   = d-1;
 pp.N2E      = N2E;
 pp.boundary = bdy;
 pp.normalize = mdl_normalize(fwd_model);
-
-pp.v2meas   = get_v2meas(pp.n_elec, pp.n_stim, stim);
 
 function v2meas = get_v2meas(n_elec,n_stim,stim)
     v2meas = sparse(n_elec*n_stim,0);
