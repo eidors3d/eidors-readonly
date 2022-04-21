@@ -91,13 +91,15 @@ function rimg = calc_this_slice( img, levels, np)
     if ~any(isfield(img, {'elem_data', 'node_data'}))
        error('img does not have a data field');
     end
-    
-    for lev_no = fliplr(1:numel(nodes))
+    n_levels = numel(nodes);
+    % levels are numbered from min to max, but we want the max to end up on
+    % top when shown via show_slices
+    for lev_no = 1:n_levels
         fwd_model.nodes = nodes{lev_no};
         if isfield(img,'elem_data')
-          rimg(:,:,:,lev_no) = calc_image_elems( data, fwd_model);
+          rimg(:,:,:,n_levels + 1 - lev_no) = calc_image_elems( data, fwd_model);
         elseif isfield(img,'node_data')
-          rimg(:,:,:,lev_no) = calc_image_nodes( data, fwd_model);
+          rimg(:,:,:,n_levels + 1 - lev_no) = calc_image_nodes( data, fwd_model);
         end
     end
     

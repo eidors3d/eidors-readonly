@@ -1,4 +1,4 @@
-function out_img= show_slices( img, levels )
+function out_img= show_slices( img, levels, vh )
 % out_img = show_slices (img, levels ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or a array of structs
@@ -7,15 +7,9 @@ function out_img= show_slices( img, levels )
 % out_img= matrix in the current colormap which we can use image(out_img);
 %
 % PARAMETERS:
-%  levels = Matrix [Lx3] of L image levels
-%           each row of the matrix specifies the intercepts
-%           of the slice on the x, y, z axis. To specify a z=2 plane
-%           parallel to the x,y: use levels= [inf,inf,2]
-%  
-%  if levels is [L x 5] then levels= [x,y,z,h,v] where,
-%           x,y,z specify the axes intercepts, and 
-%           h,v   specify the horizontal, vertical position
-%                 of that slice in the output image
+%  levels = any level defintion accepted by level_model_slice
+%  vh     = [Lx2] matrix specifying the horizontal (column), vertical (row)
+%           position of each slice in the output image
 % 
 % IMAGE PARAMETERS:
 %   img.show_slices.levels (same as above);
@@ -35,14 +29,17 @@ function out_img= show_slices( img, levels )
 %   img.show_slices.contour_properties => e.g. {'Color',[0,0,0],'LineWidth',2}
 %   img.calc_slices.filter => e.g. conv2(ones(5),ones(5))/5^4   
 %
-% if levels is scalar, then make levels equispaced horizontal
-%          cuts through the object
-%
 % Show slices is roughly equivalent to:
 %   rimg = calc_slices(img,levels); 
 %   rimg = calc_colours(rimg,img); image(rimg);
 %
-% See also: CALC_SLICES, MK_MOSAIC, CALC_COLOURS
+% Deprecated interface:
+%  if levels is [L x 5] then levels= [x,y,z,h,v] where,
+%           x,y,z specify the axes intercepts, and 
+%           h,v   specify the horizontal, vertical position
+%                 of that slice in the output image
+%
+% See also: LEVEL_MODEL_SLICE, CALC_SLICES, MK_MOSAIC, CALC_COLOURS
 
 % (C) 2005-2008 Andy Adler. License: GPL version 2 or version 3
 % $Id$
@@ -72,21 +69,14 @@ if isempty(levels) && do_calc_slices %&& size(img(1).fwd_model.nodes,2)==2
    levels= [Inf,Inf,0];
 end
 
-vh = [];
-if size(levels,2) == 5
+if nargin < 3
+    vh = [];
+end
+if isempty(vh) && isnumeric(levels) && size(levels,2) == 5
    vh = levels(:,4:5);
    levels = levels(:,1:3);
-elseif numel(levels)== 1 && isnumeric(levels)
-   if size(img(1).fwd_model.nodes,2) == 2 % Can't do horiz slices for 2D model
-      eidors_msg('Can''t do horizontal slices for 2D model. Showing 2D slice');
-      levels= [Inf,Inf,0];
-   else
-      zmax= max(img(1).fwd_model.nodes(:,3));
-      zmin= min(img(1).fwd_model.nodes(:,3));
-      levels = linspace(zmax,zmin, levels+2);
-      levels = levels(2:end-1)';
-      levels = [(1+0*levels)*[Inf,Inf], levels];
-   end
+   warning('EIDORS:DeprecatedInterface', ...
+    'Specifing 5-element level is deprecated and will cause an error in a future release.');
 end
 
 if do_calc_slices
@@ -172,22 +162,23 @@ if nargout==0; clear('out_img'); end
 
 function do_unit_test
    clf; sp=0;
-
+   %1
    img=calc_jacobian_bkgnd(mk_common_model('a2t3',8)); 
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
    sp=sp+1;subplot(4,5,sp); show_slices(img) 
-
+   %2
    img.calc_colours.npoints= 128;
    sp=sp+1;subplot(4,5,sp); show_slices(img) 
-
+   %3
    img.calc_colours.npoints= 32;
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1:3);
    sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
-
+   %4
    img.show_slices.img_cols= 1;
    sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
+   %5
    imgn = rmfield(img,'elem_data');
    imgn.node_data=toeplitz(1:size(img.fwd_model.nodes,1),1);
 
@@ -197,14 +188,18 @@ function do_unit_test
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    sp=sp+1;subplot(4,5,sp); show_slices(img);
 
+   %6
    img.elem_data = img.elem_data(:,1);
+   img.fwd_model.mdl_slice_mapper = rmfield(img.fwd_model.mdl_slice_mapper, {'npx','npy'});
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-150,150,30);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
    sp=sp+1;subplot(4,5,sp); show_slices(img);
 
+   %7
    sp=sp+1;subplot(4,5,sp); show_slices(imgn) 
 
+   %8
    imgn.fwd_model.mdl_slice_mapper.x_pts = linspace(-100,100,20);
    imgn.fwd_model.mdl_slice_mapper.y_pts = linspace(-150,150,30);
    imgn.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
@@ -212,18 +207,21 @@ function do_unit_test
 
 
 % 3D images
+   %9
    img=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2])); 
    img.calc_colours.npoints= 16;
    img.elem_data=toeplitz(1:size(img.fwd_model.elems,1),1);
    sp=sp+1;subplot(4,5,sp); show_slices(img,2) 
 
-
+   %10
    img.elem_data=img.elem_data*[1:3];
    sp=sp+1;subplot(4,5,sp); show_slices(img,2) 
 
+   %11
    img.elem_data=img.elem_data(:,1:2);
    sp=sp+1;subplot(4,5,sp); show_slices(img,[inf,inf,1;0,inf,inf;0,1,inf]);
 
+   %12
    img.show_slices.sep = 5;
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(-1,1,20);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(-1,1,30);
@@ -231,31 +229,37 @@ function do_unit_test
 
    sp=sp+1;subplot(4,5,sp); show_slices(img,2) 
 
-
+   %13
+   img.fwd_model = rmfield(img.fwd_model, 'mdl_slice_mapper');
    img.elem_data = img.elem_data(:,1);
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,1;
            0,1,inf,3,1];
    sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
 
+   %14
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,2;
            0,1,inf,  1,3];
    sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
 
+   %15
    img.elem_data = img.elem_data(:,[1,1]);
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,1;
            0,1,inf,  3,1];
    sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
    
-   m = calc_slices(img,levels);
+   %16
+   m = calc_slices(img,levels(:,1:3));
    sp=sp+1;subplot(4,5,sp); show_slices(m) 
    
+   %17
    img.elem_data = img.elem_data(:,1);
    img.show_slices.contour_levels = true;
    sp=sp+1;subplot(4,5,sp); show_slices(img) 
 
+   %18
    img.fwd_model.mdl_slice_mapper = struct('level',[inf,inf,1], ...
      'x_pts', linspace(-1,1,50), 'y_pts',linspace(-2,2,100));
    img.show_slices.axes_msm = true;
