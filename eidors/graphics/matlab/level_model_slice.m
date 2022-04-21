@@ -6,7 +6,7 @@ function [out, out2, out3] = level_model_slice(varargin)
 % Transforms a list of 3D points such that level is a slice at z=0.
 %	NODES: n_nodes x 3 list of point coordinates 
 %	LEVEL: definition of the slice(s). Can be:
-%     - scalar: number of slices along the z axis
+%     - scalar: number of slices along the z axis ordered max to min
 %     - vector (N x 3): intercepts with the coordinate axis
 %     - struct:
 %       .centre (N x 3): centre point for transformation
@@ -130,7 +130,7 @@ function [C, M] = matrix_from_number(nodes, num_levels, sn)
     
     zmax= max(nodes(:,3));
     zmin= min(nodes(:,3));
-    levels = linspace(zmin,zmax, num_levels+2);
+    levels = linspace(zmax,zmin, num_levels+2);
     levels = levels(2:end-1);
     
     C = (max(nodes) + min(nodes))/2;
