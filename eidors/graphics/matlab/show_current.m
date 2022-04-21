@@ -15,6 +15,11 @@ function quiv = show_current( img, vv )
 %    or
 %   img.fwd_model.mdl_slice_mapper.x_pts - vector of points in horizontal direction
 %   img.fwd_model.mdl_slice_mapper.y_pts - vector of points in vertical
+%    or
+%   img.fwd_model.mdl_slice_mapper.npoints    - number of points across the larger
+%                                               dimension of the model (square)
+%    or
+%   img.fwd_model.mdl_slice_mapper.resolution - number of points per unit
 %
 % For 3D models, the slice may be specified as (see mdl_slice_mapper for information)
 %   img.fwd_model.mdl_slice_mapper.level 
@@ -66,7 +71,9 @@ if isfield(img.fwd_model, 'mdl_slice_mapper');
    elem_ptr = mdl_slice_mapper( img.fwd_model, 'elem' );
    szep = size(elem_ptr);
 
-   [xp,yp] = grid_the_space( img.fwd_model);
+   %[xp,yp] = grid_the_space( img.fwd_model);
+   xy = mdl_slice_mapper( img.fwd_model, 'get_points');
+   xp = xy{1}; yp = xy{2};
 
    xc = reshape( elemcur(elem_ptr+1,1), szep);
    yc = reshape( elemcur(elem_ptr+1,2), szep);
@@ -150,10 +157,10 @@ function do_unit_test
 
    imdl= mk_common_model('d2d2c',8);
    img = calc_jacobian_bkgnd( imdl );
-   img.fwd_model.mdl_slice_mapper.npx = 64;
-   img.fwd_model.mdl_slice_mapper.npy = 64;
+   img.fwd_model.mdl_slice_mapper.npoints = 64;
    show_current(img);
 
+   img.fwd_model = rmfield(img.fwd_model, 'mdl_slice_mapper');
    img.fwd_model.mdl_slice_mapper.x_pts = linspace(0,1,62);
    img.fwd_model.mdl_slice_mapper.y_pts = linspace(0,1,56);
    img.fwd_model.mdl_slice_mapper.level = [inf,inf,0];
