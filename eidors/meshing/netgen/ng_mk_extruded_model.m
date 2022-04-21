@@ -189,6 +189,11 @@ function [tank_height, tank_shape, tank_maxh, is2D] = parse_shape(shape)
                     error('length of maxh must either be 1 or equal to the total number of curves');
                 end
             end
+        else % maxh not specified
+            if isfield(tank_shape,'additional_shapes')
+                N_curves = 1 + numel(tank_shape.additional_shapes);
+                tank_maxh(2:N_curves) = tank_maxh;
+            end
         end
     else
         points = shape;
