@@ -190,5 +190,5 @@ function do_unit_test
    imgr = calc_slices(imgr);
    max_imgr = max(imgr(:));
    unit_test_cmp('Max', max_imgr, 6.683411990674756e-04, 1e-8);
-   unit_test_cmp('Loc', find(imgr>0.99*max_imgr),  ...
-      [1755; 1756; 1818; 1819; 1820; 1882; 1883; 1946; 1947]);
+   tst = [1753;1754;1755;1816;1817;1818;1819;1880;1881;1882;1944;1945;2008];
+   unit_test_cmp('Loc', find(imgr>0.99*max_imgr), tst);
