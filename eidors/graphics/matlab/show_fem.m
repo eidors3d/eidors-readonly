@@ -440,10 +440,8 @@ end
 try;
     set(hh,'FaceAlpha',mdl.show_fem.alpha_inhomogeneities);
 end
-if ~exist('OCTAVE_VERSION');
 camlight('left');
 lighting('none'); % lighting doesn't help much
-end
 
 
 function paint_electrodes(sel,srf,vtx, colour, show_num);
@@ -773,21 +771,17 @@ end
 % TESTS:
 function do_unit_test
    clf
-if ~exist('OCTAVE_VERSION')
-   rng(0);
-end
+   rand('state',0);
 
    img=calc_jacobian_bkgnd(mk_common_model('a2c0',8)); 
    img.elem_data=rand(size(img.fwd_model.elems,1),1);
    subplot(4,4,1); show_fem(img.fwd_model,[0,0,1]) 
    title('regular mesh numbered');
 
-if ~exist('OCTAVE_VERSION')
    imgn = rmfield(img,'elem_data');
    imgn.node_data=rand(size(img.fwd_model.nodes,1),1);
    subplot(4,4,9); show_fem(imgn) 
    title('interpolated node colours');
-end
 
    img2(1) = img; img2(2) = img;
    subplot(4,4,2); show_fem(img,[1]);
@@ -804,7 +798,6 @@ end
    subplot(4,4,12);show_fem(img); %Should show grey
    title('error -> show grey');
 
-if ~exist('OCTAVE_VERSION')
    imgn.calc_colours.mapped_colour = 0; % USE RGB colours
    subplot(4,4,10);show_fem(imgn,[0,1]) 
    title('interpolated node colours');
@@ -812,7 +805,6 @@ if ~exist('OCTAVE_VERSION')
 
    subplot(4,4,11);hh=show_fem(imgn); set(hh,'EdgeColor',[0,0,1]);
    title('with edge colours');
-end
 
    img3=calc_jacobian_bkgnd(mk_common_model('n3r2',[16,2]));
    img3.elem_data= randn(828,1);                       
