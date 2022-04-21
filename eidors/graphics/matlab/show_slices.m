@@ -244,7 +244,7 @@ function do_unit_test
    sp=sp+1;subplot(4,5,sp); show_slices(img,levels) 
 
    %15
-   img.elem_data = img.elem_data(:,[1,1]);
+   img.elem_data = img.elem_data * [1,2];
    levels=[inf,inf,1,1,1;
            0,inf,inf,2,1;
            0,1,inf,  3,1];
