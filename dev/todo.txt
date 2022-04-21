@@ -22,8 +22,8 @@ ERROR = (Error using eidors_default>get_default (line 106)
  + Fix phase delay in meas_pattern
  - Speed up / clean up _higher_order code
  - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
- - DONE (calc_grid_points) new function: calc_volumes which calculates elems => volumes or nodes => volumes
- - DONE(img_point_mapper) new function low level: interp_points(img, xyz_points) use point_in_tet 
+ + DONE (calc_grid_points) new function: calc_volumes which calculates elems => volumes or nodes => volumes
+ + DONE(img_point_mapper) new function low level: interp_points(img, xyz_points) use point_in_tet 
  - support c2f in img_point_mapper (Bartek)
  + refactor the point_to_tet part of mk_tet_c2f
  + Check line and comment mk_tet_c2f: 429  rnode2tet = sparse(rnode2tet);
@@ -51,6 +51,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
 		mk_pixel_slice
 		calc_image_SNR - assumes level is a 3 element vector, difficult
  - merge meshes speed-up/refactor (Bartek)
+ - add img = set_slices(img, level, hlim, vlim, res)
  
 
 Plan for 3.10
