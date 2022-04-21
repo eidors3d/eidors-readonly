@@ -45,7 +45,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
 		+ mdl_slice_mapper
 		+ mdl_slice_mesher
 		+ show_slices
-		show_slices_move
+		+ show_slices_move
 		show_3d_slices
 		show_current
 		mk_pixel_slice

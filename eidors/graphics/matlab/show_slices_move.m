@@ -35,8 +35,8 @@ elec_zmin = min(pos(:,3));
 
 levels = inf*ones(num_levs,3);
 levels(:,3) = [elec_zmax; elec_zmax-(elec_zmax - elec_zmin)/2; elec_zmin];
-levels(:,4) = ones(num_levs,1);
-levels(:,5) = (1:num_levs)';
+
+img.show_slices.img_cols = 1;
 
 show_slices( img, levels );
 
