@@ -28,7 +28,7 @@ function varargout = eidors_default(varargin)
    s = dbstack;
    
    % unit test
-   if numel(s) == 1 && optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
+   if optargin == 1 && ischar(varargin{1}) && strcmp(varargin{1},'UNIT_TEST')
        do_unit_test;
        return;
    end
