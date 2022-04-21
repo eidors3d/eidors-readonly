@@ -11,6 +11,7 @@ function fmdl = mk_hollow_electrode(fmdl, elec_idx)
 %   flow within the electrode
 %
 % Limitations: currently works for 2D fems only
+% Recommended replacement: mat_idx_to_electrode
 
 % (C) 2017 Andy Adler and Bartek Grychtol. License: GPL v2 or v3. $Id$
 

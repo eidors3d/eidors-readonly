@@ -52,7 +52,7 @@ for SP=1:3
         img = mk_image(fmdl,1);
         vo = fwd_solve(img);
         vx = mono2stim(vm, fmdl.stimulation);
-        unit_test_cmp('Equal',vo.meas,vx.meas, 10*eps);
+        unit_test_cmp('Equal',vo.meas,vx.meas, 50*eps);
     end
 end
 end
