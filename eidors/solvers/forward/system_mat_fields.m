@@ -417,7 +417,8 @@ function do_unit_test_2d_test
    vh = fwd_solve( mk_image(fmdl,1) ); 
    unit_test_cmp('sys_mat_b2s_3b', vh.meas, 1.432226638247073, 1e-12);
 
-   imdl=  mk_common_model('a2C2',4); fmdl=imdl.fwd_model;
+   imdl=  mk_common_model('a2C2',4);
+   fmdl=rmfield(imdl.fwd_model,'stimulation');
    fmdl.nodes(1,:) = [];
    fmdl.gnd_node = 2;
    fmdl.elems(1:4,:) = [];
@@ -439,7 +440,8 @@ function do_unit_test_2d_test
 
 % Add a CEM via a boundary
    Nelec = 4;
-   fmdl= getfield( mk_common_model('a2C2',Nelec), 'fwd_model');
+   imdl= mk_common_model('a2C2',Nelec);
+   fmdl=rmfield(imdl.fwd_model,'stimulation');
 
    FC = system_mat_fields( fmdl );
    unit_test_cmp('sys_mat-b2cCEM-0', Nelec, num_elecs(fmdl));
@@ -455,7 +457,8 @@ function do_unit_test_2d_test
        [num_elems(fmdl)*(size(fmdl.elems,2)-1) + 3*2 + 2*3, ...
         num_nodes(fmdl)+num_elecs(fmdl)]);
 
-   fmdl= getfield( mk_common_model('a2C2',Nelec), 'fwd_model');
+   imdl= mk_common_model('a2C2',Nelec);
+   fmdl= rmfield(imdl.fwd_model,'stimulation');
    fmdl.electrode(5) = struct('nodes',1:3,'z_contact',.01);
    fmdl.system_mat_fields.CEM_boundary = [1,2;2,3;3,1];
    FC = system_mat_fields( fmdl );

@@ -109,6 +109,9 @@ function v2meas = get_v2meas(n_elec,n_stim,stim)
     for i=1:n_stim
         meas_pat= stim(i).meas_pattern;
         n_meas  = size(meas_pat,1);
+        if n_elec ~= size(meas_pat,2)
+           error('meas_pattern %d ~= n_elec',i)
+        end
         v2meas((i-1)*n_elec + 1: i*n_elec,end+(1:n_meas)) = meas_pat.';
     end
     v2meas = v2meas'; % Conjugate transpose. For derivation
