@@ -43,6 +43,12 @@ if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return; end
    [x, y, z] = ndgrid(msm.x_pts, msm.y_pts, msm.z_pts);
 
    IN = point_in_vox(imdl.rec_model,[x(:),y(:),z(:)]);
+   INdesity = nnz(IN)/prod(size(IN));
+   if INdesity==0
+      error('GREIT3D_distribution: grid doesn''t match model');
+   elseif INdesity<0.5
+      eidors_msg('GREIT3D_distribution: grid only matches %3.1f%% of model', INdesity*100, 1);
+   end
    distr = [x(IN),y(IN),z(IN)]';
 
 function out = point_in_vox(fmdl,points, epsilon)
@@ -72,7 +78,31 @@ function out = point_in_vox(fmdl,points, epsilon)
       out(idx) = out(idx) | inpolygon(points(idx,1),points(idx,2),bnd(:,1),bnd(:,2));
    end
 
+function do_small_test
+   fmdl= ng_mk_cyl_models([4,1],[16,1.5,2.5],[0.10]);
+   fmdl= mystim_square(fmdl);
+   vopt.imgsz = [16 16];
+   vopt.zvec = linspace( 0.5,3.5,4);
+   [imdl,opt.distr] = GREIT3D_distribution(fmdl, vopt);
+   unit_test_cmp('Coarse1 size:', size(opt.distr),[3,672]);
+   unit_test_cmp('Corase1 vals:', opt.distr(:,1),[-0.4375;-0.9375;1],1e-7);
+
+   vopt.zvec = linspace(-1,1,3);
+   [imdl,opt.distr] = GREIT3D_distribution(fmdl, vopt);
+   unit_test_cmp('Coarse2 size:', size(opt.distr),[3,224]);
+   unit_test_cmp('Corase2 vals:', opt.distr(:,1),[-0.4375;-0.9375;0.5],1e-7);
+
+   vopt.zvec = linspace(-2,0,3);
+   try
+       get_error = 0;
+       [imdl,opt.distr] = GREIT3D_distribution(fmdl, vopt);
+   catch
+       get_error = 1;
+   end
+   unit_test_cmp('Coarse3: got error', get_error,1)
+
 function do_unit_test
+   do_small_test
    [vh,vi] = test_fwd_solutions;
    % inverse geometry
    fmdl= ng_mk_cyl_models([4,1,.5],[16,1.5,2.5],[0.05]);
