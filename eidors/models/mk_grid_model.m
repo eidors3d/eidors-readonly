@@ -148,6 +148,9 @@ function cmdl= mk_3d_grid(xvec, yvec, zvec)
    xlen = length(xvec);
    ylen = length(yvec);
    zlen = length(zvec);
+   if zlen<2 || ylen<2 || xlen<2
+      error('Need at least 2 components for each gridpoint')
+   end
    cmdl= eidors_obj('fwd_model', ...
             sprintf('Grid model %d x %d x %d', xlen, ylen, zlen) );
 
