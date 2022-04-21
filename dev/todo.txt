@@ -41,7 +41,7 @@ ERROR = (Error using eidors_default>get_default (line 106)
 		- N x 3
 		- struct('rotate','center', 'n')
 	- affected functions:
-		calc_slices
+		+ calc_slices
 		+ mdl_slice_mapper
 		+ mdl_slice_mesher
 		show_slices

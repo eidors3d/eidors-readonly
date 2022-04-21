@@ -2,13 +2,7 @@ function rimg = calc_slices( img, levels );
 % calc_slices (img, levels, clim  ) show slices at levels of an
 %             using a fast rendering algorithm
 % img    = EIDORS image struct, or array of I images
-% levels = Matrix [Lx3] of L image levels
-%          each row of the matrix specifies the intercepts
-%          of the slice on the x, y, z axis. To specify a z=2 plane
-%          parallel to the x,y: use levels= [inf,inf,2]
-%
-% if levels is scalar, then make levels equispaced horizontal
-%          cuts through the object
+% levels = any level definition accepted by level_model_slice
 %
 % PARAMETERS:
 %   img.calc_slices.filter % Filter to be applied to images
@@ -23,6 +17,7 @@ function rimg = calc_slices( img, levels );
 %   img.fwd_model.mdl_slice_mapper.{npx, npy}
 %        see help of mdl_slice_mapper for more options
 %
+% See also: LEVEL_MODEL_SLICE
 
 % (C) 2006-2022 Andy Adler and Bartek Grychtol. 
 % License: GPL version 2 or version 3
