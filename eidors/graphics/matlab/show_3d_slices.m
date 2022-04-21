@@ -4,13 +4,13 @@ function h = show_3d_slices(img, varargin);
 %  z_cuts = planes in z to do a cut
 %  x_cuts = planes in x to do a cut
 %  y_cuts = planes in y to do a cut
-%  any_cuts = cut planes intercepts as Nx3 matrix (see mdl_slice_mapper)
+%  any_cuts = any single-slice specification accepted by LEVEL_MODEL_SLICE
 % Default show 2 z_cuts and 1 x and 1 y cut
 %
 % h = show_3d_slices(...) returns a cell array of handles to the individual
 % slices { z_slices, x_slices, y_slices, any_slices }
 %
-% See also: mdl_slices_mesher
+% See also: level_model_slice, mdl_slice_mesher
 
 % (C) 2007-2012 Andy Adler & Bartlomiej Grychtol. 
 % License: GPL version 2 or version 3

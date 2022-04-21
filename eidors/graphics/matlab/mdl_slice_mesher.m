@@ -35,9 +35,6 @@ function [nimg out] = mdl_slice_mesher(fmdl,level,varargin)
 % License: GPL version 2 or version 3
 % $Id$
 
-% TODO: 
-%  1. More intuitive cut plane specification
-
 
 if ischar(fmdl) && strcmp(fmdl,'UNIT_TEST'); do_unit_test; return, end;
 

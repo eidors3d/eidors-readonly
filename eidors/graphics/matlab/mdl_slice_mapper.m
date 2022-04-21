@@ -5,8 +5,6 @@ function map = mdl_slice_mapper( fmdl, maptype )
 % USAGE:
 % fmdl = fwd_model object
 %     required fields
-%   fmdl.mdl_slice_mapper.npy   - number of points in vertical 
-%    or
 %   fmdl.mdl_slice_mapper.npx   - number of points in horizontal direction
 %   fmdl.mdl_slice_mapper.npy   - number of points in vertical 
 %    or
