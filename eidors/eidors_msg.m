@@ -1,4 +1,4 @@
-function log_level= eidors_msg( message, varargin )
+function log_level = eidors_msg( message, varargin )
 %EIDORS_MSG eidors progress and status messages
 %
 %  EIDORS_MSG(STR, LVL) prints 'EIDORS:[ STR ]' if current log_level <= LVL
@@ -127,7 +127,9 @@ if length(message)>1 % single characters are just for progress
           message = sprintf('%s%s', file , msg_extra);
       end
    end
-   last_msg = message;
+   s = dbstack();
+   last_msg = sprintf('%s:%d %s', s(2).file, s(2).line, message);
+  
    string= [sprintf('%c',' ' * ones(1,level-1)), ...
             'EIDORS:[',message,']\n'];
        
