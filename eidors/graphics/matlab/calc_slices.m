@@ -75,8 +75,7 @@ function rimg = calc_this_slice( img, levels, np)
     fwd_model = img.fwd_model;
     
     if ~isfield(fwd_model,'mdl_slice_mapper')
-        fwd_model.mdl_slice_mapper.npx  = np;
-        fwd_model.mdl_slice_mapper.npy  = np;
+        fwd_model.mdl_slice_mapper.npoints = np;
         fwd_model.mdl_slice_mapper.level= levels;
         % grid model sets mdl_slice_mapper.np* but not level
     elseif ~isfield(fwd_model.mdl_slice_mapper,'level')
@@ -190,7 +189,7 @@ function do_unit_test
    img.calc_colours.npoints = 8; 
 
    imc = calc_slices(img);
-   imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
+   imt = NaN*ones(8); imt(2:7,2:7) = 1; imt(3:6,:) = 1; imt(:,3:6) = 1; 
    unit_test_cmp('cs 2d 1', imc, imt);
 
    imn = rmfield(img,'elem_data');
@@ -200,24 +199,23 @@ function do_unit_test
 
    img.elem_data(1:4) = 2;
    imc = calc_slices(img);
-   imt(3:6,3:6) = 1; imt(4:5,4:5) = 2; 
+   imt(4:5,4:5) = 2; 
    unit_test_cmp('cs 2d 3', imc, imt);
 
    imn.node_data(1:5) = 2;
    imc = calc_slices(imn);
-   imt(3:6,3:6) = 1; imt(4:5,3:6) = 1.049020821501088;
-   imt(3:6,4:5) = 1.049020821501088; imt(4:5,4:5) = 2;
+   imt(3:6,3:6) = 1; imt(4:5,3:6) = 1.292893218813452;
+   imt(3:6,4:5) = 1.292893218813452; imt(4:5,4:5) = 2;
    unit_test_cmp('cs 2d 4', imc, imt, 1e-14);
 
    imn.node_data(:) = 1; imn.node_data(1) = 4;
    imc = calc_slices(imn);
-   imt(3:6,3:6) = 1; imt(4:5,4:5) = 1.575633893074693; 
+   imt(3:6,3:6) = 1; imt(4:5,4:5) = 1.878679656440358; 
    unit_test_cmp('cs 2d 5', imc, imt, 1e-14);
 
    imn.calc_colours.npoints = 7; 
    imc = calc_slices(imn);
-% FIXME: the region is offset left for odd npoints
-   imt = NaN*ones(7); imt(2:6,2:6) = 1; imt(4,1:7)= 1; imt(1:7,4)= 1;imt(4,4) = 4; 
+   imt = NaN*ones(7); imt(3:5,:) = 1; imt(:,3:5)= 1; imt(2:6,2:6)= 1;imt(4,4) = 4; 
    unit_test_cmp('cs 2d 6', imc, imt, 1e-14);
 
 
@@ -226,17 +224,17 @@ function do_unit_test
    img.calc_colours.npoints = 8; 
    imn = calc_slices(img,[inf,inf,1]);
 
-   imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
+   imt = NaN*ones(8); imt(3:6,:) = 1; imt(:,3:6) = 1; imt(2:7,2:7) = 1; 
    unit_test_cmp('cs 3d 1', imn, imt);
 
+   img.calc_colours.npoints = 12; 
    imn = calc_slices(img,[inf,0,inf]);
-   imt = NaN*ones(8); imt(1:8,3:6) = 1; 
+   imt = NaN*ones(12); imt(:,3:10) = 1; 
    unit_test_cmp('cs 3d 2', imn, imt);
 
    % Should have no effect
    img.fwd_model.nodes(:,3) = img.fwd_model.nodes(:,3)-1;
    imn = calc_slices(img,[inf,0,inf]); 
-   imt = NaN*ones(8); imt(1:8,3:6) = 1; 
    unit_test_cmp('cs 3d 3', imn, imt);
 
 

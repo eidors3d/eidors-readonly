@@ -5,6 +5,8 @@ function map = mdl_slice_mapper( fmdl, maptype )
 % USAGE:
 % fmdl = fwd_model object
 %     required fields
+%   fmdl.mdl_slice_mapper.npy   - number of points in vertical 
+%    or
 %   fmdl.mdl_slice_mapper.npx   - number of points in horizontal direction
 %   fmdl.mdl_slice_mapper.npy   - number of points in vertical 
 %    or
@@ -12,6 +14,9 @@ function map = mdl_slice_mapper( fmdl, maptype )
 %   fmdl.mdl_slice_mapper.y_pts - vector of points in vertical
 %     x_pts starts at the left, and y_pts starts at the top, this means
 %     that y_pts normally would run from max to min
+%    or
+%   fmdl.mdl_slice_mapper.npoints    - number of points across the larger
+%                                      dimension of the model (square)
 %    or
 %   fmdl.mdl_slice_mapper.resolution - number of points per unit
 %   
@@ -434,11 +439,17 @@ function pts = get_points(fwd_model);
 % Create matrices x y which grid the space of NODE
 function  [x,y] = grid_the_space( fmdl, flag);
 
+  if nnz(isfield(fmdl.mdl_slice_mapper, {'x_pts', 'npoints', 'npx', 'resolution'}))>1
+      warning('Multiple specifications of points to map provided. Precedence not guaranteed')
+  end
+
   xspace = []; yspace = [];
   try 
      xspace =  fmdl.mdl_slice_mapper.x_pts;
      yspace =  fmdl.mdl_slice_mapper.y_pts;
   end
+  
+  
 
   if isempty(xspace)
 
@@ -447,35 +458,30 @@ function  [x,y] = grid_the_space( fmdl, flag);
 
      ymin = min(fmdl.nodes(:,2));    ymax = max(fmdl.nodes(:,2));
      ymean= mean([ymin,ymax]); yrange= ymax-ymin;
-
+     
     
      npx = []; npy = [];
      if all(isfield(fmdl.mdl_slice_mapper,{'npx','npy'}))
          npx  = fmdl.mdl_slice_mapper.npx;
          npy  = fmdl.mdl_slice_mapper.npy;
-% This code broke UNIT TESTS for v3.10
-%         range= max([xrange, yrange]); 
-%         % for backward compatibility 
-%         xspace = linspace( xmean - range*0.5, xmean + range*0.5, npx );
-%         yspace = linspace( ymean + range*0.5, ymean - range*0.5, npy );
+     elseif isfield(fmdl.mdl_slice_mapper, 'npoints')
+         maxrange = max(xrange,yrange); 
+         xrange = maxrange; yrange = maxrange;
+         npx  = fmdl.mdl_slice_mapper.npoints;
+         npy  = fmdl.mdl_slice_mapper.npoints;
      else
          res = 1;
-         try
-             res =  fmdl.mdl_slice_mapper.resolution;
-         end
+         try res =  fmdl.mdl_slice_mapper.resolution; end
          npx = ceil(xrange*res);
          npy = ceil(yrange*res);
      end
-     if 1
-       xdiv = xrange/npx; ydiv = yrange/npy;
-       xspace = linspace( xmean - xrange/2 - xdiv/2, xmean + xrange*0.5 + xdiv/2, npx + 2);
-       yspace = linspace( ymean + yrange/2 + ydiv/2, ymean - yrange*0.5 - ydiv/2, npy + 2);
-       xspace = xspace(2:end-1);
-       yspace = yspace(2:end-1);
-     else
-       xspace = linspace( xmean - xrange/2 , xmean + xrange*0.5 , npx);
-       yspace = linspace( ymean + yrange/2 , ymean - yrange*0.5 , npy);
-     end
+     
+     xdiv = xrange/npx; ydiv = yrange/npy;
+     xspace = linspace( xmean - xrange/2 - xdiv/2, xmean + xrange*0.5 + xdiv/2, npx + 2);
+     yspace = linspace( ymean + yrange/2 + ydiv/2, ymean - yrange*0.5 - ydiv/2, npy + 2);
+     xspace = xspace(2:end-1);
+     yspace = yspace(2:end-1);
+
   end
   if nargin > 1 && ischar(flag) && strcmp(flag, 'only_get_points')
       x = xspace; y = yspace;
