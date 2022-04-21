@@ -463,8 +463,8 @@ function  [x,y] = grid_the_space( fmdl, flag);
          try
              res =  fmdl.mdl_slice_mapper.resolution;
          end
-         npx = ceil(xrange/res);
-         npy = ceil(yrange/res);
+         npx = ceil(xrange*res);
+         npy = ceil(yrange*res);
      end
      if 1
        xdiv = xrange/npx; ydiv = yrange/npy;
