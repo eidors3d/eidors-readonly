@@ -243,7 +243,7 @@ function do_unit_test
    img.calc_colours.npoints = 8; 
    img(2) = img;
    imc = calc_slices(img); 
-   imt = NaN*ones(8); imt(3:6,2:7) = 1; imt(2:7,3:6) = 1; 
+   imt = NaN*ones(8); imt(3:6,:) = 1; imt(:,3:6) = 1; imt(2:7,2:7) = 1; 
    unit_test_cmp('cs mult 1', imc, cat(3,imt,imt));
 
    imgb = mk_image( mk_common_model('b2c2',8));
