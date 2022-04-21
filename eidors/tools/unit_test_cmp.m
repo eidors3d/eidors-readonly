@@ -56,14 +56,13 @@ tolstr='';
       sza1 = all(sza==1); szb1 = all(szb==1);
       if ~eqsz && ~sza1 && ~szb1
          ok='Fail (size change)';
+      elseif any(isnan(a(:)) ~= isnan(b(:)))
+             ok='Fail (NaNs change)';
       else
-         if isnan(a) == isnan(b);
-             a(isnan(a))=0; b(isnan(b))=0;
-         end;
-         rel_err = full(max(abs(a(:)-b(:))));
+         rel_err = full(max(abs(double(a(:))-double(b(:)))));
          if rel_err <= tol;
             ok='OK';
-         end;
+         end
 
          if abs(rel_err)>0
             tolstr= sprintf('(%1.3f x tol)', rel_err/tol); 
