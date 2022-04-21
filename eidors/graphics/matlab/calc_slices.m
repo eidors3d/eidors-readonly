@@ -87,7 +87,7 @@ function rimg = calc_this_slice( img, levels, np)
         nodes = level_model_slice(fwd_model, levels);
         
         % we'll level by replacing nodes. Disable.
-        lvl = struct('rotation_matrix',eye(3), 'centre', zeros(3,1));
+        lvl = struct('rotation_matrix',eye(3), 'centre', zeros(1,3));
         fwd_model.mdl_slice_mapper.level = lvl;
     end
     
