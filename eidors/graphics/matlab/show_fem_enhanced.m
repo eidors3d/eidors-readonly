@@ -764,7 +764,7 @@ if ~ver.isoctave
    title('interpolated node colours');
 
 
-   subplot(3,4,11);hh=show_fem_enhanced(imgn); set(hh,'EdgeColor',[0,0,1]);
+   subplot(3,4,11);hh=show_fem_enhanced(imgn); set(hh(1),'EdgeColor',[0,0,1]);
    title('with edge colours');
 
 end
