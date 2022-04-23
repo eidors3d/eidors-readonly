@@ -147,17 +147,20 @@ function val = msz_sphere(val)
     s_idx = s_idx(:);
     val = [xsp(s_idx),ysp(s_idx),zsp(s_idx), maxh+0*xsp(s_idx)];
 
+% space points around zero with spacing maxh
+function pts = space_around_zero(lim,maxh);
+    pts = 0:maxh:lim;
+    pts = [-fliplr(pts(2:end)),pts];
+
 function val = msz_cylinder(val)
     % [x1, y1, z1, x2, y2, z2, radius, maxh])
     len2= norm(val(1:3) - val(4:6))/2;
     ctr =     (val(1:3) + val(4:6))/2;
     maxh = val(8);
     radius = val(7);
-    nptr= floor(2*radius/maxh)+1;
-    nptz= floor(2*len2/maxh)+1;
-    xsp= linspace(-radius, +radius, nptr);
-    ysp= linspace(-radius, +radius, nptr);
-    zsp= linspace(-len2  , +len2  , nptz);
+    xsp= space_around_zero(radius, maxh);
+    ysp= space_around_zero(radius, maxh);
+    zsp= space_around_zero(len2, maxh);
     [xsp,ysp,zsp] = ndgrid(xsp,ysp,zsp);
     s_idx = (xsp.^2 + ysp.^2) < radius^2;
     xsp = xsp(s_idx(:));
@@ -368,7 +371,7 @@ opt.stloptions.recalchopt = 1;
 opt.visoptions.subdivisions = 1;
 
 function do_unit_test
-   test_main_options()
+%  test_main_options()
    unit_test_MSZ()
 
 function test_main_options()
@@ -405,8 +408,10 @@ function unit_test_MSZ
            ng_write_opt('MSZSPHERE',[5,5,5,4,1]);
        case 6; n_exp = 106;
            ng_write_opt('MSZBRICK',[5,5,5,9,9,9,1]);
-       case 7; n_exp = 660;
+       case 7; n_exp = 544;
            ng_write_opt('MSZCYLINDER',[5,5,5,8,8,8,5,1]);
+       case 8; n_exp = 23;
+           ng_write_opt('MSZCYLINDER',[5,5,5,8,8,8,5,5]);
          
        otherwise; break
        end
