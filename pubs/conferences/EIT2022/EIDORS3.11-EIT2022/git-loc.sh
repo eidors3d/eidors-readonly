@@ -9,7 +9,8 @@ echo 'loc = [ % all(/)  htdocs   dev   version  date' > $OUTF
 for ver in `seq 1 $LASTREV`; do 
    echo "$REPO: VER=$ver";
    GITVER=`(cd $REPO && git svn find-rev r$ver)`;
-   (cd $REPO && git checkout $GITVER && git clean -d -x -f);
+#  (cd $REPO && git checkout $GITVER && git clean -d -x -f); ## Seems not to work
+   (cd $REPO && rm -rf * && git checkout $GITVER -- . && ls)  ## Much slower. Can't trust git
    DATE=`(cd $REPO && git show -s --format=%ct $GITVER) | perl -pe'chomp'`;
    for PTH in $REPO $REPO/htdocs $REPO/dev ; do
        find $PTH -type f -name \*.m -print0 2>/dev/null | xargs -0 perl \
