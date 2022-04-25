@@ -417,7 +417,7 @@ function [NODE, ELEM] = level_model( fwd_model )
    else   error('mdl_slice_mapper: no field level or centre provided');
    end
    
-   NODE = NODE{1}'; 
+   NODE = NODE'; 
    
 function pts = get_points(fwd_model);
    NODE = level_model( fwd_model );

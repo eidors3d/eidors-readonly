@@ -16,13 +16,16 @@ function [out, out2, out3] = level_model_slice(varargin)
 %         [0,0,1].         
 %		.rotation_matrix (3 x 3)
 %		An error is thrown if both normal_angle and rotation_matrix are present.
-%   SN	 : slice number to use if level defines multiple slices (default: all).
-%	XYZ	 : Cell array (one per level) of NODES transformed such that level is
-%     a slice at z=0.
+%   SN	 : slice number to use if level defines multiple slices (default: 1).
+%	XYZ	 : NODES transformed such that level is a slice at z=0.
 %
-% XYZ = LEVEL_MODEL_SLICE(MDL,__) 
+% MDL = LEVEL_MODEL_SLICE(MDL,__) 
 % Modifies the nodes of an EIDORS fwd_model structure MDL. Can be used in
 % place of NODES with every other syntax.
+%
+% {XYZ} = LEVEL_MODEL_SLICE(MDL, LEVEL, 'all') 
+% {XYZ} = LEVEL_MODEL_SLICE(NODES, LEVEL, 'all') 
+% Returns a cell array (one per slice) of transformed NODES (or MDL.nodes).
 %
 % N = LEVEL_MODEL_SLICE(LEVEL) returns the number of slices defined in LEVEL.
 %
@@ -50,20 +53,26 @@ if nargout == 1 || nargout == 3
     else
         % XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL)
         % XYZ = LEVEL_MODEL_SLICE(NODES, LEVEL, SN)
-        n_slices = get_number_of_slices(varargin{2});
-        if nargin == 2 && n_slices > 1 
-            for i = n_slices:-1:1
-                [out(i,1), C(i,:), M] = level_model_slice(varargin{1},varargin{2}, i);
-            end
+        if nargin == 3 && ischar(varargin{3}) && strcmp(varargin{3},'all')
+           n_slices = get_number_of_slices(varargin{2});
+           if isstruct(varargin{1}), varargin{1}=varargin{1}.nodes; end
+           for i = n_slices:-1:1
+              out(i,1) = cell(1);
+              [out{i,1}, C(i,:), M] = level_model_slice(varargin{1},varargin{2}, i);
+           end
         else % nargin==3
             [C, M] = matrix_from_level(varargin{:});
             SHIFT = [C(1), C(2), C(3)] * M';
             SHIFT(3) = 0;
             % accept fwd_model as input
-            if isstruct(varargin{1}), varargin{1} = varargin{1}.nodes; end
-            
-            % (nodes - C) * M' + SHIFT
-            out = {bsxfun(@plus, bsxfun(@minus, varargin{1}, C ) * M', SHIFT)};
+            if isstruct(varargin{1})
+               out = varargin{1};
+               % (nodes - C) * M' + SHIFT
+               out.nodes = bsxfun(@plus, bsxfun(@minus, out.nodes, C ) * M', SHIFT);
+            else
+               % (nodes - C) * M' + SHIFT
+               out = bsxfun(@plus, bsxfun(@minus, varargin{1}, C ) * M', SHIFT);
+            end
             if nargout == 3
                 out2 = C;
                 out3 = M;

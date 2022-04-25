@@ -79,7 +79,7 @@ function rimg = calc_this_slice( img, levels, np)
     
     nodes = {fwd_model.nodes};
     if size(fwd_model.nodes,2)==3 && size(fwd_model.elems,2) > 3 
-        nodes = level_model_slice(fwd_model, levels);
+        nodes = level_model_slice(fwd_model.nodes, levels, 'all');
         
         % we'll level by replacing nodes. Disable.
         lvl = struct('rotation_matrix',eye(3), 'centre', zeros(1,3));
