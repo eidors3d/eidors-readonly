@@ -3,10 +3,10 @@ function graph_loc
    datafile; dat = loc; t=dat(:,5);
    clf
    hold on;
-   hh(1)=plot(t,1e-3*dat(:,1),            '-','Color',[2,0,0]/3,'LineWidth',3);
-   hh(2)=plot(t,1e-3*dat(:,1:3)*[1;-1;-1],'-','Color',[1,1,0]/3,'LineWidth',3);
-   hh(3)=plot(t,1e-3*dat(:,2),            '-','Color',[0,2,0]/3,'LineWidth',3);
-   hh(4)=plot(t,1e-3*dat(:,3),            '-','Color',[0,0,2]/3,'LineWidth',3);
+   plot(t,1e-3*dat(:,1:3)*[1;-1;-1],'-','Color',[1,1,0]/3,'LineWidth',3,'DisplayName','Eidors');
+   plot(t,1e-3*dat(:,3),            '-','Color',[0,0,2]/3,'LineWidth',3,'DisplayName','Dev');
+   plot(t,1e-3*dat(:,2),            '-','Color',[0,2,0]/3,'LineWidth',3,'DisplayName','Tutorials');
+   plot(t,1e-3*dat(:,1),            '-','Color',[2,0,0]/3,'LineWidth',3,'DisplayName','Total');
 
    k=1;for yy=2004:2022;
      tt(k) = (datenum(yy,1,1)-datenum(1970,1,1))*86400;
@@ -17,11 +17,10 @@ function graph_loc
    ylim([0, ylim*[0;1]]);
    xlim([min(t),max(t)+0e7]);
    releaselines
-%  uistack(hh,'top'); %%% Screws up colours
    hold off;
    set(gca,'Box','off')
    set(gcf,'PaperPosition',[1,1,6,2.5]);
-   legend('Total','Eidors','Tutorials','Dev','location','northwest');
+   legend('location','northwest');
    ylabel('Lines of Code (x1000)')
    print -dpdf fig_loc.pdf
    !LD_LIBRARY_PATH="" pdfcrop fig_loc.pdf fig_loc.pdf
@@ -29,7 +28,7 @@ function graph_loc
 function releaselines
 
 release= [
-(datenum(2019,06,30)-datenum(1970,1,1))*86400; % eidors-v3.9.1
+(datenum(2019,12,31)-datenum(1970,1,1))*86400; % eidors-v3.10
 (datenum(2018,06,1)-datenum(1970,1,1))*86400; % eidors-v3.9.1
 (datenum(2017,06,21)-datenum(1970,1,1))*86400; % eidors-v3.9
 1431302400; %eidors-v3.8     2015-05-11

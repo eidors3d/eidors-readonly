@@ -5,14 +5,14 @@ echo "Look at $REPO";
 OUTF=datafile.m
 LASTREV=$(cd $REPO && git svn log --oneline HEAD^^^^^..HEAD | head -1 | cut -f1 -d'|' | sed 's/r//')
 echo "LastRev is $LASTREV";
-echo 'loc = [ % all(/)  htdocs   dev   version  date' > $OUTF
+echo 'loc = [ % all eidors  htdocs   dev   version  date' > $OUTF
 for ver in `seq 1 $LASTREV`; do 
    echo "$REPO: VER=$ver";
    GITVER=`(cd $REPO && git svn find-rev r$ver)`;
 #  (cd $REPO && git checkout $GITVER && git clean -d -x -f); ## Seems not to work
    (cd $REPO && rm -rf * && git checkout $GITVER -- . && ls)  ## Much slower. Can't trust git
    DATE=`(cd $REPO && git show -s --format=%ct $GITVER) | perl -pe'chomp'`;
-   for PTH in $REPO $REPO/htdocs $REPO/dev ; do
+   for PTH in $REPO $REPO/eidors $REPO/htdocs $REPO/dev ; do
        find $PTH -type f -name \*.m -print0 2>/dev/null | xargs -0 perl \
            -e  'BEGIN{my $lines = 0};' \
            -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
