@@ -1,12 +1,12 @@
 function graph_loc
    %% Graph the lines of code
-   datafile; dat = loc; t=dat(:,5);
+   datafile; dat = loc; t=dat(:,6);
    clf
    hold on;
-   plot(t,1e-3*dat(:,1:3)*[1;-1;-1],'-','Color',[1,1,0]/3,'LineWidth',3,'DisplayName','Eidors');
-   plot(t,1e-3*dat(:,3),            '-','Color',[0,0,2]/3,'LineWidth',3,'DisplayName','Dev');
-   plot(t,1e-3*dat(:,2),            '-','Color',[0,2,0]/3,'LineWidth',3,'DisplayName','Tutorials');
-   plot(t,1e-3*dat(:,1),            '-','Color',[2,0,0]/3,'LineWidth',3,'DisplayName','Total');
+   plot(t,1e-3*dat(:,3),          '-','Color',[0,2,0]/3,'LineWidth',3,'DisplayName','Tutorials');
+   plot(t,1e-3*dat(:,2:4)*[1;1;1],'-','Color',[2,0,0]/3,'LineWidth',3,'DisplayName','Total');
+   plot(t,1e-3*dat(:,2)          ,'-','Color',[1,1,0]/3,'LineWidth',3,'DisplayName','Eidors');
+   plot(t,1e-3*dat(:,4),          '-','Color',[0,0,2]/3,'LineWidth',3,'DisplayName','Dev');
 
    k=1;for yy=2004:2022;
      tt(k) = (datenum(yy,1,1)-datenum(1970,1,1))*86400;

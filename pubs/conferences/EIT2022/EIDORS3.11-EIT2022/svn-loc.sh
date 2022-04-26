@@ -10,7 +10,7 @@ for ver in `seq 1 $LASTREV`; do
    echo "$REPO: VER=$ver";
    (cd $REPO && svn up -r$ver )
    DATE=`(cd $REPO && svn info --show-item last-changed-date) | perl -MDate::Parse -pe'$_=str2time($_)'`;
-   for PTH in $REPO $REPO/eidors $REPO/htdocs $REPO/dev ; do
+   for PTH in $REPO "$REPO/eidors $REPO/eidors3d" $REPO/htdocs $REPO/dev ; do
        find $PTH -type f -name \*.m -print0 2>/dev/null | xargs -0 perl \
            -e  'BEGIN{my $lines = 0};' \
            -ne 'next if /^\s*%/; next if /^\s*$/; $lines++;' \
