@@ -286,7 +286,7 @@ function [joint EL1 EL2 V] = add_electrodes(mdl,N,fc,elecs)
 % fcs = fcs(N);
 fcs = N;
 used_nodes = unique(mdl.faces(fcs,:));
-node_map = zeros(size(mdl.nodes,1),1);
+node_map = zeros(1,size(mdl.nodes,1));
 node_map(used_nodes) = 1:numel(used_nodes);
 
 jnk.type = 'fwd_model';
@@ -693,16 +693,21 @@ dd = sqrt(sum( (dv - repmat(dot(dv,nl,2),1,3) .* nl).^2,2));
 dim = size(bb,2);
 first = true; % at first iteration, add all neighbours
 if use_elec
-%    PN = project_nodes_on_elec(mdl,elecs,1:length(mdl.nodes));
    PN = level_model_slice(mdl.nodes,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
-   elec_nodes = level_model_slice(elecs.nodes,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
-   elec_nodes = elec_nodes(:,1:2);
+   elec_pts = level_model_slice(elecs.points,struct('centre',mdl.face_centre(fc,:),'normal',mdl.normals(fc,:)));
+   elec_pts = elec_pts(:,1:2);
    PN = PN(:,1:2);
-   ctr = mean(elec_nodes);
-   TR = triangulation(elecs.elems, bsxfun(@plus, ctr, 1.1 * bsxfun(@minus,elec_nodes,ctr)));
-   idx = TR.pointLocation(PN);
-   outside = isnan(idx); 
-   toofar = all(outside(mdl.boundary),2);
+   emin = min(elec_pts);
+   emax = max(elec_pts);
+   rng = emax-emin;
+   emin = emin - 0.1*rng;
+   emax = emax + 0.1*rng;
+   toofar = false(size(mdl.boundary,1),1);
+   
+   for i = 1:2
+      nodes = reshape(PN(mdl.boundary,i),[],3);
+      toofar =  toofar |  sum(nodes > emax(i),2) == 3 | sum(nodes < emin(i),2) == 3;
+   end
 end
 while any(todo)
    id = find(todo,1,'first');
