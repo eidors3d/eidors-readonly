@@ -57,7 +57,7 @@ function fwd_mdl= construct_fwd_model(srf,vtx,simp,bc, name, ...
 % get rid of duplicates, if there are any
 [~,idx] = unique(sort(srf,2),'rows','stable');
 if length(idx)~=size(srf,1)
-   error('Duplicate elements on boundary. This in an EIDORS bug.')
+   error('Duplicate elements on boundary. Netgen completed, but EIDORS can''t interpret the result. Try modifying the netgen parameters.')
 end
 %fc = fc(idx);
 %bc = bc(idx);

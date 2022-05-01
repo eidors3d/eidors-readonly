@@ -1,6 +1,7 @@
 Plan for 3.12:
  - img_point_mapper that works in Octave
  - Fix _higher_order to handle faces-type electrodes
+ - Speed up / clean up _higher_order code
 
 Plan for 3.11
  - Failing tests:
@@ -20,11 +21,11 @@ ERROR = (Error using eidors_default>get_default (line 106)
  + Fix print_convert to deal with PaperPositionMode behaviour change 
  + Warn if GREIT3D_distribution has zvec outside image and opt.distr = []
  + Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
- - mk_grid_model => Warn if length(vector)==1
+ + mk_grid_model => Warn if length(vector)==1
+ - mk_grid_model => 3D c2f seems broken. Is it
  + debug "Interpolation failed for point ..." in mk_c2f_circ_mapping
  + Fix phase delay in meas_pattern
- - Speed up / clean up _higher_order code
- - Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
+ + Remove "This is an EIDORS bug" test in ng_mk_fwd_model.m:58 after validating
  + DONE (calc_grid_points) new function: calc_volumes which calculates elems => volumes or nodes => volumes
  + DONE(img_point_mapper) new function low level: interp_points(img, xyz_points) use point_in_tet 
  - support c2f in img_point_mapper (Bartek)
