@@ -13,7 +13,10 @@ ERROR = (Error using eidors_default>get_default (line 106)
  - Test why fwd solver not more efficient with large stim patterns
  - Add 3D for prior_gaussian_HPF
  + Make sparse overload smarter
- - New included data based on the JXBrunner data set
+ + New included data based on the JXBrunner data set => landquart_data_2014.mat
+    + Permission email from 2019-03-07
+    + vv = freq_filt(vv, @(f) f<FR/Subsample/2, FR, 2);
+    + Subsample = 5; FR=FR/Subsample; vv= vv(:,1:Subsample:end); vv = int16(1e7*vv);
  + Fix print_convert to deal with PaperPositionMode behaviour change 
  + Warn if GREIT3D_distribution has zvec outside image and opt.distr = []
  + Use oncleanup https://www.mathworks.com/help/matlab/ref/oncleanup.html
