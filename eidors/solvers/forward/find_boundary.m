@@ -8,6 +8,9 @@ function [srf, idx] = find_boundary(simp);
 %        boundary simplices are of 1 lower dimention than simp
 %idx  =  index of simplex to which each boundary belongs
 %simp = The simplices matrix
+%
+% Also:
+%  fmdl.boundary = find_boundary(fmdl_old)
 
 % $Id$
 
