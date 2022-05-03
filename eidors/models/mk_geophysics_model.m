@@ -311,8 +311,9 @@ end
 xllim = fmdlbox(1,1);
 xrlim = fmdlbox(1,2);
 zdepth = fmdlbox(3,1);
-xr=max(floor((xrlim-xllim)/hmax_rec/2),1)*2+1; % odd number
-yr=max(floor(-zdepth/hmax_rec/2),1)*2+1; % odd number
+% AA - 2022-05 Updated from hmax_rec/2 
+xr=max(floor((xrlim-xllim)/hmax_rec),1)*2+1; % odd number
+yr=max(floor(-zdepth/hmax_rec),1)*2+1; % odd number
 [x,y] = meshgrid( linspace(xllim,xrlim,xr), linspace(zdepth,0,yr));
 vtx= [x(:),y(:)];
 if CMDL_DIM ~= 0
