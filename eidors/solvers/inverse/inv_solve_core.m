@@ -2473,7 +2473,7 @@ function do_unit_test_diff()
         subplot(222); show_fem(img_itr,1); title('GN 10-iter');
         subplot(222); show_fem(img_abs,1); title('GN abs 10-iter');
    unit_test_cmp('core (1-step) vs. diff_GN_one_step', img_it1.elem_data, img_gn1.elem_data, eps*15);
-   unit_test_cmp('core (1-step) vs. core (N-step)   ', img_it1.elem_data, img_itr.elem_data, eps);
+   unit_test_cmp('core (1-step) vs. core (N-step)   ', img_it1.elem_data, img_itr.elem_data, eps*2);
    unit_test_cmp('core (N-step) vs. abs  (N-step)   ', img_it1.elem_data, img_abs.elem_data-1, eps);
 
 % test sub-functions
