@@ -373,4 +373,4 @@ function do_unit_test()
 
 function S = sens(J)
    S = sum(J.^2,1);
-   S = log10(max(J,1e-10)); % AVOID -inf
+   S = log10(max(S,1e-10)'); % AVOID -inf
