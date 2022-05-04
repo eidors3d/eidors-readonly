@@ -357,13 +357,9 @@ if CMDL_DIM ~= 0
    nn = size(cmdl.nodes,1);
    Xn = repmat(X(1,:), nn, 1);
    if CMDL_DIM ~= FMDL_DIM % 2D
-      if 1 % Working  Code from version 5213
-      cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
-      cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
-      else
       cmdl.nodes = ([cmdl.nodes(:,1) zeros(nn,1) cmdl.nodes(:,2:end)]/ R) + Xn;
-      cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]);
-      end
+      cmdl.nodes = cmdl.nodes(:,[1 3]);
+%     cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]); % ONLY DIVIDE ONCE
    else % CMDL_DIM == FMDL_DIM
       cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
       cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
