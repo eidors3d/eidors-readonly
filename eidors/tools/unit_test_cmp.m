@@ -77,7 +77,11 @@ tolstr='';
    end
 
    fprintf('%4s %s\n', ok, tolstr);
-   if strcmp(ok(1:2),'OK'); npass= npass+1; end
+   if strcmp(ok(1:2),'OK');
+      npass= npass+1;
+   else
+%     keyboard % uncomment to debug
+   end
    ntotal= ntotal+1;
    
    if nargout>0
