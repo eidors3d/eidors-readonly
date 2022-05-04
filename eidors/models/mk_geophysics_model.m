@@ -357,8 +357,13 @@ if CMDL_DIM ~= 0
    nn = size(cmdl.nodes,1);
    Xn = repmat(X(1,:), nn, 1);
    if CMDL_DIM ~= FMDL_DIM % 2D
+      if 1 % Working  Code from version 5213
+      cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
+      cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
+      else
       cmdl.nodes = ([cmdl.nodes(:,1) zeros(nn,1) cmdl.nodes(:,2:end)]/ R) + Xn;
       cmdl.nodes = cmdl.nodes(:,[1 3])/R([1 3],[1 3]);
+      end
    else % CMDL_DIM == FMDL_DIM
       cmdl.nodes = ([cmdl.nodes zeros(nn,3-CMDL_DIM)]/ R) + Xn;
       cmdl.nodes = cmdl.nodes(:,1:CMDL_DIM);
@@ -681,6 +686,13 @@ function err = mdl_elec_err(mdl, xyzc)
    end
    err = xyzc(:,1:nd) - eu;
 
+function test_fwd_rec_match(imdl,idx,str)
+   fwd = imdl.fwd_model.nodes(:,idx);
+   mxf = max(fwd); mnf = min(fwd);
+   rec = imdl.rec_model.nodes;
+   mxr = max(rec); mnr = min(fwd);
+   unit_test_cmp(['fwd-rec match: ',str],[mxf,mnf],[mxr,mnr],10*eps);
+
 function do_unit_test
    ne = 16;
    imdl = mk_geophysics_model('h2p5a', ne);
@@ -717,9 +729,13 @@ clf; h=plot([vh.meas vd.meas],'o--'); legend('analytic','FEM'); set(gca,'box','o
 
    % std dual meshes w/ 16 elec
    imdlh32_16 = mk_geophysics_model('h32a', 16);
+   test_fwd_rec_match(imdlh32_16,[1,3],'h32a')
    imdlh22_16 = mk_geophysics_model('h22a', 16);
+   test_fwd_rec_match(imdlh22_16,[1,2],'h22a')
    imdlH32_16 = mk_geophysics_model('H32a', 16);
+   test_fwd_rec_match(imdlH32_16,[1,3],'h22a')
    imdlH22_16 = mk_geophysics_model('H22a', 16);
+   test_fwd_rec_match(imdlH22_16,[1,2],'h22a')
 
 if 0
    % Nolwenn's grid
