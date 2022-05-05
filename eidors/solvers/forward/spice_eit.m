@@ -421,7 +421,7 @@ function unittest()
 
       disp('-----------------------------------------');
       print_netlist(desc,netlist);
-      [v,i,nn]=csolve(netlist,freq);
+      [v,i,nn]=spice_eit(netlist,freq);
       pass=cmp(pass,'voltages',v,Ev,tol);
       pass=cmp(pass,'currents',i,Ei,tol);
       pass=cmp(pass,'node#s',nn,Enn);
