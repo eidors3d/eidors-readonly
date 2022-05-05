@@ -187,8 +187,7 @@ function do_unit_test
    imgr= inv_solve(imdl, vh, vi);
    show_slices(imgr);
 
-   imgr = calc_slices(imgr);
-   max_imgr = max(imgr(:));
+   max_imgr = max(imgr.elem_data(:));
    unit_test_cmp('Max', max_imgr, 6.683411990674756e-04, 1e-8);
-   tst = [1753;1754;1755;1816;1817;1818;1819;1880;1881;1882;1944;1945;2008];
-   unit_test_cmp('Loc', find(imgr>0.99*max_imgr), tst);
+   tst= [17;25;26;37;38;50;66;82];
+   unit_test_cmp('Loc', find(imgr.elem_data>0.95*max_imgr), tst);
