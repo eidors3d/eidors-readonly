@@ -71,10 +71,10 @@ function rimg = calc_this_slice( img, levels, np)
     
     if ~isfield(fwd_model,'mdl_slice_mapper')
         fwd_model.mdl_slice_mapper.npoints = np;
-        fwd_model.mdl_slice_mapper.level= levels;
-        % grid model sets mdl_slice_mapper.np* but not level
-    elseif ~isfield(fwd_model.mdl_slice_mapper,'level')
-        fwd_model.mdl_slice_mapper.level= levels;
+    end
+    if isfield(fwd_model.mdl_slice_mapper, 'level')
+      eidors_msg(3, 'Using level definition from the mdl_slice_mapper.level field.');
+      levels = fwd_model.mdl_slice_mapper.level; 
     end
     
     nodes = {fwd_model.nodes};
