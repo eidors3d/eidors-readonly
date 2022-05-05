@@ -102,7 +102,9 @@ function PSF = desired_soln(xyz, radius, opt)
     SPARSE_STEP = ceil(n_nz/5);
     PSF = spalloc(n_el,n_pt,n_nz);
     
-    for i=1:size(xyz,2)
+    Npts = size(xyz,2);
+    Nfailed = 0;
+    for i=1:Npts
         if nnz(PSF) > n_nz
            n_nz = nnz(PSF) + SPARSE_STEP;
            [r,c,v] = find(PSF);
@@ -151,12 +153,14 @@ function PSF = desired_soln(xyz, radius, opt)
         X(v) = []; Y(v) = []; Z(v) = [];
         
         if isempty(X)
-            if ~warned
-               warning('EIDORS:OutsidePoint',...
-                  'Desired image generation failed for point %d (and maybe others)',i);
-               warned = true;
-            end
+%  REMOVED: Now only one warning at the end
+%           if 0 && ~warned 
+%              warning('EIDORS:OutsidePoint',...
+%                 'Desired image generation failed for point %d (and maybe others)',i);
+%              warned = true;
+%           end
             % PSF(:,i) = 0; % not needed
+            Nfailed = Nfailed + 1;
             continue;
         end
         V = [X Y Z];
@@ -167,7 +171,14 @@ function PSF = desired_soln(xyz, radius, opt)
         PSF(close_el,i) = 1;
     end
     interp_elem_new('clear');
-    progress_msg(Inf);
+    if Nfailed==0
+        progress_msg(Inf);
+    else
+        progress_msg(sprintf( ...
+      'Interpolation failed for %d of %d points', ...
+                Nfailed,Npts), Inf);
+    end
+  
 end
 
 %-------------------------------------------------------------------------%
